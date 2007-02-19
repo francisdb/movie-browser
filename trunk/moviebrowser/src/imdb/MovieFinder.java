@@ -10,15 +10,19 @@
 package imdb;
 
 import au.id.jericho.lib.html.Element;
+import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+import au.id.jericho.lib.html.StartTag;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -193,44 +197,56 @@ public class MovieFinder {
         return url;
     }
     
-    public MovieInfo getMovieInfo(MovieInfo movieInfo) throws Exception {
+    public MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
         System.out.println(movieInfo.getDirectory());
         String url = findNfoUrl(movieInfo.getDirectory());
         if(url == null){
             String title = removeCrap(movieInfo.getDirectory().getName());
-            String encoded = URLEncoder.encode(title, "UTF-8");
+            String encoded = "";
+            try{
+                encoded = URLEncoder.encode(title, "UTF-8");
+            }catch(UnsupportedEncodingException ex){
+                System.out.println(ex.getMessage());                
+            }
             url = "http://www.imdb.com/Tsearch?title="+encoded;
+            
         }
         
+        
         movieInfo.setUrl(url);
-        String id = url.replaceAll("[a-zA-Z:/.+=?]","").trim();
-        movieInfo.setImdbId(id);
+        movieInfo.setImdbId(url.replaceAll("[a-zA-Z:/.+=?]","").trim());
         
-        Session s = new Session();
-        System.out.println("URL: "+url);
-        Response r = s.get(generateImdbUrl(movieInfo));
-        //System.out.println("HEADERS: " + Arrays.toString(r.getHeaders()));
-        
-        //PHPTagTypes.register();
-        //PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
-        //MasonTagTypes.register();
-        Source source = null;
-        source = new Source(r.getBody());
-        source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-        source.fullSequentialParse();
+        Source source = getParsedSource(movieInfo);
     
         String imgUrl = null;
         Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
-        movieInfo.setTitle(titleElement.getContent().extractText());
-        
+        if(titleElement.getContent().extractText().contains("Title Search")){
+            //find the first link
+            movieInfo.setUrl(null);
+            List linkElements=source.findAllElements(HTMLElementName.A);
+            for (Iterator i=linkElements.iterator(); i.hasNext() && movieInfo.getUrl() == null;) {
+                Element linkElement=(Element)i.next();
+                String href=linkElement.getAttributeValue("href");
+                System.out.println(linkElement.extractText()+ " -> " + href);
+                if(href != null && href.startsWith("/title/tt")){
+                    int questionMarkIndex = href.indexOf('?');
+                    if(questionMarkIndex != -1){
+                        href=href.substring(0, questionMarkIndex);
+                    }
+                    movieInfo.setUrl(href);
+                    movieInfo.setImdbId(href.replaceAll("[a-zA-Z:/.+=?]","").trim());
+                    source = getParsedSource(movieInfo);
+                    titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
+                }
+            }
+            
+        }
+        movieInfo.setTitle(titleElement.getContent().extractText());        
         
         List linkElements=source.findAllElements(HTMLElementName.A);
         for (Iterator i=linkElements.iterator(); i.hasNext();) {
             Element linkElement=(Element)i.next();
-            
-            String href=linkElement.getAttributeValue("href");
-                if (href==null) continue;
             
             if ("poster".equals(linkElement.getAttributeValue("name"))){
                 
@@ -248,30 +264,45 @@ public class MovieFinder {
                 }
                 
             }
-            if(href.startsWith("/Sections/Genres/")){
+            String href=linkElement.getAttributeValue("href");
+            if(href != null && href.startsWith("/Sections/Genres/")){
                 movieInfo.addGenre(linkElement.getContent().extractText());
+            }         
+            if(href != null && href.startsWith("/Sections/Languages/")){
+                movieInfo.addLanguage(linkElement.getContent().extractText());
             }
-            if(href.startsWith("/rg/title-tease/rating-stars")){
-                 int end = linkElement.getEnd();
-                Element nextElement = source.findNextElement(end);
-                movieInfo.setRating(nextElement.getContent().extractText());
-                end = nextElement.getEnd();
-                movieInfo.setVotes(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
-                System.out.println("STARS: " + linkElement.getContent().extractText(true));
-            }
+            
         }
         
         linkElements=source.findAllElements(HTMLElementName.B);
         for (Iterator i=linkElements.iterator(); i.hasNext();) {
-            Element linkElement=(Element)i.next();
-            if(linkElement.getContent().extractText().startsWith("Plot ")){
-                int end = linkElement.getEnd();
+            Element bElement=(Element)i.next();
+            if(bElement.getContent().extractText().contains("User Rating:")){
+                Element next = source.findNextElement(bElement.getEndTag().getEnd());
+                movieInfo.setRating(next.getContent().extractText());
+                next = source.findNextElement(next.getEndTag().getEnd());
+                movieInfo.setVotes(next.getContent().extractText());
+            }
+        }
+        
+        linkElements=source.findAllElements(HTMLElementName.H5);
+        for (Iterator i=linkElements.iterator(); i.hasNext();) {
+            Element hElement=(Element)i.next();
+            if(hElement.getContent().extractText().contains("Plot")){
+                int end = hElement.getEnd();
                 movieInfo.setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
+            }
+            if(hElement.getContent().extractText().contains("Runtime")){
+                int end = hElement.getEnd();
+                EndTag next = source.findNextEndTag(end);
+                System.out.println(next);
+                String runtime = source.subSequence(end, next.getBegin()).toString().trim();
+                movieInfo.setRuntime(runtime);
             }
         }
         
         if(imgUrl == null){
-            System.out.println(source.toString());
+            //System.out.println(source.toString());
             movieInfo.setPlot("Not found");
         }
         
@@ -280,6 +311,23 @@ public class MovieFinder {
         return movieInfo;
     }
     
+    
+    public Source getParsedSource(MovieInfo movieInfo) throws Exception{
+        Session s = new Session();
+        String url = generateImdbUrl(movieInfo);
+        System.out.println("Loading "+url);
+        Response r = s.get(url);
+        //System.out.println("HEADERS: " + Arrays.toString(r.getHeaders()));
+        
+        //PHPTagTypes.register();
+        //PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
+        //MasonTagTypes.register();
+        Source source = null;
+        source = new Source(r.getBody());
+        source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
+        source.fullSequentialParse();
+        return source;
+    }
 
     
     public static String generateTomatoesUrl(MovieInfo info){

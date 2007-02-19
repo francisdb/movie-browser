@@ -31,6 +31,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
@@ -238,6 +239,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }catch(InterruptedException ex){
                     ex.printStackTrace();
                 }catch(ExecutionException ex){
+                    JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                     ex.getCause().printStackTrace();
                 }finally {
                     loadProgressBar.setIndeterminate(false);
@@ -249,21 +251,35 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void showMovie(MovieInfo info){
-
+        
         movieImagePanel.setImage(info.getImage());
         imdbHyperlink.setText(MovieFinder.generateImdbUrl(info));
         tomatoesHyperlink.setText(MovieFinder.generateTomatoesUrl(info));
         
         StringBuilder builder = new StringBuilder();
+
+        builder.append(info.getTitle()).append("\n");
+        boolean first = true;
         for(String genre:info.getGenres()){
-            if(builder.length() != 0){
+            if(first){
+                first = false;
+            }else{
+                builder.append(", ");                
+            }
+            builder.append(genre);
+        }
+        builder.append("\n");
+        first = true;
+        for(String genre:info.getLanguages()){
+            if(first){
+                first = false; 
+            }else{
                 builder.append(", ");
             }
             builder.append(genre);
         }
         builder.append("\n");
-        builder.insert(0, "\n");
-        builder.insert(0, info.getTitle());
+        builder.append(info.getRuntime()).append("\n");
         builder.append("IMDB ").append(info.getRating()).append(" ").append(info.getVotes()).append("\n");
         builder.append("CRIT ").append(info.getTomatoesRating()).append(" USR ").append(info.getTomatoesRatingUsers()).append("\n");
         builder.append(info.getPlot());
@@ -319,11 +335,11 @@ public class MainFrame extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch(Exception e) {
-                    System.out.println("Error setting native LAF: " + e);
-                }
+//                try {
+//                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//                } catch(Exception e) {
+//                    System.out.println("Error setting native LAF: " + e);
+//                }
                 new MainFrame().setVisible(true);
             }
         });
