@@ -26,6 +26,7 @@ public class MovieInfo {
     
     private Image image;
     private List<String> genres;
+    private List<String> languages;
     private String rating;
     private String tomatoesRating;
     private String tomatoesRatingUsers;
@@ -36,6 +37,7 @@ public class MovieInfo {
     private String imdbId;
     private File directory;
     private MovieStatus status;
+    private String runtime;
     
     private PropertyChangeSupport propertyChangeSupport;
     
@@ -44,7 +46,8 @@ public class MovieInfo {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         this.directory = directory;
         this.status = MovieStatus.NEW;
-        genres = new LinkedList<String>();
+        this.genres = new LinkedList<String>();
+        this.languages = new LinkedList<String>();
     }
     
     public void addPropertyChangeListener(PropertyChangeListener listener){
@@ -65,6 +68,14 @@ public class MovieInfo {
 
     public void addGenre(String genre) {
         this.genres.add(genre);
+    }
+
+    public List<String> getLanguages() {
+        return languages;
+    }
+       
+    public void addLanguage(String language){
+        this.languages.add(language);
     }
 
     public String getRating() {
@@ -146,6 +157,18 @@ public class MovieInfo {
     public MovieStatus getStatus() {
         return status;
     }
+
+    public String getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(String runtime) {
+        this.runtime = runtime;
+    }
+    
+
+    
+
 
     public void setStatus(MovieStatus status) {
         MovieStatus oldValue = this.status;
