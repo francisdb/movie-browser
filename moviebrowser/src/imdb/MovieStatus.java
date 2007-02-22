@@ -14,5 +14,23 @@ package imdb;
  * @author francisdb
  */
 public enum MovieStatus {
-    NEW, LOADING_IMDB, LOADING_TOMATOES, LOADED    
+    /**
+     * New in list
+     */
+    NEW, 
+    
+    /**
+     * Loading imdb data
+     */
+    LOADING_IMDB, 
+    
+    /**
+     * Loading tomatoes data
+     */
+    LOADING_TOMATOES, 
+    
+    /**
+     * Loading completed
+     */
+    LOADED    
 }
