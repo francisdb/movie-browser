@@ -6,41 +6,21 @@
 
 package imdb;
 
-import java.awt.Component;
 import java.awt.Desktop;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
-import javax.imageio.ImageIO;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import org.jdesktop.swingx.event.SelectionListener;
-import org.omg.CORBA.MARSHAL;
 
 /**
  *
@@ -77,54 +57,26 @@ public class MainFrame extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        loadButton = new javax.swing.JButton();
-        movieImagePanel = new org.jdesktop.swingx.JXImagePanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        infoTextPane = new javax.swing.JTextPane();
-        loadProgressBar = new javax.swing.JProgressBar();
-        imdbHyperlink = new org.jdesktop.swingx.JXHyperlink();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane3 = new javax.swing.JScrollPane();
         movieTable = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        movieImagePanel = new org.jdesktop.swingx.JXImagePanel();
+        loadProgressBar = new javax.swing.JProgressBar();
+        imdbHyperlink = new org.jdesktop.swingx.JXHyperlink();
         tomatoesHyperlink = new org.jdesktop.swingx.JXHyperlink();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        infoTextPane = new javax.swing.JTextPane();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        MovieMenu = new javax.swing.JMenu();
+        ImportMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Somatik.be movie browser");
         setName("mainFrame");
-        loadButton.setText("Select movies directory...");
-        loadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadButtonActionPerformed(evt);
-            }
-        });
-
-        movieImagePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        movieImagePanel.setInheritAlpha(false);
-        movieImagePanel.setToolTipText("Click to open movie folder");
-        movieImagePanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                movieImagePanelMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout movieImagePanelLayout = new javax.swing.GroupLayout(movieImagePanel);
-        movieImagePanel.setLayout(movieImagePanelLayout);
-        movieImagePanelLayout.setHorizontalGroup(
-            movieImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 429, Short.MAX_VALUE)
-        );
-        movieImagePanelLayout.setVerticalGroup(
-            movieImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 158, Short.MAX_VALUE)
-        );
-
-        jScrollPane2.setViewportView(infoTextPane);
-
-        imdbHyperlink.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                imdbHyperlinkActionPerformed(evt);
-            }
-        });
-
+        jSplitPane1.setBorder(null);
+        jSplitPane1.setDividerLocation(300);
+        jSplitPane1.setResizeWeight(1.0);
         movieTable.setAutoCreateRowSorter(true);
         movieTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -147,11 +99,85 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.setGridColor(java.awt.SystemColor.controlHighlight);
         jScrollPane3.setViewportView(movieTable);
 
+        jSplitPane1.setLeftComponent(jScrollPane3);
+
+        movieImagePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        movieImagePanel.setInheritAlpha(false);
+        movieImagePanel.setToolTipText("Click to open movie folder");
+        movieImagePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                movieImagePanelMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout movieImagePanelLayout = new javax.swing.GroupLayout(movieImagePanel);
+        movieImagePanel.setLayout(movieImagePanelLayout);
+        movieImagePanelLayout.setHorizontalGroup(
+            movieImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 416, Short.MAX_VALUE)
+        );
+        movieImagePanelLayout.setVerticalGroup(
+            movieImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 156, Short.MAX_VALUE)
+        );
+
+        imdbHyperlink.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                imdbHyperlinkActionPerformed(evt);
+            }
+        });
+
         tomatoesHyperlink.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tomatoesHyperlinkActionPerformed(evt);
             }
         });
+
+        jScrollPane2.setViewportView(infoTextPane);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(movieImagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(loadProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(imdbHyperlink, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(movieImagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(imdbHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jSplitPane1.setRightComponent(jPanel1);
+
+        MovieMenu.setMnemonic('M');
+        MovieMenu.setText("Movie");
+        ImportMenuItem.setMnemonic('I');
+        ImportMenuItem.setText("Import folder...");
+        ImportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ImportMenuItemActionPerformed(evt);
+            }
+        });
+
+        MovieMenu.add(ImportMenuItem);
+
+        jMenuBar1.add(MovieMenu);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -159,41 +185,58 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(movieImagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(imdbHyperlink, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
-                    .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
-                    .addComponent(loadProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(movieImagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(imdbHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadButton)))
-                .addGap(12, 12, 12))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ImportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportMenuItemActionPerformed
+        JFileChooser chooser = new JFileChooser(selectedFile);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            loadProgressBar.setIndeterminate(true);
+            final File selected = chooser.getSelectedFile();
+            this.selectedFile = selected;
+            new SwingWorker<MovieInfoTableModel,Void>() {
+                protected MovieInfoTableModel doInBackground() throws Exception {
+                    
+                    List<MovieInfo> movies = new ArrayList<MovieInfo>();
+                    for(File file:selected.listFiles()){
+                        if(file.isDirectory()){
+                            movies.add(new MovieInfo(file));
+                        }
+                    }
+                    
+                    
+                    return new MovieInfoTableModel(movies);
+                }
+                
+                protected void done(){
+                    try{
+                        movieTable.setModel(get());
+                    }catch(InterruptedException ex){
+                        ex.printStackTrace();
+                    }catch(ExecutionException ex){
+                        ex.getCause().printStackTrace();
+                    }finally{
+                        loadProgressBar.setIndeterminate(false);
+                    }
+                }
+                
+            }.execute();
+            
+        } else {
+            System.out.println("No Selection ");
+        }
+    }//GEN-LAST:event_ImportMenuItemActionPerformed
 
     private void movieImagePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieImagePanelMouseClicked
         try {
@@ -286,49 +329,7 @@ public class MainFrame extends javax.swing.JFrame {
         infoTextPane.setText(builder.toString());
         infoTextPane.setCaretPosition(0);
     }
-    
-    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        JFileChooser chooser = new JFileChooser(selectedFile);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            loadButton.setEnabled(false);
-            loadProgressBar.setIndeterminate(true);
-            final File selected = chooser.getSelectedFile();
-            this.selectedFile = selected;
-            new SwingWorker<MovieInfoTableModel,Void>() {
-                protected MovieInfoTableModel doInBackground() throws Exception {
-                    
-                    List<MovieInfo> movies = new ArrayList<MovieInfo>();
-                    for(File file:selected.listFiles()){
-                        if(file.isDirectory()){
-                            movies.add(new MovieInfo(file));
-                        }
-                    }
-                    
-                    
-                    return new MovieInfoTableModel(movies);
-                }
-                
-                protected void done(){
-                    try{
-                        movieTable.setModel(get());
-                    }catch(InterruptedException ex){
-                        ex.printStackTrace();
-                    }catch(ExecutionException ex){
-                        ex.getCause().printStackTrace();
-                    }finally{
-                        loadProgressBar.setIndeterminate(false);
-                        loadButton.setEnabled(true);
-                    }
-                }
-                
-            }.execute();
-            
-        } else {
-            System.out.println("No Selection ");
-        }
-    }//GEN-LAST:event_loadButtonActionPerformed
-    
+        
     /**
      * @param args the command line arguments
      */
@@ -346,11 +347,15 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem ImportMenuItem;
+    private javax.swing.JMenu MovieMenu;
     private org.jdesktop.swingx.JXHyperlink imdbHyperlink;
     private javax.swing.JTextPane infoTextPane;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JButton loadButton;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
     private org.jdesktop.swingx.JXImagePanel movieImagePanel;
     private javax.swing.JTable movieTable;

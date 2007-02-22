@@ -13,7 +13,6 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
-import au.id.jericho.lib.html.StartTag;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,6 +65,9 @@ public class MovieFinder {
     public MovieFinder() {
     }
    
+    /**
+     * Test class for the apache htpclient
+     */
     public void httpclient(){
         // initialize the POST method
         GetMethod get = new GetMethod("http://www.imdb.com/Tsearch?title=idiocracy");
@@ -143,6 +145,11 @@ public class MovieFinder {
     
 
     
+    /**
+     * 
+     * @param dir 
+     * @return 
+     */
     protected String findNfoUrl(File dir){
         String url = null;
         String urlStart = null;
@@ -197,6 +204,13 @@ public class MovieFinder {
         return url;
     }
     
+    /**
+     * 
+     * @param movieInfo 
+     * @return 
+     * @throws java.net.UnknownHostException 
+     * @throws java.lang.Exception 
+     */
     public MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
         System.out.println(movieInfo.getDirectory());
@@ -312,6 +326,12 @@ public class MovieFinder {
     }
     
     
+    /**
+     * 
+     * @param movieInfo 
+     * @return 
+     * @throws java.lang.Exception 
+     */
     public Source getParsedSource(MovieInfo movieInfo) throws Exception{
         Session s = new Session();
         String url = generateImdbUrl(movieInfo);
@@ -330,10 +350,20 @@ public class MovieFinder {
     }
 
     
+    /**
+     * 
+     * @param info 
+     * @return 
+     */
     public static String generateTomatoesUrl(MovieInfo info){
         return "http://www.rottentomatoes.com/alias?type=imdbid&s="+info.getImdbId();
     }
     
+    /**
+     * 
+     * @param info 
+     * @return 
+     */
     public static String generateImdbUrl(MovieInfo info){
         String id = info.getImdbId();
         if("".equals(id)){

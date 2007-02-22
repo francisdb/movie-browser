@@ -11,7 +11,6 @@ package imdb;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -23,13 +22,18 @@ import javax.swing.table.AbstractTableModel;
  */
 public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener{
     
+    /**
+     * Movie column number
+     */
     public static final int MOVIE_COL = 1;
     private static final String COL_NAMES[] = {"?","Movie","Date","IMDB","Critics","Users"};
     private static final Class COL_CLASSES[] = {MovieStatus.class, Object.class, Date.class, String.class, String.class, String.class};
     
     private List<MovieInfo> movies;
     
-    /** Creates a new instance of MovieInfoTableModel */
+    /** Creates a new instance of MovieInfoTableModel 
+     * @param movies 
+     */
     public MovieInfoTableModel(List<MovieInfo> movies) {
         this.movies = movies;
         for(MovieInfo movie:movies){

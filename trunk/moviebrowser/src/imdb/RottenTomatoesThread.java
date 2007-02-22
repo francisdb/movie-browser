@@ -12,10 +12,8 @@ package imdb;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
-import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.List;
-import org.jdesktop.http.Request;
 import org.jdesktop.http.Response;
 import org.jdesktop.http.Session;
 
@@ -30,7 +28,10 @@ public class RottenTomatoesThread implements Runnable{
         private static int threads;
     
     
-    /** Creates a new instance of RottenTomatoesThread */
+    /** 
+     * Creates a new instance of RottenTomatoesThread 
+     * @param movieInfo 
+     */
     public RottenTomatoesThread(MovieInfo movieInfo) {
         this.movieInfo = movieInfo;
         RottenTomatoesThread.incThreads();
@@ -82,11 +83,17 @@ public class RottenTomatoesThread implements Runnable{
         RottenTomatoesThread.decThreads();
     }
     
+    /**
+     * increaded the number of threads
+     */
     public static void incThreads(){
         threads++;
         System.out.println("Threads: "+threads);
     }
     
+    /**
+     * decreases the number of threads
+     */
     public static void decThreads(){
         threads--;
         System.out.println("Threads: "+threads);
