@@ -40,11 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 if(!e.getValueIsAdjusting()){
                     MovieInfo info = (MovieInfo)movieTable.getValueAt(movieTable.getSelectedRow(), MovieInfoTableModel.MOVIE_COL);
-                    if(info.getUrl() == null){
-                        loadMovie(info);
-                    }else{
-                        showMovie(info);
-                    }
+                    showMovie(info);
                 }
             }
         });
@@ -222,11 +218,12 @@ public class MainFrame extends javax.swing.JFrame {
                         MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
                         model.addAll(movies);
                         infoLabel.setText(model.getRowCount()+" movies loaded");
+                        loadMovies(movies);
                     }catch(InterruptedException ex){
                         ex.printStackTrace();
+                        loadProgressBar.setIndeterminate(false);
                     }catch(ExecutionException ex){
                         ex.getCause().printStackTrace();
-                    }finally{
                         loadProgressBar.setIndeterminate(false);
                     }
                 }
@@ -258,18 +255,18 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_imdbHyperlinkActionPerformed
         
-    private void loadMovie(final MovieInfo info){
-        loadProgressBar.setIndeterminate(true);
+    private void loadMovies(final List<MovieInfo> infos){
         
         new SwingWorker<MovieInfo,Void>() {
             protected MovieInfo doInBackground() throws Exception {
-                MovieFinder main = new MovieFinder();
-                return main.getMovieInfo(info);
+                MovieFinder finder = new MovieFinder();
+                finder.loadMovies(infos);
+                return null;
             }
             
             protected void done() {
                 try{
-                    showMovie(get());
+                    get();
                 }catch(InterruptedException ex){
                     ex.printStackTrace();
                 }catch(ExecutionException ex){
@@ -290,7 +287,11 @@ public class MainFrame extends javax.swing.JFrame {
         }else{
             movieHeader.setIcon(new ImageIcon(info.getImage()));
         }
-        movieHeader.setTitle(info.getTitle());
+        if(info.getTitle() == null){
+            movieHeader.setTitle(info.getDirectory().getName());
+        }else{
+            movieHeader.setTitle(info.getTitle());
+        }
         movieHeader.setDescription(info.getPlot());
         imdbHyperlink.setText(MovieFinder.generateImdbUrl(info));
         tomatoesHyperlink.setText(MovieFinder.generateTomatoesUrl(info));
