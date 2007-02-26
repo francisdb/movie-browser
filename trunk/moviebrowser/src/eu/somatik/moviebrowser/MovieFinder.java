@@ -25,7 +25,11 @@ import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.imageio.ImageIO;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -38,7 +42,6 @@ import org.jdesktop.http.Session;
  * @author francisdb
  */
 public class MovieFinder {
-    
     
         private static final String IMDB_URLS[] = {
             "http://www.imdb.com/title/",
@@ -61,10 +64,12 @@ public class MovieFinder {
             ".ac3"
         };
 
+        private ExecutorService service;
     /**
      * Creates a new instance of MovieFinder
      */
     public MovieFinder() {
+        this.service = Executors.newFixedThreadPool(5);
     }
    
     /**
@@ -207,6 +212,38 @@ public class MovieFinder {
     }
     
     /**
+     * Loads all movies
+     * @param movies 
+     */
+    public void loadMovies(List<MovieInfo> movies){
+        List<MovieCaller> callers = new LinkedList<MovieCaller>();
+        for(MovieInfo info:movies){
+            callers.add(new MovieCaller(info));
+        }
+        
+        try{
+            service.invokeAll(callers);
+        }catch(InterruptedException ex){
+            ex.printStackTrace();
+        }     
+    }
+    
+    
+    
+    private class MovieCaller implements Callable<MovieInfo>{
+        private final MovieInfo info;
+        public MovieCaller(MovieInfo info) {
+            this.info = info;
+        }
+
+        public MovieInfo call() throws Exception {
+            MovieInfo loaded = getMovieInfo(info);
+            loadRottenTomatoes(info);
+            return loaded;
+        }
+    }
+    
+    /**
      * 
      * @param movieInfo 
      * @return 
@@ -322,9 +359,52 @@ public class MovieFinder {
             movieInfo.setPlot("Not found");
         }
         
-        new Thread(new RottenTomatoesThread(movieInfo)).start();
-        
         return movieInfo;
+    }
+    
+    private void loadRottenTomatoes(MovieInfo movieInfo){
+          movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
+          if(!"".equals(movieInfo.getImdbId())){
+             Session s = new Session();
+            Response r = null;
+            try {
+                r = s.get(MovieFinder.generateTomatoesUrl(movieInfo));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if(r != null){
+                Source source = new Source(r.getBody());
+                //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
+                source.fullSequentialParse();
+
+                Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
+                System.out.println(titleElement.getContent().extractText());
+                List spanElements=source.findAllElements(HTMLElementName.SPAN);
+                for (Iterator i=spanElements.iterator(); i.hasNext();) {
+                    Element spanElement=(Element)i.next();
+                    String cssClass=spanElement.getAttributeValue("class");
+                    if (cssClass!=null && "subnav_button_percentage".equals(cssClass)){
+                        String userRating = spanElement.getContent().extractText();
+                        if(!"".equals(userRating)){
+                            movieInfo.setTomatoesRatingUsers(userRating);
+                        }
+                    }
+                }
+
+                List divElements=source.findAllElements(HTMLElementName.DIV);
+                for (Iterator i=divElements.iterator(); i.hasNext();) {
+                    Element divElement=(Element)i.next();
+                    String elementId=divElement.getAttributeValue("id");
+                    if (elementId!=null && "critics_tomatometer_score_txt".equals(elementId)){
+                        String criticsRating = divElement.getContent().extractText();
+                        if(!"".equals(criticsRating)){
+                            movieInfo.setTomatoesRating(criticsRating);
+                        }
+                    }
+                }
+            }
+        }
+        movieInfo.setStatus(MovieStatus.LOADED);
     }
     
     
