@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package imdb;
+package eu.somatik.moviebrowser;
 
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;

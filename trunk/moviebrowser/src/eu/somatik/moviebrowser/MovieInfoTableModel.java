@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package imdb;
+package eu.somatik.moviebrowser;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

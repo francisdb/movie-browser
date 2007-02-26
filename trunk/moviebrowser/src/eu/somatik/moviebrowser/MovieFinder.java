@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package imdb;
+package eu.somatik.moviebrowser;
 
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.jdesktop.http.Response;
 import org.jdesktop.http.Session;
+
 
 /**
  *
