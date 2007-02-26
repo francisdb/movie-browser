@@ -11,6 +11,7 @@ package imdb;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -31,14 +32,11 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     private List<MovieInfo> movies;
     
-    /** Creates a new instance of MovieInfoTableModel 
-     * @param movies 
+    /** 
+     * Creates a new instance of MovieInfoTableModel 
      */
-    public MovieInfoTableModel(List<MovieInfo> movies) {
-        this.movies = movies;
-        for(MovieInfo movie:movies){
-            movie.addPropertyChangeListener(this);
-        }
+    public MovieInfoTableModel() {
+        this.movies = new ArrayList<MovieInfo>();
     }
 
     public int getRowCount() {
@@ -92,6 +90,18 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         return false;
     }
     
+    /**
+     * Adds all movies
+     * @param items 
+     */
+    public void addAll(List<MovieInfo> items){
+        int firstRow = movies.size();
+        movies.addAll(items);
+        for(MovieInfo movie:items){
+            movie.addPropertyChangeListener(this);
+        }
+        this.fireTableRowsInserted(firstRow, firstRow+items.size()-1);
+    }
 
     
 }

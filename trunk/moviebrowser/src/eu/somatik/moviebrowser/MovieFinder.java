@@ -49,6 +49,7 @@ public class MovieFinder {
         
         private static final String TO_REMOVE[] = {
             ".dvdrip",
+            ".samplefix",
             ".dvdivx",
             ".divx",
             ".xvid",
