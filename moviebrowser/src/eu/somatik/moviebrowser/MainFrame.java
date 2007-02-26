@@ -4,7 +4,7 @@
  * Created on January 24, 2007, 10:47 PM
  */
 
-package imdb;
+package eu.somatik.moviebrowser;
 
 import java.awt.Desktop;
 import java.io.File;
