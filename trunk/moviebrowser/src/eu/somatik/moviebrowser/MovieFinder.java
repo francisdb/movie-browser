@@ -341,7 +341,7 @@ public class MovieFinder {
         linkElements=source.findAllElements(HTMLElementName.H5);
         for (Iterator i=linkElements.iterator(); i.hasNext();) {
             Element hElement=(Element)i.next();
-            if(hElement.getContent().extractText().contains("Plot")){
+            if(hElement.getContent().extractText().contains("Plot Outline")){
                 int end = hElement.getEnd();
                 movieInfo.setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             }
