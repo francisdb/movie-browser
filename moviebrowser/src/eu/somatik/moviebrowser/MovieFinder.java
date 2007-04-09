@@ -348,9 +348,9 @@ public class MovieFinder {
             if(hElement.getContent().extractText().contains("Runtime")){
                 int end = hElement.getEnd();
                 EndTag next = source.findNextEndTag(end);
-                System.out.println(next);
+                //System.out.println(next);
                 String runtime = source.subSequence(end, next.getBegin()).toString().trim();
-                movieInfo.setRuntime(runtime);
+                movieInfo.setRuntime(parseRuntime(runtime));
             }
         }
         
@@ -360,6 +360,16 @@ public class MovieFinder {
         }
         
         return movieInfo;
+    }
+    
+    private Integer parseRuntime(String runtimeString){
+        String runtime = runtimeString.substring(0,runtimeString.indexOf("min")).trim();
+        int colonIndex = runtime.indexOf(":");
+        if(colonIndex != -1){
+            runtime = runtime.substring(colonIndex+1);
+        }
+
+        return Integer.valueOf(runtime);
     }
     
     private void loadRottenTomatoes(MovieInfo movieInfo){

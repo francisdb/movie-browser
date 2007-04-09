@@ -36,7 +36,11 @@ public class MovieInfo {
     private String imdbId;
     private File directory;
     private MovieStatus status;
-    private String runtime;
+    
+    /**
+     * Runtime in minutes 
+     */
+    private Integer runtime;
     
     private PropertyChangeSupport propertyChangeSupport;
     
@@ -267,7 +271,7 @@ public class MovieInfo {
      * 
      * @return 
      */
-    public String getRuntime() {
+    public Integer getRuntime() {
         return runtime;
     }
 
@@ -275,7 +279,7 @@ public class MovieInfo {
      * 
      * @param runtime 
      */
-    public void setRuntime(String runtime) {
+    public void setRuntime(Integer runtime) {
         this.runtime = runtime;
     }
     
