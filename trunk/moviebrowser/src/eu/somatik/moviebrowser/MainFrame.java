@@ -319,7 +319,7 @@ public class MainFrame extends javax.swing.JFrame {
             builder.append(genre);
         }
         builder.append("\n");
-        builder.append(info.getRuntime()).append("\n");
+        builder.append(info.getRuntime()).append(" min\n");
         builder.append("IMDB ").append(info.getRating()).append(" ").append(info.getVotes()).append("\n");
         builder.append("CRIT ").append(info.getTomatoesRating()).append(" USR ").append(info.getTomatoesRatingUsers()).append("\n");
         builder.append(info.getPlot());
