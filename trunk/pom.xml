@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate</artifactId>
-            <version>3.2.2.ga</version>
+            <version>3.2.3.ga</version>
         </dependency>
         
         <dependency>
@@ -66,6 +66,12 @@
             <groupId>org.jdesktop</groupId>
             <artifactId>swingx-ws</artifactId>
             <version>2007_01_05</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1-rc1</version>
         </dependency>
     </dependencies>
     
