@@ -6,7 +6,13 @@
 
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.data.Genre;
+import eu.somatik.moviebrowser.data.Language;
+import eu.somatik.moviebrowser.data.MovieInfo;
 import java.awt.Desktop;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -30,6 +36,8 @@ public class MainFrame extends javax.swing.JFrame {
     
     private File selectedFile;
     
+    private MovieFinder finder = new MovieFinder();
+    
     /** Creates new form MainFrame */
     public MainFrame() {
         initComponents();
@@ -42,6 +50,13 @@ public class MainFrame extends javax.swing.JFrame {
                     MovieInfo info = (MovieInfo)movieTable.getValueAt(movieTable.getSelectedRow(), MovieInfoTableModel.MOVIE_COL);
                     showMovie(info);
                 }
+            }
+        });
+        
+        this.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent arg0) {
+                finder.stop();
             }
         });
     }
@@ -259,7 +274,6 @@ public class MainFrame extends javax.swing.JFrame {
         
         new SwingWorker<MovieInfo,Void>() {
             protected MovieInfo doInBackground() throws Exception {
-                MovieFinder finder = new MovieFinder();
                 finder.loadMovies(infos);
                 return null;
             }
@@ -287,20 +301,20 @@ public class MainFrame extends javax.swing.JFrame {
         }else{
             movieHeader.setIcon(new ImageIcon(info.getImage()));
         }
-        if(info.getTitle() == null){
+        if(info.getMovie().getTitle() == null){
             movieHeader.setTitle(info.getDirectory().getName());
         }else{
-            movieHeader.setTitle(info.getTitle());
+            movieHeader.setTitle(info.getMovie().getTitle());
         }
-        movieHeader.setDescription(info.getPlot());
+        movieHeader.setDescription(info.getMovie().getPlot());
         imdbHyperlink.setText(MovieFinder.generateImdbUrl(info));
         tomatoesHyperlink.setText(MovieFinder.generateTomatoesUrl(info));
         
         StringBuilder builder = new StringBuilder();
 
-        builder.append(info.getTitle()).append("\n");
+        builder.append(info.getMovie().getTitle()).append("\n");
         boolean first = true;
-        for(String genre:info.getGenres()){
+        for(Genre genre:info.getMovie().getGenres()){
             if(first){
                 first = false;
             }else{
@@ -310,19 +324,19 @@ public class MainFrame extends javax.swing.JFrame {
         }
         builder.append("\n");
         first = true;
-        for(String genre:info.getLanguages()){
+        for(Language language:info.getMovie().getLanguages()){
             if(first){
                 first = false; 
             }else{
                 builder.append(", ");
             }
-            builder.append(genre);
+            builder.append(language);
         }
         builder.append("\n");
-        builder.append(info.getRuntime()).append(" min\n");
-        builder.append("IMDB ").append(info.getRating()).append(" ").append(info.getVotes()).append("\n");
-        builder.append("CRIT ").append(info.getTomatoesRating()).append(" USR ").append(info.getTomatoesRatingUsers()).append("\n");
-        builder.append(info.getPlot());
+        builder.append(info.getMovie().getRuntime()).append(" min\n");
+        builder.append("IMDB ").append(info.getMovie().getRating()).append(" ").append(info.getMovie().getVotes()).append("\n");
+        builder.append("CRIT ").append(info.getMovie().getTomatoesRating()).append(" USR ").append(info.getMovie().getTomatoesRatingUsers()).append("\n");
+        builder.append(info.getMovie().getPlot());
         infoTextPane.setText(builder.toString());
         infoTextPane.setCaretPosition(0);
     }

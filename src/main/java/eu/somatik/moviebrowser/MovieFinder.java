@@ -9,10 +9,13 @@
 
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.data.MovieInfo;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+import eu.somatik.moviebrowser.data.Genre;
+import eu.somatik.moviebrowser.data.Language;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,12 +67,22 @@ public class MovieFinder {
             ".ac3"
         };
 
-        private ExecutorService service;
+        private final ExecutorService service;
+        
+        private final MovieCache movieCache;
+        
+        
     /**
      * Creates a new instance of MovieFinder
      */
     public MovieFinder() {
-        this.service = Executors.newFixedThreadPool(5);
+        this.service = Executors.newFixedThreadPool(1);
+        this.movieCache = new MovieCache();
+    }
+    
+    public void stop(){
+        movieCache.shutdown();
+        service.shutdownNow();
     }
    
     /**
@@ -239,6 +252,7 @@ public class MovieFinder {
         public MovieInfo call() throws Exception {
             MovieInfo loaded = getMovieInfo(info);
             loadRottenTomatoes(info);
+            movieCache.persist(loaded.getMovie());
             return loaded;
         }
     }
@@ -267,8 +281,8 @@ public class MovieFinder {
         }
         
         
-        movieInfo.setUrl(url);
-        movieInfo.setImdbId(url.replaceAll("[a-zA-Z:/.+=?]","").trim());
+        movieInfo.getMovie().setUrl(url);
+        movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]","").trim());
         
         Source source = getParsedSource(movieInfo);
     
@@ -276,9 +290,9 @@ public class MovieFinder {
         Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
         if(titleElement.getContent().extractText().contains("Title Search")){
             //find the first link
-            movieInfo.setUrl(null);
+            movieInfo.getMovie().setUrl(null);
             List linkElements=source.findAllElements(HTMLElementName.A);
-            for (Iterator i=linkElements.iterator(); i.hasNext() && movieInfo.getUrl() == null;) {
+            for (Iterator i=linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
                 Element linkElement=(Element)i.next();
                 String href=linkElement.getAttributeValue("href");
                 System.out.println(linkElement.extractText()+ " -> " + href);
@@ -287,15 +301,15 @@ public class MovieFinder {
                     if(questionMarkIndex != -1){
                         href=href.substring(0, questionMarkIndex);
                     }
-                    movieInfo.setUrl(href);
-                    movieInfo.setImdbId(href.replaceAll("[a-zA-Z:/.+=?]","").trim());
+                    movieInfo.getMovie().setUrl(href);
+                    movieInfo.getMovie().setImdbId(href.replaceAll("[a-zA-Z:/.+=?]","").trim());
                     source = getParsedSource(movieInfo);
                     titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
                 }
             }
             
         }
-        movieInfo.setTitle(titleElement.getContent().extractText());        
+        movieInfo.getMovie().setTitle(titleElement.getContent().extractText());        
         
         List linkElements=source.findAllElements(HTMLElementName.A);
         for (Iterator i=linkElements.iterator(); i.hasNext();) {
@@ -319,10 +333,12 @@ public class MovieFinder {
             }
             String href=linkElement.getAttributeValue("href");
             if(href != null && href.startsWith("/Sections/Genres/")){
-                movieInfo.addGenre(linkElement.getContent().extractText());
+                Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().extractText());
+                movieInfo.getMovie().addGenre(genre);
             }         
             if(href != null && href.startsWith("/Sections/Languages/")){
-                movieInfo.addLanguage(linkElement.getContent().extractText());
+                Language language = movieCache.getOrCreateLanguage(linkElement.getContent().extractText());
+                movieInfo.getMovie().addLanguage(language);
             }
             
         }
@@ -332,9 +348,9 @@ public class MovieFinder {
             Element bElement=(Element)i.next();
             if(bElement.getContent().extractText().contains("User Rating:")){
                 Element next = source.findNextElement(bElement.getEndTag().getEnd());
-                movieInfo.setRating(next.getContent().extractText());
+                movieInfo.getMovie().setRating(next.getContent().extractText());
                 next = source.findNextElement(next.getEndTag().getEnd());
-                movieInfo.setVotes(next.getContent().extractText());
+                movieInfo.getMovie().setVotes(next.getContent().extractText());
             }
         }
         
@@ -343,20 +359,20 @@ public class MovieFinder {
             Element hElement=(Element)i.next();
             if(hElement.getContent().extractText().contains("Plot Outline")){
                 int end = hElement.getEnd();
-                movieInfo.setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
+                movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             }
             if(hElement.getContent().extractText().contains("Runtime")){
                 int end = hElement.getEnd();
                 EndTag next = source.findNextEndTag(end);
                 //System.out.println(next);
                 String runtime = source.subSequence(end, next.getBegin()).toString().trim();
-                movieInfo.setRuntime(parseRuntime(runtime));
+                movieInfo.getMovie().setRuntime(parseRuntime(runtime));
             }
         }
         
         if(imgUrl == null){
             //System.out.println(source.toString());
-            movieInfo.setPlot("Not found");
+            movieInfo.getMovie().setPlot("Not found");
         }
         
         return movieInfo;
@@ -374,7 +390,7 @@ public class MovieFinder {
     
     private void loadRottenTomatoes(MovieInfo movieInfo){
           movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
-          if(!"".equals(movieInfo.getImdbId())){
+          if(!"".equals(movieInfo.getMovie().getImdbId())){
              Session s = new Session();
             Response r = null;
             try {
@@ -388,7 +404,7 @@ public class MovieFinder {
                 source.fullSequentialParse();
 
                 Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
-                System.out.println(titleElement.getContent().extractText());
+                //System.out.println(titleElement.getContent().extractText());
                 List spanElements=source.findAllElements(HTMLElementName.SPAN);
                 for (Iterator i=spanElements.iterator(); i.hasNext();) {
                     Element spanElement=(Element)i.next();
@@ -396,7 +412,7 @@ public class MovieFinder {
                     if (cssClass!=null && "subnav_button_percentage".equals(cssClass)){
                         String userRating = spanElement.getContent().extractText();
                         if(!"".equals(userRating)){
-                            movieInfo.setTomatoesRatingUsers(userRating);
+                            movieInfo.getMovie().setTomatoesRatingUsers(userRating);
                         }
                     }
                 }
@@ -408,7 +424,7 @@ public class MovieFinder {
                     if (elementId!=null && "critics_tomatometer_score_txt".equals(elementId)){
                         String criticsRating = divElement.getContent().extractText();
                         if(!"".equals(criticsRating)){
-                            movieInfo.setTomatoesRating(criticsRating);
+                            movieInfo.getMovie().setTomatoesRating(criticsRating);
                         }
                     }
                 }
@@ -448,7 +464,7 @@ public class MovieFinder {
      * @return 
      */
     public static String generateTomatoesUrl(MovieInfo info){
-        return "http://www.rottentomatoes.com/alias?type=imdbid&s="+info.getImdbId();
+        return "http://www.rottentomatoes.com/alias?type=imdbid&s="+info.getMovie().getImdbId();
     }
     
     /**
@@ -457,9 +473,9 @@ public class MovieFinder {
      * @return 
      */
     public static String generateImdbUrl(MovieInfo info){
-        String id = info.getImdbId();
+        String id = info.getMovie().getImdbId();
         if("".equals(id)){
-            return info.getUrl();
+            return info.getMovie().getUrl();
         }else{
             return "http://www.imdb.com/title/tt"+id+"/";
         }

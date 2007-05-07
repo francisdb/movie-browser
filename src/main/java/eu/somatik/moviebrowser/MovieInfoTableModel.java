@@ -9,6 +9,7 @@
 
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.data.MovieInfo;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -65,13 +66,13 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 2:
                 return new Date(movies.get(rowIndex).getDirectory().lastModified());
             case 3:
-                return movies.get(rowIndex).getRuntime();
+                return movies.get(rowIndex).getMovie().getRuntime();
             case 4:
-                return movies.get(rowIndex).getRating();
+                return movies.get(rowIndex).getMovie().getRating();
             case 5:
-                return movies.get(rowIndex).getTomatoesRating();
+                return movies.get(rowIndex).getMovie().getTomatoesRating();
             case 6:
-                return movies.get(rowIndex).getTomatoesRatingUsers();
+                return movies.get(rowIndex).getMovie().getTomatoesRatingUsers();
             default:
                 assert false: "Should never come here";
                 return null;
