@@ -23,7 +23,6 @@ public class MovieBrowser {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        new MovieCache().test();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 //                try {

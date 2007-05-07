@@ -9,17 +9,24 @@
 
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.data.Genre;
+import eu.somatik.moviebrowser.data.Language;
+import eu.somatik.moviebrowser.data.Movie;
+import eu.somatik.moviebrowser.data.MovieInfo;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
+
 
 
 /**
@@ -29,22 +36,83 @@ import javax.persistence.Persistence;
 public class MovieCache {
     
     /* the default framework is embedded*/
-    public String framework = "embedded";
-    public String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-    public String protocol = "jdbc:derby:";
+    private String framework = "embedded";
+    private String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+    private String protocol = "jdbc:derby:";
     
+    private final  EntityManagerFactory emf;
     
     /** Creates a new instance of MovieCache */
     public MovieCache() {
+        emf = Persistence.createEntityManagerFactory("movies");
+        printList();
     }
     
-    public static void main(String[] args){
-        new MovieCache().test();
+    /**
+     * Shuts down the cache
+     */
+    public void shutdown(){
+        emf.close();
     }
-                /*
-               The driver is installed by loading its class.
-               In an embedded environment, this will start up Derby, since it is not already running.
-                 */
+    
+    public void persist(Object object){
+        System.out.println("Persisting " + object);
+        EntityManager em =  emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        transaction.begin();
+        em.persist(object);
+        transaction.commit();
+        em.close();
+    }
+    
+    public Genre getOrCreateGenre(String name){
+        EntityManager em =  emf.createEntityManager();
+        Genre found = em.find(Genre.class, name);
+        em.close();
+        if(found == null){
+            System.out.println("New genre " + name);
+            found = new Genre();
+            found.setName(name);
+            persist(found);
+        }
+        return found;
+    }
+    
+    public Language getOrCreateLanguage(String name){
+        EntityManager em =  emf.createEntityManager();
+        Language found = em.find(Language.class, name);
+        em.close();
+        if(found == null){
+            System.out.println("New language " + name);
+            found = new Language();
+            found.setName(name);
+            persist(found);
+        }
+        return found;
+    }
+    
+    public void printList(){
+        System.out.println("Printing movie list");
+        try{
+            EntityManager em =  emf.createEntityManager();
+            Query query = em.createQuery("SELECT m FROM Movie m");
+            Movie movie;
+            for(Object result :query.getResultList()){
+                movie = (Movie) result;
+                System.out.println(movie);
+            }
+            em.close();
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        System.err.println("Printing done");
+    }
+    
+    
+  /*
+   *            The driver is installed by loading its class.
+   *            In an embedded environment, this will start up Derby, since it is not already running.
+   */
     private void loadDriver(){
         try     {
             java.lang.Class.forName(driver).newInstance();
@@ -61,8 +129,8 @@ public class MovieCache {
     private Connection getConnection() throws SQLException{
         Connection conn = null;
         Properties props = new Properties();
-        props.put("user", "user1");
-        props.put("password", "user1");
+        props.put("user", "moviebrowser");
+        props.put("password", "moviebrowser");
         
             /*
                The connection specifies create=true to cause
@@ -77,11 +145,9 @@ public class MovieCache {
         return conn;
     }
     
-    public void test(){
+    private void test(){
         try {
             
-            EntityManagerFactory emfProduction = Persistence.createEntityManagerFactory("movies");
-            emfProduction.close();
             
             loadDriver();
             
