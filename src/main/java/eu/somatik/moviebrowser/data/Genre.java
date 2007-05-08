@@ -25,6 +25,12 @@ public class Genre {
     /** Creates a new instance of Genre */
     public Genre() {
     }
+
+    public Genre(String name) {
+        this.name = name;
+    }
+    
+    
     
     /**
      * 
