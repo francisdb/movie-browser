@@ -25,6 +25,12 @@ public class Language {
     /** Creates a new instance of Language */
     public Language() {
     }
+
+    public Language(String name) {
+        this.name = name;
+    }
+    
+    
     
     /**
      * 

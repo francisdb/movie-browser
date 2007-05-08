@@ -130,7 +130,7 @@
                                 <manifest>
                                     <addClasspath>true</addClasspath>
                                     <classpathPrefix>lib</classpathPrefix>
-                                    <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
+                                    <mainClass>HelloWorld</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>

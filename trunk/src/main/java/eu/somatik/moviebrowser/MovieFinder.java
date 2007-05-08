@@ -452,7 +452,7 @@ public class MovieFinder {
         //MasonTagTypes.register();
         Source source = null;
         source = new Source(r.getBody());
-        source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
+        //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
         source.fullSequentialParse();
         return source;
     }
