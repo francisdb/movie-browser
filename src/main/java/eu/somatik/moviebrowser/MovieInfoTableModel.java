@@ -105,6 +105,11 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         }
         this.fireTableRowsInserted(firstRow, firstRow+items.size()-1);
     }
+    
+    public void clear(){
+        movies.clear();
+        this.fireTableDataChanged();
+    }
 
     
 }

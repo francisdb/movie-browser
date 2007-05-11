@@ -16,8 +16,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 
 /**
  *
@@ -43,10 +42,10 @@ public class Movie {
      */
     private Integer runtime;
     
-    @OneToMany( cascade={CascadeType.PERSIST} ,fetch=FetchType.LAZY)
+    @ManyToMany( cascade={CascadeType.PERSIST} ,fetch=FetchType.LAZY)
     private List<Genre> genres;
     
-    @OneToMany( cascade={CascadeType.PERSIST} ,fetch=FetchType.LAZY)
+    @ManyToMany( cascade={CascadeType.PERSIST} ,fetch=FetchType.LAZY)
     private List<Language> languages;
     
     
