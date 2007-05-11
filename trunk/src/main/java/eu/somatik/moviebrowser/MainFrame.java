@@ -6,6 +6,7 @@
 
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.data.Genre;
 import eu.somatik.moviebrowser.data.Language;
 import eu.somatik.moviebrowser.data.MovieInfo;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -59,6 +61,8 @@ public class MainFrame extends javax.swing.JFrame {
                 finder.stop();
             }
         });
+        
+        fillTable();
     }
     
     /** This method is called from within the constructor to
@@ -212,39 +216,8 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             loadProgressBar.setIndeterminate(true);
-            final File selected = chooser.getSelectedFile();
-            this.selectedFile = selected;
-            new SwingWorker<List<MovieInfo>,Void>() {
-                protected List<MovieInfo> doInBackground() throws Exception {
-                    
-                    List<MovieInfo> movies = new ArrayList<MovieInfo>();
-                    for(File file:selected.listFiles()){
-                        if(file.isDirectory()){
-                            movies.add(new MovieInfo(file));
-                        }
-                    }
-                    
-                    return movies;
-                }
-                
-                protected void done(){
-                    try{
-                        List<MovieInfo> movies = get();
-                        MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
-                        model.addAll(movies);
-                        infoLabel.setText(model.getRowCount()+" movies loaded");
-                        loadMovies(movies);
-                    }catch(InterruptedException ex){
-                        ex.printStackTrace();
-                        loadProgressBar.setIndeterminate(false);
-                    }catch(ExecutionException ex){
-                        ex.getCause().printStackTrace();
-                        loadProgressBar.setIndeterminate(false);
-                    }
-                }
-                
-            }.execute();
-            
+            File newFolder = chooser.getSelectedFile();
+            addFolder(newFolder);
         } else {
             System.out.println("No Selection ");
         }
@@ -270,6 +243,52 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_imdbHyperlinkActionPerformed
         
+    private void addFolder(File newFolder){
+        final Set<String> folders = Settings.loadFolders();
+            folders.add(newFolder.getAbsolutePath());
+            Settings.saveFolders(folders);
+            this.selectedFile = newFolder;
+            fillTable();
+    }
+    
+    private void fillTable(){
+        final Set<String> folders = Settings.loadFolders();
+               new SwingWorker<List<MovieInfo>,Void>() {
+                protected List<MovieInfo> doInBackground() throws Exception {
+                    File folder;
+                    List<MovieInfo> movies = new ArrayList<MovieInfo>();
+                    for(String path:folders){
+                        folder = new File(path);
+                        for(File file:folder.listFiles()){
+                            if(file.isDirectory()){
+                                movies.add(new MovieInfo(file));
+                            }
+                        }
+                    }
+                    
+                    return movies;
+                }
+                
+                protected void done(){
+                    try{
+                        List<MovieInfo> movies = get();
+                        MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
+                        model.clear();
+                        model.addAll(movies);
+                        infoLabel.setText(model.getRowCount()+" movies loaded");
+                        loadMovies(movies);
+                    }catch(InterruptedException ex){
+                        ex.printStackTrace();
+                        loadProgressBar.setIndeterminate(false);
+                    }catch(ExecutionException ex){
+                        ex.getCause().printStackTrace();
+                        loadProgressBar.setIndeterminate(false);
+                    }
+                }
+                
+            }.execute();
+    }
+    
     private void loadMovies(final List<MovieInfo> infos){
         
         new SwingWorker<MovieInfo,Void>() {

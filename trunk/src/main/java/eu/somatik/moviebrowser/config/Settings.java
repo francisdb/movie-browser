@@ -1,0 +1,106 @@
+/*
+ * Configuration.java
+ *
+ * Created on May 11, 2007, 10:55:35 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package eu.somatik.moviebrowser.config;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author francisdb
+ */
+public class Settings {
+    
+    private static final String SETTINGS_DIR = ".moviebrowser";
+    private static final String FOLDER_SETTINGS = "folders.lst";
+    
+    private Settings() {
+        // utlity class
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public static final Set<String> loadFolders(){
+        Set<String> folders = new HashSet<String>();
+        File folderSettings = openFolderSettings();
+        try {
+            FileReader fileReader = new
+                    FileReader(folderSettings);
+            
+            BufferedReader bufferedReader =
+                    new BufferedReader(fileReader);
+            
+            String line = bufferedReader.readLine();
+            while(line != null) {
+                if(line.trim().length() != 0){
+                    folders.add(line);
+                    System.out.println("Search folder: "+line);
+                }
+                line = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            System.err.println("File input error");
+        }
+        return folders;
+    }
+    
+    /**
+     *
+     * @param folders
+     */
+    public static final void saveFolders(Set<String> folders){
+        File folderSettings = openFolderSettings();
+        FileWriter writer; // declare a file output object
+        PrintWriter printWriter; // declare a print stream object
+        
+        try {
+            writer = new FileWriter(folderSettings, false);
+            printWriter = new PrintWriter(writer);
+            for(String folder:folders){
+                if(folder.trim().length() != 0){
+                    printWriter.println(folder);
+                }
+            }
+            printWriter.close();
+        } catch (Exception e) {
+            System.err.println("Error writing to file");
+        }
+    }
+    
+    private static File openFolderSettings(){
+        File settingsDir = new File(System.getProperty("user.home"), SETTINGS_DIR);
+        settingsDir.mkdirs();
+        
+        File folderSettings = new File(settingsDir,FOLDER_SETTINGS);
+        if(!folderSettings.exists()){
+            try {
+                java.lang.System.out.println("First run, creating " + folderSettings.getAbsolutePath());
+                folderSettings.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger("global").log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return folderSettings;
+    }
+    
+    
+}
