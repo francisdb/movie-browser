@@ -30,7 +30,7 @@ public class MovieBrowser {
 //                } catch(Exception e) {
 //                    System.out.println("Error setting native LAF: " + e);
 //                }
-                new MainFrame().setVisible(true);
+                new MainFrame();
             }
         });
     }

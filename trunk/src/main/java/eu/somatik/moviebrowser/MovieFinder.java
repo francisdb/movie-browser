@@ -16,13 +16,11 @@ import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.data.Genre;
 import eu.somatik.moviebrowser.data.Language;
-import java.awt.Image;
+import eu.somatik.moviebrowser.data.Movie;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.Calendar;
@@ -33,9 +31,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.imageio.ImageIO;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+
 import org.jdesktop.http.Response;
 import org.jdesktop.http.Session;
 
@@ -46,37 +42,45 @@ import org.jdesktop.http.Session;
  */
 public class MovieFinder {
     
-        private static final String IMDB_URLS[] = {
-            "http://www.imdb.com/title/",
-            "http://us.imdb.com/title/",
-            "http://www.imdb.com/title?",
-            "http://us.imdb.com/title?",
-            "http://imdb.com/title/"
-        };
-        
-        private static final String TO_REMOVE[] = {
-            ".dvdrip",
-            ".samplefix",
-            ".dvdivx",
-            ".divx",
-            ".xvid",
-            ".limited",
-            ".internal",
-            ".proper",
-            ".dc",
-            ".ac3"
-        };
-
-        private final ExecutorService service;
-        
-        private final MovieCache movieCache;
-        
-        
+    private static final String IMDB_URLS[] = {
+        "http://www.imdb.com/title/",
+        "http://us.imdb.com/title/",
+        "http://www.imdb.com/title?",
+        "http://us.imdb.com/title?",
+        "http://imdb.com/title/"
+    };
+    
+    private static final String TO_REMOVE[] = {
+        ".dvdrip",
+        ".samplefix",
+        ".dvdivx",
+        ".dvdivx4",
+        ".dvdivx5",
+        ".divx",
+        ".xvid",
+        ".limited",
+        ".internal",
+        ".proper",
+        ".dc",
+        ".ac3",
+        ".unrated",
+        ".stv",
+        ".dutch",
+        ".limited",
+        ".nfofix"        
+        //".ws"        
+    };
+    
+    private final ExecutorService service;
+    
+    private final MovieCache movieCache;
+    
+    
     /**
      * Creates a new instance of MovieFinder
      */
     public MovieFinder() {
-        this.service = Executors.newFixedThreadPool(1);
+        this.service = Executors.newFixedThreadPool(5);
         this.movieCache = new MovieCache();
     }
     
@@ -84,91 +88,12 @@ public class MovieFinder {
         movieCache.shutdown();
         service.shutdownNow();
     }
-   
-    /**
-     * Test class for the apache htpclient
-     */
-    public void httpclient(){
-        // initialize the POST method
-        GetMethod get = new GetMethod("http://www.imdb.com/Tsearch?title=idiocracy");
-        System.out.println(get.getQueryString());
-        
-        // execute the POST
-        HttpClient client = new HttpClient();
-        try{
-            int status = client.executeMethod(get);
-            String response = get.getResponseBodyAsString();
-            get.releaseConnection();
-            System.out.println(response);
-        }catch(IOException ex){
-            ex.printStackTrace();
-        }
-    }
-    
-//    /**
-//     * Runs JTidy on the source string, to produce the dest string.
-//     */
-//    private static String tidy(String source) {
-//        try {
-//            org.w3c.tidy.Tidy tidy = new org.w3c.tidy.Tidy();
-//            tidy.setXHTML(true);
-//            tidy.setShowWarnings(false);
-//            tidy.setSmartIndent(true);
-//            ByteArrayInputStream in = new ByteArrayInputStream(source.getBytes());
-//            ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            tidy.parse(in, out);
-//            in.close();
-//            return out.toString();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return source;
-//        }
-//    }
-    
-//    public void testSwingX() throws Exception{
-//        Session s = new Session();
-//        Response r = s.get("http://www.imdb.com/search");
-//        Form form = Forms.getFormByIndex(r,1);
-//        System.out.println("FORM "+form.getMethod() + "(" + form.getAction() + ")");
-//        if(form != null){
-//            form.getInput("s").setValue("tt");
-//            form.getInput("q").setValue("idiocracy");
-//            for(Input input:form.getInputs()){
-//                System.out.println(input.getName()+":"+input.getValue());
-//            }
-//            
-//            
-//            r = Forms.submit(form,s);
-//            System.out.println(r.getBody());
-//        }
-//    }
-    
-//    public void testDom() throws Exception{
-//        
-//        Session s = new Session();
-//        Response r = s.get("http://www.imdb.com/Tsearch?title=idiocracy");
-//        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-//        String tidyHtml = tidy(r.getBody());
-//        System.out.println(tidyHtml);
-//        ByteArrayInputStream in = new ByteArrayInputStream(tidyHtml.getBytes());
-//        Document doc = builder.parse(in);
-//        in.close();
-//        
-//        XPathFactory factory = XPathFactory.newInstance();
-//        XPath xpath = factory.newXPath();
-//        XPathExpression e = XPathUtils.compile("//form[2]");
-//        Node foundNode = (Node)e.evaluate(doc, XPathConstants.NODE);
-//        String href = xpath.evaluate("@action", foundNode);
-//        String method = xpath.evaluate("@method", foundNode);
-//        System.out.println("FORM "+method + "(" + href + ")");
-//    }
-    
 
     
     /**
-     * 
-     * @param dir 
-     * @return 
+     *
+     * @param dir
+     * @return
      */
     protected String findNfoUrl(File dir){
         String url = null;
@@ -182,17 +107,17 @@ public class MovieFinder {
                     int x= fis.available();
                     byte b[]= new byte[x];
                     fis.read(b);
-
+                    
                     String content = new String(b).toLowerCase();
                     int start = -1;
                     int i = 0;
                     while(start == -1 && i < IMDB_URLS.length){
-                         urlStart = IMDB_URLS[i];
-                         //System.out.println("looking for "+urlStart);
-                         start = content.indexOf(urlStart);
-                         i++;
+                        urlStart = IMDB_URLS[i];
+                        //System.out.println("looking for "+urlStart);
+                        start = content.indexOf(urlStart);
+                        i++;
                     }
-                   
+                    
                     if(start != -1){
                         i = start + urlStart.length();
                         int end = -1;
@@ -214,7 +139,7 @@ public class MovieFinder {
                         url = content.substring(start,end);
                         System.out.println("IMDB url found: "+url);
                     }
-
+                    
                 }catch(IOException ex){
                     ex.printStackTrace();
                 }
@@ -226,7 +151,7 @@ public class MovieFinder {
     
     /**
      * Loads all movies
-     * @param movies 
+     * @param movies
      */
     public void loadMovies(List<MovieInfo> movies){
         List<MovieCaller> callers = new LinkedList<MovieCaller>();
@@ -238,7 +163,7 @@ public class MovieFinder {
             service.invokeAll(callers);
         }catch(InterruptedException ex){
             ex.printStackTrace();
-        }     
+        }
     }
     
     
@@ -248,21 +173,31 @@ public class MovieFinder {
         public MovieCaller(MovieInfo info) {
             this.info = info;
         }
-
+        
         public MovieInfo call() throws Exception {
-            MovieInfo loaded = getMovieInfo(info);
-            loadRottenTomatoes(info);
-            movieCache.persist(loaded.getMovie());
+            Movie movie = movieCache.find(info.getMovie().getPath());
+            MovieInfo loaded;
+            if(movie == null || movie.getImdbId() == null){
+                loaded = getMovieInfo(info);
+                loadRottenTomatoes(info);
+                movieCache.saveMovie(loaded.getMovie());
+            }else{
+                info.setStatus(MovieStatus.CACHED);
+                info.setMovie(movie);
+                loaded = info;
+            }
+            info.setStatus(MovieStatus.LOADED);
             return loaded;
         }
     }
+
     
     /**
-     * 
-     * @param movieInfo 
-     * @return 
-     * @throws java.net.UnknownHostException 
-     * @throws java.lang.Exception 
+     *
+     * @param movieInfo
+     * @return
+     * @throws java.net.UnknownHostException
+     * @throws java.lang.Exception
      */
     public MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
@@ -274,7 +209,7 @@ public class MovieFinder {
             try{
                 encoded = URLEncoder.encode(title, "UTF-8");
             }catch(UnsupportedEncodingException ex){
-                System.out.println(ex.getMessage());                
+                System.out.println(ex.getMessage());
             }
             url = "http://www.imdb.com/Tsearch?title="+encoded;
             
@@ -285,8 +220,8 @@ public class MovieFinder {
         movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]","").trim());
         
         Source source = getParsedSource(movieInfo);
-    
-        String imgUrl = null;
+        
+
         Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
         if(titleElement.getContent().extractText().contains("Title Search")){
             //find the first link
@@ -295,7 +230,7 @@ public class MovieFinder {
             for (Iterator i=linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
                 Element linkElement=(Element)i.next();
                 String href=linkElement.getAttributeValue("href");
-                System.out.println(linkElement.extractText()+ " -> " + href);
+                //System.out.println(linkElement.extractText()+ " -> " + href);
                 if(href != null && href.startsWith("/title/tt")){
                     int questionMarkIndex = href.indexOf('?');
                     if(questionMarkIndex != -1){
@@ -309,7 +244,8 @@ public class MovieFinder {
             }
             
         }
-        movieInfo.getMovie().setTitle(titleElement.getContent().extractText());        
+        movieInfo.getMovie().setTitle(titleElement.getContent().extractText());
+        
         
         List linkElements=source.findAllElements(HTMLElementName.A);
         for (Iterator i=linkElements.iterator(); i.hasNext();) {
@@ -320,22 +256,16 @@ public class MovieFinder {
                 // A element can contain other tags so need to extract the text from it:
                 List imgs=linkElement.getContent().findAllElements(HTMLElementName.IMG);
                 Element img = (Element)imgs.get(0);
-                imgUrl = img.getAttributeValue("src");
+                String imgUrl = img.getAttributeValue("src");
                 
-                try{
-                    URL imageUrl = new URL(imgUrl);
-                    Image image = ImageIO.read(imageUrl);
-                    movieInfo.setImage(image);
-                }catch(IOException ex){
-                    ex.printStackTrace();
-                }
-                
+                movieInfo.getMovie().setImgUrl(imgUrl);
+                ImageCache.saveImgToCache(movieInfo);
             }
             String href=linkElement.getAttributeValue("href");
             if(href != null && href.startsWith("/Sections/Genres/")){
                 Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().extractText());
                 movieInfo.getMovie().addGenre(genre);
-            }         
+            }
             if(href != null && href.startsWith("/Sections/Languages/")){
                 Language language = movieCache.getOrCreateLanguage(linkElement.getContent().extractText());
                 movieInfo.getMovie().addLanguage(language);
@@ -370,7 +300,7 @@ public class MovieFinder {
             }
         }
         
-        if(imgUrl == null){
+        if(movieInfo.getMovie().getTitle() == null){
             //System.out.println(source.toString());
             movieInfo.getMovie().setPlot("Not found");
         }
@@ -384,14 +314,14 @@ public class MovieFinder {
         if(colonIndex != -1){
             runtime = runtime.substring(colonIndex+1);
         }
-
+        
         return Integer.valueOf(runtime);
     }
     
     private void loadRottenTomatoes(MovieInfo movieInfo){
-          movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
-          if(!"".equals(movieInfo.getMovie().getImdbId())){
-             Session s = new Session();
+        movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
+        if(!"".equals(movieInfo.getMovie().getImdbId())){
+            Session s = new Session();
             Response r = null;
             try {
                 r = s.get(MovieFinder.generateTomatoesUrl(movieInfo));
@@ -402,7 +332,7 @@ public class MovieFinder {
                 Source source = new Source(r.getBody());
                 //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
                 source.fullSequentialParse();
-
+                
                 Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
                 //System.out.println(titleElement.getContent().extractText());
                 List spanElements=source.findAllElements(HTMLElementName.SPAN);
@@ -416,7 +346,7 @@ public class MovieFinder {
                         }
                     }
                 }
-
+                
                 List divElements=source.findAllElements(HTMLElementName.DIV);
                 for (Iterator i=divElements.iterator(); i.hasNext();) {
                     Element divElement=(Element)i.next();
@@ -435,10 +365,10 @@ public class MovieFinder {
     
     
     /**
-     * 
-     * @param movieInfo 
-     * @return 
-     * @throws java.lang.Exception 
+     *
+     * @param movieInfo
+     * @return
+     * @throws java.lang.Exception
      */
     public Source getParsedSource(MovieInfo movieInfo) throws Exception{
         Session s = new Session();
@@ -456,21 +386,21 @@ public class MovieFinder {
         source.fullSequentialParse();
         return source;
     }
-
+    
     
     /**
-     * 
-     * @param info 
-     * @return 
+     *
+     * @param info
+     * @return
      */
     public static String generateTomatoesUrl(MovieInfo info){
         return "http://www.rottentomatoes.com/alias?type=imdbid&s="+info.getMovie().getImdbId();
     }
     
     /**
-     * 
-     * @param info 
-     * @return 
+     *
+     * @param info
+     * @return
      */
     public static String generateImdbUrl(MovieInfo info){
         String id = info.getMovie().getImdbId();
@@ -503,6 +433,87 @@ public class MovieFinder {
         movieName = movieName.trim();
         return movieName;
     }
+    
+    
+        
+    //    /**
+    //     * Test class for the apache htpclient
+    //     */
+    //    public void httpclient(){
+    //        // initialize the POST method
+    //        GetMethod get = new GetMethod("http://www.imdb.com/Tsearch?title=idiocracy");
+    //        System.out.println(get.getQueryString());
+    //
+    //        // execute the POST
+    //        HttpClient client = new HttpClient();
+    //
+    //        try{
+    //            int status = client.executeMethod(get);
+    //            String response = get.getResponseBodyAsString();
+    //            get.releaseConnection();
+    //            System.out.println(response);
+    //        }catch(IOException ex){
+    //            ex.printStackTrace();
+    //        }
+    //    }
+    
+    //    /**
+    //     * Runs JTidy on the source string, to produce the dest string.
+    //     */
+    //    private static String tidy(String source) {
+    //        try {
+    //            org.w3c.tidy.Tidy tidy = new org.w3c.tidy.Tidy();
+    //            tidy.setXHTML(true);
+    //            tidy.setShowWarnings(false);
+    //            tidy.setSmartIndent(true);
+    //            ByteArrayInputStream in = new ByteArrayInputStream(source.getBytes());
+    //            ByteArrayOutputStream out = new ByteArrayOutputStream();
+    //            tidy.parse(in, out);
+    //            in.close();
+    //            return out.toString();
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //            return source;
+    //        }
+    //    }
+    
+    //    public void testSwingX() throws Exception{
+    //        Session s = new Session();
+    //        Response r = s.get("http://www.imdb.com/search");
+    //        Form form = Forms.getFormByIndex(r,1);
+    //        System.out.println("FORM "+form.getMethod() + "(" + form.getAction() + ")");
+    //        if(form != null){
+    //            form.getInput("s").setValue("tt");
+    //            form.getInput("q").setValue("idiocracy");
+    //            for(Input input:form.getInputs()){
+    //                System.out.println(input.getName()+":"+input.getValue());
+    //            }
+    //
+    //
+    //            r = Forms.submit(form,s);
+    //            System.out.println(r.getBody());
+    //        }
+    //    }
+    
+    //    public void testDom() throws Exception{
+    //
+    //        Session s = new Session();
+    //        Response r = s.get("http://www.imdb.com/Tsearch?title=idiocracy");
+    //        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    //        String tidyHtml = tidy(r.getBody());
+    //        System.out.println(tidyHtml);
+    //        ByteArrayInputStream in = new ByteArrayInputStream(tidyHtml.getBytes());
+    //        Document doc = builder.parse(in);
+    //        in.close();
+    //
+    //        XPathFactory factory = XPathFactory.newInstance();
+    //        XPath xpath = factory.newXPath();
+    //        XPathExpression e = XPathUtils.compile("//form[2]");
+    //        Node foundNode = (Node)e.evaluate(doc, XPathConstants.NODE);
+    //        String href = xpath.evaluate("@action", foundNode);
+    //        String method = xpath.evaluate("@method", foundNode);
+    //        System.out.println("FORM "+method + "(" + href + ")");
+    //    }
     
     
 }

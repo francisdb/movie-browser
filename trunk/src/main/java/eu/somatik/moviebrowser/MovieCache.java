@@ -17,7 +17,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 
 
@@ -28,11 +27,14 @@ import javax.persistence.Query;
 public class MovieCache {
     
     private final  EntityManagerFactory emf;
+    private final MovieDAO movieDAO;
     
     /** Creates a new instance of MovieCache */
     public MovieCache() {
+        System.out.println("Starting up the cache.");
         emf = Persistence.createEntityManagerFactory("movies-hibernate");
-        printList();
+        this.movieDAO = new MovieDAO(emf);
+        //printList();
     }
     
     /**
@@ -40,59 +42,76 @@ public class MovieCache {
      */
     public void shutdown(){
         emf.close();
+        System.out.println("Cache shutdown complete.");
     }
     
-    public void persist(Object object){
-        System.out.println("Persisting " + object);
+    /**
+     * 
+     * @param path the movie path
+     * @return the movie of null if not found in cache
+     */
+    public Movie find(String path){
         EntityManager em =  emf.createEntityManager();
+        Movie found = em.find(Movie.class, path);
+        em.close();
+        return found;
+    }
+    
+    public void saveMovie(Movie movie){
+        EntityManager em =  emf.createEntityManager();
+        Movie found = em.find(Movie.class, movie.getPath());
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
-        em.persist(object);
+        if(found==null){
+            System.out.println("Saving movie "+movie.getPath());
+            em.persist(movie);
+        }else{
+            System.out.println("Updating movie "+movie.getPath());
+            movie = em.merge(movie);
+        }
         transaction.commit();
         em.close();
     }
     
     public Genre getOrCreateGenre(String name){
         EntityManager em =  emf.createEntityManager();
+        
         Genre found = em.find(Genre.class, name);
-        em.close();
         if(found == null){
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
             System.out.println("New genre " + name);
             found = new Genre();
             found.setName(name);
-            persist(found);
+            em.persist(found);
+            transaction.commit();
         }
+        em.close();
         return found;
     }
     
     public Language getOrCreateLanguage(String name){
         EntityManager em =  emf.createEntityManager();
         Language found = em.find(Language.class, name);
-        em.close();
         if(found == null){
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
             System.out.println("New language " + name);
             found = new Language();
             found.setName(name);
-            persist(found);
+            em.persist(found);
+            transaction.commit();
         }
+        
+        em.close();
         return found;
     }
     
     public void printList(){
         System.out.println("Printing movie list");
-        try{
-            EntityManager em =  emf.createEntityManager();
-            Query query = em.createQuery("SELECT m FROM Movie m");
-            Movie movie;
-            for(Object result :query.getResultList()){
-                movie = (Movie) result;
-                System.out.println(movie);
-            }
-            em.close();
-        }catch(Exception ex){
-            System.err.println(ex.getMessage());
+        for(Movie movie:movieDAO.loadMovies()){
+            System.out.println(movie.getPath()+""+movie);
         }
-        System.err.println("Printing done");
     }
     
 }

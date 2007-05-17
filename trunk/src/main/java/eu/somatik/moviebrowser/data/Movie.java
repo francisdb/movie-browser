@@ -10,8 +10,10 @@
 package eu.somatik.moviebrowser.data;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,14 +27,16 @@ import javax.persistence.ManyToMany;
 @Entity
 public class Movie {
     
+    @Id
+    private String path;
     private String imdbId;
     
     private String votes;
     private String plot;
     
-    @Id
     private String title;
     private String url;
+    private String imgUrl;
     private String rating;
     private String tomatoesRating;
     private String tomatoesRatingUsers;
@@ -42,18 +46,26 @@ public class Movie {
      */
     private Integer runtime;
     
-    @ManyToMany( cascade={CascadeType.PERSIST} ,fetch=FetchType.LAZY)
-    private List<Genre> genres;
+    @ManyToMany(fetch=FetchType.EAGER)
+    private Set<Genre> genres;
     
-    @ManyToMany( cascade={CascadeType.PERSIST} ,fetch=FetchType.LAZY)
-    private List<Language> languages;
+    @ManyToMany(fetch=FetchType.EAGER)
+    private Set<Language> languages;
     
     
     
     /** Creates a new instance of Movie */
     public Movie() {
-        this.genres = new LinkedList<Genre>();
-        this.languages = new LinkedList<Language>();
+        this.genres = new HashSet<Genre>();
+        this.languages = new HashSet<Language>();
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
     
     /**
@@ -141,8 +153,8 @@ public class Movie {
      * 
      * @return 
      */
-    public List<Genre> getGenres() {
-        return Collections.unmodifiableList(genres);
+    public Set<Genre> getGenres() {
+        return genres;
     }
 
     /**
@@ -157,7 +169,7 @@ public class Movie {
      * 
      * @return the List of language strings
      */
-    public List<Language> getLanguages() {
+    public Set<Language> getLanguages() {
         return languages;
     }
        
@@ -224,6 +236,15 @@ public class Movie {
     public Integer getRuntime() {
         return runtime;
     }
+    
+    
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     /**
      * 
@@ -237,6 +258,7 @@ public class Movie {
     public String toString() {
         return "Movie "+getTitle()+" -> "+getImdbId();
     }
+
 
     
 

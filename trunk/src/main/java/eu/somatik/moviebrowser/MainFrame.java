@@ -11,9 +11,12 @@ import eu.somatik.moviebrowser.data.Genre;
 import eu.somatik.moviebrowser.data.Language;
 import eu.somatik.moviebrowser.data.MovieInfo;
 import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -38,7 +43,7 @@ public class MainFrame extends javax.swing.JFrame {
     
     private File selectedFile;
     
-    private MovieFinder finder = new MovieFinder();
+    private final MovieFinder finder;
     
     /** Creates new form MainFrame */
     public MainFrame() {
@@ -46,23 +51,42 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         movieTable.setModel(new MovieInfoTableModel());
-        movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()){
-                    MovieInfo info = (MovieInfo)movieTable.getValueAt(movieTable.getSelectedRow(), MovieInfoTableModel.MOVIE_COL);
-                    showMovie(info);
-                }
-            }
-        });
-        
-        this.addWindowListener(new WindowAdapter(){
+        this.setVisible(true);
+        finder = new MovieFinder();
+                this.addWindowListener(new WindowAdapter(){
+
             @Override
-            public void windowClosed(WindowEvent arg0) {
+            public void windowClosing(WindowEvent e) {
                 finder.stop();
             }
         });
-        
+        movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                if(!e.getValueIsAdjusting()){
+                    if(movieTable.getSelectedRowCount() == 1){
+                        MovieInfo info = (MovieInfo)movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                        showMovie(info);
+                    }
+                }
+            }
+        });
+        movieTable.addMouseListener(new MouseAdapter(){
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount() == 2){
+                    try {
+                        MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                        Desktop.getDesktop().open(info.getDirectory());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            
+        });
         fillTable();
+        
     }
     
     /** This method is called from within the constructor to
@@ -215,7 +239,6 @@ public class MainFrame extends javax.swing.JFrame {
         JFileChooser chooser = new JFileChooser(selectedFile);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            loadProgressBar.setIndeterminate(true);
             File newFolder = chooser.getSelectedFile();
             addFolder(newFolder);
         } else {
@@ -252,6 +275,8 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void fillTable(){
+        infoLabel.setText("Scanning folders...");
+        loadProgressBar.setIndeterminate(true);
         final Set<String> folders = Settings.loadFolders();
                new SwingWorker<List<MovieInfo>,Void>() {
                 protected List<MovieInfo> doInBackground() throws Exception {
@@ -259,9 +284,11 @@ public class MainFrame extends javax.swing.JFrame {
                     List<MovieInfo> movies = new ArrayList<MovieInfo>();
                     for(String path:folders){
                         folder = new File(path);
-                        for(File file:folder.listFiles()){
-                            if(file.isDirectory()){
-                                movies.add(new MovieInfo(file));
+                        if(folder.exists()){
+                            for(File file:folder.listFiles()){
+                                if(file.isDirectory()){
+                                    movies.add(new MovieInfo(file));
+                                }
                             }
                         }
                     }
@@ -275,7 +302,7 @@ public class MainFrame extends javax.swing.JFrame {
                         MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
                         model.clear();
                         model.addAll(movies);
-                        infoLabel.setText(model.getRowCount()+" movies loaded");
+                        infoLabel.setText(model.getRowCount()+" movies found, loading info...");
                         loadMovies(movies);
                     }catch(InterruptedException ex){
                         ex.printStackTrace();
@@ -290,7 +317,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void loadMovies(final List<MovieInfo> infos){
-        
+        loadProgressBar.setIndeterminate(true);
         new SwingWorker<MovieInfo,Void>() {
             protected MovieInfo doInBackground() throws Exception {
                 finder.loadMovies(infos);
@@ -307,6 +334,7 @@ public class MainFrame extends javax.swing.JFrame {
                     ex.getCause().printStackTrace();
                 }finally {
                     loadProgressBar.setIndeterminate(false);
+                    infoLabel.setText("All movie info loaded.");
                 }
             }
             
@@ -315,6 +343,10 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void showMovie(MovieInfo info){
+        if(info.getImage() == null){
+            
+            ImageCache.loadImg(info);
+        }
         if(info.getImage() == null){
             movieHeader.setIcon(null);
         }else{
