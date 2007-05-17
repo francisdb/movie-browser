@@ -14,9 +14,7 @@ import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+
 
 /**
  *
@@ -43,6 +41,7 @@ public class MovieInfo {
         this.directory = directory;
         this.status = MovieStatus.NEW;
         this.movie = new Movie();
+        this.movie.setPath(directory.getAbsolutePath());
     }
     
     /**

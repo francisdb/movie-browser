@@ -98,12 +98,14 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * @param items 
      */
     public void addAll(List<MovieInfo> items){
-        int firstRow = movies.size();
-        movies.addAll(items);
-        for(MovieInfo movie:items){
-            movie.addPropertyChangeListener(this);
+        if(items.size() != 0){
+            int firstRow = movies.size();
+            movies.addAll(items);
+            for(MovieInfo movie:items){
+                movie.addPropertyChangeListener(this);
+            }
+            this.fireTableRowsInserted(firstRow, firstRow+items.size()-1);
         }
-        this.fireTableRowsInserted(firstRow, firstRow+items.size()-1);
     }
     
     public void clear(){

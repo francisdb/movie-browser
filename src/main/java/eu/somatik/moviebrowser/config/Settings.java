@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 public class Settings {
     
     private static final String SETTINGS_DIR = ".moviebrowser";
+    private static final String IMG_CACHE = "images";
     private static final String FOLDER_SETTINGS = "folders.lst";
     
     private Settings() {
@@ -102,5 +103,19 @@ public class Settings {
         return folderSettings;
     }
     
+    private static File getSettingsDir(){
+        File settingsDir = new File(System.getProperty("user.home"), SETTINGS_DIR);
+        if(!settingsDir.exists()){
+            settingsDir.mkdirs();
+        }
+        return settingsDir;
+    }
     
+    public static File getImageCacheDir(){
+        File cache = new File(getSettingsDir(),IMG_CACHE);
+        if(!cache.exists()){
+            cache.mkdirs();
+        }
+        return cache;
+    }
 }

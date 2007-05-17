@@ -32,5 +32,15 @@ public enum MovieStatus {
     /**
      * Loading completed
      */
-    LOADED    
+    LOADED,
+    
+    /**
+     * Loaded form cache
+     */
+    CACHED,
+    
+    /**
+     * Loading img
+     */
+    LOADING_IMG
 }
