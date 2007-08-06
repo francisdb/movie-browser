@@ -10,6 +10,8 @@
 package eu.somatik.moviebrowser;
 
 import eu.somatik.moviebrowser.data.MovieInfo;
+import eu.somatik.moviebrowser.data.MovieStatus;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;

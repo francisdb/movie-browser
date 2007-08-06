@@ -9,17 +9,6 @@
 
 package eu.somatik.moviebrowser;
 
-import eu.somatik.moviebrowser.data.MovieInfo;
-import au.id.jericho.lib.html.Element;
-import au.id.jericho.lib.html.EndTag;
-import au.id.jericho.lib.html.HTMLElementName;
-import au.id.jericho.lib.html.Source;
-import eu.somatik.moviebrowser.data.Genre;
-import eu.somatik.moviebrowser.data.Language;
-import eu.somatik.moviebrowser.data.Movie;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -35,6 +24,19 @@ import java.util.concurrent.Executors;
 import org.jdesktop.http.Response;
 import org.jdesktop.http.Session;
 
+import au.id.jericho.lib.html.Element;
+import au.id.jericho.lib.html.EndTag;
+import au.id.jericho.lib.html.HTMLElementName;
+import au.id.jericho.lib.html.Source;
+import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.cache.MovieCache;
+import eu.somatik.moviebrowser.data.Genre;
+import eu.somatik.moviebrowser.data.Language;
+import eu.somatik.moviebrowser.data.Movie;
+import eu.somatik.moviebrowser.data.MovieInfo;
+import eu.somatik.moviebrowser.data.MovieStatus;
+import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+
 
 /**
  *
@@ -42,13 +44,7 @@ import org.jdesktop.http.Session;
  */
 public class MovieFinder {
     
-    private static final String IMDB_URLS[] = {
-        "http://www.imdb.com/title/",
-        "http://us.imdb.com/title/",
-        "http://www.imdb.com/title?",
-        "http://us.imdb.com/title?",
-        "http://imdb.com/title/"
-    };
+
     
     private static final String TO_REMOVE[] = {
         ".dvdrip",
@@ -75,11 +71,14 @@ public class MovieFinder {
     
     private final MovieCache movieCache;
     
+    private final FileSystemScanner fileSystemScanner;
+    
     
     /**
      * Creates a new instance of MovieFinder
      */
     public MovieFinder() {
+    	this.fileSystemScanner = new FileSystemScanner();
         this.service = Executors.newFixedThreadPool(5);
         this.movieCache = new MovieCache();
     }
@@ -92,66 +91,7 @@ public class MovieFinder {
         service.shutdownNow();
     }
 
-    
-    /**
-     *
-     * @param dir
-     * @return the nfo URL or null
-     */
-    protected String findNfoUrl(File dir){
-        String url = null;
-        String urlStart = null;
-        System.out.println("looking for nfo in "+dir.getPath());
-        for(File file:dir.listFiles()){
-            if(file.getName().toLowerCase().endsWith(".nfo")){
-                System.out.println("checking nfo: "+file.getName());
-                try{
-                    FileInputStream fis = new FileInputStream(file);
-                    int x= fis.available();
-                    byte b[]= new byte[x];
-                    fis.read(b);
-                    
-                    String content = new String(b).toLowerCase();
-                    int start = -1;
-                    int i = 0;
-                    while(start == -1 && i < IMDB_URLS.length){
-                        urlStart = IMDB_URLS[i];
-                        //System.out.println("looking for "+urlStart);
-                        start = content.indexOf(urlStart);
-                        i++;
-                    }
-                    
-                    if(start != -1){
-                        i = start + urlStart.length();
-                        int end = -1;
-                        char character;
-                        while(i < content.length()-1 && end == -1){
-                            character = content.charAt(i);
-                            //System.out.println((int)character);
-                            if(character == '\n' || character == '\t' || character == '\n' || character == (char)32){
-                                end = i;
-                            }
-                            i++;
-                        }
-                        
-                        //if the url is the end of the file
-                        if(i == content.length()-1){
-                            end = content.length()-1;
-                        }
-                        
-                        url = content.substring(start,end);
-                        System.out.println("IMDB url found: "+url);
-                    }
-                    
-                }catch(IOException ex){
-                    ex.printStackTrace();
-                }
-            }
-        }
-        
-        return url;
-    }
-    
+   
     /**
      * Loads all movies
      * @param movies
@@ -210,7 +150,7 @@ public class MovieFinder {
     public MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
         System.out.println(movieInfo.getDirectory());
-        String url = findNfoUrl(movieInfo.getDirectory());
+        String url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
         if(url == null){
             String title = removeCrap(movieInfo.getDirectory().getName());
             String encoded = "";

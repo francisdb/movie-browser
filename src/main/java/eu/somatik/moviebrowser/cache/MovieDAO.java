@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.cache;
 
 import eu.somatik.moviebrowser.data.Movie;
 import java.util.ArrayList;
@@ -24,10 +24,18 @@ public class MovieDAO {
     
     private final EntityManagerFactory emf;
     
+    /**
+     * Constructs a new MovieDAO object
+     *
+     * @param emf
+     */
     public MovieDAO(final EntityManagerFactory emf) {
         this.emf = emf;
     }
     
+    /**
+     * @param movie
+     */
     public void addMovie(Movie movie){
         EntityManager manager = emf.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
@@ -36,6 +44,9 @@ public class MovieDAO {
         manager.close();
     }
     
+    /**
+     * @param movie
+     */
     public void deleteMovie(Movie movie){
         EntityManager manager = emf.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
@@ -44,6 +55,9 @@ public class MovieDAO {
         manager.close();
     }
     
+    /**
+     * @param movie
+     */
     public void updateMovie(Movie movie){
         EntityManager manager = emf.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
@@ -52,6 +66,9 @@ public class MovieDAO {
         manager.close();
     }
     
+    /**
+     * @return the list of movies in the database
+     */
     public List<Movie> loadMovies(){
         List<Movie> movies = new ArrayList<Movie>();
         EntityManager manager = emf.createEntityManager();

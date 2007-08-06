@@ -24,14 +24,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.data.Genre;
 import eu.somatik.moviebrowser.data.Language;
 import eu.somatik.moviebrowser.data.MovieInfo;
+import eu.somatik.moviebrowser.scanner.FileSystemScanner;
 
 /**
  *
@@ -73,12 +76,27 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getClickCount() == 2){
-                    try {
-                        MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-                        Desktop.getDesktop().open(info.getDirectory());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
+                	MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                	if(SwingUtilities.isLeftMouseButton(e)){
+	                    try {
+	                        Desktop.getDesktop().open(info.getDirectory());
+	                    } catch (IOException ex) {
+	                        ex.printStackTrace();
+	                    }
+                	}else{
+                		FileSystemScanner scanner = new FileSystemScanner();
+                		File sample = scanner.findSample(info.getDirectory());
+                		if(sample != null){
+                			try {
+                				System.out.println("OPENING: "+sample);
+		                        Desktop.getDesktop().open(sample);
+		                    } catch (IOException ex) {
+		                        ex.printStackTrace();
+		                    }
+                		}else{
+                			JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
+                		}
+                	}
                 }
             }
             

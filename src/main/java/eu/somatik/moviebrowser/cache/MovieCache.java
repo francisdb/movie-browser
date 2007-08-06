@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.cache;
 
 import eu.somatik.moviebrowser.data.Genre;
 import eu.somatik.moviebrowser.data.Language;
@@ -29,7 +29,9 @@ public class MovieCache {
     private final  EntityManagerFactory emf;
     private final MovieDAO movieDAO;
     
-    /** Creates a new instance of MovieCache */
+    /** 
+     * Creates a new instance of MovieCache 
+     */
     public MovieCache() {
         System.out.println("Starting up the cache.");
         emf = Persistence.createEntityManagerFactory("movies-hibernate");
@@ -57,6 +59,9 @@ public class MovieCache {
         return found;
     }
     
+    /**
+     * @param movie
+     */
     public void saveMovie(Movie movie){
         EntityManager em =  emf.createEntityManager();
         Movie found = em.find(Movie.class, movie.getPath());
@@ -73,6 +78,10 @@ public class MovieCache {
         em.close();
     }
     
+    /**
+     * @param name
+     * @return the Genre
+     */
     public Genre getOrCreateGenre(String name){
         EntityManager em =  emf.createEntityManager();
         
@@ -90,6 +99,10 @@ public class MovieCache {
         return found;
     }
     
+    /**
+     * @param name
+     * @return the Language
+     */
     public Language getOrCreateLanguage(String name){
         EntityManager em =  emf.createEntityManager();
         Language found = em.find(Language.class, name);
@@ -107,6 +120,9 @@ public class MovieCache {
         return found;
     }
     
+    /**
+     * 
+     */
     public void printList(){
         System.out.println("Printing movie list");
         for(Movie movie:movieDAO.loadMovies()){

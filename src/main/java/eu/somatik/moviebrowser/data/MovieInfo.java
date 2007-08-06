@@ -14,8 +14,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 
-import eu.somatik.moviebrowser.MovieStatus;
-
 
 /**
  *
