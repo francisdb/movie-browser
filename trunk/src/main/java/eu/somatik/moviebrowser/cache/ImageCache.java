@@ -7,10 +7,8 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.cache;
 
-import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.data.MovieInfo;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,7 +18,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
+
 import javax.imageio.ImageIO;
+
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.data.MovieInfo;
+import eu.somatik.moviebrowser.data.MovieStatus;
 
 /**
  *
@@ -30,9 +33,8 @@ public class ImageCache {
     
     
     private ImageCache() {
-        // Utility class
+        throw new UnsupportedOperationException("Utility class");
     }
-    
     
     /**
      *
