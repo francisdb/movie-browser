@@ -169,8 +169,12 @@ public class MovieFinder {
         
         Source source = getParsedSource(movieInfo);
         
-
-        Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
+        return parseImdbHtml(source, movieInfo);
+        
+    }
+    
+    private MovieInfo parseImdbHtml(Source source, MovieInfo movieInfo) throws Exception{
+    	Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
         if(titleElement.getContent().extractText().contains("Title Search")){
             //find the first link
             movieInfo.getMovie().setUrl(null);
@@ -316,6 +320,7 @@ public class MovieFinder {
      *
      * @param movieInfo
      * @return the parsed source
+     * @throws Exception 
      * @throws java.lang.Exception
      */
     public Source getParsedSource(MovieInfo movieInfo) throws Exception{
