@@ -24,8 +24,14 @@ public class Genre {
     
     /** Creates a new instance of Genre */
     public Genre() {
+    	// nothing here
     }
 
+    /**
+     * Constructs a new Genre object
+     *
+     * @param name
+     */
     public Genre(String name) {
         this.name = name;
     }
@@ -42,7 +48,7 @@ public class Genre {
 
     /**
      * 
-     * @return 
+     * @return the name
      */
     public String getName() {
         return name;

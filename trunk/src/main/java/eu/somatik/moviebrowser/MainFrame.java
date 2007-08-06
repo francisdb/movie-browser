@@ -6,17 +6,11 @@
 
 package eu.somatik.moviebrowser;
 
-import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.data.Genre;
-import eu.somatik.moviebrowser.data.Language;
-import eu.somatik.moviebrowser.data.MovieInfo;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -25,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -34,6 +27,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.data.Genre;
+import eu.somatik.moviebrowser.data.Language;
+import eu.somatik.moviebrowser.data.MovieInfo;
 
 /**
  *
@@ -133,7 +131,8 @@ public class MainFrame extends javax.swing.JFrame {
                 false, false
             };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
+            @Override
+			public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
@@ -279,7 +278,8 @@ public class MainFrame extends javax.swing.JFrame {
         loadProgressBar.setIndeterminate(true);
         final Set<String> folders = Settings.loadFolders();
                new SwingWorker<List<MovieInfo>,Void>() {
-                protected List<MovieInfo> doInBackground() throws Exception {
+                @Override
+				protected List<MovieInfo> doInBackground() throws Exception {
                     File folder;
                     List<MovieInfo> movies = new ArrayList<MovieInfo>();
                     for(String path:folders){
@@ -296,7 +296,8 @@ public class MainFrame extends javax.swing.JFrame {
                     return movies;
                 }
                 
-                protected void done(){
+                @Override
+				protected void done(){
                     try{
                         List<MovieInfo> movies = get();
                         MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
@@ -319,12 +320,14 @@ public class MainFrame extends javax.swing.JFrame {
     private void loadMovies(final List<MovieInfo> infos){
         loadProgressBar.setIndeterminate(true);
         new SwingWorker<MovieInfo,Void>() {
-            protected MovieInfo doInBackground() throws Exception {
+            @Override
+			protected MovieInfo doInBackground() throws Exception {
                 finder.loadMovies(infos);
                 return null;
             }
             
-            protected void done() {
+            @Override
+			protected void done() {
                 try{
                     get();
                 }catch(InterruptedException ex){

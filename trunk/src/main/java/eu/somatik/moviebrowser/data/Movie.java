@@ -9,12 +9,9 @@
 
 package eu.somatik.moviebrowser.data;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -60,17 +57,23 @@ public class Movie {
         this.languages = new HashSet<Language>();
     }
 
+    /**
+     * @return the path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * @param path
+     */
     public void setPath(String path) {
         this.path = path;
     }
     
     /**
      * 
-     * @return 
+     * @return  the cotes
      */
     public String getVotes() {
         return votes;
@@ -86,7 +89,7 @@ public class Movie {
 
     /**
      * 
-     * @return 
+     * @return the plot
      */
     public String getPlot() {
         return plot;
@@ -102,7 +105,7 @@ public class Movie {
 
     /**
      * 
-     * @return 
+     * @return the title
      */
     public String getTitle() {
         return title;
@@ -118,7 +121,7 @@ public class Movie {
 
     /**
      * 
-     * @return 
+     * @return the url
      */
     public String getUrl() {
         return url;
@@ -134,7 +137,7 @@ public class Movie {
     
         /**
      * 
-     * @return 
+     * @return the imdbId
      */
     public String getImdbId() {
         return imdbId;
@@ -151,7 +154,7 @@ public class Movie {
     
     /**
      * 
-     * @return 
+     * @return the genres
      */
     public Set<Genre> getGenres() {
         return genres;
@@ -183,7 +186,7 @@ public class Movie {
 
     /**
      * 
-     * @return 
+     * @return the rating
      */
     public String getRating() {
         return rating;
@@ -199,7 +202,7 @@ public class Movie {
     
     /**
      * 
-     * @return 
+     * @return the tomatoesRating
      */
     public String getTomatoesRating() {
         return tomatoesRating;
@@ -215,7 +218,7 @@ public class Movie {
     
     /**
      * 
-     * @return 
+     * @return tomatoesRatingUsers
      */
     public String getTomatoesRatingUsers() {
         return tomatoesRatingUsers;
@@ -229,19 +232,25 @@ public class Movie {
         this.tomatoesRatingUsers = tomatoesRatingUsers;
     }
 
-        /**
+    /**
      * 
-     * @return 
+     * @return the runtime
      */
     public Integer getRuntime() {
         return runtime;
     }
     
     
+    /**
+     * @return the imgUrl
+     */
     public String getImgUrl() {
         return imgUrl;
     }
 
+    /**
+     * @param imgUrl
+     */
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
