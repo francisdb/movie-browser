@@ -29,7 +29,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      */
     public static final int MOVIE_COL = 1;
     private static final String COL_NAMES[] = {"?","Movie","Date","Runtime","IMDB","Critics","Users"};
-    private static final Class COL_CLASSES[] = {MovieStatus.class, Object.class, Date.class, Integer.class, String.class, String.class, String.class};
+    private static final Class<?> COL_CLASSES[] = {MovieStatus.class, Object.class, Date.class, Integer.class, String.class, String.class, String.class};
     
     private List<MovieInfo> movies;
     
@@ -44,11 +44,13 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         return movies.size();
     }
 
-    public String getColumnName(int columnIndex){
+    @Override
+	public String getColumnName(int columnIndex){
         return COL_NAMES[columnIndex];
     }
     
-    public Class getColumnClass(int columnIndex){
+    @Override
+	public Class<?> getColumnClass(int columnIndex){
         return COL_CLASSES[columnIndex];
     }
     
@@ -57,7 +59,6 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object value;
         switch(columnIndex){
             case 0:
                 return movies.get(rowIndex).getStatus();
@@ -89,7 +90,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         });
     }
 
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    @Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
     
@@ -108,6 +110,9 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         }
     }
     
+    /**
+     * Clears the movie list
+     */
     public void clear(){
         movies.clear();
         this.fireTableDataChanged();

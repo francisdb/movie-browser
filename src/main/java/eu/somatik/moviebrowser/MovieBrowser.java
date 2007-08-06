@@ -17,6 +17,7 @@ public class MovieBrowser {
     
     /** Creates a new instance of MovieBrowser */
     private MovieBrowser() {
+    	// nothing here
     }
     
         /**

@@ -24,8 +24,14 @@ public class Language {
     
     /** Creates a new instance of Language */
     public Language() {
+    	// empty
     }
 
+    /**
+     * Constructs a new Language object
+     *
+     * @param name
+     */
     public Language(String name) {
         this.name = name;
     }
@@ -42,7 +48,7 @@ public class Language {
 
     /**
      * 
-     * @return 
+     * @return the name
      */
     public String getName() {
         return name;

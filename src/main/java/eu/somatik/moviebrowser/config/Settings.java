@@ -36,7 +36,7 @@ public class Settings {
     
     /**
      *
-     * @return
+     * @return the folders
      */
     public static final Set<String> loadFolders(){
         Set<String> folders = new HashSet<String>();
@@ -111,6 +111,9 @@ public class Settings {
         return settingsDir;
     }
     
+    /**
+     * @return the imageCacheDir
+     */
     public static File getImageCacheDir(){
         File cache = new File(getSettingsDir(),IMG_CACHE);
         if(!cache.exists()){

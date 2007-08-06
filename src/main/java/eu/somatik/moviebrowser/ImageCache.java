@@ -55,6 +55,10 @@ public class ImageCache {
         }
     }
     
+    /**
+     * @param imgUrl
+     * @return the cached image file
+     */
     public static File getCacheFile(String imgUrl){
         File cached = null;
         String startAfter = "imdb.com/";
@@ -65,6 +69,10 @@ public class ImageCache {
         return cached;
     }
     
+    /**
+     * @param info
+     * @return the saved file
+     */
     public static File saveImgToCache(MovieInfo info){
         File cached = null;
         try{

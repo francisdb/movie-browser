@@ -72,13 +72,13 @@
         <dependency>
             <groupId>org.jdesktop</groupId>
             <artifactId>swingx</artifactId>
-            <version>2007_04_15</version>
+            <version>2007_08_05</version>
         </dependency>
         
         <dependency>
             <groupId>org.jdesktop</groupId>
             <artifactId>swingx-ws</artifactId>
-            <version>2007_01_05</version>
+            <version>2007_08_05</version>
         </dependency>
         
         <dependency>

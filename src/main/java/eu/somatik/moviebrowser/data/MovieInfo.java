@@ -9,11 +9,12 @@
 
 package eu.somatik.moviebrowser.data;
 
-import eu.somatik.moviebrowser.*;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+
+import eu.somatik.moviebrowser.MovieStatus;
 
 
 /**
@@ -54,7 +55,7 @@ public class MovieInfo {
 
     /**
      * 
-     * @return 
+     * @return the Image
      */
     public Image getImage() {
         return image;
@@ -70,7 +71,7 @@ public class MovieInfo {
 
     /**
      * 
-     * @return 
+     * @return the Directory
      */
     public File getDirectory() {
         return directory;
@@ -84,13 +85,14 @@ public class MovieInfo {
         this.directory = directory;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return directory.getName();
     }
 
     /**
      * 
-     * @return 
+     * @return the MovieStatus
      */
     public MovieStatus getStatus() {
         return status;
@@ -112,10 +114,16 @@ public class MovieInfo {
         propertyChangeSupport.firePropertyChange("loading", oldValue, this.status);
     }
     
+    /**
+     * @param movie
+     */
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
 
+    /**
+     * @return the Movie
+     */
     public Movie getMovie() {
         return movie;
     }

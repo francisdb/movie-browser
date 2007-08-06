@@ -84,6 +84,9 @@ public class MovieFinder {
         this.movieCache = new MovieCache();
     }
     
+    /**
+     * Stops the finder
+     */
     public void stop(){
         movieCache.shutdown();
         service.shutdownNow();
@@ -93,7 +96,7 @@ public class MovieFinder {
     /**
      *
      * @param dir
-     * @return
+     * @return the nfo URL or null
      */
     protected String findNfoUrl(File dir){
         String url = null;
@@ -170,6 +173,11 @@ public class MovieFinder {
     
     private class MovieCaller implements Callable<MovieInfo>{
         private final MovieInfo info;
+        /**
+         * Constructs a new MovieCaller object
+         *
+         * @param info
+         */
         public MovieCaller(MovieInfo info) {
             this.info = info;
         }
@@ -195,7 +203,7 @@ public class MovieFinder {
     /**
      *
      * @param movieInfo
-     * @return
+     * @return the MovieInfo
      * @throws java.net.UnknownHostException
      * @throws java.lang.Exception
      */
@@ -226,8 +234,8 @@ public class MovieFinder {
         if(titleElement.getContent().extractText().contains("Title Search")){
             //find the first link
             movieInfo.getMovie().setUrl(null);
-            List linkElements=source.findAllElements(HTMLElementName.A);
-            for (Iterator i=linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
+            List<?> linkElements=source.findAllElements(HTMLElementName.A);
+            for (Iterator<?> i=linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
                 Element linkElement=(Element)i.next();
                 String href=linkElement.getAttributeValue("href");
                 //System.out.println(linkElement.extractText()+ " -> " + href);
@@ -247,14 +255,14 @@ public class MovieFinder {
         movieInfo.getMovie().setTitle(titleElement.getContent().extractText());
         
         
-        List linkElements=source.findAllElements(HTMLElementName.A);
-        for (Iterator i=linkElements.iterator(); i.hasNext();) {
+        List<?> linkElements=source.findAllElements(HTMLElementName.A);
+        for (Iterator<?> i=linkElements.iterator(); i.hasNext();) {
             Element linkElement=(Element)i.next();
             
             if ("poster".equals(linkElement.getAttributeValue("name"))){
                 
                 // A element can contain other tags so need to extract the text from it:
-                List imgs=linkElement.getContent().findAllElements(HTMLElementName.IMG);
+                List<?> imgs=linkElement.getContent().findAllElements(HTMLElementName.IMG);
                 Element img = (Element)imgs.get(0);
                 String imgUrl = img.getAttributeValue("src");
                 
@@ -274,7 +282,7 @@ public class MovieFinder {
         }
         
         linkElements=source.findAllElements(HTMLElementName.B);
-        for (Iterator i=linkElements.iterator(); i.hasNext();) {
+        for (Iterator<?> i=linkElements.iterator(); i.hasNext();) {
             Element bElement=(Element)i.next();
             if(bElement.getContent().extractText().contains("User Rating:")){
                 Element next = source.findNextElement(bElement.getEndTag().getEnd());
@@ -285,7 +293,7 @@ public class MovieFinder {
         }
         
         linkElements=source.findAllElements(HTMLElementName.H5);
-        for (Iterator i=linkElements.iterator(); i.hasNext();) {
+        for (Iterator<?> i=linkElements.iterator(); i.hasNext();) {
             Element hElement=(Element)i.next();
             if(hElement.getContent().extractText().contains("Plot Outline")){
                 int end = hElement.getEnd();
@@ -333,10 +341,10 @@ public class MovieFinder {
                 //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
                 source.fullSequentialParse();
                 
-                Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
+                //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
                 //System.out.println(titleElement.getContent().extractText());
-                List spanElements=source.findAllElements(HTMLElementName.SPAN);
-                for (Iterator i=spanElements.iterator(); i.hasNext();) {
+                List<?> spanElements=source.findAllElements(HTMLElementName.SPAN);
+                for (Iterator<?> i=spanElements.iterator(); i.hasNext();) {
                     Element spanElement=(Element)i.next();
                     String cssClass=spanElement.getAttributeValue("class");
                     if (cssClass!=null && "subnav_button_percentage".equals(cssClass)){
@@ -347,8 +355,8 @@ public class MovieFinder {
                     }
                 }
                 
-                List divElements=source.findAllElements(HTMLElementName.DIV);
-                for (Iterator i=divElements.iterator(); i.hasNext();) {
+                List<?> divElements=source.findAllElements(HTMLElementName.DIV);
+                for (Iterator<?> i=divElements.iterator(); i.hasNext();) {
                     Element divElement=(Element)i.next();
                     String elementId=divElement.getAttributeValue("id");
                     if (elementId!=null && "critics_tomatometer_score_txt".equals(elementId)){
@@ -367,7 +375,7 @@ public class MovieFinder {
     /**
      *
      * @param movieInfo
-     * @return
+     * @return the parsed source
      * @throws java.lang.Exception
      */
     public Source getParsedSource(MovieInfo movieInfo) throws Exception{
@@ -391,7 +399,7 @@ public class MovieFinder {
     /**
      *
      * @param info
-     * @return
+     * @return the tomatoes url
      */
     public static String generateTomatoesUrl(MovieInfo info){
         return "http://www.rottentomatoes.com/alias?type=imdbid&s="+info.getMovie().getImdbId();
@@ -400,7 +408,7 @@ public class MovieFinder {
     /**
      *
      * @param info
-     * @return
+     * @return the imdb url
      */
     public static String generateImdbUrl(MovieInfo info){
         String id = info.getMovie().getImdbId();
