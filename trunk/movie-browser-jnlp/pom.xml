@@ -19,9 +19,6 @@
 				</executions>
 				<configuration>
 					<jnlp>
-						<inputTemplate>
-							src/main/jnlp/template.vm.xml
-						</inputTemplate>
 						<outputFile>moviebrowser.jnlp</outputFile>
 						<mainClass>
 							eu.somatik.moviebrowser.MovieBrowser
