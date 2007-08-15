@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.jdesktop</groupId>
             <artifactId>swingx</artifactId>
-            <version>2007_08_05</version>
+            <version>2007_08_12</version>
         </dependency>
         
         <dependency>
@@ -182,7 +182,7 @@
                                 <manifest>
                                     <addClasspath>true</addClasspath>
                                     <classpathPrefix>lib</classpathPrefix>
-                                    <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
+                                    <mainClass></mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
