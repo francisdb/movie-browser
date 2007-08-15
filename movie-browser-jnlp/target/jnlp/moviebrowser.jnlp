@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc.//DTD JNLP 1.5//EN" "http://www.netbeans.org/jnlp/DTD/jnlp.dtd">
+<jnlp spec="1.0+" codebase="http://moviebrowser.somatik.be/" href="moviebrowser.jnlp">
+    <information>
+        <title>Movie browser</title>
+        <vendor>Somatik</vendor>
+        <homepage href="http://moviebrowser.somatik.be"/>
+        <description>Movie browser</description>
+        <icon href="images/movie.gif"/>
+        <offline-allowed />
+        <shortcut>
+            <desktop />
+            <menu submenu="moviebrowser" />
+        </shortcut>
+    </information>
+    <resources locale="" os="">
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="32m" max-heap-size="128m" />
+        
+<jar href="hibernate-3.2.3.ga.jar"/>
+<jar href="hsqldb-1.8.0.7.jar"/>
+<jar href="hibernate-tools-3.2.0.beta9a.jar"/>
+<jar href="hibernate-entitymanager-3.2.1.ga.jar"/>
+<jar href="log4j-1.2.14.jar"/>
+<jar href="jericho-html-2.4.jar"/>
+<jar href="antlr-2.7.6.jar"/>
+<jar href="commons-collections-2.1.1.jar"/>
+<jar href="jboss-archive-browsing-5.0.0alpha-200607201-119.jar"/>
+<jar href="hibernate-annotations-3.2.1.ga.jar"/>
+<jar href="c3p0-0.9.1.jar"/>
+<jar href="persistence-api-1.0.jar"/>
+<jar href="asm-1.5.3.jar"/>
+<jar href="javassist-3.3.ga.jar"/>
+<jar href="swingx-2007_08_12.jar"/>
+<jar href="ehcache-1.2.3.jar"/>
+<jar href="freemarker-2.3.4.jar"/>
+<jar href="commons-codec-1.2.jar"/>
+<jar href="swingx-ws-2007_08_05.jar"/>
+<jar href="commons-httpclient-3.1-rc1.jar"/>
+<jar href="commons-logging-1.0.4.jar"/>
+<jar href="dom4j-1.6.1.jar"/>
+<jar href="asm-attrs-1.5.3.jar"/>
+<jar href="jtidy-r8-20060801.jar"/>
+<jar href="cglib-2.1_3.jar"/>
+<jar href="moviebrowser-1.0-SNAPSHOT.jar" main="true"/>
+<jar href="jta-1.0.1B.jar"/>
+
+    </resources>
+    <security>
+        <all-permissions/>
+    </security>
+    
+    <application-desc main-class="eu.somatik.moviebrowser.MovieBrowser" />
+    
+    
+</jnlp>
