@@ -71,7 +71,7 @@ public class MovieFinder {
     private final ExecutorService service;
     private final ExecutorService tomatoesService;
     
-    private final MovieCache movieCache;
+    private MovieCache movieCache;
     
     private final FileSystemScanner fileSystemScanner;
     
@@ -83,6 +83,9 @@ public class MovieFinder {
     	this.fileSystemScanner = new FileSystemScanner();
         this.service = Executors.newFixedThreadPool(5);
         this.tomatoesService = Executors.newFixedThreadPool(5);
+    }
+    
+    public void init(){
         this.movieCache = new MovieCache();
     }
     
