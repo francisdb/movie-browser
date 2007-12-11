@@ -36,7 +36,6 @@ import eu.somatik.moviebrowser.data.MovieStatus;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 
@@ -70,6 +69,7 @@ public class MovieFinder {
     };
     
     private final ExecutorService service;
+    private final ExecutorService tomatoesService;
     
     private final MovieCache movieCache;
     
@@ -82,6 +82,7 @@ public class MovieFinder {
     public MovieFinder() {
     	this.fileSystemScanner = new FileSystemScanner();
         this.service = Executors.newFixedThreadPool(5);
+        this.tomatoesService = Executors.newFixedThreadPool(5);
         this.movieCache = new MovieCache();
     }
     
@@ -91,6 +92,7 @@ public class MovieFinder {
     public void stop(){
         movieCache.shutdown();
         service.shutdownNow();
+        tomatoesService.shutdown();
     }
 
    
@@ -124,20 +126,41 @@ public class MovieFinder {
             this.info = info;
         }
         
+        @Override
         public MovieInfo call() throws Exception {
             Movie movie = movieCache.find(info.getMovie().getPath());
             MovieInfo loaded;
             if(movie == null || movie.getImdbId() == null){
                 loaded = getMovieInfo(info);
-                loadRottenTomatoes(info);
+                tomatoesService.submit(new TomatoesCaller(info));
                 movieCache.saveMovie(loaded.getMovie());
             }else{
                 info.setStatus(MovieStatus.CACHED);
                 info.setMovie(movie);
                 loaded = info;
             }
-            info.setStatus(MovieStatus.LOADED);
             return loaded;
+        }
+    }
+    
+     private class TomatoesCaller implements Callable<MovieInfo>{
+        private final MovieInfo info;
+        /**
+         * Constructs a new MovieCaller object
+         *
+         * @param info
+         */
+        public TomatoesCaller(MovieInfo info) {
+            this.info = info;
+        }
+        
+        @Override
+        public MovieInfo call() throws Exception {
+            info.setStatus(MovieStatus.LOADING_TOMATOES);
+            loadRottenTomatoes(info);
+            movieCache.saveMovie(info.getMovie());
+            info.setStatus(MovieStatus.LOADED);
+            return info;
         }
     }
 
