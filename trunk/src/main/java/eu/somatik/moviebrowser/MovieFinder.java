@@ -21,8 +21,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.jdesktop.http.Response;
-import org.jdesktop.http.Session;
 
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
@@ -36,6 +34,10 @@ import eu.somatik.moviebrowser.data.Movie;
 import eu.somatik.moviebrowser.data.MovieInfo;
 import eu.somatik.moviebrowser.data.MovieStatus;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 
 /**
@@ -269,53 +271,54 @@ public class MovieFinder {
         
         return Integer.valueOf(runtime);
     }
-    
-    private void loadRottenTomatoes(MovieInfo movieInfo){
+
+    private void loadRottenTomatoes(MovieInfo movieInfo) {
         movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
-        if(!"".equals(movieInfo.getMovie().getImdbId())){
-            Session s = new Session();
-            Response r = null;
+        if (!"".equals(movieInfo.getMovie().getImdbId())) {
+            HttpClient client = new HttpClient();
+            HttpMethod method = new GetMethod(MovieFinder.generateTomatoesUrl(movieInfo));
             try {
-                r = s.get(MovieFinder.generateTomatoesUrl(movieInfo));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            if(r != null){
-                Source source = new Source(r.getBody());
+                client.executeMethod(method);
+                Source source = new Source(method.getResponseBodyAsString());
                 //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
                 source.fullSequentialParse();
-                
+
                 //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
                 //System.out.println(titleElement.getContent().extractText());
-                List<?> spanElements=source.findAllElements(HTMLElementName.SPAN);
-                for (Iterator<?> i=spanElements.iterator(); i.hasNext();) {
-                    Element spanElement=(Element)i.next();
-                    String cssClass=spanElement.getAttributeValue("class");
-                    if (cssClass!=null && "subnav_button_percentage".equals(cssClass)){
+                List<?> spanElements = source.findAllElements(HTMLElementName.SPAN);
+                for (Iterator<?> i = spanElements.iterator(); i.hasNext();) {
+                    Element spanElement = (Element) i.next();
+                    String cssClass = spanElement.getAttributeValue("class");
+                    if (cssClass != null && "subnav_button_percentage".equals(cssClass)) {
                         String userRating = spanElement.getContent().extractText();
-                        if(!"".equals(userRating)){
+                        if (!"".equals(userRating)) {
                             movieInfo.getMovie().setTomatoesRatingUsers(userRating);
                         }
                     }
                 }
-                
-                List<?> divElements=source.findAllElements(HTMLElementName.DIV);
-                for (Iterator<?> i=divElements.iterator(); i.hasNext();) {
-                    Element divElement=(Element)i.next();
-                    String elementId=divElement.getAttributeValue("id");
-                    if (elementId!=null && "critics_tomatometer_score_txt".equals(elementId)){
+
+                List<?> divElements = source.findAllElements(HTMLElementName.DIV);
+                for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
+                    Element divElement = (Element) i.next();
+                    String elementId = divElement.getAttributeValue("id");
+                    if (elementId != null && "critics_tomatometer_score_txt".equals(elementId)) {
                         String criticsRating = divElement.getContent().extractText();
-                        if(!"".equals(criticsRating)){
+                        if (!"".equals(criticsRating)) {
                             movieInfo.getMovie().setTomatoesRating(criticsRating);
                         }
                     }
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                // Release the connection.
+                method.releaseConnection();
             }
         }
         movieInfo.setStatus(MovieStatus.LOADED);
     }
-    
-    
+
+
     /**
      *
      * @param movieInfo
@@ -324,17 +327,22 @@ public class MovieFinder {
      * @throws java.lang.Exception
      */
     public Source getParsedSource(MovieInfo movieInfo) throws Exception{
-        Session s = new Session();
-        String url = generateImdbUrl(movieInfo);
-        System.out.println("Loading "+url);
-        Response r = s.get(url);
+        
+        HttpClient client = new HttpClient();
+        HttpMethod method = new GetMethod(generateImdbUrl(movieInfo));
+        client.executeMethod(method);
+        
+//        Session s = new Session();
+//        String url = generateImdbUrl(movieInfo);
+//        System.out.println("Loading "+url);
+//        Response r = s.get(url);
         //System.out.println("HEADERS: " + Arrays.toString(r.getHeaders()));
         
         //PHPTagTypes.register();
         //PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
         //MasonTagTypes.register();
         Source source = null;
-        source = new Source(r.getBody());
+        source = new Source(method.getResponseBodyAsString());
         //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
         source.fullSequentialParse();
         return source;
