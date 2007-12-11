@@ -297,7 +297,8 @@ public class MainFrame extends javax.swing.JFrame {
         final Set<String> folders = Settings.loadFolders();
                new SwingWorker<List<MovieInfo>,Void>() {
                 @Override
-				protected List<MovieInfo> doInBackground() throws Exception {
+                protected List<MovieInfo> doInBackground() throws Exception {
+                    finder.init();
                     File folder;
                     List<MovieInfo> movies = new ArrayList<MovieInfo>();
                     for(String path:folders){

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.4" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.4" maxVersion="1.4" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
       <SubComponents>
@@ -131,9 +131,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="movieHeader" alignment="0" min="-2" pref="420" max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" alignment="0" pref="420" max="32767" attributes="1"/>
-                          <Component id="imdbHyperlink" alignment="0" pref="420" max="32767" attributes="1"/>
-                          <Component id="tomatoesHyperlink" alignment="0" pref="420" max="32767" attributes="2"/>
+                          <Component id="jScrollPane2" alignment="0" pref="424" max="32767" attributes="1"/>
+                          <Component id="imdbHyperlink" alignment="0" pref="424" max="32767" attributes="1"/>
+                          <Component id="tomatoesHyperlink" alignment="0" pref="424" max="32767" attributes="2"/>
                       </Group>
                   </Group>
               </Group>
