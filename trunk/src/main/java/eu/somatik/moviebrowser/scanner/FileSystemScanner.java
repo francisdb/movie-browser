@@ -3,12 +3,16 @@ package eu.somatik.moviebrowser.scanner;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author francisdb
  *
  */
 public class FileSystemScanner {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemScanner.class);
 
     private static final String IMDB_URLS[] = {
         "http://www.imdb.com/title/",
@@ -98,7 +102,7 @@ public class FileSystemScanner {
             }
             
         }catch(IOException ex){
-            ex.printStackTrace();
+            LOGGER.error("Could not find IMDB url", ex);
         }
         return url;
     }
