@@ -9,9 +9,9 @@
 
 package eu.somatik.moviebrowser.cache;
 
-import eu.somatik.moviebrowser.data.Genre;
-import eu.somatik.moviebrowser.data.Language;
-import eu.somatik.moviebrowser.data.Movie;
+import eu.somatik.moviebrowser.domain.Genre;
+import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.Movie;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

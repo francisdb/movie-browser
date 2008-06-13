@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.data;
+package eu.somatik.moviebrowser.domain;
 
 import java.awt.Image;
 import java.beans.PropertyChangeListener;

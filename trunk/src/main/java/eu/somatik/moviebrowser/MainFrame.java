@@ -31,9 +31,9 @@ import javax.swing.event.ListSelectionListener;
 
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.data.Genre;
-import eu.somatik.moviebrowser.data.Language;
-import eu.somatik.moviebrowser.data.MovieInfo;
+import eu.somatik.moviebrowser.domain.Genre;
+import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
 
 /**
