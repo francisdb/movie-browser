@@ -30,7 +30,7 @@
 						<storepass>moviepass</storepass>
 						<storetype></storetype>
 						<alias>moviebrowser</alias>
-						<validity></validity>
+						<validity>900</validity>
 
 						<dnameCn>Francis De Brabandere</dnameCn>
 						<dnameOu>somatik.eu</dnameOu>
