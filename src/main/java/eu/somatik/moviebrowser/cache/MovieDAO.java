@@ -9,7 +9,7 @@
 
 package eu.somatik.moviebrowser.cache;
 
-import eu.somatik.moviebrowser.data.Movie;
+import eu.somatik.moviebrowser.domain.Movie;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;

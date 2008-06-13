@@ -9,8 +9,8 @@
 
 package eu.somatik.moviebrowser;
 
-import eu.somatik.moviebrowser.data.MovieInfo;
-import eu.somatik.moviebrowser.data.MovieStatus;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieStatus;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

@@ -22,8 +22,8 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 
 import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.data.MovieInfo;
-import eu.somatik.moviebrowser.data.MovieStatus;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieStatus;
 
 /**
  *
