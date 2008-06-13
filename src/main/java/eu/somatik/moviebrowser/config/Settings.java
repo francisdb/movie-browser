@@ -41,11 +41,12 @@ public class Settings {
     public static final Set<String> loadFolders(){
         Set<String> folders = new HashSet<String>();
         File folderSettings = openFolderSettings();
+        BufferedReader bufferedReader = null;
         try {
             FileReader fileReader = new
                     FileReader(folderSettings);
             
-            BufferedReader bufferedReader =
+            bufferedReader =
                     new BufferedReader(fileReader);
             
             String line = bufferedReader.readLine();
@@ -56,9 +57,16 @@ public class Settings {
                 }
                 line = bufferedReader.readLine();
             }
-            bufferedReader.close();
-        } catch (Exception e) {
-            System.err.println("File input error");
+        } catch (IOException e) {
+            System.err.println("File input error: "+e.getMessage());
+        } finally {
+            if(bufferedReader != null){
+                try {
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         return folders;
     }
@@ -81,8 +89,8 @@ public class Settings {
                 }
             }
             printWriter.close();
-        } catch (Exception e) {
-            System.err.println("Error writing to file");
+        } catch (IOException e) {
+            System.err.println("Error writing to file: "+e.getMessage());
         }
     }
     
@@ -94,7 +102,10 @@ public class Settings {
         if(!folderSettings.exists()){
             try {
                 java.lang.System.out.println("First run, creating " + folderSettings.getAbsolutePath());
-                folderSettings.createNewFile();
+                boolean succes = folderSettings.createNewFile();
+                if(!succes){
+                    throw new IOException("Could not create file: "+folderSettings.getAbsolutePath());
+                }
             } catch (IOException ex) {
                 Logger.getLogger("global").log(Level.SEVERE, null, ex);
             }
