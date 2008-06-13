@@ -99,7 +99,6 @@ public class ImageCache {
                 count++;
             }
             is.close();
-            fos.close();
             System.out.println(count + " byte(s) copied");
         } catch (MalformedURLException e) {
             e.printStackTrace();
