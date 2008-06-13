@@ -19,19 +19,21 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author francisdb
  */
 public class ImageCache {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
     
     
     private ImageCache() {
@@ -53,7 +55,7 @@ public class ImageCache {
                     info.setImage(image);
                 }
             }catch(IOException ex){
-                ex.printStackTrace();
+                LOGGER.error("Could not load image", ex);
             }
             info.setStatus(MovieStatus.LOADED);
         }
@@ -100,16 +102,16 @@ public class ImageCache {
             }
             is.close();
             System.out.println(count + " byte(s) copied");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (MalformedURLException ex) {
+            LOGGER.error("Could not save image", ex);
+        } catch (IOException ex) {
+            LOGGER.error("Could not save image", ex);
         }finally{
             if(fos != null){
                 try {
                     fos.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(ImageCache.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("Could not close output stream", ex);
                 }
             }
         }

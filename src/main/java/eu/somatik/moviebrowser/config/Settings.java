@@ -17,14 +17,16 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author francisdb
  */
 public class Settings {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
     
     private static final String SETTINGS_DIR = ".moviebrowser";
     private static final String IMG_CACHE = "images";
@@ -58,13 +60,13 @@ public class Settings {
                 line = bufferedReader.readLine();
             }
         } catch (IOException e) {
-            System.err.println("File input error: "+e.getMessage());
+            LOGGER.error("File input error: ", e);
         } finally {
             if(bufferedReader != null){
                 try {
                     bufferedReader.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.error("Could not close reader: ", ex);
                 }
             }
         }
@@ -89,8 +91,8 @@ public class Settings {
                 }
             }
             printWriter.close();
-        } catch (IOException e) {
-            System.err.println("Error writing to file: "+e.getMessage());
+        } catch (IOException ex) {
+            LOGGER.error("Error writing to file: ", ex);
         }
     }
     
@@ -107,7 +109,7 @@ public class Settings {
                     throw new IOException("Could not create file: "+folderSettings.getAbsolutePath());
                 }
             } catch (IOException ex) {
-                Logger.getLogger("global").log(Level.SEVERE, null, ex);
+                LOGGER.error("File io error: ", ex);
             }
         }
         
