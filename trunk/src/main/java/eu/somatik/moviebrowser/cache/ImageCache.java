@@ -19,6 +19,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import eu.somatik.moviebrowser.config.Settings;
@@ -77,6 +79,7 @@ public class ImageCache {
      */
     public static File saveImgToCache(MovieInfo info){
         File cached = null;
+        FileOutputStream fos = null;
         try{
             URL imgUrl = new URL(info.getMovie().getImgUrl());
             URLConnection urlC = imgUrl.openConnection();
@@ -87,7 +90,7 @@ public class ImageCache {
             System.out.print("Copying resource (type: " + urlC.getContentType());
             Date date=new Date(urlC.getLastModified());
             System.out.println(", modified on: " + date + ")...");
-            FileOutputStream fos=null;
+            
             cached = getCacheFile(info.getMovie().getImgUrl());
             fos = new FileOutputStream(cached);
             int oneChar, count=0;
@@ -102,6 +105,14 @@ public class ImageCache {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally{
+            if(fos != null){
+                try {
+                    fos.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ImageCache.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         return cached;
     }
