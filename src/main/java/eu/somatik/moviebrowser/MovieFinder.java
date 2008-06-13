@@ -34,6 +34,8 @@ import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import eu.somatik.moviebrowser.service.MovieInfoFetcher;
+import eu.somatik.moviebrowser.service.TomatoesInfoFetcher;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -80,6 +82,7 @@ public class MovieFinder {
     private final FileSystemScanner fileSystemScanner;
     
     
+        
     /**
      * Creates a new instance of MovieFinder
      */
@@ -151,6 +154,9 @@ public class MovieFinder {
     }
     
      private class TomatoesCaller implements Callable<MovieInfo>{
+         
+         private final MovieInfoFetcher tomatoesFetcher;
+         
         private final MovieInfo info;
         /**
          * Constructs a new MovieCaller object
@@ -158,13 +164,14 @@ public class MovieFinder {
          * @param info
          */
         public TomatoesCaller(MovieInfo info) {
+            this.tomatoesFetcher = new TomatoesInfoFetcher();
             this.info = info;
         }
         
         @Override
         public MovieInfo call() throws Exception {
             info.setStatus(MovieStatus.LOADING_TOMATOES);
-            loadRottenTomatoes(info);
+            tomatoesFetcher.fetch(info);
             movieCache.saveMovie(info.getMovie());
             info.setStatus(MovieStatus.LOADED);
             return info;
@@ -305,46 +312,7 @@ public class MovieFinder {
         return Integer.valueOf(runtime);
     }
 
-    private void loadRottenTomatoes(MovieInfo movieInfo) {
-        movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
-        if (!"".equals(movieInfo.getMovie().getImdbId())) {
-            HttpClient client = new HttpClient();
-            HttpMethod method = new GetMethod(MovieFinder.generateTomatoesUrl(movieInfo));
-            try {
-                client.executeMethod(method);
-                Source source = new Source(method.getResponseBodyAsString());
-                //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-                source.fullSequentialParse();
-
-                //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
-                //System.out.println(titleElement.getContent().extractText());
-                
-                // <div id="bubble_allCritics" class="percentBubble" style="display:none;">     57%    </div>
-
-                
-                List<?> divElements = source.findAllElements(HTMLElementName.DIV);
-                for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
-                    Element divElement = (Element) i.next();
-                    String id = divElement.getAttributeValue("id");
-                    if (id != null && "bubble_allCritics".equals(id)) {
-                        String userRating = divElement.getContent().extractText().trim();
-                        if (!"".equals(userRating)) {
-                            movieInfo.getMovie().setTomatometer(userRating);
-                        }
-                    }
-                }
-
-
-            } catch (Exception ex) {
-                LOGGER.error("LOAding from rotten tomatoes failed", ex);
-            } finally {
-                // Release the connection.
-                method.releaseConnection();
-            }
-        }
-        movieInfo.setStatus(MovieStatus.LOADED);
-    }
-
+   
 
     /**
      *
