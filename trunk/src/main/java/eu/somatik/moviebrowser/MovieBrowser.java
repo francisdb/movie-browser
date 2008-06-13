@@ -52,7 +52,9 @@ public class MovieBrowser {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                         new MainFrame();
+                         MainFrame mainFrame = new MainFrame();
+                         mainFrame.setVisible(true);
+                         mainFrame.load();
                     }
                 });
                

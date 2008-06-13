@@ -49,10 +49,10 @@ public class FileSystemScanner {
      */
     public String findNfoUrl(File dir){
         String url = null;
-        System.out.println("looking for nfo in "+dir.getPath());
+        LOGGER.debug("looking for nfo in "+dir.getPath());
         for(File file:dir.listFiles()){
             if(file.getName().toLowerCase().endsWith(".nfo")){
-                System.out.println("checking nfo: "+file.getName());
+                LOGGER.debug("checking nfo: "+file.getName());
                 url = findImdbUrl(file); 
             }
         }
@@ -98,7 +98,7 @@ public class FileSystemScanner {
                 }
                 
                 url = content.substring(start,end);
-                System.out.println("IMDB url found: "+url);
+                LOGGER.info("IMDB url found: "+url);
             }
             
         }catch(IOException ex){

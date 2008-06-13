@@ -55,7 +55,7 @@ public class Settings {
             while(line != null) {
                 if(line.trim().length() != 0){
                     folders.add(line);
-                    System.out.println("Search folder: "+line);
+                    LOGGER.info("Search folder: "+line);
                 }
                 line = bufferedReader.readLine();
             }
@@ -103,7 +103,7 @@ public class Settings {
         File folderSettings = new File(settingsDir,FOLDER_SETTINGS);
         if(!folderSettings.exists()){
             try {
-                java.lang.System.out.println("First run, creating " + folderSettings.getAbsolutePath());
+                LOGGER.info("First run, creating " + folderSettings.getAbsolutePath());
                 boolean succes = folderSettings.createNewFile();
                 if(!succes){
                     throw new IOException("Could not create file: "+folderSettings.getAbsolutePath());

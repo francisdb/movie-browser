@@ -181,7 +181,7 @@ public class MovieFinder {
      */
     public MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
-        System.out.println(movieInfo.getDirectory());
+        LOGGER.info(movieInfo.getDirectory().getAbsolutePath());
         String url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
         if(url == null){
             String title = removeCrap(movieInfo.getDirectory().getName());
@@ -189,7 +189,7 @@ public class MovieFinder {
             try{
                 encoded = URLEncoder.encode(title, "UTF-8");
             }catch(UnsupportedEncodingException ex){
-                System.out.println(ex.getMessage());
+                LOGGER.error("Could not cencode UTF-8" ,ex);
             }
             url = "http://www.imdb.com/Tsearch?title="+encoded;
             
@@ -214,7 +214,6 @@ public class MovieFinder {
             for (Iterator<?> i=linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
                 Element linkElement=(Element)i.next();
                 String href=linkElement.getAttributeValue("href");
-                //System.out.println(linkElement.extractText()+ " -> " + href);
                 if(href != null && href.startsWith("/title/tt")){
                     int questionMarkIndex = href.indexOf('?');
                     if(questionMarkIndex != -1){
