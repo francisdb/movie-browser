@@ -30,8 +30,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * Movie column number
      */
     public static final int MOVIE_COL = 1;
-    private static final String COL_NAMES[] = {"?","Movie","Date","Runtime","IMDB","Critics","Users"};
-    private static final Class<?> COL_CLASSES[] = {MovieStatus.class, Object.class, Date.class, Integer.class, String.class, String.class, String.class};
+    private static final String COL_NAMES[] = {"?","Movie","Date","Runtime","IMDB","Tomatometer"};
+    private static final Class<?> COL_CLASSES[] = {MovieStatus.class, Object.class, Date.class, Integer.class, String.class, String.class};
     
     private List<MovieInfo> movies;
     
@@ -42,6 +42,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         this.movies = new ArrayList<MovieInfo>();
     }
 
+    @Override
     public int getRowCount() {
         return movies.size();
     }
@@ -56,10 +57,12 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         return COL_CLASSES[columnIndex];
     }
     
+    @Override
     public int getColumnCount() {
         return COL_CLASSES.length;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch(columnIndex){
             case 0:
@@ -73,18 +76,18 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 4:
                 return movies.get(rowIndex).getMovie().getRating();
             case 5:
-                return movies.get(rowIndex).getMovie().getTomatoesRating();
-            case 6:
-                return movies.get(rowIndex).getMovie().getTomatoesRatingUsers();
+                return movies.get(rowIndex).getMovie().getTomatometer();
             default:
                 assert false: "Should never come here";
                 return null;
         }
     }
 
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         final MovieInfo info = (MovieInfo)evt.getSource();
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 int index = movies.indexOf(info);
                 fireTableRowsUpdated(index,index);

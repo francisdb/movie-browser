@@ -274,6 +274,10 @@ public class MovieFinder {
                 int end = hElement.getEnd();
                 movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             }
+            if(hElement.getContent().extractText().contains("Plot:")){
+                int end = hElement.getEnd();
+                movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
+            }
             if(hElement.getContent().extractText().contains("Runtime")){
                 int end = hElement.getEnd();
                 EndTag next = source.findNextEndTag(end);
@@ -314,29 +318,23 @@ public class MovieFinder {
 
                 //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
                 //System.out.println(titleElement.getContent().extractText());
-                List<?> spanElements = source.findAllElements(HTMLElementName.SPAN);
-                for (Iterator<?> i = spanElements.iterator(); i.hasNext();) {
-                    Element spanElement = (Element) i.next();
-                    String cssClass = spanElement.getAttributeValue("class");
-                    if (cssClass != null && "subnav_button_percentage".equals(cssClass)) {
-                        String userRating = spanElement.getContent().extractText();
+                
+                // <div id="bubble_allCritics" class="percentBubble" style="display:none;">     57%    </div>
+
+                
+                List<?> divElements = source.findAllElements(HTMLElementName.DIV);
+                for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
+                    Element divElement = (Element) i.next();
+                    String id = divElement.getAttributeValue("id");
+                    if (id != null && "bubble_allCritics".equals(id)) {
+                        String userRating = divElement.getContent().extractText().trim();
                         if (!"".equals(userRating)) {
-                            movieInfo.getMovie().setTomatoesRatingUsers(userRating);
+                            movieInfo.getMovie().setTomatometer(userRating);
                         }
                     }
                 }
 
-                List<?> divElements = source.findAllElements(HTMLElementName.DIV);
-                for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
-                    Element divElement = (Element) i.next();
-                    String elementId = divElement.getAttributeValue("id");
-                    if (elementId != null && "critics_tomatometer_score_txt".equals(elementId)) {
-                        String criticsRating = divElement.getContent().extractText();
-                        if (!"".equals(criticsRating)) {
-                            movieInfo.getMovie().setTomatoesRating(criticsRating);
-                        }
-                    }
-                }
+
             } catch (Exception ex) {
                 LOGGER.error("LOAding from rotten tomatoes failed", ex);
             } finally {
