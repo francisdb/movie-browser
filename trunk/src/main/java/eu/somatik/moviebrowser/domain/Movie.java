@@ -35,8 +35,7 @@ public class Movie {
     private String url;
     private String imgUrl;
     private String rating;
-    private String tomatoesRating;
-    private String tomatoesRatingUsers;
+    private String tomatometer;
     
     /**
      * Runtime in minutes 
@@ -199,38 +198,16 @@ public class Movie {
     public void setRating(String rating) {
         this.rating = rating;
     }
-    
-    /**
-     * 
-     * @return the tomatoesRating
-     */
-    public String getTomatoesRating() {
-        return tomatoesRating;
+
+    public String getTomatometer() {
+        return tomatometer;
     }
 
-    /**
-     * 
-     * @param tomatoesRating 
-     */
-    public void setTomatoesRating(String tomatoesRating) {
-        this.tomatoesRating = tomatoesRating;
+    public void setTomatometer(String tomatometer) {
+        this.tomatometer = tomatometer;
     }
     
-    /**
-     * 
-     * @return tomatoesRatingUsers
-     */
-    public String getTomatoesRatingUsers() {
-        return tomatoesRatingUsers;
-    }
 
-    /**
-     * 
-     * @param tomatoesRatingUsers 
-     */
-    public void setTomatoesRatingUsers(String tomatoesRatingUsers) {
-        this.tomatoesRatingUsers = tomatoesRatingUsers;
-    }
 
     /**
      * 
