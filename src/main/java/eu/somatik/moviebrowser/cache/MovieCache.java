@@ -72,7 +72,7 @@ public class MovieCache {
             em.persist(movie);
         }else{
             System.out.println("Updating movie "+movie.getPath());
-            movie = em.merge(movie);
+            /*movie = */em.merge(movie);
         }
         transaction.commit();
         em.close();

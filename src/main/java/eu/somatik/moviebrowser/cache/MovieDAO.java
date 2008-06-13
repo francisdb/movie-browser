@@ -61,7 +61,7 @@ public class MovieDAO {
     public void updateMovie(Movie movie){
         EntityManager manager = emf.createEntityManager();
         EntityTransaction transaction = manager.getTransaction();
-        movie = manager.merge(movie);
+        /*movie = */manager.merge(movie);
         transaction.commit();
         manager.close();
     }
