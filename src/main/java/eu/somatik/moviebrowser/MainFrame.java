@@ -3,7 +3,6 @@
  *
  * Created on January 24, 2007, 10:47 PM
  */
-
 package eu.somatik.moviebrowser;
 
 import java.awt.Desktop;
@@ -35,17 +34,19 @@ import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author  francisdb
  */
 public class MainFrame extends javax.swing.JFrame {
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private File selectedFile;
-    
     private final MovieFinder finder;
-    
+
     /** Creates new form MainFrame */
     public MainFrame() {
         initComponents();
@@ -54,63 +55,68 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.setModel(new MovieInfoTableModel());
         this.setVisible(true);
         finder = new MovieFinder();
-                this.addWindowListener(new WindowAdapter(){
+    }
 
+    /**
+     * Makes the frame ready for use
+     */
+    public void load() {
+        this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 finder.stop();
             }
         });
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()){
-                    if(movieTable.getSelectedRowCount() == 1){
-                        MovieInfo info = (MovieInfo)movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                if (!e.getValueIsAdjusting()) {
+                    if (movieTable.getSelectedRowCount() == 1) {
+                        MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
                         showMovie(info);
                     }
                 }
             }
         });
-        movieTable.addMouseListener(new MouseAdapter(){
+        movieTable.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() == 2){
-                	MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-                	if(SwingUtilities.isLeftMouseButton(e)){
-	                    try {
-	                        Desktop.getDesktop().open(info.getDirectory());
-	                    } catch (IOException ex) {
-	                        ex.printStackTrace();
-	                    }
-                	}else{
-                		FileSystemScanner scanner = new FileSystemScanner();
-                		File sample = scanner.findSample(info.getDirectory());
-                		if(sample != null){
-                			try {
-                				System.out.println("OPENING: "+sample);
-		                        Desktop.getDesktop().open(sample);
-		                    } catch (IOException ex) {
-		                        ex.printStackTrace();
-		                    }
-                		}else{
-                			JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
-                		}
-                	}
+                if (e.getClickCount() == 2) {
+                    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        try {
+                            Desktop.getDesktop().open(info.getDirectory());
+                        } catch (IOException ex) {
+                            LOGGER.error("Could not open dir "+info.getDirectory(), ex);
+                        }
+                    } else {
+                        FileSystemScanner scanner = new FileSystemScanner();
+                        File sample = scanner.findSample(info.getDirectory());
+                        if (sample != null) {
+                            try {
+                                LOGGER.info("OPENING: " + sample);
+                                Desktop.getDesktop().open(sample);
+                            } catch (IOException ex) {
+                                LOGGER.error("Could not launch default app for "+sample, ex);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
+                        }
+                    }
                 }
             }
-            
         });
         fillTable();
-        
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
      */
-    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -130,7 +136,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Somatik.be movie browser");
-        setName("mainFrame");
+        setName("mainFrame"); // NOI18N
 
         jSplitPane1.setBorder(null);
         jSplitPane1.setDividerLocation(300);
@@ -149,8 +155,7 @@ public class MainFrame extends javax.swing.JFrame {
                 false, false
             };
 
-            @Override
-			public boolean isCellEditable(int rowIndex, int columnIndex) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
@@ -200,7 +205,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -230,9 +235,9 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 808, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -241,7 +246,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -259,7 +264,7 @@ public class MainFrame extends javax.swing.JFrame {
             File newFolder = chooser.getSelectedFile();
             addFolder(newFolder);
         } else {
-            System.out.println("No Selection ");
+            LOGGER.debug("No Selection ");
         }
     }//GEN-LAST:event_ImportMenuItemActionPerformed
 
@@ -267,9 +272,9 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(new URI(tomatoesHyperlink.getText()));
         } catch (URISyntaxException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Failed launching default browser for " + tomatoesHyperlink.getText(), ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Failed launching default browser for " + tomatoesHyperlink.getText(), ex);
         }
     }//GEN-LAST:event_tomatoesHyperlinkActionPerformed
 
@@ -277,9 +282,9 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(new URI(imdbHyperlink.getText()));
         } catch (URISyntaxException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText(), ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText(), ex);
         }
     }//GEN-LAST:event_imdbHyperlinkActionPerformed
         
@@ -316,7 +321,7 @@ public class MainFrame extends javax.swing.JFrame {
                 }
                 
                 @Override
-				protected void done(){
+		protected void done(){
                     try{
                         List<MovieInfo> movies = get();
                         MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();

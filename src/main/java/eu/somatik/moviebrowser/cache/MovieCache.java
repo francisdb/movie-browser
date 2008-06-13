@@ -17,6 +17,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -26,6 +28,8 @@ import javax.persistence.Persistence;
  */
 public class MovieCache {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieCache.class);
+    
     private final  EntityManagerFactory emf;
     private final MovieDAO movieDAO;
     
@@ -33,7 +37,7 @@ public class MovieCache {
      * Creates a new instance of MovieCache 
      */
     public MovieCache() {
-        System.out.println("Starting up the cache.");
+        LOGGER.info("Starting up the cache.");
         emf = Persistence.createEntityManagerFactory("movies-hibernate");
         this.movieDAO = new MovieDAO(emf);
         //printList();
@@ -44,7 +48,7 @@ public class MovieCache {
      */
     public void shutdown(){
         emf.close();
-        System.out.println("Cache shutdown complete.");
+        LOGGER.info("Cache shutdown complete.");
     }
     
     /**
@@ -68,10 +72,10 @@ public class MovieCache {
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
         if(found==null){
-            System.out.println("Saving movie "+movie.getPath());
+            LOGGER.trace("Saving movie "+movie.getPath());
             em.persist(movie);
         }else{
-            System.out.println("Updating movie "+movie.getPath());
+            LOGGER.trace("Updating movie "+movie.getPath());
             /*movie = */em.merge(movie);
         }
         transaction.commit();
@@ -89,7 +93,7 @@ public class MovieCache {
         if(found == null){
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-            System.out.println("New genre " + name);
+            LOGGER.trace("New genre " + name);
             found = new Genre();
             found.setName(name);
             em.persist(found);
@@ -109,7 +113,7 @@ public class MovieCache {
         if(found == null){
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
-            System.out.println("New language " + name);
+            LOGGER.trace("New language " + name);
             found = new Language();
             found.setName(name);
             em.persist(found);
@@ -124,9 +128,9 @@ public class MovieCache {
      * 
      */
     public void printList(){
-        System.out.println("Printing movie list");
+        LOGGER.info("Printing movie list");
         for(Movie movie:movieDAO.loadMovies()){
-            System.out.println(movie.getPath()+""+movie);
+            LOGGER.info(movie.getPath()+""+movie);
         }
     }
     

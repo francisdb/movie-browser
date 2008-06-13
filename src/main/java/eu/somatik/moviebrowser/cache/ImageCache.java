@@ -89,9 +89,9 @@ public class ImageCache {
             // if no local file name specified
             InputStream is = imgUrl.openStream();
             // Print info about resource
-            System.out.print("Copying resource (type: " + urlC.getContentType());
+            LOGGER.info("Copying resource (type: " + urlC.getContentType());
             Date date=new Date(urlC.getLastModified());
-            System.out.println(", modified on: " + date + ")...");
+            LOGGER.info(", modified on: " + date + ")...");
             
             cached = getCacheFile(info.getMovie().getImgUrl());
             fos = new FileOutputStream(cached);
@@ -101,7 +101,7 @@ public class ImageCache {
                 count++;
             }
             is.close();
-            System.out.println(count + " byte(s) copied");
+            LOGGER.debug(count + " byte(s) copied");
         } catch (MalformedURLException ex) {
             LOGGER.error("Could not save image", ex);
         } catch (IOException ex) {
