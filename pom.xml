@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.somatik</groupId>
@@ -90,8 +91,6 @@
             </plugin>
         </plugins>
     </reporting>
-        
-    
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
@@ -129,6 +128,15 @@
                     <mainClass>eu.somatik.moviebrowser.MovieBrowser</mainClass>
                 </configuration>
             </plugin>
+            <!-- build windows exe -->
+            <plugin>
+                <groupId>com.mindtree.techworks.insight.releng</groupId>
+                <artifactId>maven-jsmooth-plugin</artifactId>
+                <configuration>
+                    <!-- TODO create jsmooth config -->
+                    <jsmoothFile>test.jsmooth</jsmoothFile>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <repositories>
@@ -139,4 +147,14 @@
             <layout>default</layout>
         </repository>
     </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>insight.release.repo</id>
+            <name>Insight Release Repository</name>
+            <url>https://mindtreeinsight.svn.sourceforge.net/svnroot/mindtreeinsight/maven-repo/trunk/release</url>
+        </pluginRepository>
+    </pluginRepositories>
+    
+    
 </project>
