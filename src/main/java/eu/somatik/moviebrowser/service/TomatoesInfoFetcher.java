@@ -18,12 +18,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author fdb
  */
-public class TomatoesInfoFetcher implements MovieInfoFetcher{
-    
+public class TomatoesInfoFetcher implements MovieInfoFetcher {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesInfoFetcher.class);
 
-    
-     public void fetch(MovieInfo movieInfo) {
+    @Override
+    public void fetch(MovieInfo movieInfo) {
         movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
         if (!"".equals(movieInfo.getMovie().getImdbId())) {
             HttpClient client = new HttpClient();
@@ -36,10 +36,10 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher{
 
                 //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
                 //System.out.println(titleElement.getContent().extractText());
-                
+
                 // <div id="bubble_allCritics" class="percentBubble" style="display:none;">     57%    </div>
 
-                
+
                 List<?> divElements = source.findAllElements(HTMLElementName.DIV);
                 for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
                     Element divElement = (Element) i.next();
@@ -62,6 +62,4 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher{
         }
         movieInfo.setStatus(MovieStatus.LOADED);
     }
-
-    
 }
