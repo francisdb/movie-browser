@@ -129,14 +129,14 @@
                 </configuration>
             </plugin>
             <!-- build windows exe -->
-            <plugin>
+            <!-- TODO create jsmooth config -->
+            <!--<plugin>
                 <groupId>com.mindtree.techworks.insight.releng</groupId>
                 <artifactId>maven-jsmooth-plugin</artifactId>
                 <configuration>
-                    <!-- TODO create jsmooth config -->
                     <jsmoothFile>test.jsmooth</jsmoothFile>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
     <repositories>
