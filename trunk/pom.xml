@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.somatik</groupId>
     <artifactId>moviebrowser</artifactId>
-    <version>0.5</version>
+    <version>0.5-SNAPSHOT</version>
     <name>moviebrowser</name>
     <description>Browse the movies on your harddrive using this tool</description>
     <url>http://code.google.com/p/movie-browser/</url>
