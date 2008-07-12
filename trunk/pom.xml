@@ -7,6 +7,11 @@
     <name>moviebrowser</name>
     <description>Browse the movies on your harddrive using this tool</description>
     <url>http://code.google.com/p/movie-browser/</url>
+    <scm>
+        <connection>scm:svn:http://movie-browser.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://movie-browser.googlecode.com/svn/trunk/</developerConnection>
+        <url>http://code.google.com/p/movie-browser/source/browse</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
