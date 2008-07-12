@@ -148,13 +148,15 @@
         </repository>
     </repositories>
     
+    <!-- THIS REPO CONTAINS A COPY OF man maven repo :-/
+    
     <pluginRepositories>
         <pluginRepository>
             <id>insight.release.repo</id>
             <name>Insight Release Repository</name>
             <url>https://mindtreeinsight.svn.sourceforge.net/svnroot/mindtreeinsight/maven-repo/trunk/release</url>
         </pluginRepository>
-    </pluginRepositories>
+    </pluginRepositories>-->
     
     
 </project>
