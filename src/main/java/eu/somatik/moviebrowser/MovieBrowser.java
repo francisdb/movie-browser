@@ -8,9 +8,6 @@
  */
 package eu.somatik.moviebrowser;
 
-import java.io.IOError;
-import java.io.IOException;
-import java.util.logging.Level;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
