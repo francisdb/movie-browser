@@ -8,7 +8,6 @@
  */
 package eu.somatik.moviebrowser;
 
-import au.id.jericho.lib.html.StartTag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -26,8 +25,6 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
-import au.id.jericho.lib.html.TextExtractor;
-import com.mchange.v2.naming.ReferenceableUtils.ExtractRec;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
