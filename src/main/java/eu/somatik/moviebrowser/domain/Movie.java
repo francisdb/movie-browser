@@ -32,10 +32,12 @@ public class Movie {
     private String plot;
     
     private String title;
+    private Integer year;
     private String url;
     private String imgUrl;
     private String rating;
     private String tomatometer;
+    private String movieWebStars;
     
     /**
      * Runtime in minutes 
@@ -206,6 +208,15 @@ public class Movie {
     public void setTomatometer(String tomatometer) {
         this.tomatometer = tomatometer;
     }
+
+    public String getMovieWebStars() {
+        return movieWebStars;
+    }
+
+    public void setMovieWebStars(String movieWebStars) {
+        this.movieWebStars = movieWebStars;
+    }
+    
     
 
 
@@ -239,6 +250,16 @@ public class Movie {
     public void setRuntime(Integer runtime) {
         this.runtime = runtime;
     }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+    
+    
     
     @Override
     public String toString() {

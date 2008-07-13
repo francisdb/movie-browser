@@ -4,6 +4,7 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.MovieFinder;
+import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import java.io.IOException;
@@ -24,11 +25,10 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesInfoFetcher.class);
 
     @Override
-    public void fetch(MovieInfo movieInfo) {
-        movieInfo.setStatus(MovieStatus.LOADING_TOMATOES);
-        if (!"".equals(movieInfo.getMovie().getImdbId())) {
+    public void fetch(Movie movie) {
+        if (!"".equals(movie.getImdbId())) {
             HttpClient client = new HttpClient();
-            HttpMethod method = new GetMethod(MovieFinder.generateTomatoesUrl(movieInfo));
+            HttpMethod method = new GetMethod(MovieFinder.generateTomatoesUrl(movie));
             try {
                 client.executeMethod(method);
                 Source source = new Source(method.getResponseBodyAsString());
@@ -48,7 +48,7 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
                     if (id != null && "bubble_allCritics".equals(id)) {
                         String userRating = divElement.getContent().extractText().trim();
                         if (!"".equals(userRating)) {
-                            movieInfo.getMovie().setTomatometer(userRating);
+                            movie.setTomatometer(userRating);
                         }
                     }
                 }
@@ -58,9 +58,10 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
                 LOGGER.error("Loading from rotten tomatoes failed", ex);
             } finally {
                 // Release the connection.
-                method.releaseConnection();
+                if(method != null){
+                    method.releaseConnection();
+                }
             }
         }
-        movieInfo.setStatus(MovieStatus.LOADED);
     }
 }
