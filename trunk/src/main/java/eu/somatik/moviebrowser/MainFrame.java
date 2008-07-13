@@ -134,6 +134,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
+        ClearListMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Somatik.be movie browser");
@@ -206,7 +207,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -214,7 +215,7 @@ public class MainFrame extends javax.swing.JFrame {
         infoLabel.setText("Ready to load movies");
 
         movieMenu.setMnemonic('M');
-        movieMenu.setText("Movie");
+        movieMenu.setText("Movies");
 
         importMenuItem.setMnemonic('I');
         importMenuItem.setText("Import folder...");
@@ -224,6 +225,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         movieMenu.add(importMenuItem);
+
+        ClearListMenuItem.setMnemonic('C');
+        ClearListMenuItem.setText("Clear List");
+        ClearListMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ClearListMenuItemActionPerformed(evt);
+            }
+        });
+        movieMenu.add(ClearListMenuItem);
 
         jMenuBar1.add(movieMenu);
 
@@ -236,7 +246,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -288,6 +298,11 @@ public class MainFrame extends javax.swing.JFrame {
             LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText(), ex);
         }
     }//GEN-LAST:event_imdbHyperlinkActionPerformed
+
+private void ClearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearListMenuItemActionPerformed
+    MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
+    model.clear();
+}//GEN-LAST:event_ClearListMenuItemActionPerformed
         
     private void addFolder(File newFolder){
         final Set<String> folders = Settings.loadFolders();
@@ -424,6 +439,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem ClearListMenuItem;
     private org.jdesktop.swingx.JXHyperlink imdbHyperlink;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JLabel infoLabel;
