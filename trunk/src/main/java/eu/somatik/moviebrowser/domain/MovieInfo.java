@@ -96,11 +96,6 @@ public class MovieInfo {
         return status;
     }
 
-    
-    
-
-    
-
 
     /**
      * 
