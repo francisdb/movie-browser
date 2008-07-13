@@ -6,9 +6,9 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package eu.somatik.moviebrowser;
 
+import au.id.jericho.lib.html.StartTag;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -26,6 +26,8 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+import au.id.jericho.lib.html.TextExtractor;
+import com.mchange.v2.naming.ReferenceableUtils.ExtractRec;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
@@ -35,6 +37,7 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.MovieInfoFetcher;
+import eu.somatik.moviebrowser.service.MovieWebInfoFetcher;
 import eu.somatik.moviebrowser.service.TomatoesInfoFetcher;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -42,17 +45,13 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  *
  * @author francisdb
  */
 public class MovieFinder {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
-    
 
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
     private static final String TO_REMOVE[] = {
         ".dvdrip",
         ".samplefix",
@@ -70,63 +69,56 @@ public class MovieFinder {
         ".stv",
         ".dutch",
         ".limited",
-        ".nfofix"        
-        //".ws"        
+        ".nfofix"    //".ws"        
     };
-    
     private final ExecutorService service;
-    private final ExecutorService tomatoesService;
-    
+    private final ExecutorService secondaryService;
     private MovieCache movieCache;
-    
     private final FileSystemScanner fileSystemScanner;
-    
-    
-        
+
     /**
      * Creates a new instance of MovieFinder
      */
     public MovieFinder() {
-    	this.fileSystemScanner = new FileSystemScanner();
+        this.fileSystemScanner = new FileSystemScanner();
         this.service = Executors.newFixedThreadPool(5);
-        this.tomatoesService = Executors.newFixedThreadPool(5);
+        this.secondaryService = Executors.newFixedThreadPool(5);
     }
-    
-    public void init(){
+
+    public void init() {
         this.movieCache = new MovieCache();
     }
-    
+
     /**
      * Stops the finder
      */
-    public void stop(){
+    public void stop() {
         movieCache.shutdown();
         service.shutdownNow();
-        tomatoesService.shutdown();
+        secondaryService.shutdown();
     }
 
-   
     /**
      * Loads all movies
      * @param movies
      */
-    public void loadMovies(List<MovieInfo> movies){
+    public void loadMovies(List<MovieInfo> movies) {
         List<MovieCaller> callers = new LinkedList<MovieCaller>();
-        for(MovieInfo info:movies){
+        for (MovieInfo info : movies) {
             callers.add(new MovieCaller(info));
         }
-        
-        try{
+
+        try {
             service.invokeAll(callers);
-        }catch(InterruptedException ex){
+        } catch (InterruptedException ex) {
             LOGGER.error("Movie loader interrupted", ex);
         }
     }
-    
-    
-    
-    private class MovieCaller implements Callable<MovieInfo>{
+
+    private class MovieCaller implements Callable<MovieInfo> {
+
         private final MovieInfo info;
+
         /**
          * Constructs a new MovieCaller object
          *
@@ -135,16 +127,17 @@ public class MovieFinder {
         public MovieCaller(MovieInfo info) {
             this.info = info;
         }
-        
+
         @Override
         public MovieInfo call() throws Exception {
             Movie movie = movieCache.find(info.getMovie().getPath());
             MovieInfo loaded;
-            if(movie == null || movie.getImdbId() == null){
+            if (movie == null || movie.getImdbId() == null) {
                 loaded = getMovieInfo(info);
-                tomatoesService.submit(new TomatoesCaller(info));
+                secondaryService.submit(new TomatoesCaller(info));
+                secondaryService.submit(new MovieWebCaller(info));
                 movieCache.saveMovie(loaded.getMovie());
-            }else{
+            } else {
                 info.setStatus(MovieStatus.CACHED);
                 info.setMovie(movie);
                 loaded = info;
@@ -152,33 +145,57 @@ public class MovieFinder {
             return loaded;
         }
     }
-    
-     private class TomatoesCaller implements Callable<MovieInfo>{
-         
-         private final MovieInfoFetcher tomatoesFetcher;
-         
-        private final MovieInfo info;
+
+    private class TomatoesCaller extends AbstractMovieCaller {
+
         /**
          * Constructs a new MovieCaller object
          *
          * @param info
          */
         public TomatoesCaller(MovieInfo info) {
-            this.tomatoesFetcher = new TomatoesInfoFetcher();
+            super(new TomatoesInfoFetcher(), info);
+        }
+    }
+
+    private class MovieWebCaller extends AbstractMovieCaller {
+
+        /**
+         * Constructs a new MovieCaller object
+         *
+         * @param info
+         */
+        public MovieWebCaller(MovieInfo info) {
+            super(new MovieWebInfoFetcher(), info);
+        }
+    }
+
+    private abstract class AbstractMovieCaller implements Callable<MovieInfo> {
+
+        private final MovieInfoFetcher fetcher;
+        private final MovieInfo info;
+
+        /**
+         * Constructs a new MovieCaller object
+         *
+         * @param info
+         */
+        public AbstractMovieCaller(final MovieInfoFetcher fetcher, final MovieInfo info) {
+            this.fetcher = fetcher;
             this.info = info;
         }
-        
+
         @Override
         public MovieInfo call() throws Exception {
             info.setStatus(MovieStatus.LOADING_TOMATOES);
-            tomatoesFetcher.fetch(info);
+            LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
+            fetcher.fetch(info.getMovie());
             movieCache.saveMovie(info.getMovie());
             info.setStatus(MovieStatus.LOADED);
             return info;
         }
     }
 
-    
     /**
      *
      * @param movieInfo
@@ -190,102 +207,108 @@ public class MovieFinder {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
         LOGGER.info(movieInfo.getDirectory().getAbsolutePath());
         String url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
-        if(url == null){
+        if (url == null) {
             String title = removeCrap(movieInfo.getDirectory().getName());
-            String encoded = "";
-            try{
-                encoded = URLEncoder.encode(title, "UTF-8");
-            }catch(UnsupportedEncodingException ex){
-                LOGGER.error("Could not cencode UTF-8" ,ex);
-            }
-            url = "http://www.imdb.com/Tsearch?title="+encoded;
-            
+            url = generateImdbSearchUrl(title);
+
         }
-        
-        
+
+
         movieInfo.getMovie().setUrl(url);
-        movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]","").trim());
-        
+        movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]", "").trim());
+
         Source source = getParsedSource(movieInfo);
-        
+
         return parseImdbHtml(source, movieInfo);
-        
+
     }
-    
-    private MovieInfo parseImdbHtml(Source source, MovieInfo movieInfo) throws Exception{
-    	Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
-        if(titleElement.getContent().extractText().contains("Title Search")){
+
+    private MovieInfo parseImdbHtml(Source source, MovieInfo movieInfo) throws Exception {
+        Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
+        if (titleElement.getContent().extractText().contains("Title Search")) {
             //find the first link
             movieInfo.getMovie().setUrl(null);
-            List<?> linkElements=source.findAllElements(HTMLElementName.A);
-            for (Iterator<?> i=linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
-                Element linkElement=(Element)i.next();
-                String href=linkElement.getAttributeValue("href");
-                if(href != null && href.startsWith("/title/tt")){
+            List<?> linkElements = source.findAllElements(HTMLElementName.A);
+            for (Iterator<?> i = linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
+                Element linkElement = (Element) i.next();
+                String href = linkElement.getAttributeValue("href");
+                if (href != null && href.startsWith("/title/tt")) {
                     int questionMarkIndex = href.indexOf('?');
-                    if(questionMarkIndex != -1){
-                        href=href.substring(0, questionMarkIndex);
+                    if (questionMarkIndex != -1) {
+                        href = href.substring(0, questionMarkIndex);
                     }
                     movieInfo.getMovie().setUrl(href);
-                    movieInfo.getMovie().setImdbId(href.replaceAll("[a-zA-Z:/.+=?]","").trim());
+                    movieInfo.getMovie().setImdbId(href.replaceAll("[a-zA-Z:/.+=?]", "").trim());
                     source = getParsedSource(movieInfo);
-                    titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
+                    titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
                 }
             }
-            
+
         }
-        movieInfo.getMovie().setTitle(titleElement.getContent().extractText());
+        String titleYear = titleElement.getContent().getTextExtractor().toString();
         
+        if(titleYear.endsWith(")")){
+            int index = titleYear.lastIndexOf("(");
+            String year = titleYear.substring(index+1, titleYear.length()-1);
+            try{
+                movieInfo.getMovie().setYear(Integer.valueOf(year));
+            }catch(NumberFormatException ex){
+                LOGGER.error("Could not parse '"+year+"' to integer", ex);
+            }
+            titleYear = titleYear.substring(0, index);
+        }
+        movieInfo.getMovie().setTitle(titleYear);
         
-        List<?> linkElements=source.findAllElements(HTMLElementName.A);
-        for (Iterator<?> i=linkElements.iterator(); i.hasNext();) {
-            Element linkElement=(Element)i.next();
-            
-            if ("poster".equals(linkElement.getAttributeValue("name"))){
-                
+
+        List<?> linkElements = source.findAllElements(HTMLElementName.A);
+        for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
+            Element linkElement = (Element) i.next();
+
+            if ("poster".equals(linkElement.getAttributeValue("name"))) {
+
                 // A element can contain other tags so need to extract the text from it:
-                List<?> imgs=linkElement.getContent().findAllElements(HTMLElementName.IMG);
-                Element img = (Element)imgs.get(0);
+                List<?> imgs = linkElement.getContent().findAllElements(HTMLElementName.IMG);
+                Element img = (Element) imgs.get(0);
                 String imgUrl = img.getAttributeValue("src");
-                
+
                 movieInfo.getMovie().setImgUrl(imgUrl);
                 ImageCache.saveImgToCache(movieInfo);
             }
-            String href=linkElement.getAttributeValue("href");
-            if(href != null && href.startsWith("/Sections/Genres/")){
+            String href = linkElement.getAttributeValue("href");
+            if (href != null && href.startsWith("/Sections/Genres/")) {
                 Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().extractText());
                 movieInfo.getMovie().addGenre(genre);
             }
-            if(href != null && href.startsWith("/Sections/Languages/")){
+            if (href != null && href.startsWith("/Sections/Languages/")) {
                 Language language = movieCache.getOrCreateLanguage(linkElement.getContent().extractText());
                 movieInfo.getMovie().addLanguage(language);
             }
-            
+
         }
-        
-        linkElements=source.findAllElements(HTMLElementName.B);
-        for (Iterator<?> i=linkElements.iterator(); i.hasNext();) {
-            Element bElement=(Element)i.next();
-            if(bElement.getContent().extractText().contains("User Rating:")){
+
+        linkElements = source.findAllElements(HTMLElementName.B);
+        for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
+            Element bElement = (Element) i.next();
+            if (bElement.getContent().extractText().contains("User Rating:")) {
                 Element next = source.findNextElement(bElement.getEndTag().getEnd());
                 movieInfo.getMovie().setRating(next.getContent().extractText());
                 next = source.findNextElement(next.getEndTag().getEnd());
                 movieInfo.getMovie().setVotes(next.getContent().extractText());
             }
         }
-        
-        linkElements=source.findAllElements(HTMLElementName.H5);
-        for (Iterator<?> i=linkElements.iterator(); i.hasNext();) {
-            Element hElement=(Element)i.next();
-            if(hElement.getContent().extractText().contains("Plot Outline")){
+
+        linkElements = source.findAllElements(HTMLElementName.H5);
+        for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
+            Element hElement = (Element) i.next();
+            if (hElement.getContent().extractText().contains("Plot Outline")) {
                 int end = hElement.getEnd();
                 movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             }
-            if(hElement.getContent().extractText().contains("Plot:")){
+            if (hElement.getContent().extractText().contains("Plot:")) {
                 int end = hElement.getEnd();
                 movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             }
-            if(hElement.getContent().extractText().contains("Runtime")){
+            if (hElement.getContent().extractText().contains("Runtime")) {
                 int end = hElement.getEnd();
                 EndTag next = source.findNextEndTag(end);
                 //System.out.println(next);
@@ -293,26 +316,24 @@ public class MovieFinder {
                 movieInfo.getMovie().setRuntime(parseRuntime(runtime));
             }
         }
-        
-        if(movieInfo.getMovie().getTitle() == null){
+
+        if (movieInfo.getMovie().getTitle() == null) {
             //System.out.println(source.toString());
             movieInfo.getMovie().setPlot("Not found");
         }
-        
+
         return movieInfo;
     }
-    
-    private Integer parseRuntime(String runtimeString){
-        String runtime = runtimeString.substring(0,runtimeString.indexOf("min")).trim();
+
+    private Integer parseRuntime(String runtimeString) {
+        String runtime = runtimeString.substring(0, runtimeString.indexOf("min")).trim();
         int colonIndex = runtime.indexOf(":");
-        if(colonIndex != -1){
-            runtime = runtime.substring(colonIndex+1);
+        if (colonIndex != -1) {
+            runtime = runtime.substring(colonIndex + 1);
         }
-        
+
         return Integer.valueOf(runtime);
     }
-
-   
 
     /**
      *
@@ -321,18 +342,18 @@ public class MovieFinder {
      * @throws Exception 
      * @throws java.lang.Exception
      */
-    public Source getParsedSource(MovieInfo movieInfo) throws Exception{
-        
+    public Source getParsedSource(MovieInfo movieInfo) throws Exception {
+
         HttpClient client = new HttpClient();
-        HttpMethod method = new GetMethod(generateImdbUrl(movieInfo));
+        HttpMethod method = new GetMethod(generateImdbUrl(movieInfo.getMovie()));
         client.executeMethod(method);
-        
+
 //        Session s = new Session();
 //        String url = generateImdbUrl(movieInfo);
 //        System.out.println("Loading "+url);
 //        Response r = s.get(url);
         //System.out.println("HEADERS: " + Arrays.toString(r.getHeaders()));
-        
+
         //PHPTagTypes.register();
         //PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
         //MasonTagTypes.register();
@@ -342,57 +363,67 @@ public class MovieFinder {
         source.fullSequentialParse();
         return source;
     }
-    
-    
+
     /**
      *
      * @param info
      * @return the tomatoes url
      */
-    public static String generateTomatoesUrl(MovieInfo info){
-        return "http://www.rottentomatoes.com/alias?type=imdbid&s="+info.getMovie().getImdbId();
+    public static String generateTomatoesUrl(Movie movie) {
+        return "http://www.rottentomatoes.com/alias?type=imdbid&s=" + movie.getImdbId();
     }
-    
+
     /**
      *
      * @param info
      * @return the imdb url
      */
-    public static String generateImdbUrl(MovieInfo info){
-        String id = info.getMovie().getImdbId();
-        if("".equals(id)){
-            return info.getMovie().getUrl();
-        }else{
-            return "http://www.imdb.com/title/tt"+id+"/";
+    public static String generateImdbUrl(Movie movie) {
+        String id = movie.getImdbId();
+        if ("".equals(id)) {
+            return movie.getUrl();
+        } else {
+            return "http://www.imdb.com/title/tt" + id + "/";
         }
     }
-    
-    private String removeCrap(String name){
-        String movieName = name.toLowerCase();
-        for(String bad:TO_REMOVE){
-            movieName = movieName.replaceAll(bad,"");
+
+    /**
+     *
+     * @param info
+     * @return the imdb url
+     */
+    public static String generateImdbSearchUrl(String title) {
+        String encoded = "";
+        try {
+            encoded = URLEncoder.encode(title, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.error("Could not cencode UTF-8", ex);
         }
-        
+        return "http://www.imdb.com/Tsearch?title=" + encoded;
+    }
+
+    private String removeCrap(String name) {
+        String movieName = name.toLowerCase();
+        for (String bad : TO_REMOVE) {
+            movieName = movieName.replaceAll(bad, "");
+        }
+
         Calendar calendar = new GregorianCalendar();
         int thisYear = calendar.get(Calendar.YEAR);
-        
+
         //TODO recup the movie year!
-        
-        for(int i = 1800;i<thisYear;i++){
-            movieName = movieName.replaceAll(Integer.toString(i),"");
+
+        for (int i = 1800; i < thisYear; i++) {
+            movieName = movieName.replaceAll(Integer.toString(i), "");
         }
         int dashPos = movieName.lastIndexOf('-');
-        if(dashPos != -1){
-            movieName = movieName.substring(0,movieName.lastIndexOf('-'));
+        if (dashPos != -1) {
+            movieName = movieName.substring(0, movieName.lastIndexOf('-'));
         }
-        movieName = movieName.replaceAll("\\."," ");
+        movieName = movieName.replaceAll("\\.", " ");
         movieName = movieName.trim();
         return movieName;
-    }
-    
-    
-        
-    //    /**
+    }    //    /**
     //     * Test class for the apache htpclient
     //     */
     //    public void httpclient(){
@@ -412,7 +443,6 @@ public class MovieFinder {
     //            ex.printStackTrace();
     //        }
     //    }
-    
     //    /**
     //     * Runs JTidy on the source string, to produce the dest string.
     //     */
@@ -432,7 +462,6 @@ public class MovieFinder {
     //            return source;
     //        }
     //    }
-    
     //    public void testSwingX() throws Exception{
     //        Session s = new Session();
     //        Response r = s.get("http://www.imdb.com/search");
@@ -450,7 +479,6 @@ public class MovieFinder {
     //            System.out.println(r.getBody());
     //        }
     //    }
-    
     //    public void testDom() throws Exception{
     //
     //        Session s = new Session();
@@ -470,6 +498,4 @@ public class MovieFinder {
     //        String method = xpath.evaluate("@method", foundNode);
     //        System.out.println("FORM "+method + "(" + href + ")");
     //    }
-    
-    
 }

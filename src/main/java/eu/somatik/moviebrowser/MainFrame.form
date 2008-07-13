@@ -52,7 +52,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jSplitPane1" alignment="1" pref="463" max="32767" attributes="3"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="infoLabel" pref="134" max="32767" attributes="0"/>
+                      <Component id="infoLabel" pref="0" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="loadProgressBar" min="-2" pref="317" max="-2" attributes="2"/>
                   </Group>
@@ -65,7 +65,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jSplitPane1" pref="235" max="32767" attributes="0"/>
+              <Component id="jSplitPane1" pref="234" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="loadProgressBar" min="-2" pref="14" max="-2" attributes="0"/>
@@ -82,7 +82,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="null"/>
         </Property>
-        <Property name="dividerLocation" type="int" value="300"/>
+        <Property name="dividerLocation" type="int" value="500"/>
         <Property name="resizeWeight" type="double" value="1.0"/>
       </Properties>
 
@@ -148,7 +148,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="tomatoesHyperlink" min="-2" pref="16" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" pref="25" max="32767" attributes="0"/>
+                      <Component id="jScrollPane2" pref="24" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

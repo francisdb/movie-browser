@@ -30,8 +30,26 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * Movie column number
      */
     public static final int MOVIE_COL = 1;
-    private static final String COL_NAMES[] = {"?","Movie","Date","Runtime","IMDB","Tomatometer"};
-    private static final Class<?> COL_CLASSES[] = {MovieStatus.class, Object.class, Date.class, Integer.class, String.class, String.class};
+    private static final String COL_NAMES[] = {
+        "?",
+        "Movie",
+        "Year",
+        "Date",
+        "Runtime",
+        "IMDB",
+        "Tomatometer",
+        "MovieWeb"
+    };
+    private static final Class<?> COL_CLASSES[] = {
+        MovieStatus.class, 
+        Object.class, 
+        Integer.class,
+        Date.class, 
+        Integer.class, 
+        String.class, 
+        String.class, 
+        String.class
+    };
     
     private List<MovieInfo> movies;
     
@@ -70,13 +88,17 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 1:
                 return movies.get(rowIndex);
             case 2:
-                return new Date(movies.get(rowIndex).getDirectory().lastModified());
+                return movies.get(rowIndex).getMovie().getYear();
             case 3:
-                return movies.get(rowIndex).getMovie().getRuntime();
+                return new Date(movies.get(rowIndex).getDirectory().lastModified());
             case 4:
-                return movies.get(rowIndex).getMovie().getRating();
+                return movies.get(rowIndex).getMovie().getRuntime();
             case 5:
+                return movies.get(rowIndex).getMovie().getRating();
+            case 6:
                 return movies.get(rowIndex).getMovie().getTomatometer();
+            case 7:
+                return movies.get(rowIndex).getMovie().getMovieWebStars();
             default:
                 assert false: "Should never come here";
                 return null;
