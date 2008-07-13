@@ -44,6 +44,17 @@ public class FileSystemScanner {
     }
     
     /**
+     * Locates parent directory name and returns it
+     * @param folder
+     * @return the parent dir name or null if not found 
+     */
+    public File findParentDirectory(File folder) {
+        File name = null;
+        name = folder.getParentFile();
+        return name;
+    }
+    
+    /**
      * Finds the NFO file and looks for the imdb url inside it
      * @param dir
      * @return the nfo URL or null
