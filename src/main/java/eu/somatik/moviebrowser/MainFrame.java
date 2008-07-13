@@ -62,6 +62,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public void load() {
         this.addWindowListener(new WindowAdapter() {
+
             @Override
             public void windowClosing(WindowEvent e) {
                 finder.stop();
@@ -71,11 +72,9 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    if (movieTable.getSelectedRowCount() == 1) {
-                        MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-                        showMovie(info);
-                    }
+                if (!e.getValueIsAdjusting() && movieTable.getSelectedRowCount() == 1) {
+                    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                    showMovie(info);
                 }
             }
         });
@@ -89,7 +88,7 @@ public class MainFrame extends javax.swing.JFrame {
                         try {
                             Desktop.getDesktop().open(info.getDirectory());
                         } catch (IOException ex) {
-                            LOGGER.error("Could not open dir "+info.getDirectory(), ex);
+                            LOGGER.error("Could not open dir " + info.getDirectory(), ex);
                         }
                     } else {
                         FileSystemScanner scanner = new FileSystemScanner();
@@ -99,7 +98,7 @@ public class MainFrame extends javax.swing.JFrame {
                                 LOGGER.info("OPENING: " + sample);
                                 Desktop.getDesktop().open(sample);
                             } catch (IOException ex) {
-                                LOGGER.error("Could not launch default app for "+sample, ex);
+                                LOGGER.error("Could not launch default app for " + sample, ex);
                             }
                         } else {
                             JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
