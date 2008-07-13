@@ -134,7 +134,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
-        ClearListMenuItem = new javax.swing.JMenuItem();
+        clearListMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Somatik.be movie browser");
@@ -226,14 +226,14 @@ public class MainFrame extends javax.swing.JFrame {
         });
         movieMenu.add(importMenuItem);
 
-        ClearListMenuItem.setMnemonic('C');
-        ClearListMenuItem.setText("Clear List");
-        ClearListMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        clearListMenuItem.setMnemonic('C');
+        clearListMenuItem.setText("Clear List");
+        clearListMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ClearListMenuItemActionPerformed(evt);
+                clearListMenuItemActionPerformed(evt);
             }
         });
-        movieMenu.add(ClearListMenuItem);
+        movieMenu.add(clearListMenuItem);
 
         jMenuBar1.add(movieMenu);
 
@@ -299,10 +299,10 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_imdbHyperlinkActionPerformed
 
-private void ClearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearListMenuItemActionPerformed
+private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearListMenuItemActionPerformed
     MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
     model.clear();
-}//GEN-LAST:event_ClearListMenuItemActionPerformed
+}//GEN-LAST:event_clearListMenuItemActionPerformed
         
     private void addFolder(File newFolder){
         final Set<String> folders = Settings.loadFolders();
@@ -439,7 +439,7 @@ private void ClearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem ClearListMenuItem;
+    private javax.swing.JMenuItem clearListMenuItem;
     private org.jdesktop.swingx.JXHyperlink imdbHyperlink;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JLabel infoLabel;
