@@ -6,6 +6,7 @@ package eu.somatik.moviebrowser.service;
 
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
+import au.id.jericho.lib.html.Segment;
 import au.id.jericho.lib.html.Source;
 import au.id.jericho.lib.html.StartTag;
 import au.id.jericho.lib.html.TextExtractor;
@@ -76,14 +77,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             List<?> divElements = source.findAllElements(HTMLElementName.DIV);
             for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
                 Element divElement = (Element) i.next();
-                TextExtractor extractor = new TextExtractor(divElement.getContent()) {
-
-                    @Override
-                    public boolean excludeElement(StartTag startTag) {
-                        //LOGGER.debug(startTag.toString());
-                        return true;
-                    }
-                };
+                TextExtractor extractor = new ElementOnlyTextExtractor(divElement.getContent());
                 String content = extractor.toString();
                 if (content.startsWith("MovieWeb Users:")) {
                     List childs = divElement.getChildElements();
@@ -119,5 +113,18 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             LOGGER.error("Could not cencode UTF-8", ex);
         }
         return "http://www.movieweb.com/search/?search=" + encoded;
+    }
+
+    private static class ElementOnlyTextExtractor extends TextExtractor {
+
+        public ElementOnlyTextExtractor(final Segment segment) {
+            super(segment);
+        }
+        
+        @Override
+        public boolean excludeElement(StartTag startTag) {
+            //LOGGER.debug(startTag.toString());
+            return true;
+        }
     }
 }
