@@ -5,8 +5,6 @@ import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.MovieFinder;
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.MovieStatus;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
