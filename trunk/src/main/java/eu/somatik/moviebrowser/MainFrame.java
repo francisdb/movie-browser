@@ -34,6 +34,7 @@ import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import java.awt.Dimension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     /** Creates new form MainFrame */
     public MainFrame() {
+        this.setPreferredSize(new Dimension(1000,600));
         initComponents();
         setLocationRelativeTo(null);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -138,7 +140,7 @@ public class MainFrame extends javax.swing.JFrame {
         setName("mainFrame"); // NOI18N
 
         jSplitPane1.setBorder(null);
-        jSplitPane1.setDividerLocation(300);
+        jSplitPane1.setDividerLocation(500);
         jSplitPane1.setResizeWeight(1.0);
 
         movieTable.setAutoCreateRowSorter(true);
@@ -204,7 +206,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -236,7 +238,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                        .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -245,7 +247,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -384,8 +386,8 @@ public class MainFrame extends javax.swing.JFrame {
             movieHeader.setTitle(info.getMovie().getTitle());
         }
         movieHeader.setDescription(info.getMovie().getPlot());
-        imdbHyperlink.setText(MovieFinder.generateImdbUrl(info));
-        tomatoesHyperlink.setText(MovieFinder.generateTomatoesUrl(info));
+        imdbHyperlink.setText(MovieFinder.generateImdbUrl(info.getMovie()));
+        tomatoesHyperlink.setText(MovieFinder.generateTomatoesUrl(info.getMovie()));
         
         StringBuilder builder = new StringBuilder();
 
@@ -413,6 +415,7 @@ public class MainFrame extends javax.swing.JFrame {
         builder.append(info.getMovie().getRuntime()).append(" min\n");
         builder.append("IMDB ").append(info.getMovie().getRating()).append(" ").append(info.getMovie().getVotes()).append("\n");
         builder.append("TOMATO ").append(info.getMovie().getTomatometer()).append("\n");
+        builder.append("MovieWeb ").append(info.getMovie().getMovieWebStars()).append("\n");
         builder.append(info.getMovie().getPlot());
         infoTextPane.setText(builder.toString());
         infoTextPane.setCaretPosition(0);
