@@ -6,6 +6,7 @@ import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.MovieFinder;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.httpclient.HttpClient;
@@ -53,8 +54,8 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
                 }
 
 
-            } catch (Exception ex) {
-                LOGGER.error("LOAding from rotten tomatoes failed", ex);
+            } catch (IOException ex) {
+                LOGGER.error("Loading from rotten tomatoes failed", ex);
             } finally {
                 // Release the connection.
                 method.releaseConnection();

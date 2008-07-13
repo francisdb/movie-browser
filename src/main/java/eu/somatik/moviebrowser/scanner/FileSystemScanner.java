@@ -1,5 +1,6 @@
 package eu.somatik.moviebrowser.scanner;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -62,12 +63,14 @@ public class FileSystemScanner {
     
     private String findImdbUrl(File nfoFile){
     	String url = null;
+        DataInputStream dis = null;
         FileInputStream fis = null;
     	try{
             fis = new FileInputStream(nfoFile);
+            dis = new DataInputStream(fis);
             int x= fis.available();
             byte b[]= new byte[x];
-            fis.read(b);
+            dis.readFully(b);
             
             String content = new String(b).toLowerCase();
             int start = -1;
@@ -105,6 +108,13 @@ public class FileSystemScanner {
         }catch(IOException ex){
             LOGGER.error("Could not find IMDB url", ex);
         }finally{
+            if(dis != null){
+                try {
+                    dis.close();
+                } catch (IOException ex) {
+                    LOGGER.error("Could not close nfo file", ex);
+                }
+            }
             if(fis != null){
                 try {
                     fis.close();
