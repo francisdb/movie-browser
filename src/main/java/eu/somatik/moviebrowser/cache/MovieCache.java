@@ -133,5 +133,20 @@ public class MovieCache {
             LOGGER.info(movie.getPath()+""+movie);
         }
     }
-    
+
+    /**
+     * Clear the movies list from DB. Simillar to deleteMovie() in MovieDAO, but doesn't work, 
+     * as it throws an exception saying: Removing a detached instance.
+     */
+//    public void removeFromList(Movie movie) {
+//        //System.out.println(list.getPath());
+//        EntityManager em = emf.createEntityManager();
+//        EntityTransaction transaction = em.getTransaction();
+//        eu.somatik.moviebrowser.cache.MovieDAO movies = new eu.somatik.moviebrowser.cache.MovieDAO(emf);
+//        movies.deleteMovie(movie);
+//        //em.remove(movie);
+//        //transaction.commit();
+//        //em.remove(movie);
+//        //em.close();
+//    }
 }

@@ -28,6 +28,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Genre;
@@ -135,6 +136,8 @@ public class MainFrame extends javax.swing.JFrame {
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
         clearListMenuItem = new javax.swing.JMenuItem();
+        toolsMenu = new javax.swing.JMenu();
+        clearCacheMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Somatik.be movie browser");
@@ -237,6 +240,18 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(movieMenu);
 
+        toolsMenu.setText("Tools");
+
+        clearCacheMenuItem.setText("Clear Cache");
+        clearCacheMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearCacheMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(clearCacheMenuItem);
+
+        jMenuBar1.add(toolsMenu);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -300,9 +315,38 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_imdbHyperlinkActionPerformed
 
 private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearListMenuItemActionPerformed
+    clearTableList();
+}//GEN-LAST:event_clearListMenuItemActionPerformed
+
+/**
+ * Clear the table list, this does not clear the cache.
+ */
+private void clearTableList() {
     MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
     model.clear();
-}//GEN-LAST:event_clearListMenuItemActionPerformed
+}
+
+/**
+ * Clear cache data, including images and persistence DB. 
+ * @param evt
+ */
+private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
+//    //Clear the image folder
+//    File imagesDir = new File(Settings.getImageCacheDir().getName());
+//    System.out.println(imagesDir.getAbsolutePath());
+//    imagesDir.delete();
+//       
+//    //Clear the persistence db. For testing I tried to pass the selected row but
+//    //still get detached error - for more info see commented code in MovieCache class.
+//    MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
+//    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+//    //System.out.println(info.getDirectory());
+//    MovieCache movies = new MovieCache();
+//    movies.removeFromList(info.getMovie());
+//    
+//    //clear the table values
+//    clearTableList();
+}//GEN-LAST:event_clearCacheMenuItemActionPerformed
         
     private void addFolder(File newFolder){
         final Set<String> folders = Settings.loadFolders();
@@ -439,6 +483,7 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
     private org.jdesktop.swingx.JXHyperlink imdbHyperlink;
     private javax.swing.JMenuItem importMenuItem;
@@ -454,6 +499,7 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
     private org.jdesktop.swingx.JXHyperlink tomatoesHyperlink;
+    private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables
     
 }
