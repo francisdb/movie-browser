@@ -55,6 +55,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     /** Creates new form MainFrame */
     public MainFrame() {
+        this.setIconImage(loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
         initComponents();
         setLocationRelativeTo(null);
