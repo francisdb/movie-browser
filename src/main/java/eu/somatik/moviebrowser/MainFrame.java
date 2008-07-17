@@ -224,7 +224,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -529,7 +529,12 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
             // TODO implement
-            JOptionPane.showMessageDialog(MainFrame.this, "Not implemented");
+            //JOptionPane.showMessageDialog(MainFrame.this, "Not implemented");
+           java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new EditMovieFrame().setVisible(true);
+            }
+        });
         }
     }
     
