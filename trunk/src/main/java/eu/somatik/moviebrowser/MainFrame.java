@@ -389,6 +389,7 @@ private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST
         JMenuItem jMenuItemWatchSample = new JMenuItem("Watch Sample");
         jMenuItemWatchSample.addActionListener(
             new java.awt.event.ActionListener() {
+                @Override 
                 public void actionPerformed(java.awt.event.ActionEvent evt) 
                 {
                     jMenuItemWatchSampleActionPerformed(evt);
