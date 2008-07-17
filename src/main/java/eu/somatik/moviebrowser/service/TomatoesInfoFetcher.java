@@ -3,7 +3,7 @@ package eu.somatik.moviebrowser.service;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
-import eu.somatik.moviebrowser.MovieFinder;
+import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.domain.Movie;
 import java.io.IOException;
 import java.util.Iterator;
@@ -44,9 +44,14 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
                     Element divElement = (Element) i.next();
                     String id = divElement.getAttributeValue("id");
                     if (id != null && "bubble_allCritics".equals(id)) {
-                        String userRating = divElement.getContent().extractText().trim();
+                        String userRating = divElement.getContent().getTextExtractor().toString().trim();
                         if (!"".equals(userRating)) {
-                            movie.setTomatometer(userRating);
+                            userRating = userRating.replace("%", "");
+                            try{
+                                movie.setTomatometer(Integer.valueOf(userRating));
+                            }catch(NumberFormatException ex){
+                                LOGGER.error("Could not parse "+userRating+" to Integer", ex);
+                            }
                         }
                     }
                 }
