@@ -32,8 +32,7 @@ public class MovieWebInfoFetcherTest {
         movieInfo.setMovie(movie);
         MovieWebInfoFetcher fetcher = new MovieWebInfoFetcher();
         fetcher.fetch(movieInfo.getMovie());
-        assertNotNull("MovieWebStars is null", movie.getMovieWebStars());
-        assertTrue("No data for MovieWebStart", movie.getMovieWebStars().length() > 0);
+        assertNotNull("MovieWebStars is null", movie.getMovieWebScore());
     }
 
 }
