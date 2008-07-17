@@ -12,8 +12,10 @@ package eu.somatik.moviebrowser;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 
+import eu.somatik.moviebrowser.service.ScoreCalculator;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +28,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener{
     
+    private final ScoreCalculator calculator;
+    
     /**
      * Movie column number
      */
@@ -36,6 +40,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Year",
         "Date",
         "Runtime",
+        "Score",
         "IMDB",
         "Tomatometer",
         "MovieWeb"
@@ -48,6 +53,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class, 
         Integer.class, 
         Integer.class, 
+        Integer.class, 
         Integer.class
     };
     
@@ -57,6 +63,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * Creates a new instance of MovieInfoTableModel 
      */
     public MovieInfoTableModel() {
+        this.calculator = new ScoreCalculator();
         this.movies = new ArrayList<MovieInfo>();
     }
 
@@ -94,11 +101,13 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 4:
                 return movies.get(rowIndex).getMovie().getRuntime();
             case 5:
-                return movies.get(rowIndex).getMovie().getRating();
+                return calculator.calculate(movies.get(rowIndex).getMovie());
             case 6:
-                return movies.get(rowIndex).getMovie().getTomatometer();
+                return movies.get(rowIndex).getMovie().getImdbScore();
             case 7:
-                return movies.get(rowIndex).getMovie().getMovieWebStars();
+                return movies.get(rowIndex).getMovie().getTomatoScore();
+            case 8:
+                return movies.get(rowIndex).getMovie().getMovieWebScore();
             default:
                 assert false: "Should never come here";
                 return null;

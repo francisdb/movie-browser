@@ -502,9 +502,9 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
         builder.append("\n");
         builder.append(info.getMovie().getRuntime()).append(" min\n");
-        builder.append("IMDB ").append(info.getMovie().getRating()).append(" ").append(info.getMovie().getVotes()).append("\n");
-        builder.append("TOMATO ").append(info.getMovie().getTomatometer()).append("\n");
-        builder.append("MovieWeb ").append(info.getMovie().getMovieWebStars()).append("\n");
+        builder.append("IMDB ").append(info.getMovie().getImdbScore()).append(" ").append(info.getMovie().getVotes()).append("\n");
+        builder.append("TOMATO ").append(info.getMovie().getTomatoScore()).append("\n");
+        builder.append("MovieWeb ").append(info.getMovie().getMovieWebScore()).append("\n");
         builder.append(info.getMovie().getPlot());
         infoTextPane.setText(builder.toString());
         infoTextPane.setCaretPosition(0);
