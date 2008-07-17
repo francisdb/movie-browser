@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +36,7 @@ import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import eu.somatik.moviebrowser.service.FolderScanner;
 import java.awt.Dimension;
 import java.net.URL;
 import javax.swing.AbstractAction;
@@ -300,7 +300,9 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
-            addFolder(newFolder);
+            Settings.addFolder(newFolder);
+            this.selectedFile = newFolder;
+            fillTable();
         } else {
             LOGGER.debug("No Selection ");
         }
@@ -386,6 +388,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             JPopupMenu popup = new JPopupMenu();
             popup.add(new TrailerAction());
             popup.add(new WatchSampleAction());
+            popup.add(new EditAction());
             LOGGER.info("Showing popup");
             popup.show(evt.getComponent(), evt.getX(), evt.getY());
         }
@@ -393,90 +396,70 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
    
 
-    private void addFolder(File newFolder){
-        final Set<String> folders = Settings.loadFolders();
-            folders.add(newFolder.getAbsolutePath());
-            Settings.saveFolders(folders);
-            this.selectedFile = newFolder;
-            fillTable();
-    }
+ 
     
-    private void fillTable(){
+    private void fillTable() {
         infoLabel.setText("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
         final Set<String> folders = Settings.loadFolders();
-               new SwingWorker<List<MovieInfo>,Void>() {
-                @Override
-                protected List<MovieInfo> doInBackground() throws Exception {
-                    finder.init();
-                    File folder;
-                    List<MovieInfo> movies = new ArrayList<MovieInfo>();
-                    for(String path:folders){
-                        folder = new File(path);
-                        if(folder.exists()){
-                            for(File file:folder.listFiles()){
-                                if(file.isDirectory()){
-                                    movies.add(new MovieInfo(file));
-                                }
-                            }
-                        }
-                    }
-                    
-                    return movies;
-                }
-                
-                @Override
-		protected void done(){
-                    try{
-                        List<MovieInfo> movies = get();
-                        MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
-                        model.clear();
-                        model.addAll(movies);
-                        infoLabel.setText(model.getRowCount()+" movies found, loading info...");
-                        loadMovies(movies);
-                    }catch(InterruptedException ex){
-                        ex.printStackTrace();
-                        loadProgressBar.setIndeterminate(false);
-                    }catch(ExecutionException ex){
-                        ex.getCause().printStackTrace();
-                        loadProgressBar.setIndeterminate(false);
-                    }
-                }
-                
-            }.execute();
-    }
-    
-    private void loadMovies(final List<MovieInfo> infos){
-        loadProgressBar.setIndeterminate(true);
-        new SwingWorker<MovieInfo,Void>() {
+        new SwingWorker<List<MovieInfo>, Void>() {
             @Override
-			protected MovieInfo doInBackground() throws Exception {
+            protected List<MovieInfo> doInBackground() throws Exception {
+                finder.init();
+                FolderScanner scanner = new FolderScanner();
+                return scanner.scan(folders);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    List<MovieInfo> movies = get();
+                    MovieInfoTableModel model = (MovieInfoTableModel) movieTable.getModel();
+                    model.clear();
+                    model.addAll(movies);
+                    infoLabel.setText(model.getRowCount() + " movies found, loading info...");
+                    loadMovies(movies);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    loadProgressBar.setIndeterminate(false);
+                } catch (ExecutionException ex) {
+                    ex.getCause().printStackTrace();
+                    loadProgressBar.setIndeterminate(false);
+                }
+            }
+        }.execute();
+    }
+
+    private void loadMovies(final List<MovieInfo> infos) {
+        loadProgressBar.setIndeterminate(true);
+        new SwingWorker<MovieInfo, Void>() {
+
+            @Override
+            protected MovieInfo doInBackground() throws Exception {
                 finder.loadMovies(infos);
                 return null;
             }
-            
+
             @Override
-			protected void done() {
-                try{
+            protected void done() {
+                try {
                     get();
-                }catch(InterruptedException ex){
+                } catch (InterruptedException ex) {
                     ex.printStackTrace();
-                }catch(ExecutionException ex){
+                } catch (ExecutionException ex) {
                     JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                     ex.getCause().printStackTrace();
-                }finally {
+                } finally {
                     loadProgressBar.setIndeterminate(false);
                     infoLabel.setText("All movie info loaded.");
                 }
             }
-            
         }.execute();
-        
+
     }
     
     private void showMovie(MovieInfo info){
         if(info.getImage() == null){
-            
             ImageCache.loadImg(info);
         }
         if(info.getImage() == null){
@@ -526,6 +509,27 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }
         
     
+    private MovieInfo getSelectedMovie(){
+        return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+    }
+    
+    /**
+     * This action lets you edit a record
+     * @param evt
+     */
+    private class EditAction extends AbstractAction {
+
+        public EditAction() {
+            super("Edit");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MovieInfo info = getSelectedMovie();
+            // TODO implement
+            JOptionPane.showMessageDialog(MainFrame.this, "Not implemented");
+        }
+    }
     
     
      /**
@@ -562,7 +566,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+            MovieInfo info = getSelectedMovie();
             FileSystemScanner scanner = new FileSystemScanner();
             File sample = scanner.findSample(info.getDirectory());
             if (sample != null) {
