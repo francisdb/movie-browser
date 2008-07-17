@@ -5,6 +5,7 @@
  */
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;

@@ -6,7 +6,7 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -222,7 +222,7 @@ public class MovieFinder {
 
     private MovieInfo parseImdbHtml(Source source, MovieInfo movieInfo) throws Exception {
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
-        if (titleElement.getContent().extractText().contains("Title Search")) {
+        if (titleElement.getContent().getTextExtractor().toString().contains("Title Search")) {
             //find the first link
             movieInfo.getMovie().setUrl(null);
             List<?> linkElements = source.findAllElements(HTMLElementName.A);
@@ -273,11 +273,11 @@ public class MovieFinder {
             }
             String href = linkElement.getAttributeValue("href");
             if (href != null && href.startsWith("/Sections/Genres/")) {
-                Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().extractText());
+                Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().getTextExtractor().toString());
                 movieInfo.getMovie().addGenre(genre);
             }
             if (href != null && href.startsWith("/Sections/Languages/")) {
-                Language language = movieCache.getOrCreateLanguage(linkElement.getContent().extractText());
+                Language language = movieCache.getOrCreateLanguage(linkElement.getContent().getTextExtractor().toString());
                 movieInfo.getMovie().addLanguage(language);
             }
 
@@ -286,26 +286,34 @@ public class MovieFinder {
         linkElements = source.findAllElements(HTMLElementName.B);
         for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
             Element bElement = (Element) i.next();
-            if (bElement.getContent().extractText().contains("User Rating:")) {
+            if (bElement.getContent().getTextExtractor().toString().contains("User Rating:")) {
                 Element next = source.findNextElement(bElement.getEndTag().getEnd());
-                movieInfo.getMovie().setRating(next.getContent().extractText());
+                String rating = next.getContent().getTextExtractor().toString();
+                // to percentage
+                rating = rating.replace("/10", "");
+                try {
+                    int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
+                    movieInfo.getMovie().setRating(Integer.valueOf(theScore));
+                } catch (NumberFormatException ex) {
+                    LOGGER.error("Could not parse " + rating + " to Float", ex);
+                }
                 next = source.findNextElement(next.getEndTag().getEnd());
-                movieInfo.getMovie().setVotes(next.getContent().extractText());
+                movieInfo.getMovie().setVotes(next.getContent().getTextExtractor().toString());
             }
         }
 
         linkElements = source.findAllElements(HTMLElementName.H5);
+        String hText;
         for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
             Element hElement = (Element) i.next();
-            if (hElement.getContent().extractText().contains("Plot Outline")) {
+            hText = hElement.getContent().getTextExtractor().toString();
+            if (hText.contains("Plot Outline")) {
                 int end = hElement.getEnd();
                 movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
-            }
-            if (hElement.getContent().extractText().contains("Plot:")) {
+            }else if (hText.contains("Plot:")) {
                 int end = hElement.getEnd();
                 movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
-            }
-            if (hElement.getContent().extractText().contains("Runtime")) {
+            }else if (hText.contains("Runtime")) {
                 int end = hElement.getEnd();
                 EndTag next = source.findNextEndTag(end);
                 //System.out.println(next);
@@ -337,7 +345,6 @@ public class MovieFinder {
      * @param movieInfo
      * @return the parsed source
      * @throws Exception 
-     * @throws java.lang.Exception
      */
     public Source getParsedSource(MovieInfo movieInfo) throws Exception {
 
@@ -363,7 +370,7 @@ public class MovieFinder {
 
     /**
      *
-     * @param info
+     * @param movie 
      * @return the tomatoes url
      */
     public static String generateTomatoesUrl(Movie movie) {
@@ -371,8 +378,7 @@ public class MovieFinder {
     }
 
     /**
-     *
-     * @param info
+     * @param movie 
      * @return the imdb url
      */
     public static String generateImdbUrl(Movie movie) {
@@ -385,8 +391,7 @@ public class MovieFinder {
     }
 
     /**
-     *
-     * @param info
+     * @param title 
      * @return the imdb url
      */
     public static String generateImdbSearchUrl(String title) {

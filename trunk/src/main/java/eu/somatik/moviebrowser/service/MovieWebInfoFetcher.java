@@ -82,9 +82,17 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
                 if (content.startsWith("MovieWeb Users:")) {
                     List childs = divElement.getChildElements();
                     if (childs.size() > 0) {
-                        String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString();
+                        String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString().trim();
                         LOGGER.info("User score: " + score);
-                        movie.setMovieWebStars(score);
+                        if(score.length() > 0){
+                            try {
+                                float theScore = Float.valueOf(score).floatValue() * 20;
+                                int intScore = Math.round(theScore);
+                                movie.setMovieWebStars(intScore);
+                            } catch (NumberFormatException ex) {
+                                LOGGER.error("Could not parse " + score + " to Float", ex);
+                            }
+                        }
                     }
                 } else if (content.startsWith("The Critics:")) {
                     List childs = divElement.getChildElements();
@@ -120,7 +128,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
         public ElementOnlyTextExtractor(final Segment segment) {
             super(segment);
         }
-        
+
         @Override
         public boolean excludeElement(StartTag startTag) {
             //LOGGER.debug(startTag.toString());

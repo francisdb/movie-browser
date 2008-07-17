@@ -46,9 +46,9 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class,
         Date.class, 
         Integer.class, 
-        String.class, 
-        String.class, 
-        String.class
+        Integer.class, 
+        Integer.class, 
+        Integer.class
     };
     
     private List<MovieInfo> movies;
