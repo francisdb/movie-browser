@@ -88,7 +88,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
                             try {
                                 float theScore = Float.valueOf(score).floatValue() * 20;
                                 int intScore = Math.round(theScore);
-                                movie.setMovieWebStars(intScore);
+                                movie.setMovieWebScore(intScore);
                             } catch (NumberFormatException ex) {
                                 LOGGER.error("Could not parse " + score + " to Float", ex);
                             }

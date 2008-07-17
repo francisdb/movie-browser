@@ -35,9 +35,10 @@ public class Movie {
     private Integer year;
     private String url;
     private String imgUrl;
-    private Integer rating;
-    private Integer tomatometer;
-    private Integer movieWebStars;
+    
+    private Integer imdbScore;
+    private Integer tomatoScore;
+    private Integer movieWebScore;
     
     /**
      * Runtime in minutes 
@@ -185,37 +186,31 @@ public class Movie {
         this.languages.add(language);
     }
 
-    /**
-     * 
-     * @return the rating
-     */
-    public Integer getRating() {
-        return rating;
+    public Integer getImdbScore() {
+        return imdbScore;
     }
 
-    /**
-     * 
-     * @param rating 
-     */
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    public void setImdbScore(Integer imdbScore) {
+        this.imdbScore = imdbScore;
     }
 
-    public Integer getTomatometer() {
-        return tomatometer;
+    public Integer getMovieWebScore() {
+        return movieWebScore;
     }
 
-    public void setTomatometer(Integer tomatometer) {
-        this.tomatometer = tomatometer;
+    public void setMovieWebScore(Integer movieWebScore) {
+        this.movieWebScore = movieWebScore;
     }
 
-    public Integer getMovieWebStars() {
-        return movieWebStars;
+    public Integer getTomatoScore() {
+        return tomatoScore;
     }
 
-    public void setMovieWebStars(Integer movieWebStars) {
-        this.movieWebStars = movieWebStars;
+    public void setTomatoScore(Integer tomatoScore) {
+        this.tomatoScore = tomatoScore;
     }
+
+
 
     /**
      * 

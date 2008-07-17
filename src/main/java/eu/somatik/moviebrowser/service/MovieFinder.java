@@ -293,7 +293,7 @@ public class MovieFinder {
                 rating = rating.replace("/10", "");
                 try {
                     int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
-                    movieInfo.getMovie().setRating(Integer.valueOf(theScore));
+                    movieInfo.getMovie().setImdbScore(Integer.valueOf(theScore));
                 } catch (NumberFormatException ex) {
                     LOGGER.error("Could not parse " + rating + " to Float", ex);
                 }

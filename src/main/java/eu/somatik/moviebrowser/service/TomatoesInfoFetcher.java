@@ -48,7 +48,7 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
                         if (!"".equals(userRating)) {
                             userRating = userRating.replace("%", "");
                             try{
-                                movie.setTomatometer(Integer.valueOf(userRating));
+                                movie.setTomatoScore(Integer.valueOf(userRating));
                             }catch(NumberFormatException ex){
                                 LOGGER.error("Could not parse "+userRating+" to Integer", ex);
                             }
