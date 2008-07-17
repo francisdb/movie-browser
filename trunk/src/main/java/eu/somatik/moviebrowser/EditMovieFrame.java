@@ -8,6 +8,8 @@ package eu.somatik.moviebrowser;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import au.id.jericho.lib.html.HTMLElementName;
+import au.id.jericho.lib.html.Source;
 
 /**
  *
@@ -99,9 +101,14 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
  private Source getRequest(String searchkey) throws Exception {
 
         HttpClient client = new HttpClient();
-        HttpMethod method = new GetMethod();
-        client.executeMethod(method);
-
+        //HttpMethod method = new GetMethod("http://www.imdb.com/find?q=" + searchTextField.getText());
+        //client.executeMethod(method);
+        
+        Source source = null;
+        //source = new Source(method.getResponseBodyAsString());
+        //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
+        //source.fullSequentialParse();
+        return source;
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
