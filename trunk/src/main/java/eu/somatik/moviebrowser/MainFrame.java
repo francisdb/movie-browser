@@ -6,6 +6,7 @@
 package eu.somatik.moviebrowser;
 
 import java.awt.Desktop;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -28,10 +29,8 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Genre;
@@ -39,6 +38,7 @@ import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
 import java.awt.Dimension;
+import javax.swing.AbstractAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     /** Creates new form MainFrame */
     public MainFrame() {
-        this.setPreferredSize(new Dimension(1000,600));
+        this.setPreferredSize(new Dimension(1000, 600));
         initComponents();
         setLocationRelativeTo(null);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -171,6 +171,9 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.setFillsViewportHeight(true);
         movieTable.setGridColor(java.awt.SystemColor.controlHighlight);
         movieTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                movieTableMousePressed(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 movieTableMouseReleased(evt);
             }
@@ -218,7 +221,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -326,18 +329,18 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
     clearTableList();
 }//GEN-LAST:event_clearListMenuItemActionPerformed
 
-/**
- * Clear the table list, this does not clear the cache.
- */
-private void clearTableList() {
-    MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
-    model.clear();
-}
+    /**
+     * Clear the table list, this does not clear the cache.
+     */
+    private void clearTableList() {
+        MovieInfoTableModel model = (MovieInfoTableModel) movieTable.getModel();
+        model.clear();
+    }
 
-/**
- * Clear cache data, including images and persistence DB. 
- * @param evt
- */
+    /**
+     * Clear cache data, including images and persistence DB. 
+     * @param evt
+     */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
 //    //Clear the image folder
 //    File imagesDir = new File(Settings.getImageCacheDir().getName());
@@ -356,91 +359,38 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 //    clearTableList();
 }//GEN-LAST:event_clearCacheMenuItemActionPerformed
 
-/**
- * This method is the movie tables right click mouse event action listner. 
- * It identifies the row (and column, might be useful for other right click options
- * added later) the mouse clicks on and selcts that row by storing the row and column 
- * values in int variables row and column. 
- * @param evt
- */
+    /**
+     * This method is the movie tables right click mouse event action listner. 
+     * It identifies the row (and column, might be useful for other right click options
+     * added later) the mouse clicks on and selcts that row by storing the row and column 
+     * values in int variables row and column. 
+     * @param evt
+     */
 private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMouseReleased
-    if (evt.isPopupTrigger()) {
-        JTable source = (JTable)evt.getSource();
-        int row = source.rowAtPoint( evt.getPoint() );
-        int column = source.columnAtPoint( evt.getPoint() );
-        //System.out.println(column);
-        source.changeSelection(row, column, false, false);
-
-        JPopupMenu popup = new JPopupMenu();
-        
-        //First option, IMDB Trailer with it's action listner, which triggers
-        //method jMenuItemTrailerActionPerformed(). 
-        JMenuItem jMenuItemPopupTrailer = new JMenuItem("IMDB Trailer");
-        jMenuItemPopupTrailer.addActionListener(
-            new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) 
-                {
-                    jMenuItemTrailerActionPerformed(evt);
-                }
-            });
-            
-        //Second option, Watch Sample with it's action listner, which triggers
-        //method jMenuItemWatchSampleActionPerformed(). 
-        JMenuItem jMenuItemWatchSample = new JMenuItem("Watch Sample");
-        jMenuItemWatchSample.addActionListener(
-            new java.awt.event.ActionListener() {
-                @Override 
-                public void actionPerformed(java.awt.event.ActionEvent evt) 
-                {
-                    jMenuItemWatchSampleActionPerformed(evt);
-                }
-            });
-        
-        popup.add(jMenuItemPopupTrailer);
-        popup.add(jMenuItemWatchSample);
-        popup.show(evt.getComponent(), evt.getX(), evt.getY());
-    }
+    showPopup(evt);
 }//GEN-LAST:event_movieTableMouseReleased
 
-/**
- * 
- * This method is triggered by the actioPerformed method of the jMenuItemTrailer menu item's 
- * action listener. It tries to play the sample video if any. 
- * IMPORTANT TO DO NOTE: Code duplicated here, from movieTable.addMouseListener in Load() method. 
- * @param evt
- */
-private void jMenuItemTrailerActionPerformed(java.awt.event.ActionEvent evt) {
-    try {
-        Desktop.getDesktop().browse(new URI(imdbHyperlink.getText() + "trailers"));
-    } catch (URISyntaxException ex) {
-        LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText() + "trailers", ex);
-    } catch (IOException ex) {
-        LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText() + "trailers", ex);
-    }
-}
+private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMousePressed
+    showPopup(evt);
+}//GEN-LAST:event_movieTableMousePressed
 
-/**
- * 
- * This method is triggered by the actioPerformed method of the jMenuItemWatchSample menu item's 
- * action listener. It opens the IMDB trailers page for the selected movie.
- * @param evt
- */
-private void jMenuItemWatchSampleActionPerformed(java.awt.event.ActionEvent evt) {
-    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-    FileSystemScanner scanner = new FileSystemScanner();
-    File sample = scanner.findSample(info.getDirectory());
-    if (sample != null) {
-        try {
-            LOGGER.info("OPENING: " + sample);
-            Desktop.getDesktop().open(sample);
-        } catch (IOException ex) {
-            LOGGER.error("Could not launch default app for " + sample, ex);
+    private void showPopup(MouseEvent evt) {
+        if (evt.isPopupTrigger()) {
+            JTable source = (JTable) evt.getSource();
+            int row = source.rowAtPoint(evt.getPoint());
+            int column = source.columnAtPoint(evt.getPoint());
+            source.changeSelection(row, column, false, false);
+
+            JPopupMenu popup = new JPopupMenu();
+            popup.add(new TrailerAction());
+            popup.add(new WatchSampleAction());
+            LOGGER.info("Showing popup");
+            popup.show(evt.getComponent(), evt.getX(), evt.getY());
         }
-    } else {
-        JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
     }
-}
-      
+
+   
+
     private void addFolder(File newFolder){
         final Set<String> folders = Settings.loadFolders();
             folders.add(newFolder.getAbsolutePath());
@@ -573,6 +523,59 @@ private void jMenuItemWatchSampleActionPerformed(java.awt.event.ActionEvent evt)
         infoTextPane.setCaretPosition(0);
     }
         
+    
+    
+    
+     /**
+     * This action  tries to play the sample video if any. 
+     * TODO Code duplicated here, from movieTable.addMouseListener in Load() method. 
+     * @param evt
+     */
+    private class TrailerAction extends AbstractAction {
+
+        public TrailerAction() {
+            super("IMDB Trailer");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                Desktop.getDesktop().browse(new URI(imdbHyperlink.getText() + "trailers"));
+            } catch (URISyntaxException ex) {
+                LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText() + "trailers", ex);
+            } catch (IOException ex) {
+                LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText() + "trailers", ex);
+            }
+        }
+    }
+
+    /**
+     * This action opens the sample if a sample is found
+     * @param evt
+     */
+    private class  WatchSampleAction extends AbstractAction{
+
+        public WatchSampleAction() {
+            super("Watch Sample");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+            FileSystemScanner scanner = new FileSystemScanner();
+            File sample = scanner.findSample(info.getDirectory());
+            if (sample != null) {
+                try {
+                    LOGGER.info("OPENING: " + sample);
+                    Desktop.getDesktop().open(sample);
+                } catch (IOException ex) {
+                    LOGGER.error("Could not launch default app for " + sample, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
+            }
+        }
+    }
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
