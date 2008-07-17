@@ -374,13 +374,13 @@ private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST
         JPopupMenu popup = new JPopupMenu();
         
         //First option, IMDB Trailer with it's action listner, which triggers
-        //method jMenuItemPopupTrailerActionPerformed(). 
+        //method jMenuItemTrailerActionPerformed(). 
         JMenuItem jMenuItemPopupTrailer = new JMenuItem("IMDB Trailer");
         jMenuItemPopupTrailer.addActionListener(
             new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) 
                 {
-                    jMenuItemPopupTrailerActionPerformed(evt);
+                    jMenuItemTrailerActionPerformed(evt);
                 }
             });
             
@@ -403,12 +403,12 @@ private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
 /**
  * 
- * This method is triggered by the actioPerformed method of the jMenuItemWatchSample menu item's 
+ * This method is triggered by the actioPerformed method of the jMenuItemTrailer menu item's 
  * action listener. It tries to play the sample video if any. 
  * IMPORTANT TO DO NOTE: Code duplicated here, from movieTable.addMouseListener in Load() method. 
  * @param evt
  */
-private void jMenuItemPopupTrailerActionPerformed(java.awt.event.ActionEvent evt) {
+private void jMenuItemTrailerActionPerformed(java.awt.event.ActionEvent evt) {
     try {
         Desktop.getDesktop().browse(new URI(imdbHyperlink.getText() + "trailers"));
     } catch (URISyntaxException ex) {
@@ -420,7 +420,7 @@ private void jMenuItemPopupTrailerActionPerformed(java.awt.event.ActionEvent evt
 
 /**
  * 
- * This method is triggered by the actioPerformed method of the jMenuItemPopupTrailer menu item's 
+ * This method is triggered by the actioPerformed method of the jMenuItemWatchSample menu item's 
  * action listener. It opens the IMDB trailers page for the selected movie.
  * @param evt
  */
