@@ -38,6 +38,7 @@ import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
 import java.awt.Dimension;
+import java.net.URL;
 import javax.swing.AbstractAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -535,7 +536,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private class TrailerAction extends AbstractAction {
 
         public TrailerAction() {
-            super("IMDB Trailer");
+            super("IMDB Trailer", load("images/16/video-x-generic.png"));
         }
 
         @Override
@@ -555,9 +556,8 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * @param evt
      */
     private class  WatchSampleAction extends AbstractAction{
-
         public WatchSampleAction() {
-            super("Watch Sample");
+            super("Watch Sample", load("images/16/video-display.png"));
         }
 
         @Override
@@ -577,7 +577,23 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
         }
     }
-
+    
+    /**
+     * Loads an icon from the specified path and filename
+     * @param path
+     * @param fileName
+     * @return the loaded ImageIcon
+     */
+    private static final ImageIcon load(String fileName) {
+        ImageIcon icon = null;
+        URL resource = MainFrame.class.getClassLoader().getResource(fileName);
+        if (resource != null) {
+            icon = new ImageIcon(resource);
+        } else {
+            LOGGER.error("Icon does not exist: " + fileName);
+        }
+        return icon;
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem clearCacheMenuItem;
