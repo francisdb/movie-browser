@@ -371,6 +371,7 @@ private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_movieTableMouseReleased
 
 private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMousePressed
+    // needed for linux gtk look and feel
     showPopup(evt);
 }//GEN-LAST:event_movieTableMousePressed
 
