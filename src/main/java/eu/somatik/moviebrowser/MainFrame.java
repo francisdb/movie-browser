@@ -527,12 +527,14 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
             // TODO implement
             //JOptionPane.showMessageDialog(MainFrame.this, "Not implemented");
            java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new EditMovieFrame().setVisible(true);
+                MovieInfo info = getSelectedMovie();
+                File file = new File(info.getMovie().getPath());
+                String name = file.getName();
+                new EditMovieFrame(name).setVisible(true);
             }
         });
         }
