@@ -135,7 +135,7 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     JOptionPane.showMessageDialog(EditMovieFrame.this, "Not implemented");
 }//GEN-LAST:event_updateButtonActionPerformed
 
- private Source getRequest(String searchkey) throws Exception {
+ private Source getRequest() throws Exception {
 
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod("http://www.imdb.com/find?q=" + URLEncoder.encode(searchTextField.getText(), "UTF-8"));
@@ -154,7 +154,7 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         DefaultListModel listModel = new DefaultListModel();
         
         Source source = null;
-        source = getRequest(searchTextField.getText());
+        source = getRequest();
         System.out.println(source);
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
         
