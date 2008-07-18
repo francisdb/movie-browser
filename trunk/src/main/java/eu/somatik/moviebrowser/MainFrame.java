@@ -527,8 +527,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // TODO implement
-            //JOptionPane.showMessageDialog(MainFrame.this, "Not implemented");
+            
            java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 MovieInfo info = getSelectedMovie();
