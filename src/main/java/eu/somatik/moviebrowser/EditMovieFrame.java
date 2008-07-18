@@ -9,6 +9,7 @@ package eu.somatik.moviebrowser;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import java.net.URLEncoder;
         
 import org.apache.commons.httpclient.HttpClient;
@@ -64,6 +65,11 @@ public class EditMovieFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(resultsList);
 
         updateButton.setText("Update");
+        updateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButtonActionPerformed(evt);
+            }
+        });
 
         statusProgressBar.setForeground(new java.awt.Color(255, 153, 51));
         statusProgressBar.setString("");
@@ -124,6 +130,11 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     }
 }//GEN-LAST:event_searchButtonActionPerformed
 
+private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+    // TODO add your handling code here:
+    JOptionPane.showMessageDialog(EditMovieFrame.this, "Not implemented");
+}//GEN-LAST:event_updateButtonActionPerformed
+
  private Source getRequest(String searchkey) throws Exception {
 
         HttpClient client = new HttpClient();
@@ -154,7 +165,7 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
                 String href = linkElement.getAttributeValue("href");
                 System.out.println(href);
                 if (href != null && href.startsWith("/title/tt")) {
-                    String name = linkElement.getContent().toString();
+                    String name = linkElement.getContent().getTextExtractor().toString();
                     int questionMarkIndex = href.indexOf('?');
                     if (questionMarkIndex != -1) {
                         href = href.substring(0, questionMarkIndex);
