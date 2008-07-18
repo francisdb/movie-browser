@@ -527,15 +527,10 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
-           java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                MovieInfo info = getSelectedMovie();
-                File file = new File(info.getMovie().getPath());
-                String name = file.getName();
-                new EditMovieFrame(name).setVisible(true);
-            }
-        });
+            MovieInfo info = getSelectedMovie();
+            File file = new File(info.getMovie().getPath());
+            String name = file.getName();
+            new EditMovieFrame(name).setVisible(true);
         }
     }
     
