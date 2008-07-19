@@ -8,6 +8,17 @@
  */
 package eu.somatik.moviebrowser;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import eu.somatik.moviebrowser.module.MovieBrowserModule;
+import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import eu.somatik.moviebrowser.service.FolderScanner;
+import eu.somatik.moviebrowser.service.MovieFinder;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -21,41 +32,95 @@ import org.slf4j.LoggerFactory;
 public class MovieBrowser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieBrowser.class);
+    private final MovieFinder movieFinder;
+    private final FolderScanner folderScanner;
+    private final FileSystemScanner fileSystemScanner;
 
-    /** Creates a new instance of MovieBrowser */
-    private MovieBrowser() {
-        // nothing here
+    /** 
+     * Creates a new instance of MovieBrowser
+     * @param finder
+     * @param folderScanner
+     * @param fileSystemScanner 
+     */
+    @Inject
+    public MovieBrowser(final MovieFinder finder, final FolderScanner folderScanner, final FileSystemScanner fileSystemScanner) {
+        this.movieFinder = finder;
+        this.folderScanner = folderScanner;
+        this.fileSystemScanner = fileSystemScanner;
+    }
+
+    private void configureLogging() {
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        try {
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(lc);
+            lc.shutdownAndReset();
+            configurator.doConfigure(MovieBrowser.class.getClassLoader().getResource("logback.xml"));
+        } catch (JoranException je) {
+            StatusPrinter.print(lc);
+        }
+
+    }
+
+    private void configurelookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException ex) {
+            LOGGER.error("Error setting native LAF", ex);
+        } catch (InstantiationException ex) {
+            LOGGER.error("Error setting native LAF", ex);
+        } catch (IllegalAccessException ex) {
+            LOGGER.error("Error setting native LAF", ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            LOGGER.error("Error setting native LAF", ex);
+        }
+    }
+    
+    private void configureExceptionhandling(){
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                LOGGER.error("Uncaught exception in thread " + thread.getName(), ex);
+            }
+        });
+
+    }
+
+    private void start() {
+        configureLogging();
+        configureExceptionhandling();
+        configurelookAndFeel();
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MainFrame mainFrame = new MainFrame(MovieBrowser.this);
+                mainFrame.setVisible(true);
+                mainFrame.load();
+            }
+        });
     }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        Injector injector = Guice.createInjector(new MovieBrowserModule());
+        MovieBrowser browser = injector.getInstance(MovieBrowser.class);
+        browser.start();
+    }
 
-            @Override
-            public void run() {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (ClassNotFoundException ex) {
-                    LOGGER.error("Error setting native LAF", ex);
-                } catch (InstantiationException ex) {
-                    LOGGER.error("Error setting native LAF", ex);
-                } catch (IllegalAccessException ex) {
-                    LOGGER.error("Error setting native LAF", ex);
-                } catch (UnsupportedLookAndFeelException ex) {
-                    LOGGER.error("Error setting native LAF", ex);
-                }
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                         MainFrame mainFrame = new MainFrame();
-                         mainFrame.setVisible(true);
-                         mainFrame.load();
-                    }
-                });
-               
-            }
-        });
+    public MovieFinder getMovieFinder() {
+        return movieFinder;
+    }
+
+    public FolderScanner getFolderScanner() {
+        return folderScanner;
+    }
+
+    public FileSystemScanner getFileSystemScanner() {
+        return fileSystemScanner;
     }
 }

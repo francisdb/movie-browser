@@ -1,140 +1,37 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package eu.somatik.moviebrowser.scanner;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * @author francisdb
  *
+ * @author francisdb
  */
-public class FileSystemScanner {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemScanner.class);
+public interface FileSystemScanner {
 
-    private static final String IMDB_URLS[] = {
-        "http://www.imdb.com/title/",
-        "http://us.imdb.com/title/",
-        "http://www.imdb.com/title?",
-        "http://us.imdb.com/title?",
-        "http://imdb.com/title/"
-    };
-	 
-    
-    /**
-     * Locates she sample file and returns it
-     * @param folder
-     * @return the sample file or null if not found 
-     */
-    public File findSample(File folder){
-    	File sample = null;
-    	for(File file:folder.listFiles()){
-    		if("sample".equals(file.getName().toLowerCase())){
-    			for(File sampleFolderFile:file.listFiles()){
-    				if(sampleFolderFile.getName().toLowerCase().endsWith(".avi")){
-    					sample = sampleFolderFile;
-    				}
-    			}
-    		}
-    	}
-    	return sample;
-    }
-    
-    /**
-     * Locates parent directory name and returns it
-     * @param folder
-     * @return the parent dir name or null if not found 
-     */
-    public File findParentDirectory(File folder) {
-        File name = null;
-        name = folder.getParentFile();
-        return name;
-    }
-    
     /**
      * Finds the NFO file and looks for the imdb url inside it
      * @param dir
      * @return the nfo URL or null
      */
-    public String findNfoUrl(File dir){
-        String url = null;
-        LOGGER.debug("looking for nfo in "+dir.getPath());
-        for(File file:dir.listFiles()){
-            if(file.getName().toLowerCase().endsWith(".nfo")){
-                LOGGER.debug("checking nfo: "+file.getName());
-                url = findImdbUrl(file); 
-            }
-        }
-        
-        return url;
-    }
-    
-    private String findImdbUrl(File nfoFile){
-    	String url = null;
-        DataInputStream dis = null;
-        FileInputStream fis = null;
-    	try{
-            fis = new FileInputStream(nfoFile);
-            dis = new DataInputStream(fis);
-            int x= fis.available();
-            byte b[]= new byte[x];
-            dis.readFully(b);
-            
-            String content = new String(b).toLowerCase();
-            int start = -1;
-            int i = 0;
-            String urlStart = null;
-            while(start == -1 && i < IMDB_URLS.length){
-                urlStart = IMDB_URLS[i];
-                //System.out.println("looking for "+urlStart);
-                start = content.indexOf(urlStart);
-                i++;
-            }
-            
-            if(start != -1){
-                i = start + urlStart.length();
-                int end = -1;
-                char character;
-                while(i < content.length()-1 && end == -1){
-                    character = content.charAt(i);
-                    //System.out.println((int)character);
-                    if(character == '\n' || character == '\t' || character == '\n' || character == (char)32){
-                        end = i;
-                    }
-                    i++;
-                }
-                
-                //if the url is the end of the file
-                if(i == content.length()-1){
-                    end = content.length()-1;
-                }
-                
-                url = content.substring(start,end);
-                LOGGER.info("IMDB url found: "+url);
-            }
-            
-        }catch(IOException ex){
-            LOGGER.error("Could not find IMDB url", ex);
-        }finally{
-            if(dis != null){
-                try {
-                    dis.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close nfo file", ex);
-                }
-            }
-            if(fis != null){
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close nfo file", ex);
-                }
-            }
-        }
-        return url;
-    }
-    
+    String findNfoUrl(File dir);
+
+    /**
+     * Locates parent directory name and returns it
+     * @param folder
+     * @return the parent dir name or null if not found
+     */
+    File findParentDirectory(File folder);
+
+    /**
+     * Locates she sample file and returns it
+     * @param folder
+     * @return the sample file or null if not found
+     */
+    File findSample(File folder);
+
 }

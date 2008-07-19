@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.fetcher;
 
 import eu.somatik.moviebrowser.domain.Movie;
 
@@ -12,4 +12,5 @@ public interface MovieInfoFetcher {
      * @param movieInfo
      */
     void fetch(Movie movieInfo);
+    
 }

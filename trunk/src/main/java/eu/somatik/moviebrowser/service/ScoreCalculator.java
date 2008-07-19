@@ -9,10 +9,8 @@ import org.slf4j.LoggerFactory;
  * @author francisdb
  */
 public class ScoreCalculator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScoreCalculator.class);
-    
+
     public Integer calculate(Movie movie){
-        LOGGER.info("Starting calculation");
         int score = 0;
         int count = 0;
         
@@ -35,7 +33,6 @@ public class ScoreCalculator {
             score = score / count;
             value = Integer.valueOf(score);
         }
-        LOGGER.info("Calculation done");
         return value;
     }
 
