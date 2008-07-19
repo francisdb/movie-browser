@@ -6,18 +6,32 @@
 
 package eu.somatik.moviebrowser;
 
+import java.awt.Desktop;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.concurrent.ExecutionException;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import java.net.URLEncoder;
-        
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.Exception;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import au.id.jericho.lib.html.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,10 +39,23 @@ import au.id.jericho.lib.html.Element;
  */
 public class EditMovieFrame extends javax.swing.JFrame {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EditMovieFrame.class);
+    private DefaultListModel listModel = new DefaultListModel();
+    private Source source;
+    
     /** Creates new form EditMovieFrame */
     public EditMovieFrame(String searchkey) {
         initComponents();
         searchTextField.setText(searchkey);
+        
+        resultsList.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) { 
+                resultsListDoubleClick();
+            }  
+         }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -62,9 +89,19 @@ public class EditMovieFrame extends javax.swing.JFrame {
         });
 
         resultsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        resultsList.setToolTipText("Double click on results to go to IMDB page.");
+        resultsList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                resultsListMouseClicked(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                resultsListMouseReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(resultsList);
 
         updateButton.setText("Update");
+        updateButton.setToolTipText("Select the correct title from results and click me to update cache.");
         updateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateButtonActionPerformed(evt);
@@ -87,10 +124,6 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
@@ -98,6 +131,10 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addComponent(updateButton)
                 .addContainerGap())
             .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -110,24 +147,57 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(statusProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(updateButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-    try {
-        getResults();
-    } 
-    catch (Exception ex) {
-        System.out.println(ex);
-    }
+    
+    statusProgressBar.setIndeterminate(true);
+    statusProgressBar.setString("Searching...");
+    
+    SwingWorker<Source, Void> worker = 
+        new SwingWorker<Source, Void>() {
+            public Source doInBackground() {
+                try {
+                    getResults();
+                } 
+                catch (Exception ex) {
+                    System.out.println(ex);
+                }
+                Source temp = null;
+                return temp;
+            }
+            
+            public void done() {
+                try {
+                    get();
+                }
+                catch(InterruptedException ex) {
+                    LOGGER.error("Get request intterrupted: ", ex);
+                    statusProgressBar.setIndeterminate(false);
+                    statusProgressBar.setString("Error Retrieving Results");
+                }
+                catch(ExecutionException ex) {
+                    LOGGER.error("Get request failed: ", ex);
+                    statusProgressBar.setIndeterminate(false);
+                    statusProgressBar.setString("Error Retrieving Results");
+                }
+                catch(Exception ex) {
+                    LOGGER.error("Get request failed: ", ex);
+                    statusProgressBar.setIndeterminate(false);
+                    statusProgressBar.setString("Error Retrieving Results");
+                }
+            }
+    };
+    worker.execute();
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
@@ -135,42 +205,63 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     JOptionPane.showMessageDialog(EditMovieFrame.this, "Not implemented");
 }//GEN-LAST:event_updateButtonActionPerformed
 
- private Source getRequest() throws Exception {
+private void resultsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultsListMouseClicked
 
-        HttpClient client = new HttpClient();
-        HttpMethod method = new GetMethod("http://www.imdb.com/find?q=" + URLEncoder.encode(searchTextField.getText(), "UTF-8"));
-        statusProgressBar.setIndeterminate(true);
-        client.executeMethod(method);
-        
-        Source source = null;
-        source = new Source(method.getResponseBodyAsString());
-        //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-        source.fullSequentialParse();
-        return source;
-    }
+}//GEN-LAST:event_resultsListMouseClicked
+
+private void resultsListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultsListMouseReleased
+
+}//GEN-LAST:event_resultsListMouseReleased
+
+private void resultsListDoubleClick() {
+    String URL;
+    String[] split;
+    URL = resultsList.getSelectedValue().toString();
+    split = URL.split("~");
+    URL = split[1].trim();
+    
+    try {
+        Desktop.getDesktop().browse(new URI(URL));
+    } catch (URISyntaxException ex) {
+        LOGGER.error("Failed launching default browser for " + URL, ex);
+    } catch (IOException ex) {
+        LOGGER.error("Failed launching default browser for " + URL, ex);
+    }   
+}    
+
+ private Source getRequest() throws Exception {
+    HttpClient client = new HttpClient();
+    HttpMethod method = new GetMethod("http://www.imdb.com/find?q=" + URLEncoder.encode(searchTextField.getText(), "UTF-8"));
+    
+    client.executeMethod(method);
+    source = new Source(method.getResponseBodyAsStream()); 
+    source.fullSequentialParse();
+    return source;
+ }
  
  private void getResults() throws Exception {
-        statusProgressBar.setString("Searching...");
-        DefaultListModel listModel = new DefaultListModel();
-        
-        Source source = null;
+     
         source = getRequest();
-        System.out.println(source);
+        //System.out.println("This is the source: \n\n" + source);
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
         
         if (titleElement.getContent().getTextExtractor().toString().contains("IMDb Search")) {
             List<?> linkElements = source.findAllElements(HTMLElementName.A);
-            for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
+            Set linksSet = new HashSet(linkElements);
+            
+            for (Iterator<?> i = linksSet.iterator(); i.hasNext();) {
                 Element linkElement = (Element) i.next();
                 String href = linkElement.getAttributeValue("href");
-                System.out.println(href);
+
                 if (href != null && href.startsWith("/title/tt")) {
                     String name = linkElement.getContent().getTextExtractor().toString();
                     int questionMarkIndex = href.indexOf('?');
                     if (questionMarkIndex != -1) {
                         href = href.substring(0, questionMarkIndex);
                     }
-                    listModel.addElement(name + " ~ " + "http://www.imdb.com" + href);
+                    if(!name.isEmpty()) {
+                        listModel.addElement(name + " ~ " + "http://www.imdb.com" + href);
+                    }
                     titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
                 }
             }
@@ -181,7 +272,7 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         if(listModel.isEmpty())
             statusProgressBar.setString("No Results Found");
         else
-            statusProgressBar.setString("");
+            statusProgressBar.setString(listModel.getSize() + " Results Found");
  }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
