@@ -2,15 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.fetcher;
 
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
-import au.id.jericho.lib.html.Segment;
 import au.id.jericho.lib.html.Source;
-import au.id.jericho.lib.html.StartTag;
-import au.id.jericho.lib.html.TextExtractor;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.module.MovieWeb;
+import eu.somatik.moviebrowser.service.parser.Parser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,11 +27,20 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
+@Singleton
 public class MovieWebInfoFetcher implements MovieInfoFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieWebInfoFetcher.class);
 
-    public MovieWebInfoFetcher() {
+    private final Parser movieWebInfoParser;
+
+    /**
+     * Creates a new MovieWebInfoFetcher
+     * @param movieWebInfoParser
+     */
+    @Inject
+    public MovieWebInfoFetcher(final @MovieWeb Parser movieWebInfoParser) {
+        this.movieWebInfoParser = movieWebInfoParser;
     }
 
     @Override
@@ -42,7 +52,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             LOGGER.debug(searchUrl);
             method = new GetMethod(searchUrl);
             client.executeMethod(method);
-            Source source = new Source(method.getResponseBodyAsString());
+            Source source = new Source(method.getResponseBodyAsStream());
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
             source.fullSequentialParse();
 
@@ -71,38 +81,10 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             }
             method = new GetMethod(movieUrl);
             client.executeMethod(method);
-            source = new Source(method.getResponseBodyAsString());
+            source = new Source(method.getResponseBodyAsStream());
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
             source.fullSequentialParse();
-            List<?> divElements = source.findAllElements(HTMLElementName.DIV);
-            for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
-                Element divElement = (Element) i.next();
-                TextExtractor extractor = new ElementOnlyTextExtractor(divElement.getContent());
-                String content = extractor.toString();
-                if (content.startsWith("MovieWeb Users:")) {
-                    List childs = divElement.getChildElements();
-                    if (childs.size() > 0) {
-                        String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString().trim();
-                        LOGGER.info("User score: " + score);
-                        if(score.length() > 0){
-                            try {
-                                float theScore = Float.valueOf(score).floatValue() * 20;
-                                int intScore = Math.round(theScore);
-                                movie.setMovieWebScore(intScore);
-                            } catch (NumberFormatException ex) {
-                                LOGGER.error("Could not parse " + score + " to Float", ex);
-                            }
-                        }
-                    }
-                } else if (content.startsWith("The Critics:")) {
-                    List childs = divElement.getChildElements();
-                    if (childs.size() > 0) {
-                        String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString();
-                        LOGGER.info("Critics score: " + score);
-                    // TODO use?
-                    }
-                }
-            }
+            movieWebInfoParser.parse(source, movie);
         } catch (IOException ex) {
             LOGGER.error("Loading from MovieWeb failed", ex);
         } finally {
@@ -123,16 +105,4 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
         return "http://www.movieweb.com/search/?search=" + encoded;
     }
 
-    private static class ElementOnlyTextExtractor extends TextExtractor {
-
-        public ElementOnlyTextExtractor(final Segment segment) {
-            super(segment);
-        }
-
-        @Override
-        public boolean excludeElement(StartTag startTag) {
-            //LOGGER.debug(startTag.toString());
-            return true;
-        }
-    }
 }

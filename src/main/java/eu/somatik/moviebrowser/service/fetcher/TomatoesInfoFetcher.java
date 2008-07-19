@@ -1,13 +1,14 @@
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.fetcher;
 
-import au.id.jericho.lib.html.Element;
-import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
-import eu.somatik.moviebrowser.service.MovieFinder;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.module.RottenTomatoes;
+import eu.somatik.moviebrowser.service.MovieFinder;
+import eu.somatik.moviebrowser.service.parser.Parser;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -18,9 +19,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author fdb
  */
+@Singleton
 public class TomatoesInfoFetcher implements MovieInfoFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesInfoFetcher.class);
+
+    private Parser tomatoesParser;
+
+    @Inject
+    public TomatoesInfoFetcher(final @RottenTomatoes Parser tomatoesParser) {
+        this.tomatoesParser = tomatoesParser;
+    }
 
     @Override
     public void fetch(Movie movie) {
@@ -29,7 +38,7 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
             HttpMethod method = new GetMethod(MovieFinder.generateTomatoesUrl(movie));
             try {
                 client.executeMethod(method);
-                Source source = new Source(method.getResponseBodyAsString());
+                Source source = new Source(method.getResponseBodyAsStream());
                 //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
                 source.fullSequentialParse();
 
@@ -39,29 +48,13 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
                 // <div id="bubble_allCritics" class="percentBubble" style="display:none;">     57%    </div>
 
 
-                List<?> divElements = source.findAllElements(HTMLElementName.DIV);
-                for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
-                    Element divElement = (Element) i.next();
-                    String id = divElement.getAttributeValue("id");
-                    if (id != null && "bubble_allCritics".equals(id)) {
-                        String userRating = divElement.getContent().getTextExtractor().toString().trim();
-                        if (!"".equals(userRating)) {
-                            userRating = userRating.replace("%", "");
-                            try{
-                                movie.setTomatoScore(Integer.valueOf(userRating));
-                            }catch(NumberFormatException ex){
-                                LOGGER.error("Could not parse "+userRating+" to Integer", ex);
-                            }
-                        }
-                    }
-                }
-
+                tomatoesParser.parse(source, movie);
 
             } catch (IOException ex) {
                 LOGGER.error("Loading from rotten tomatoes failed", ex);
             } finally {
                 // Release the connection.
-                if(method != null){
+                if (method != null) {
                     method.releaseConnection();
                 }
             }

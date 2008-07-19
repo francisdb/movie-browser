@@ -5,6 +5,7 @@
  */
 package eu.somatik.moviebrowser;
 
+import com.google.inject.Inject;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
@@ -36,8 +37,6 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.scanner.FileSystemScanner;
-import eu.somatik.moviebrowser.service.FolderScanner;
 import java.awt.Dimension;
 import java.net.URL;
 import javax.swing.AbstractAction;
@@ -52,10 +51,15 @@ public class MainFrame extends javax.swing.JFrame {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private File selectedFile;
-    private final MovieFinder finder;
+    private final MovieBrowser browser;
 
-    /** Creates new form MainFrame */
-    public MainFrame() {
+    /** 
+     * Creates new form MainFrame
+     * @param browser 
+     */
+    @Inject
+    public MainFrame(final MovieBrowser browser) {
+        this.browser = browser;
         this.setIconImage(loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
         initComponents();
@@ -63,7 +67,6 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         movieTable.setModel(new MovieInfoTableModel());
         this.setVisible(true);
-        finder = new MovieFinder();
     }
 
     /**
@@ -74,7 +77,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void windowClosing(WindowEvent e) {
-                finder.stop();
+                browser.getMovieFinder().stop();
             }
         });
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -100,8 +103,7 @@ public class MainFrame extends javax.swing.JFrame {
                             LOGGER.error("Could not open dir " + info.getDirectory(), ex);
                         }
                     } else {
-                        FileSystemScanner scanner = new FileSystemScanner();
-                        File sample = scanner.findSample(info.getDirectory());
+                        File sample = browser.getFileSystemScanner().findSample(info.getDirectory());
                         if (sample != null) {
                             try {
                                 LOGGER.info("OPENING: " + sample);
@@ -396,9 +398,6 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
     }
 
-   
-
- 
     
     private void fillTable() {
         infoLabel.setText("Scanning folders...");
@@ -407,9 +406,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         new SwingWorker<List<MovieInfo>, Void>() {
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
-                finder.init();
-                FolderScanner scanner = new FolderScanner();
-                return scanner.scan(folders);
+                return browser.getFolderScanner().scan(folders);
             }
 
             @Override
@@ -422,10 +419,10 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     infoLabel.setText(model.getRowCount() + " movies found, loading info...");
                     loadMovies(movies);
                 } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                    LOGGER.error("Loading interrupted", ex);
                     loadProgressBar.setIndeterminate(false);
                 } catch (ExecutionException ex) {
-                    ex.getCause().printStackTrace();
+                    LOGGER.error("Loading failed", ex.getCause());
                     loadProgressBar.setIndeterminate(false);
                 }
             }
@@ -438,7 +435,8 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
             @Override
             protected MovieInfo doInBackground() throws Exception {
-                finder.loadMovies(infos);
+                browser.getMovieFinder().start();
+                browser.getMovieFinder().loadMovies(infos);
                 return null;
             }
 
@@ -570,8 +568,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         @Override
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
-            FileSystemScanner scanner = new FileSystemScanner();
-            File sample = scanner.findSample(info.getDirectory());
+            File sample = browser.getFileSystemScanner().findSample(info.getDirectory());
             if (sample != null) {
                 try {
                     LOGGER.info("OPENING: " + sample);

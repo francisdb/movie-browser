@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 public class Settings {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Settings.class);
+    
     private static final String SETTINGS_DIR = ".moviebrowser";
     private static final String IMG_CACHE = "images";
     private static final String FOLDER_SETTINGS = "folders.lst";

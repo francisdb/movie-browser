@@ -8,11 +8,10 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import eu.somatik.moviebrowser.service.fetcher.MovieInfoFetcher;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,20 +21,19 @@ import java.util.concurrent.Executors;
 
 
 import au.id.jericho.lib.html.Element;
-import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.cache.MovieCache;
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.module.Imdb;
+import eu.somatik.moviebrowser.module.MovieWeb;
+import eu.somatik.moviebrowser.module.RottenTomatoes;
 import eu.somatik.moviebrowser.scanner.FileSystemScanner;
-import eu.somatik.moviebrowser.service.MovieInfoFetcher;
-import eu.somatik.moviebrowser.service.MovieWebInfoFetcher;
-import eu.somatik.moviebrowser.service.TomatoesInfoFetcher;
+import eu.somatik.moviebrowser.service.parser.Parser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -49,41 +47,41 @@ import org.slf4j.LoggerFactory;
 public class MovieFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
-    private static final String TO_REMOVE[] = {
-        ".dvdrip",
-        ".samplefix",
-        ".dvdivx",
-        ".dvdivx4",
-        ".dvdivx5",
-        ".divx",
-        ".xvid",
-        ".limited",
-        ".internal",
-        ".proper",
-        ".dc",
-        ".ac3",
-        ".unrated",
-        ".stv",
-        ".dutch",
-        ".limited",
-        ".nfofix"    //".ws"        
-    };
     private final ExecutorService service;
     private final ExecutorService secondaryService;
-    private MovieCache movieCache;
     private final FileSystemScanner fileSystemScanner;
+    private final MovieInfoFetcher movieWebInfoFetcher;
+    private final MovieInfoFetcher tomatoesInfoFetcher;
+    private final MovieNameExtractor movieNameExtractor;
+    private final MovieCacheImpl movieCache;
+    private final Parser imdbParser;
 
     /**
      * Creates a new instance of MovieFinder
+     * @param movieWebInfoFetcher
+     * @param tomatoesInfoFetcher
+     * @param movieCache
+     * @param fileSystemScanner
+     * @param movieNameExtractor
+     * @param imdbParser 
      */
-    public MovieFinder() {
-        this.fileSystemScanner = new FileSystemScanner();
+    @Inject
+    public MovieFinder(
+            final @MovieWeb MovieInfoFetcher movieWebInfoFetcher,
+            final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
+            final MovieCacheImpl movieCache,
+            final FileSystemScanner fileSystemScanner,
+            final MovieNameExtractor movieNameExtractor,
+            final @Imdb Parser imdbParser) {
+        this.movieWebInfoFetcher = movieWebInfoFetcher;
+        this.tomatoesInfoFetcher = tomatoesInfoFetcher;
+        this.movieCache = movieCache;
+        this.fileSystemScanner = fileSystemScanner;
+        this.movieNameExtractor = movieNameExtractor;
+        this.imdbParser = imdbParser;
+        
         this.service = Executors.newFixedThreadPool(5);
         this.secondaryService = Executors.newFixedThreadPool(5);
-    }
-
-    public void init() {
-        this.movieCache = new MovieCache();
     }
 
     /**
@@ -92,14 +90,21 @@ public class MovieFinder {
     public void stop() {
         movieCache.shutdown();
         service.shutdownNow();
-        secondaryService.shutdown();
+        secondaryService.shutdownNow();
     }
 
+    public void start(){
+        if (!movieCache.isStarted()) {
+            movieCache.startup();
+        }
+    }
+    
     /**
      * Loads all movies
      * @param movies
      */
     public void loadMovies(List<MovieInfo> movies) {
+        LOGGER.info("Loading " + movies.size() + " movies");
         List<MovieCaller> callers = new LinkedList<MovieCaller>();
         for (MovieInfo info : movies) {
             callers.add(new MovieCaller(info));
@@ -128,13 +133,19 @@ public class MovieFinder {
         @Override
         public MovieInfo call() throws Exception {
             Movie movie = movieCache.find(info.getMovie().getPath());
-            MovieInfo loaded;
+            MovieInfo loaded = null;
             if (movie == null || movie.getImdbId() == null) {
-                loaded = getMovieInfo(info);
-                secondaryService.submit(new TomatoesCaller(info));
-                secondaryService.submit(new MovieWebCaller(info));
-                movieCache.saveMovie(loaded.getMovie());
+                try{
+                    LOGGER.info("Fetching data for "+info.getMovie().getPath());
+                    loaded = getMovieInfo(info);
+                    secondaryService.submit(new TomatoesCaller(loaded));
+                    secondaryService.submit(new MovieWebCaller(loaded));
+                    movieCache.saveMovie(loaded.getMovie());
+                }catch(Exception ex){
+                    LOGGER.error("oops", ex);
+                }
             } else {
+                LOGGER.info("Loading cached data for "+info.getMovie().getPath());
                 info.setStatus(MovieStatus.CACHED);
                 info.setMovie(movie);
                 loaded = info;
@@ -151,7 +162,7 @@ public class MovieFinder {
          * @param info
          */
         public TomatoesCaller(MovieInfo info) {
-            super(new TomatoesInfoFetcher(), info);
+            super(tomatoesInfoFetcher, info);
         }
     }
 
@@ -163,7 +174,7 @@ public class MovieFinder {
          * @param info
          */
         public MovieWebCaller(MovieInfo info) {
-            super(new MovieWebInfoFetcher(), info);
+            super(movieWebInfoFetcher, info);
         }
     }
 
@@ -178,14 +189,15 @@ public class MovieFinder {
          * @param info
          */
         public AbstractMovieCaller(final MovieInfoFetcher fetcher, final MovieInfo info) {
+            LOGGER.info("New caller for " + fetcher.getClass().getSimpleName());
             this.fetcher = fetcher;
             this.info = info;
         }
 
         @Override
         public MovieInfo call() throws Exception {
-            info.setStatus(MovieStatus.LOADING_TOMATOES);
             LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
+            info.setStatus(MovieStatus.LOADING_TOMATOES);
             fetcher.fetch(info.getMovie());
             movieCache.saveMovie(info.getMovie());
             info.setStatus(MovieStatus.LOADED);
@@ -200,12 +212,11 @@ public class MovieFinder {
      * @throws java.net.UnknownHostException
      * @throws java.lang.Exception
      */
-    public MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
+    private MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
-        LOGGER.info(movieInfo.getDirectory().getAbsolutePath());
         String url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
         if (url == null) {
-            String title = removeCrap(movieInfo.getDirectory().getName());
+            String title = movieNameExtractor.removeCrap(movieInfo.getDirectory().getName());
             url = generateImdbSearchUrl(title);
 
         }
@@ -240,105 +251,13 @@ public class MovieFinder {
                     titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
                 }
             }
-
         }
-        String titleYear = titleElement.getContent().getTextExtractor().toString();
-        
-        if(titleYear.endsWith(")")){
-            int index = titleYear.lastIndexOf("(");
-            String year = titleYear.substring(index+1, titleYear.length()-1);
-            try{
-                movieInfo.getMovie().setYear(Integer.valueOf(year));
-            }catch(NumberFormatException ex){
-                LOGGER.error("Could not parse '"+year+"' to integer", ex);
-            }
-            titleYear = titleYear.substring(0, index);
-        }
-        movieInfo.getMovie().setTitle(titleYear);
-        
-
-        List<?> linkElements = source.findAllElements(HTMLElementName.A);
-        for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
-            Element linkElement = (Element) i.next();
-
-            if ("poster".equals(linkElement.getAttributeValue("name"))) {
-
-                // A element can contain other tags so need to extract the text from it:
-                List<?> imgs = linkElement.getContent().findAllElements(HTMLElementName.IMG);
-                Element img = (Element) imgs.get(0);
-                String imgUrl = img.getAttributeValue("src");
-
-                movieInfo.getMovie().setImgUrl(imgUrl);
-                ImageCache.saveImgToCache(movieInfo);
-            }
-            String href = linkElement.getAttributeValue("href");
-            if (href != null && href.startsWith("/Sections/Genres/")) {
-                Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().getTextExtractor().toString());
-                movieInfo.getMovie().addGenre(genre);
-            }
-            if (href != null && href.startsWith("/Sections/Languages/")) {
-                Language language = movieCache.getOrCreateLanguage(linkElement.getContent().getTextExtractor().toString());
-                movieInfo.getMovie().addLanguage(language);
-            }
-
-        }
-
-        linkElements = source.findAllElements(HTMLElementName.B);
-        for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
-            Element bElement = (Element) i.next();
-            if (bElement.getContent().getTextExtractor().toString().contains("User Rating:")) {
-                Element next = source.findNextElement(bElement.getEndTag().getEnd());
-                String rating = next.getContent().getTextExtractor().toString();
-                // to percentage
-                rating = rating.replace("/10", "");
-                try {
-                    int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
-                    movieInfo.getMovie().setImdbScore(Integer.valueOf(theScore));
-                } catch (NumberFormatException ex) {
-                    LOGGER.error("Could not parse " + rating + " to Float", ex);
-                }
-                next = source.findNextElement(next.getEndTag().getEnd());
-                movieInfo.getMovie().setVotes(next.getContent().getTextExtractor().toString());
-            }
-        }
-
-        linkElements = source.findAllElements(HTMLElementName.H5);
-        String hText;
-        for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
-            Element hElement = (Element) i.next();
-            hText = hElement.getContent().getTextExtractor().toString();
-            if (hText.contains("Plot Outline")) {
-                int end = hElement.getEnd();
-                movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
-            }else if (hText.contains("Plot:")) {
-                int end = hElement.getEnd();
-                movieInfo.getMovie().setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
-            }else if (hText.contains("Runtime")) {
-                int end = hElement.getEnd();
-                EndTag next = source.findNextEndTag(end);
-                //System.out.println(next);
-                String runtime = source.subSequence(end, next.getBegin()).toString().trim();
-                movieInfo.getMovie().setRuntime(parseRuntime(runtime));
-            }
-        }
-
-        if (movieInfo.getMovie().getTitle() == null) {
-            //System.out.println(source.toString());
-            movieInfo.getMovie().setPlot("Not found");
-        }
-
+        imdbParser.parse(source, movieInfo.getMovie());
+        ImageCache.saveImgToCache(movieInfo.getMovie());
         return movieInfo;
     }
 
-    private Integer parseRuntime(String runtimeString) {
-        String runtime = runtimeString.substring(0, runtimeString.indexOf("min")).trim();
-        int colonIndex = runtime.indexOf(":");
-        if (colonIndex != -1) {
-            runtime = runtime.substring(colonIndex + 1);
-        }
 
-        return Integer.valueOf(runtime);
-    }
 
     /**
      *
@@ -346,7 +265,7 @@ public class MovieFinder {
      * @return the parsed source
      * @throws Exception 
      */
-    public Source getParsedSource(MovieInfo movieInfo) throws Exception {
+    private Source getParsedSource(MovieInfo movieInfo) throws Exception {
 
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod(generateImdbUrl(movieInfo.getMovie()));
@@ -362,7 +281,7 @@ public class MovieFinder {
         //PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
         //MasonTagTypes.register();
         Source source = null;
-        source = new Source(method.getResponseBodyAsString());
+        source = new Source(method.getResponseBodyAsStream());
         //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
         source.fullSequentialParse();
         return source;
@@ -402,30 +321,12 @@ public class MovieFinder {
             LOGGER.error("Could not cencode UTF-8", ex);
         }
         return "http://www.imdb.com/Tsearch?title=" + encoded;
-    }
-
-    private String removeCrap(String name) {
-        String movieName = name.toLowerCase();
-        for (String bad : TO_REMOVE) {
-            movieName = movieName.replaceAll(bad, "");
-        }
-
-        Calendar calendar = new GregorianCalendar();
-        int thisYear = calendar.get(Calendar.YEAR);
-
-        //TODO recup the movie year!
-
-        for (int i = 1800; i < thisYear; i++) {
-            movieName = movieName.replaceAll(Integer.toString(i), "");
-        }
-        int dashPos = movieName.lastIndexOf('-');
-        if (dashPos != -1) {
-            movieName = movieName.substring(0, movieName.lastIndexOf('-'));
-        }
-        movieName = movieName.replaceAll("\\.", " ");
-        movieName = movieName.trim();
-        return movieName;
-    }    //    /**
+    }    
+    
+    
+    
+    
+    //    /**
     //     * Test class for the apache htpclient
     //     */
     //    public void httpclient(){
