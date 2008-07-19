@@ -159,7 +159,6 @@ public class EditMovieFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-    
     statusProgressBar.setIndeterminate(true);
     statusProgressBar.setString("Searching...");
     
@@ -240,7 +239,7 @@ private void resultsListDoubleClick() {
  }
  
  private void getResults() throws Exception {
-     
+        listModel.clear();
         source = getRequest();
         //System.out.println("This is the source: \n\n" + source);
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
