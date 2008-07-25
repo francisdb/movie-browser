@@ -4,7 +4,7 @@
  * Created on 17 July 2008, 22:21
  */
 
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.gui;
 
 import java.awt.Desktop;
 import java.awt.event.MouseEvent;

@@ -32,7 +32,7 @@ import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.module.Imdb;
 import eu.somatik.moviebrowser.module.MovieWeb;
 import eu.somatik.moviebrowser.module.RottenTomatoes;
-import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.parser.Parser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;

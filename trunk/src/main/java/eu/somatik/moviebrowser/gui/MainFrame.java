@@ -3,8 +3,9 @@
  *
  * Created on January 24, 2007, 10:47 PM
  */
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.gui;
 
+import eu.somatik.moviebrowser.*;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Desktop;
@@ -226,7 +227,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
