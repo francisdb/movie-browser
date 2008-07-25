@@ -8,6 +8,7 @@
  */
 package eu.somatik.moviebrowser;
 
+import eu.somatik.moviebrowser.gui.MainFrame;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -16,7 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
-import eu.somatik.moviebrowser.scanner.FileSystemScanner;
+import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import javax.swing.SwingUtilities;

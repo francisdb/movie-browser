@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.scanner;
+package eu.somatik.moviebrowser.service.scanner;
 
 import com.google.inject.Singleton;
 import java.io.DataInputStream;

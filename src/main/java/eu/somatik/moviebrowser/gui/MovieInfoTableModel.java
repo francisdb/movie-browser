@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser;
+package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
