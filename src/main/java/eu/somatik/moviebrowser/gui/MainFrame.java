@@ -526,10 +526,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
-            File file = new File(info.getMovie().getPath());
-            String name = file.getName();
-            EditMovieFrame editMovieFrame = new EditMovieFrame(name, browser.getImdbSearch());
+            EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
             editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
             editMovieFrame.setVisible(true);
             

@@ -31,6 +31,7 @@ import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.parser.Parser;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,15 @@ public class MovieFinder {
             movieCache.startup();
         }
     }
-    
+     
+    public void reloadMovie(MovieInfo movieInfo){
+        List<MovieInfo> list = new ArrayList<MovieInfo>();
+        list.add(movieInfo);
+        movieInfo.setImage(null);
+        ImageCache.removeImgFromCache(movieInfo.getMovie());
+        movieCache.removeMovie(movieInfo.getMovie());
+        loadMovies(list);
+    }
     /**
      * Loads all movies
      * @param movies
@@ -139,6 +148,7 @@ public class MovieFinder {
             if (movie == null || movie.getImdbId() == null) {
                 try{
                     LOGGER.info("Fetching data for "+info.getMovie().getPath());
+                    info.setStatus(MovieStatus.LOADING_IMDB);
                     loaded = getMovieInfo(info);
                     secondaryService.submit(new TomatoesCaller(loaded));
                     secondaryService.submit(new MovieWebCaller(loaded));
@@ -216,7 +226,13 @@ public class MovieFinder {
      */
     private MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
         movieInfo.setStatus(MovieStatus.LOADING_IMDB);
-        String url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
+        String url = null;
+        if(movieInfo.getMovie().getImdbId() != null){
+            url = generateImdbUrl(movieInfo.getMovie());
+        }
+        if (url == null) {
+            url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
+        }
         if (url == null) {
             String title = movieNameExtractor.removeCrap(movieInfo.getDirectory().getName());
             url = imdbSearch.generateImdbTitleSearchUrl(title);
@@ -253,7 +269,7 @@ public class MovieFinder {
 
     /**
      *
-     * @param firstMovie 
+     * @param movie 
      * @return the tomatoes url
      */
     public static String generateTomatoesUrl(Movie movie) {
@@ -261,7 +277,7 @@ public class MovieFinder {
     }
 
     /**
-     * @param firstMovie 
+     * @param movie 
      * @return the imdb url
      */
     public static String generateImdbUrl(Movie movie) {
