@@ -20,6 +20,7 @@ import eu.somatik.moviebrowser.module.MovieBrowserModule;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
+import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -36,18 +37,25 @@ public class MovieBrowser {
     private final MovieFinder movieFinder;
     private final FolderScanner folderScanner;
     private final FileSystemScanner fileSystemScanner;
+    private final ImdbSearch imdbSearch;
 
     /** 
      * Creates a new instance of MovieBrowser
      * @param finder
      * @param folderScanner
-     * @param fileSystemScanner 
+     * @param fileSystemScanner
+     * @param imdbSearch 
      */
     @Inject
-    public MovieBrowser(final MovieFinder finder, final FolderScanner folderScanner, final FileSystemScanner fileSystemScanner) {
+    public MovieBrowser(
+            final MovieFinder finder, 
+            final FolderScanner folderScanner, 
+            final FileSystemScanner fileSystemScanner,
+            final ImdbSearch imdbSearch) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
+        this.imdbSearch = imdbSearch;
     }
 
     private void configureLogging() {
@@ -124,4 +132,10 @@ public class MovieBrowser {
     public FileSystemScanner getFileSystemScanner() {
         return fileSystemScanner;
     }
+
+    public ImdbSearch getImdbSearch() {
+        return imdbSearch;
+    }
+    
+    
 }

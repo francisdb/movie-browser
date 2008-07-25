@@ -54,6 +54,7 @@ public class MovieCacheImpl implements MovieCache {
     /**
      * Shuts down the cache
      */
+    @Override
     public void shutdown() {
         if (emf != null) {
             emf.close();
@@ -68,6 +69,7 @@ public class MovieCacheImpl implements MovieCache {
      * @param path the movie path
      * @return the movie of null if not found in cache
      */
+    @Override
     public Movie find(String path) {
         EntityManager em = emf.createEntityManager();
         Movie found = em.find(Movie.class, path);
@@ -78,6 +80,7 @@ public class MovieCacheImpl implements MovieCache {
     /**
      * @param movie
      */
+    @Override
     public void saveMovie(Movie movie) {
         EntityManager em = emf.createEntityManager();
         Movie found = em.find(Movie.class, movie.getPath());
@@ -98,6 +101,7 @@ public class MovieCacheImpl implements MovieCache {
      * @param name
      * @return the Genre
      */
+    @Override
     public Genre getOrCreateGenre(String name) {
         EntityManager em = emf.createEntityManager();
 
@@ -119,6 +123,7 @@ public class MovieCacheImpl implements MovieCache {
      * @param name
      * @return the Language
      */
+    @Override
     public Language getOrCreateLanguage(String name) {
         EntityManager em = emf.createEntityManager();
         Language found = em.find(Language.class, name);
@@ -139,6 +144,7 @@ public class MovieCacheImpl implements MovieCache {
     /**
      * 
      */
+    @Override
     public void printList() {
         LOGGER.info("Printing movie list");
         for (Movie movie : movieDAO.loadMovies()) {

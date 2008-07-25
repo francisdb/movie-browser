@@ -131,7 +131,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        movieTableScrollPane = new javax.swing.JScrollPane();
         movieTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         imdbHyperlink = new org.jdesktop.swingx.JXHyperlink();
@@ -184,9 +184,9 @@ public class MainFrame extends javax.swing.JFrame {
                 movieTableMouseReleased(evt);
             }
         });
-        jScrollPane3.setViewportView(movieTable);
+        movieTableScrollPane.setViewportView(movieTable);
 
-        jSplitPane1.setLeftComponent(jScrollPane3);
+        jSplitPane1.setLeftComponent(movieTableScrollPane);
 
         imdbHyperlink.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -529,7 +529,10 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             MovieInfo info = getSelectedMovie();
             File file = new File(info.getMovie().getPath());
             String name = file.getName();
-            new EditMovieFrame(name).setVisible(true);
+            EditMovieFrame editMovieFrame = new EditMovieFrame(name, browser.getImdbSearch());
+            editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
+            editMovieFrame.setVisible(true);
+            
         }
     }
     
@@ -609,12 +612,12 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
     private org.jdesktop.swingx.JXHeader movieHeader;
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
+    private javax.swing.JScrollPane movieTableScrollPane;
     private org.jdesktop.swingx.JXHyperlink tomatoesHyperlink;
     private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables
