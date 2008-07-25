@@ -3,16 +3,11 @@
  *
  * Created on January 20, 2007, 1:51 PM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 package eu.somatik.moviebrowser.service;
 
 import eu.somatik.moviebrowser.service.fetcher.MovieInfoFetcher;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -32,11 +27,10 @@ import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.module.Imdb;
 import eu.somatik.moviebrowser.module.MovieWeb;
 import eu.somatik.moviebrowser.module.RottenTomatoes;
+import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.parser.Parser;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +49,8 @@ public class MovieFinder {
     private final MovieNameExtractor movieNameExtractor;
     private final MovieCacheImpl movieCache;
     private final Parser imdbParser;
+    private final ImdbSearch imdbSearch;
+    private final HttpLoader httpLoader;
 
     /**
      * Creates a new instance of MovieFinder
@@ -63,7 +59,9 @@ public class MovieFinder {
      * @param movieCache
      * @param fileSystemScanner
      * @param movieNameExtractor
-     * @param imdbParser 
+     * @param imdbParser
+     * @param imdbSearch
+     * @param httpLoader 
      */
     @Inject
     public MovieFinder(
@@ -72,13 +70,17 @@ public class MovieFinder {
             final MovieCacheImpl movieCache,
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor,
-            final @Imdb Parser imdbParser) {
+            final @Imdb Parser imdbParser,
+            final ImdbSearch imdbSearch,
+            final HttpLoader httpLoader) {
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
         this.imdbParser = imdbParser;
+        this.imdbSearch = imdbSearch;
+        this.httpLoader = httpLoader;
         
         this.service = Executors.newFixedThreadPool(5);
         this.secondaryService = Executors.newFixedThreadPool(5);
@@ -217,15 +219,14 @@ public class MovieFinder {
         String url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
         if (url == null) {
             String title = movieNameExtractor.removeCrap(movieInfo.getDirectory().getName());
-            url = generateImdbSearchUrl(title);
+            url = imdbSearch.generateImdbTitleSearchUrl(title);
 
         }
-
 
         movieInfo.getMovie().setUrl(url);
         movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]", "").trim());
 
-        Source source = getParsedSource(movieInfo);
+        Source source = httpLoader.fetch(generateImdbUrl(movieInfo.getMovie()));
 
         return parseImdbHtml(source, movieInfo);
 
@@ -234,22 +235,14 @@ public class MovieFinder {
     private MovieInfo parseImdbHtml(Source source, MovieInfo movieInfo) throws Exception {
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
         if (titleElement.getContent().getTextExtractor().toString().contains("Title Search")) {
-            //find the first link
-            movieInfo.getMovie().setUrl(null);
-            List<?> linkElements = source.findAllElements(HTMLElementName.A);
-            for (Iterator<?> i = linkElements.iterator(); i.hasNext() && movieInfo.getMovie().getUrl() == null;) {
-                Element linkElement = (Element) i.next();
-                String href = linkElement.getAttributeValue("href");
-                if (href != null && href.startsWith("/title/tt")) {
-                    int questionMarkIndex = href.indexOf('?');
-                    if (questionMarkIndex != -1) {
-                        href = href.substring(0, questionMarkIndex);
-                    }
-                    movieInfo.getMovie().setUrl(href);
-                    movieInfo.getMovie().setImdbId(href.replaceAll("[a-zA-Z:/.+=?]", "").trim());
-                    source = getParsedSource(movieInfo);
-                    titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
-                }
+            List<Movie> movies = imdbSearch.getResults(source);
+            if(movies.size() == 0){
+                throw new IOException("No movies found");
+            }else{
+                //use the first link
+                Movie firstMovie = movies.get(0);
+                movieInfo.getMovie().setImdbId(firstMovie.getImdbId());
+                source = httpLoader.fetch(generateImdbUrl(firstMovie));
             }
         }
         imdbParser.parse(source, movieInfo.getMovie());
@@ -258,38 +251,9 @@ public class MovieFinder {
     }
 
 
-
     /**
      *
-     * @param movieInfo
-     * @return the parsed source
-     * @throws Exception 
-     */
-    private Source getParsedSource(MovieInfo movieInfo) throws Exception {
-
-        HttpClient client = new HttpClient();
-        HttpMethod method = new GetMethod(generateImdbUrl(movieInfo.getMovie()));
-        client.executeMethod(method);
-
-//        Session s = new Session();
-//        String url = generateImdbUrl(movieInfo);
-//        System.out.println("Loading "+url);
-//        Response r = s.get(url);
-        //System.out.println("HEADERS: " + Arrays.toString(r.getHeaders()));
-
-        //PHPTagTypes.register();
-        //PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
-        //MasonTagTypes.register();
-        Source source = null;
-        source = new Source(method.getResponseBodyAsStream());
-        //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-        source.fullSequentialParse();
-        return source;
-    }
-
-    /**
-     *
-     * @param movie 
+     * @param firstMovie 
      * @return the tomatoes url
      */
     public static String generateTomatoesUrl(Movie movie) {
@@ -297,7 +261,7 @@ public class MovieFinder {
     }
 
     /**
-     * @param movie 
+     * @param firstMovie 
      * @return the imdb url
      */
     public static String generateImdbUrl(Movie movie) {
@@ -309,19 +273,7 @@ public class MovieFinder {
         }
     }
 
-    /**
-     * @param title 
-     * @return the imdb url
-     */
-    public static String generateImdbSearchUrl(String title) {
-        String encoded = "";
-        try {
-            encoded = URLEncoder.encode(title, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("Could not cencode UTF-8", ex);
-        }
-        return "http://www.imdb.com/Tsearch?title=" + encoded;
-    }    
+
     
     
     
