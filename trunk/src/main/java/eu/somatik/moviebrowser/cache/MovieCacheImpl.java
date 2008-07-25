@@ -77,6 +77,17 @@ public class MovieCacheImpl implements MovieCache {
         return found;
     }
 
+    @Override
+    public void removeMovie(Movie movie){
+        EntityManager em = emf.createEntityManager();
+        Movie found = em.find(Movie.class, movie.getPath());
+        EntityTransaction transaction = em.getTransaction();
+        transaction.begin();
+        em.remove(found);
+        transaction.commit();
+        em.close();
+    }
+    
     /**
      * @param movie
      */

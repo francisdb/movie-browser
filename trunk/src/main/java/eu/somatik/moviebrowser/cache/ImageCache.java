@@ -78,6 +78,15 @@ public class ImageCache {
         return cached;
     }
 
+    public static void removeImgFromCache(Movie movie) {
+        if (movie.getImgUrl() != null) {
+            File file = new File(movie.getImgUrl());
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
     /**
      * @param movie 
      * @return the saved file
@@ -112,8 +121,6 @@ public class ImageCache {
         }
         return cached;
     }
-    
-    
     // TODO try nio
     //            // Create channel on the source
 //        FileChannel srcChannel = new FileInputStream("srcFilename").getChannel();
@@ -127,11 +134,10 @@ public class ImageCache {
 //        // Close the channels
 //        srcChannel.close();
 //        dstChannel.close();
-
     private static void writeFile(InputStream inStream, File file) throws IOException {
         final int bufferSize = 1024;
         OutputStream fout = null;
-        try{
+        try {
             fout = new BufferedOutputStream(new FileOutputStream(file));
             byte[] buffer = new byte[bufferSize];
             int readCount = 0;
@@ -142,11 +148,11 @@ public class ImageCache {
                     fout.write(buffer);
                 }
             }
-        }finally{
-            if(fout != null){
-                try{
+        } finally {
+            if (fout != null) {
+                try {
                     fout.close();
-                }catch(IOException ex){
+                } catch (IOException ex) {
                     LOGGER.error("Could not close FileOutputStream", ex);
                 }
             }

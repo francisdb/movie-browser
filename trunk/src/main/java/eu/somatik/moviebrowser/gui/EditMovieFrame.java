@@ -22,7 +22,10 @@ import java.lang.Exception;
 
 
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
+import java.io.File;
 import javax.swing.DefaultListCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +39,27 @@ public class EditMovieFrame extends javax.swing.JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditMovieFrame.class);
     private final ImdbSearch imdbSearch;
     private final DefaultListModel listModel;
+    private final MovieInfo movieInfo;
+    private final MovieFinder movieFinder;
 
     /** 
      * Creates new form EditMovieFrame
-     * @param searchkey
+     * @param movieInfo 
      * @param imdbSearch 
      */
-    public EditMovieFrame(String searchkey, ImdbSearch imdbSearch) {
+    public EditMovieFrame(MovieInfo movieInfo, ImdbSearch imdbSearch, MovieFinder movieFinder) {
         this.imdbSearch = imdbSearch;
+        this.movieFinder = movieFinder;
+        this.movieInfo = movieInfo;
+        File file = new File(movieInfo.getMovie().getPath());
+        String searchkey = file.getName();
+
+
         this.listModel = new DefaultListModel();
         initComponents();
         searchTextField.setText(searchkey);
         resultsList.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -56,7 +68,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
             }
         });
         resultsList.setCellRenderer(new MovieListCellRenderer());
-        
+
     }
 
     /** This method is called from within the constructor to
@@ -190,8 +202,16 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-    // TODO add your handling code here:
-    JOptionPane.showMessageDialog(EditMovieFrame.this, "Not implemented");
+    Movie selectedMovie = (Movie) resultsList.getSelectedValue();
+    if (selectedMovie == null) {
+        JOptionPane.showMessageDialog(EditMovieFrame.this, "No movie selected");
+    } else {
+        // TODO add to download queue
+        movieInfo.getMovie().setImdbId(selectedMovie.getImdbId());
+        movieFinder.reloadMovie(movieInfo);
+        this.dispose();
+    }
+
 }//GEN-LAST:event_updateButtonActionPerformed
 
 private void resultsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultsListMouseClicked

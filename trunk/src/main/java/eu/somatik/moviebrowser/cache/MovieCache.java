@@ -40,6 +40,11 @@ public interface MovieCache {
      * @param movie
      */
     void saveMovie(Movie movie);
+    
+        /**
+     * @param movie
+     */
+    void removeMovie(Movie movie);
 
     /**
      * Shuts down the cache
