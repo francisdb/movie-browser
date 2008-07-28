@@ -19,7 +19,7 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
-import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.cache.ImageCacheImpl;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
@@ -62,7 +62,8 @@ public class MovieFinder {
      * @param movieNameExtractor
      * @param imdbParser
      * @param imdbSearch
-     * @param httpLoader 
+     * @param httpLoader
+     * @param imageCache 
      */
     @Inject
     public MovieFinder(
@@ -73,7 +74,8 @@ public class MovieFinder {
             final MovieNameExtractor movieNameExtractor,
             final @Imdb Parser imdbParser,
             final ImdbSearch imdbSearch,
-            final HttpLoader httpLoader) {
+            final HttpLoader httpLoader,
+            final ImageCacheImpl imageCache) {
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
         this.movieCache = movieCache;
@@ -106,7 +108,6 @@ public class MovieFinder {
         List<MovieInfo> list = new ArrayList<MovieInfo>();
         list.add(movieInfo);
         movieInfo.setImage(null);
-        ImageCache.removeImgFromCache(movieInfo.getMovie());
         movieCache.removeMovie(movieInfo.getMovie());
         loadMovies(list);
     }
@@ -262,7 +263,6 @@ public class MovieFinder {
             }
         }
         imdbParser.parse(source, movieInfo.getMovie());
-        ImageCache.saveImgToCache(movieInfo.getMovie());
         return movieInfo;
     }
 

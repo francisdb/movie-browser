@@ -1,6 +1,8 @@
 package eu.somatik.moviebrowser.module;
 
 import com.google.inject.AbstractModule;
+import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.cache.ImageCacheImpl;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
@@ -29,6 +31,7 @@ public class MovieBrowserModule extends AbstractModule {
         bind(MovieNameExtractor.class);
         
         bind(MovieCache.class).to(MovieCacheImpl.class);
+        bind(ImageCache.class).to(ImageCacheImpl.class);
         bind(FolderScanner.class).to(SimpleFolderScanner.class);
         bind(FileSystemScanner.class).to(FileSystemScannerImpl.class);
 

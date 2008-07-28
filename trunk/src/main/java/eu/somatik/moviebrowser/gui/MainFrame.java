@@ -7,6 +7,7 @@ package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.*;
 import com.google.inject.Inject;
+import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
@@ -33,7 +34,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
-import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
@@ -53,14 +53,17 @@ public class MainFrame extends javax.swing.JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private File selectedFile;
     private final MovieBrowser browser;
+    private final ImageCache imageCache;
 
     /** 
      * Creates new form MainFrame
-     * @param browser 
+     * @param browser
+     * @param imageCache 
      */
     @Inject
-    public MainFrame(final MovieBrowser browser) {
+    public MainFrame(final MovieBrowser browser, final ImageCache imageCache) {
         this.browser = browser;
+        this.imageCache = imageCache;
         this.setIconImage(loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
         initComponents();
@@ -459,14 +462,46 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
     }
     
-    private void showMovie(MovieInfo info){
-        if(info.getImage() == null){
-            ImageCache.loadImg(info);
-        }
+    private void setImage(MovieInfo info){
         if(info.getImage() == null){
             movieHeader.setIcon(null);
         }else{
             movieHeader.setIcon(new ImageIcon(info.getImage()));
+        }
+    }
+    
+    private void showMovie(final MovieInfo info){
+        // TODO need better image cache, if loading takes a lot of time the
+        // image might be shown after a new movie was selected
+        if(info.getImage() == null){
+            imageCache.loadImg(info);
+            if(info.getImage() == null){
+                new SwingWorker<Void, Void>() {
+
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        imageCache.saveImgToCache(info.getMovie());
+                        imageCache.loadImg(info);
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            get();
+                            setImage(info);
+                        } catch (InterruptedException ex) {
+                            LOGGER.error("Worker interrupted", ex);
+                        } catch (ExecutionException ex) {
+                            LOGGER.error("Worker failed", ex.getCause());
+                        }
+                    }
+                }.execute();
+            }else{
+                setImage(info);
+            }
+        }else{
+            setImage(info);
         }
         if(info.getMovie().getTitle() == null){
             movieHeader.setTitle(info.getDirectory().getName());

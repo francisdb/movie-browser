@@ -8,6 +8,7 @@
  */
 package eu.somatik.moviebrowser.cache;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
@@ -35,6 +36,7 @@ public class MovieCacheImpl implements MovieCache {
     /** 
      * Creates a new instance of MovieCache 
      */
+    @Inject
     public MovieCacheImpl() {
         // nothing here
     }
