@@ -16,6 +16,7 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FolderScanner;
@@ -38,24 +39,28 @@ public class MovieBrowser {
     private final FolderScanner folderScanner;
     private final FileSystemScanner fileSystemScanner;
     private final ImdbSearch imdbSearch;
+    private final ImageCache imageCache;
 
     /** 
      * Creates a new instance of MovieBrowser
      * @param finder
      * @param folderScanner
      * @param fileSystemScanner
-     * @param imdbSearch 
+     * @param imdbSearch
+     * @param imageCache 
      */
     @Inject
     public MovieBrowser(
             final MovieFinder finder, 
             final FolderScanner folderScanner, 
             final FileSystemScanner fileSystemScanner,
-            final ImdbSearch imdbSearch) {
+            final ImdbSearch imdbSearch,
+            final ImageCache imageCache) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
         this.imdbSearch = imdbSearch;
+        this.imageCache = imageCache;
     }
 
     private void configureLogging() {
@@ -105,7 +110,7 @@ public class MovieBrowser {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                MainFrame mainFrame = new MainFrame(MovieBrowser.this);
+                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache);
                 mainFrame.setVisible(true);
                 mainFrame.load();
             }

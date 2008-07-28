@@ -48,13 +48,10 @@ public class ImdbParser implements Parser {
         }
         movie.setTitle(titleYear);
 
-
         List<?> linkElements = source.findAllElements(HTMLElementName.A);
         for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
             Element linkElement = (Element) i.next();
-
             if ("poster".equals(linkElement.getAttributeValue("name"))) {
-
                 // A element can contain other tags so need to extract the text from it:
                 List<?> imgs = linkElement.getContent().findAllElements(HTMLElementName.IMG);
                 Element img = (Element) imgs.get(0);

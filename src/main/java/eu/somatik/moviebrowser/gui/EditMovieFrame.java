@@ -206,7 +206,9 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     if (selectedMovie == null) {
         JOptionPane.showMessageDialog(EditMovieFrame.this, "No movie selected");
     } else {
-        // TODO add to download queue
+        movieInfo.setImage(null);
+        movieInfo.getMovie().setImgUrl(null);
+        movieInfo.getMovie().setPlot(null);
         movieInfo.getMovie().setImdbId(selectedMovie.getImdbId());
         movieFinder.reloadMovie(movieInfo);
         this.dispose();
