@@ -63,7 +63,39 @@ public class ImdbSearch {
             }
 
         }else{
-            throw new IOException("Expected search page but found: "+title);
+            
+            //Assume it's a perfect result, therefore get first /title/tt link.
+            List<?> linkElements = source.findAllElements(HTMLElementName.A);
+            Element linkElement;
+            Movie movie;
+            Iterator<?> i = linkElements.iterator();
+            Set<String> ids = new HashSet<String>();
+            while (i.hasNext()) {
+                movie = new Movie();
+                linkElement = (Element) i.next();
+                String href = linkElement.getAttributeValue("href");
+                if (href != null && href.startsWith("/title/tt")) {
+                    int questionMarkIndex = href.indexOf('?');
+                    if (questionMarkIndex != -1) {
+                        href = href.substring(0, questionMarkIndex);
+                    }
+                    //href has to be split as href will be in from of /title/tt#######/some-other-dir-like-trailers
+                    String[] split = href.split("/");
+                    href = "/" + split[1] + "/" + split[2];
+                    movie.setUrl("http://www.imdb.com" + href);
+                    movie.setImdbId(href.replaceAll("[a-zA-Z:/.+=?]", "").trim());
+                    //set title as the movies title since this is a perfect search result who's HTMLElementName.title will be the movie title.
+                    movie.setTitle(title);
+                    // only add if not allready in the list
+                    if (movie.getTitle().length() > 0 && !ids.contains(movie.getImdbId())) {
+                        //Only add to the set and results list if they are empty, i.e. only if the first result, since perfect result assumed. The rest of the identified links will be the IMDB recommendations for the particular perfect result.
+                        if(ids.isEmpty() && results.isEmpty()) {
+                            ids.add(movie.getImdbId());
+                            results.add(movie);
+                        }
+                    }
+                }
+            }
         }
         return results;
 
