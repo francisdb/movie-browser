@@ -56,7 +56,6 @@ public class ImdbParser implements Parser {
                 List<?> imgs = linkElement.getContent().findAllElements(HTMLElementName.IMG);
                 Element img = (Element) imgs.get(0);
                 String imgUrl = img.getAttributeValue("src");
-
                 movie.setImgUrl(imgUrl);
             }
             String href = linkElement.getAttributeValue("href");

@@ -9,6 +9,7 @@ import eu.somatik.moviebrowser.*;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.service.MovieFinder;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -38,9 +39,12 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieStatus;
 import java.awt.Dimension;
 import java.net.URL;
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.table.DefaultTableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +74,14 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         movieTable.setModel(new MovieInfoTableModel());
+        setColumnWidths();
         this.setVisible(true);
+    }
+    
+    private void setColumnWidths(){
+        movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new StatusCellRenderer());
+        movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
+        movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setPreferredWidth(150);
     }
 
     /**
@@ -632,6 +643,50 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             LOGGER.error("Icon does not exist: " + fileName);
         }
         return icon;
+    }
+    
+    private static final class StatusCellRenderer extends DefaultTableCellRenderer{
+
+        private final Icon defaultIcon = loadIcon("images/16/bullet_black.png");
+        private final Icon loadedIcon = loadIcon("images/16/bullet_green.png");
+        private final Icon loadingIcon = loadIcon("images/16/bullet_orange.png");
+        //private final Icon failedIcon = loadIcon("images/16/bullet_red.png");
+        
+        
+        public StatusCellRenderer() {
+            setIcon(defaultIcon);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            MovieStatus movieStatus = (MovieStatus) value;
+            switch(movieStatus){
+                case NEW:
+                    setIcon(defaultIcon);
+                    break;
+                case CACHED:
+                    setIcon(loadedIcon);
+                    break;
+                case LOADED:
+                    setIcon(loadedIcon);
+                    break;
+                case LOADING_IMDB:
+                    setIcon(loadingIcon);
+                    break;
+                case LOADING_IMG:
+                    setIcon(loadingIcon);
+                    break;
+                case LOADING_TOMATOES:
+                    setIcon(loadingIcon);
+                    break;
+            }
+            setText(null);
+            return this;
+        }
+        
+        
+        
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

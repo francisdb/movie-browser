@@ -103,29 +103,31 @@ public class ImageCacheImpl implements ImageCache {
     @Override
     public File saveImgToCache(Movie movie) {
         File cached = null;
-        InputStream is = null;
-        try {
-            URL imgUrl = new URL(movie.getImgUrl());
-            URLConnection urlC = imgUrl.openConnection();
-            // Copy resource to local file, use remote file
-            // if no local file name specified
-            is = new BufferedInputStream(imgUrl.openStream());
-            // Print info about resource
-            Date date = new Date(urlC.getLastModified());
-            LOGGER.info("Saving resource (type: " + urlC.getContentType() + ", modified on: " + date + ")...");
-            cached = getCacheFile(movie.getImgUrl());
-            writeFile(is, cached);
-            is.close();
-        } catch (MalformedURLException ex) {
-            LOGGER.error("Could not save image", ex);
-        } catch (IOException ex) {
-            LOGGER.error("Could not save image", ex);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close input stream", ex);
+        if(movie.getImgUrl() != null){
+            InputStream is = null;
+            try {
+                URL imgUrl = new URL(movie.getImgUrl());
+                URLConnection urlC = imgUrl.openConnection();
+                // Copy resource to local file, use remote file
+                // if no local file name specified
+                is = new BufferedInputStream(imgUrl.openStream());
+                // Print info about resource
+                Date date = new Date(urlC.getLastModified());
+                LOGGER.info("Saving resource (type: " + urlC.getContentType() + ", modified on: " + date + ")...");
+                cached = getCacheFile(movie.getImgUrl());
+                writeFile(is, cached);
+                is.close();
+            } catch (MalformedURLException ex) {
+                LOGGER.error("Could not save image '"+movie.getImgUrl()+"'", ex);
+            } catch (IOException ex) {
+                LOGGER.error("Could not save image '"+movie.getImgUrl()+"'", ex);
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ex) {
+                        LOGGER.error("Could not close input stream", ex);
+                    }
                 }
             }
         }
