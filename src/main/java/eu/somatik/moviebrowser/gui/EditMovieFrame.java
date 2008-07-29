@@ -45,7 +45,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
     /** 
      * Creates new form EditMovieFrame
      * @param movieInfo 
-     * @param imdbSearch 
+     * @param imdbSearch
+     * @param movieFinder 
      */
     public EditMovieFrame(MovieInfo movieInfo, ImdbSearch imdbSearch, MovieFinder movieFinder) {
         this.imdbSearch = imdbSearch;
@@ -251,7 +252,7 @@ private void resultsListDoubleClick() {
         }
  }
  
-     private class MovieListCellRenderer extends DefaultListCellRenderer {
+     private static class MovieListCellRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {

@@ -103,13 +103,13 @@ public class ImageCacheImpl implements ImageCache {
     @Override
     public File saveImgToCache(Movie movie) {
         File cached = null;
-        FileOutputStream fos = null;
+        InputStream is = null;
         try {
             URL imgUrl = new URL(movie.getImgUrl());
             URLConnection urlC = imgUrl.openConnection();
             // Copy resource to local file, use remote file
             // if no local file name specified
-            InputStream is = new BufferedInputStream(imgUrl.openStream());
+            is = new BufferedInputStream(imgUrl.openStream());
             // Print info about resource
             Date date = new Date(urlC.getLastModified());
             LOGGER.info("Saving resource (type: " + urlC.getContentType() + ", modified on: " + date + ")...");
@@ -121,11 +121,11 @@ public class ImageCacheImpl implements ImageCache {
         } catch (IOException ex) {
             LOGGER.error("Could not save image", ex);
         } finally {
-            if (fos != null) {
+            if (is != null) {
                 try {
-                    fos.close();
+                    is.close();
                 } catch (IOException ex) {
-                    LOGGER.error("Could not close output stream", ex);
+                    LOGGER.error("Could not close input stream", ex);
                 }
             }
         }
