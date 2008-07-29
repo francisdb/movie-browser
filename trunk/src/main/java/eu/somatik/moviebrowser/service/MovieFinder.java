@@ -19,7 +19,6 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
-import eu.somatik.moviebrowser.cache.ImageCacheImpl;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
@@ -63,7 +62,6 @@ public class MovieFinder {
      * @param imdbParser
      * @param imdbSearch
      * @param httpLoader
-     * @param imageCache 
      */
     @Inject
     public MovieFinder(
@@ -74,8 +72,7 @@ public class MovieFinder {
             final MovieNameExtractor movieNameExtractor,
             final @Imdb Parser imdbParser,
             final ImdbSearch imdbSearch,
-            final HttpLoader httpLoader,
-            final ImageCacheImpl imageCache) {
+            final HttpLoader httpLoader) {
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
         this.movieCache = movieCache;
