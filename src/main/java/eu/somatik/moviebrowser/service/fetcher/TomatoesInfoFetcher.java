@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.module.RottenTomatoes;
-import eu.somatik.moviebrowser.service.HttpLoader;
+import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.parser.Parser;
 import java.io.IOException;
@@ -23,10 +23,10 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesInfoFetcher.class);
 
     private Parser tomatoesParser;
-    private final HttpLoader httpLoader;
+    private final HttpSourceLoader httpLoader;
 
     @Inject
-    public TomatoesInfoFetcher(final @RottenTomatoes Parser tomatoesParser, final HttpLoader httpLoader) {
+    public TomatoesInfoFetcher(final @RottenTomatoes Parser tomatoesParser, final HttpSourceLoader httpLoader) {
         this.httpLoader = httpLoader;
         this.tomatoesParser = tomatoesParser;
     }
@@ -35,7 +35,7 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     public void fetch(Movie movie) {
         if (!"".equals(movie.getImdbId())) {
             try {
-                Source source = httpLoader.fetch(MovieFinder.generateTomatoesUrl(movie));
+                Source source = httpLoader.load(MovieFinder.generateTomatoesUrl(movie));
                 //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
                 source.fullSequentialParse();
 

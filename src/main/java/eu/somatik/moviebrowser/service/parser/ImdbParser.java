@@ -6,7 +6,7 @@ import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.cache.MovieCacheImpl;
+import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.Movie;
@@ -24,10 +24,10 @@ public class ImdbParser implements Parser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImdbParser.class);
     
-    private final MovieCacheImpl movieCache;
+    private final MovieCache movieCache;
 
     @Inject
-    public ImdbParser(MovieCacheImpl movieCache) {
+    public ImdbParser(MovieCache movieCache) {
         this.movieCache = movieCache;
     }
 
@@ -59,11 +59,11 @@ public class ImdbParser implements Parser {
                 movie.setImgUrl(imgUrl);
             }
             String href = linkElement.getAttributeValue("href");
-            if (href != null && href.startsWith("/Sections/Genres/")) {
+            if (href != null && href.contains("/Sections/Genres/")) {
                 Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().getTextExtractor().toString());
                 movie.addGenre(genre);
             }
-            if (href != null && href.startsWith("/Sections/Languages/")) {
+            if (href != null && href.contains("/Sections/Languages/")) {
                 Language language = movieCache.getOrCreateLanguage(linkElement.getContent().getTextExtractor().toString());
                 movie.addLanguage(language);
             }

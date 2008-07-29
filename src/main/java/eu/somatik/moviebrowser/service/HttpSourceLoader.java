@@ -15,7 +15,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
  *
  * @author francisdb
  */
-public class HttpLoader {
+public class HttpSourceLoader implements SourceLoader {
     
     /**
      * Loads a http request and parses it to a jericho source
@@ -23,7 +23,8 @@ public class HttpLoader {
      * @return
      * @throws java.io.IOException
      */
-    public Source fetch(String url) throws IOException {
+    @Override
+    public Source load(String url) throws IOException {
         HttpClient client = new HttpClient();
         Source source = null;
         HttpMethod method = null;

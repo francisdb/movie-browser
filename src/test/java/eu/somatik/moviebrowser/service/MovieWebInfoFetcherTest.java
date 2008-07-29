@@ -20,7 +20,7 @@ public class MovieWebInfoFetcherTest {
 
 
     /**
-     * Test of fetch method, of class MovieWebInfoFetcher.
+     * Test of load method, of class MovieWebInfoFetcher.
      */
     @Test
     @Ignore
@@ -30,7 +30,7 @@ public class MovieWebInfoFetcherTest {
         movie.setTitle("Pulp Fiction");
         movieInfo.setMovie(movie);
         MovieWebParser parser = new MovieWebParser();
-        MovieWebInfoFetcher fetcher = new MovieWebInfoFetcher(parser, new HttpLoader());
+        MovieWebInfoFetcher fetcher = new MovieWebInfoFetcher(parser, new HttpSourceLoader());
         fetcher.fetch(movieInfo.getMovie());
         assertNotNull("MovieWebStars is null", movie.getMovieWebScore());
     }
