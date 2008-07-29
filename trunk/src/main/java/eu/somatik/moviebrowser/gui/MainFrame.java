@@ -163,7 +163,7 @@ public class MainFrame extends javax.swing.JFrame {
         clearCacheMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Somatik.be movie browser");
+        setTitle("Movie browser");
         setName("mainFrame"); // NOI18N
 
         jSplitPane1.setBorder(null);
