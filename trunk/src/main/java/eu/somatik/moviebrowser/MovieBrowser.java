@@ -22,6 +22,7 @@ import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
+import java.lang.Thread.UncaughtExceptionHandler;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -92,14 +93,7 @@ public class MovieBrowser {
     }
     
     private void configureExceptionhandling(){
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-
-            @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
-                LOGGER.error("Uncaught exception in thread " + thread.getName(), ex);
-            }
-        });
-
+        Thread.setDefaultUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
     }
 
     private void start() {
@@ -140,6 +134,14 @@ public class MovieBrowser {
 
     public ImdbSearch getImdbSearch() {
         return imdbSearch;
+    }
+
+    private static class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(Thread thread, Throwable ex) {
+            LOGGER.error("Uncaught exception in thread " + thread.getName(), ex);
+        }
     }
     
     
