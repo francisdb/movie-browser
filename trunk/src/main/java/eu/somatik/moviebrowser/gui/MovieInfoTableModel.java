@@ -29,13 +29,16 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     private final ScoreCalculator calculator;
     
+    public static final String MOVIE_COLUMN_NAME = "Movie";
+    public static final String STATUS_COLUMN_NAME = "?";
+    
     /**
      * Movie column number
      */
     public static final int MOVIE_COL = 1;
     private static final String COL_NAMES[] = {
-        "?",
-        "Movie",
+        STATUS_COLUMN_NAME,
+        MOVIE_COLUMN_NAME,
         "Year",
         "Date",
         "Runtime",
