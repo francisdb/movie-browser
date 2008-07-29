@@ -50,7 +50,7 @@ public class MovieFinder {
     private final MovieCacheImpl movieCache;
     private final Parser imdbParser;
     private final ImdbSearch imdbSearch;
-    private final HttpLoader httpLoader;
+    private final HttpSourceLoader httpLoader;
 
     /**
      * Creates a new instance of MovieFinder
@@ -72,7 +72,7 @@ public class MovieFinder {
             final MovieNameExtractor movieNameExtractor,
             final @Imdb Parser imdbParser,
             final ImdbSearch imdbSearch,
-            final HttpLoader httpLoader) {
+            final HttpSourceLoader httpLoader) {
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
         this.movieCache = movieCache;
@@ -240,7 +240,7 @@ public class MovieFinder {
         movieInfo.getMovie().setUrl(url);
         movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]", "").trim());
 
-        Source source = httpLoader.fetch(generateImdbUrl(movieInfo.getMovie()));
+        Source source = httpLoader.load(generateImdbUrl(movieInfo.getMovie()));
 
         return parseImdbHtml(source, movieInfo);
 
@@ -256,7 +256,7 @@ public class MovieFinder {
                 //use the first link
                 Movie firstMovie = movies.get(0);
                 movieInfo.getMovie().setImdbId(firstMovie.getImdbId());
-                source = httpLoader.fetch(generateImdbUrl(firstMovie));
+                source = httpLoader.load(generateImdbUrl(firstMovie));
             }
         }
         imdbParser.parse(source, movieInfo.getMovie());

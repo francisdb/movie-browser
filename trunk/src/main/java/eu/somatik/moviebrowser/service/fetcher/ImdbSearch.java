@@ -5,7 +5,7 @@ import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.service.HttpLoader;
+import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -24,10 +24,10 @@ import org.slf4j.LoggerFactory;
 public class ImdbSearch {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImdbSearch.class);
-    private final HttpLoader httpLoader;
+    private final HttpSourceLoader httpLoader;
 
     @Inject
-    public ImdbSearch(HttpLoader httpLoader) {
+    public ImdbSearch(HttpSourceLoader httpLoader) {
         this.httpLoader = httpLoader;
     }
 
@@ -102,7 +102,7 @@ public class ImdbSearch {
     }
 
     public List<Movie> getResults(String search) throws Exception {
-        Source source = httpLoader.fetch(generateImdbSearchUrl(search));
+        Source source = httpLoader.load(generateImdbSearchUrl(search));
         return getResults(source);
     }
 

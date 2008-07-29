@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.module.MovieWeb;
-import eu.somatik.moviebrowser.service.HttpLoader;
+import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.service.parser.Parser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -31,7 +31,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieWebInfoFetcher.class);
 
     private final Parser movieWebInfoParser;
-    private final HttpLoader httpLoader;
+    private final HttpSourceLoader httpLoader;
 
     /**
      * Creates a new MovieWebInfoFetcher
@@ -39,7 +39,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
      * @param httpLoader 
      */
     @Inject
-    public MovieWebInfoFetcher(final @MovieWeb Parser movieWebInfoParser, final HttpLoader httpLoader) {
+    public MovieWebInfoFetcher(final @MovieWeb Parser movieWebInfoParser, final HttpSourceLoader httpLoader) {
         this.movieWebInfoParser = movieWebInfoParser;
         this.httpLoader = httpLoader;
     }
@@ -47,7 +47,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
     @Override
     public void fetch(Movie movie) {
         try {
-            Source source = httpLoader.fetch(createMovieWebSearchUrl(movie));
+            Source source = httpLoader.load(createMovieWebSearchUrl(movie));
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
             source.fullSequentialParse();
 
@@ -73,7 +73,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             if (movieUrl == null) {
                 throw new IOException("Movie not found on MovieWeb");
             }
-            source = httpLoader.fetch(movieUrl);
+            source = httpLoader.load(movieUrl);
             movieWebInfoParser.parse(source, movie);
         } catch (IOException ex) {
             LOGGER.error("Loading from MovieWeb failed", ex);
