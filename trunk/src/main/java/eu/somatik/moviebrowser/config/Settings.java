@@ -120,7 +120,7 @@ public class Settings {
         return folderSettings;
     }
 
-    private static File getSettingsDir() {
+    public static File getSettingsDir() {
         File settingsDir = new File(System.getProperty("user.home"), SETTINGS_DIR);
         if (!settingsDir.exists()) {
             settingsDir.mkdirs();

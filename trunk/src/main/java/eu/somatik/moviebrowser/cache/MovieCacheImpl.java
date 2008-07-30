@@ -10,10 +10,14 @@ package eu.somatik.moviebrowser.cache;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.Movie;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -49,7 +53,10 @@ public class MovieCacheImpl implements MovieCache {
     @Override
     public void startup() {
         LOGGER.info("Starting up the cache.");
-        this.emf = Persistence.createEntityManagerFactory("movies-hibernate");
+        Map<String,String> props = new HashMap<String,String>();
+        String databaseLocation = Settings.getSettingsDir()+File.separator+"database/moviecache";
+        props.put("hibernate.connection.url", "jdbc:hsqldb:file:"+databaseLocation+";shutdown=true");
+        this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
         this.movieDAO = new MovieDAO(emf);
     }
 
