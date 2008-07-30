@@ -36,32 +36,40 @@ public class ImdbSearch {
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
         String title = titleElement.getContent().getTextExtractor().toString();
         if (title.contains("IMDb") && title.contains("Search")) {
-
-            List<?> linkElements = source.findAllElements(HTMLElementName.A);
-            Element linkElement;
-            Movie movie;
-            Iterator<?> i = linkElements.iterator();
-            Set<String> ids = new HashSet<String>();
-            while (i.hasNext()) {
-                movie = new Movie();
-                linkElement = (Element) i.next();
-                String href = linkElement.getAttributeValue("href");
-                if (href != null && href.startsWith("/title/tt")) {
-                    int questionMarkIndex = href.indexOf('?');
-                    if (questionMarkIndex != -1) {
-                        href = href.substring(0, questionMarkIndex);
-                    }
-                    movie.setUrl("http://www.imdb.com" + href);
-                    movie.setImdbId(href.replaceAll("[a-zA-Z:/.+=?]", "").trim());
-                    movie.setTitle(linkElement.getTextExtractor().toString());
-                    // only add if not allready in the list
-                    if (movie.getTitle().length() > 0 && !ids.contains(movie.getImdbId())) {
-                        ids.add(movie.getImdbId());
-                        results.add(movie);
+            List<?> tableElements = source.findAllElements(HTMLElementName.TD);
+            Element tableElement;
+            Iterator<?> j = tableElements.iterator();
+            while(j.hasNext()) {
+                tableElement = (Element) j.next();
+                //System.out.println(tableElement.getTextExtractor().toString());
+                String newList = tableElement.getChildElements().toString();
+                Source newSource = new Source(newList);
+                List<?> linkElements = newSource.findAllElements(HTMLElementName.A);
+                Element linkElement;
+                Movie movie;
+                Iterator<?> i = linkElements.iterator();
+                Set<String> ids = new HashSet<String>();
+                while ((i.hasNext()) && (!tableElement.getTextExtractor().toString().startsWith("Media from")) && (!tableElement.getTextExtractor().toString().startsWith(" ")) && (!tableElement.getTextExtractor().toString().endsWith("...)"))) {
+                    movie = new Movie();
+                    linkElement = (Element) i.next();
+                    String href = linkElement.getAttributeValue("href");
+                    if (href != null && href.startsWith("/title/tt")) {
+                        int questionMarkIndex = href.indexOf('?');
+                        if (questionMarkIndex != -1) {
+                            href = href.substring(0, questionMarkIndex);
+                        }
+                        movie.setUrl("http://www.imdb.com" + href);
+                        movie.setImdbId(href.replaceAll("[a-zA-Z:/.+=?]", "").trim());
+                        movie.setTitle(tableElement.getTextExtractor().toString());
+                        // only add if not allready in the list
+                        if (movie.getTitle().length() > 0 && !ids.contains(movie.getImdbId())) {
+                            ids.add(movie.getImdbId());
+                            results.add(movie);
+                        }
                     }
                 }
             }
-
+            
         }else{
             
             //Assume it's a perfect result, therefore get first /title/tt link.
