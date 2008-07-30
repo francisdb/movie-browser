@@ -10,12 +10,12 @@
   
   <appender name="FILE-ROLLING"
     class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>moviebrowser.log</file>
+    <file>${user.home}/.moviebrowser/moviebrowser.log</file>
 
     <rollingPolicy
       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <FileNamePattern>
-        moviebrowser-%d{yyyy-MM-dd-HH-mm-ss}.log
+        ${user.home}/.moviebrowser/moviebrowser-%d{yyyy-MM-dd-HH-mm-ss}.log
       </FileNamePattern>
     </rollingPolicy>
 
@@ -27,11 +27,12 @@
   </appender>
   
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <File>moviebrowser.log</File>
+    <File>${user.home}/.moviebrowser/moviebrowser.log</File>
     <Append>true</Append>
 		
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>
+       <!-- <Pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>-->
+      <Pattern>%date [%thread] %-5level %logger{35} - %msg%n</Pattern>
     </layout>
   </appender>
 
