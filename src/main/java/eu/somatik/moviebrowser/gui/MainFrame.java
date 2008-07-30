@@ -41,9 +41,12 @@ import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +62,11 @@ public class MainFrame extends javax.swing.JFrame {
     private final MovieBrowser browser;
     private final ImageCache imageCache;
 
+    private JButton imdbButton;
+    private JButton tomatoesButton;
+    private JButton moviewebButton;
+    private JButton omdbButton;
+    
     /** 
      * Creates new form MainFrame
      * @param browser
@@ -75,6 +83,9 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         movieTable.setModel(new MovieInfoTableModel());
         setColumnWidths();
+        addIcons();
+       
+        
         this.setVisible(true);
     }
     
@@ -83,7 +94,67 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
         movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setPreferredWidth(150);
     }
+    
+    private void addIcons() {
+        buttonPanel.setLayout(new FlowLayout());
+       
+        imdbButton = new JButton(loadIcon("images/16/imdb.png"));
+        imdbButton.setToolTipText("Open on imdb website");
+        imdbButton.addActionListener(new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(imdbButton);
+            }
+        });
+        buttonPanel.add(imdbButton);
+        tomatoesButton = new JButton(loadIcon("images/16/rottentomatoes.png"));
+        tomatoesButton.setToolTipText("Open on rottentomatoes website");
+        tomatoesButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(tomatoesButton);
+            }
+        });
+        buttonPanel.add(tomatoesButton);
+        moviewebButton = new JButton(loadIcon("images/16/movieweb.png"));
+        moviewebButton.setToolTipText("Open on movieweb website");
+        moviewebButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(moviewebButton);
+            }
+        });
+        buttonPanel.add(moviewebButton);
+        omdbButton = new JButton(loadIcon("images/16/omdb.png"));
+        omdbButton.setToolTipText("Open on omdb website");
+        omdbButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(omdbButton);
+            }
+        });
+        buttonPanel.add(omdbButton);
+    }
+
+    private void openLinkFor(JButton button) {
+        String link = button.getActionCommand();
+        if (link != null && link.length() > 0) {
+            try {
+                Desktop.getDesktop().browse(new URI(link));
+            } catch (URISyntaxException ex) {
+                LOGGER.error("Failed launching default browser for " + link, ex);
+            } catch (IOException ex) {
+                LOGGER.error("Failed launching default browser for " + link, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "No movie selected or no link found", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     /**
      * Makes the frame ready for use
      */
@@ -148,11 +219,10 @@ public class MainFrame extends javax.swing.JFrame {
         movieTableScrollPane = new javax.swing.JScrollPane();
         movieTable = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        imdbHyperlink = new org.jdesktop.swingx.JXHyperlink();
-        tomatoesHyperlink = new org.jdesktop.swingx.JXHyperlink();
         jScrollPane2 = new javax.swing.JScrollPane();
         infoTextPane = new javax.swing.JTextPane();
         movieHeader = new org.jdesktop.swingx.JXHeader();
+        buttonPanel = new javax.swing.JPanel();
         loadProgressBar = new javax.swing.JProgressBar();
         infoLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -167,8 +237,10 @@ public class MainFrame extends javax.swing.JFrame {
         setName("mainFrame"); // NOI18N
 
         jSplitPane1.setBorder(null);
-        jSplitPane1.setDividerLocation(500);
+        jSplitPane1.setDividerLocation(530);
         jSplitPane1.setResizeWeight(1.0);
+        jSplitPane1.setContinuousLayout(true);
+        jSplitPane1.setOneTouchExpandable(true);
 
         movieTable.setAutoCreateRowSorter(true);
         movieTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -202,23 +274,22 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(movieTableScrollPane);
 
-        imdbHyperlink.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                imdbHyperlinkActionPerformed(evt);
-            }
-        });
-
-        tomatoesHyperlink.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tomatoesHyperlinkActionPerformed(evt);
-            }
-        });
-
         jScrollPane2.setViewportView(infoTextPane);
 
         movieHeader.setDescription("");
         movieHeader.setTitle("");
         movieHeader.setToolTipText("Movie info");
+
+        javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
+        buttonPanel.setLayout(buttonPanelLayout);
+        buttonPanelLayout.setHorizontalGroup(
+            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 420, Short.MAX_VALUE)
+        );
+        buttonPanelLayout.setVerticalGroup(
+            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 25, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -227,21 +298,18 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(movieHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
-                    .addComponent(imdbHyperlink, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
-                    .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(movieHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(movieHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(imdbHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tomatoesHyperlink, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -292,22 +360,22 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(infoLabel))
+                    .addComponent(infoLabel)
+                    .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -326,26 +394,6 @@ public class MainFrame extends javax.swing.JFrame {
             LOGGER.debug("No Selection ");
         }
 }//GEN-LAST:event_importMenuItemActionPerformed
-
-    private void tomatoesHyperlinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tomatoesHyperlinkActionPerformed
-        try {
-            Desktop.getDesktop().browse(new URI(tomatoesHyperlink.getText()));
-        } catch (URISyntaxException ex) {
-            LOGGER.error("Failed launching default browser for " + tomatoesHyperlink.getText(), ex);
-        } catch (IOException ex) {
-            LOGGER.error("Failed launching default browser for " + tomatoesHyperlink.getText(), ex);
-        }
-    }//GEN-LAST:event_tomatoesHyperlinkActionPerformed
-
-    private void imdbHyperlinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imdbHyperlinkActionPerformed
-        try {
-            Desktop.getDesktop().browse(new URI(imdbHyperlink.getText()));
-        } catch (URISyntaxException ex) {
-            LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText(), ex);
-        } catch (IOException ex) {
-            LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText(), ex);
-        }
-    }//GEN-LAST:event_imdbHyperlinkActionPerformed
 
 private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearListMenuItemActionPerformed
     clearTableList();
@@ -520,8 +568,11 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             movieHeader.setTitle(info.getMovie().getTitle());
         }
         movieHeader.setDescription(info.getMovie().getPlot());
-        imdbHyperlink.setText(MovieFinder.generateImdbUrl(info.getMovie()));
-        tomatoesHyperlink.setText(MovieFinder.generateTomatoesUrl(info.getMovie()));
+        imdbButton.setActionCommand(MovieFinder.generateImdbUrl(info.getMovie()));
+        tomatoesButton.setActionCommand(MovieFinder.generateTomatoesUrl(info.getMovie()));
+        // TODO save and use these links
+        moviewebButton.setActionCommand("");
+        omdbButton.setActionCommand("");
         
         StringBuilder builder = new StringBuilder();
 
@@ -593,12 +644,13 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            String url = imdbButton.getActionCommand() + "trailers";
             try {
-                Desktop.getDesktop().browse(new URI(imdbHyperlink.getText() + "trailers"));
+                Desktop.getDesktop().browse(new URI(url));
             } catch (URISyntaxException ex) {
-                LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText() + "trailers", ex);
+                LOGGER.error("Failed launching default browser for " + url, ex);
             } catch (IOException ex) {
-                LOGGER.error("Failed launching default browser for " + imdbHyperlink.getText() + "trailers", ex);
+                LOGGER.error("Failed launching default browser for " + url, ex);
             }
         }
     }
@@ -690,9 +742,9 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel buttonPanel;
     private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
-    private org.jdesktop.swingx.JXHyperlink imdbHyperlink;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JTextPane infoTextPane;
@@ -705,7 +757,6 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
     private javax.swing.JScrollPane movieTableScrollPane;
-    private org.jdesktop.swingx.JXHyperlink tomatoesHyperlink;
     private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables
     
