@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -694,7 +695,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         public void actionPerformed(ActionEvent e) {
             //TO DO:
             //JOptionPane.showMessageDialog(MainFrame.this, "Subtitle Crawler Coming Soon.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
-            
+            List files = new ArrayList<String>();
             MovieInfo info = getSelectedMovie(); 
             File dir = info.getDirectory();
             for(File file:dir.listFiles()) {
@@ -702,16 +703,25 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     File child = file;
                     for(File file2:child.listFiles()) {
                         if(file2.isFile()) {
-                            checkFileType(file2);
+                            if(!file2.getName().contains("sample")) {
+                                if(checkFileType(file2)) {
+                                    files.add(file2.getName());
+                                }
+                            }
                         }
                     }
                 }
                 else {
                     if(file.isFile()) {
-                        checkFileType(file);
+                        if(!file.getName().contains("sample")) {
+                            if(checkFileType(file)) {
+                                files.add(file.getName());
+                            }
+                        }
                     }
                 }
             }            
+            openSubCrawler(files);
         }
     }
     
@@ -719,36 +729,35 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * Checks what type of file is found and if video file is found, calls openSubCrawler
      * @param fileName
      */
-    private void checkFileType(File file) {
+    private Boolean checkFileType(File file) {
         String fileType = file.getName().substring((file.getName().length()-4), file.getName().length());
-        String fileName = file.getName().substring(0,(file.getName().length()-4));
-        if(fileName.endsWith(".")) {
-            fileName = fileName.substring(0, (fileName.length()-1));
-        }
  
         if(fileType.equals(".avi")) {
-            openSubCrawler(fileName);
+            return true;
         }
         else if(fileType.equals(".mpg")) {
-            openSubCrawler(fileName);
+            return true;
         }
         else if(fileType.equals(".mp4")) {
-            openSubCrawler(fileName);
+            return true;
         }        
         else if(fileType.equals("divx")) {
-            openSubCrawler(fileName);
+            return true;
         }
         else if(fileType.equals(".mkv")) {
-            openSubCrawler(fileName);
+            return true;
         }
         else if(fileType.equals("xvid")) {
-            openSubCrawler(fileName);
+            return true;
         }
         else if(fileType.equals("mpeg")) {
-            openSubCrawler(fileName);
+            return true;
         }
         else if(fileType.equals("m4v")) {
-            openSubCrawler(fileName);
+            return true;
+        }
+        else {
+            return false;
         }
     }
     
@@ -756,8 +765,8 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * Loads SubtitleCrawlerFrame
      * @param fileName
      */
-    private void openSubCrawler(String fileName) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(fileName);
+    private void openSubCrawler(List<String> file) {
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }
