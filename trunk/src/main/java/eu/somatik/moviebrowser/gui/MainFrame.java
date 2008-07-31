@@ -728,28 +728,28 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         
         System.out.println(fileType);
         System.out.println(fileName);
-        if(fileType==".avi") {
+        if(fileType.equals(".avi")) {
             openSubCrawler(fileName);
         }
-        else if(fileType==".mpg") {
+        else if(fileType.equals(".mpg")) {
             openSubCrawler(fileName);
         }
-        else if(fileType==".mp4") {
+        else if(fileType.equals(".mp4")) {
             openSubCrawler(fileName);
         }        
-        else if(fileType=="divx") {
+        else if(fileType.equals("divx")) {
             openSubCrawler(fileName);
         }
-        else if(fileType==".mkv") {
+        else if(fileType.equals(".mkv")) {
             openSubCrawler(fileName);
         }
-        else if(fileType=="xvid") {
+        else if(fileType.equals("xvid")) {
             openSubCrawler(fileName);
         }
-        else if(fileType=="mpeg") {
+        else if(fileType.equals("mpeg")) {
             openSubCrawler(fileName);
         }
-        else if(fileType=="m4v") {
+        else if(fileType.equals("m4v")) {
             openSubCrawler(fileName);
         }
     }
