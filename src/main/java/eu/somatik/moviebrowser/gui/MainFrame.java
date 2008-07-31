@@ -455,6 +455,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             JPopupMenu popup = new JPopupMenu();
             popup.add(new TrailerAction());
             popup.add(new WatchSampleAction());
+            popup.add(new CrawlSubtitleAction());
             popup.add(new EditAction());
             LOGGER.info("Showing popup");
             popup.show(evt.getComponent(), evt.getX(), evt.getY());
@@ -618,7 +619,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private class EditAction extends AbstractAction {
 
         public EditAction() {
-            super("Edit");
+            super("Edit", loadIcon("images/16/edit.png"));
         }
 
         @Override
@@ -678,6 +679,18 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
             }
+        }
+    }
+    
+    private class CrawlSubtitleAction extends AbstractAction {
+        public CrawlSubtitleAction() {
+            super("Subtitle Crawler", loadIcon("images/16/subtitles.png"));
+        }
+        
+        @Override 
+        public void actionPerformed(ActionEvent e) {
+            //TO DO:
+            JOptionPane.showMessageDialog(null, "Subtitle Crawler Coming Soon.", "Coming Soon", evt, JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
