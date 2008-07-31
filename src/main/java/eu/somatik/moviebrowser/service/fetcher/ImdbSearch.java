@@ -49,7 +49,7 @@ public class ImdbSearch {
                 Movie movie;
                 Iterator<?> i = linkElements.iterator();
                 Set<String> ids = new HashSet<String>();
-                while ((i.hasNext()) && (!tableElement.getTextExtractor().toString().startsWith("Media from")) && (!tableElement.getTextExtractor().toString().startsWith(" ")) && (!tableElement.getTextExtractor().toString().endsWith("...)"))) {
+                while ((i.hasNext()) && (!tableElement.getTextExtractor().toString().startsWith("Media from")) && (!tableElement.getTextExtractor().toString().startsWith(" ")) && (!tableElement.getTextExtractor().toString().endsWith("Update your search preferences.")) && (!tableElement.getTextExtractor().toString().endsWith("...)"))) {
                     movie = new Movie();
                     linkElement = (Element) i.next();
                     String href = linkElement.getAttributeValue("href");
