@@ -725,9 +725,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         if(fileName.endsWith(".")) {
             fileName = fileName.substring(0, (fileName.length()-1));
         }
-        
-        System.out.println(fileType);
-        System.out.println(fileName);
+ 
         if(fileType.equals(".avi")) {
             openSubCrawler(fileName);
         }
@@ -758,8 +756,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * Loads SubtitleCrawlerFrame
      * @param fileName
      */
-    public void openSubCrawler(String fileName) {
-        System.out.println("Testing");
+    private void openSubCrawler(String fileName) {
         SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(fileName);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
