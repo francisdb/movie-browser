@@ -698,6 +698,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             List files = new ArrayList<String>();
             MovieInfo info = getSelectedMovie(); 
             File dir = info.getDirectory();
+            String alternateSearchKey = getSelectedMovie().toString();
             for(File file:dir.listFiles()) {
                 if(file.isDirectory()) {
                     File child = file;
@@ -720,7 +721,8 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                         }
                     }
                 }
-            }            
+            }
+            files.add(alternateSearchKey);
             openSubCrawler(files);
         }
     }

@@ -21,7 +21,6 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Subtitle Crawler (" + files.toString() + ")");
         crawl(files);
-        searchText.setText("");
         searchButton.setEnabled(false);
         
     }
