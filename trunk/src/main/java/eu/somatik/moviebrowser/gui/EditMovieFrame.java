@@ -114,6 +114,11 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 resultsListMouseReleased(evt);
             }
         });
+        resultsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                resultsListValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(resultsList);
 
         updateButton.setText("Update");
@@ -224,6 +229,13 @@ private void resultsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
 private void resultsListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultsListMouseReleased
 }//GEN-LAST:event_resultsListMouseReleased
+
+private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_resultsListValueChanged
+    Movie movie = (Movie) resultsList.getSelectedValue();   
+    String tooltip = "You have selected " + movie.getTitle();
+    resultsList.setToolTipText(tooltip + ". Double click selection to go to the IMDB page or click Update button to update.");
+    updateButton.setToolTipText(tooltip + ". Click here to update.");
+}//GEN-LAST:event_resultsListValueChanged
 
 private void resultsListDoubleClick() {
     Movie movie = (Movie) resultsList.getSelectedValue();
