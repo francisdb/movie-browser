@@ -690,7 +690,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         @Override 
         public void actionPerformed(ActionEvent e) {
             //TO DO:
-            JOptionPane.showMessageDialog(null, "Subtitle Crawler Coming Soon.", "Coming Soon", evt, JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Subtitle Crawler Coming Soon.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
