@@ -682,6 +682,9 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
     }
     
+    /**
+     * This action opens the SubtitleCrawlerFrame if a video file is found in the directory. 
+     */
     private class CrawlSubtitleAction extends AbstractAction {
         public CrawlSubtitleAction() {
             super("Subtitle Crawler", loadIcon("images/16/subtitles.png"));
@@ -690,8 +693,76 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         @Override 
         public void actionPerformed(ActionEvent e) {
             //TO DO:
-            JOptionPane.showMessageDialog(null, "Subtitle Crawler Coming Soon.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+            //JOptionPane.showMessageDialog(MainFrame.this, "Subtitle Crawler Coming Soon.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+            
+            MovieInfo info = getSelectedMovie(); 
+            File dir = info.getDirectory();
+            for(File file:dir.listFiles()) {
+                if(file.isDirectory()) {
+                    File child = file;
+                    for(File file2:child.listFiles()) {
+                        if(file2.isFile()) {
+                            checkFileType(file2);
+                        }
+                    }
+                }
+                else {
+                    if(file.isFile()) {
+                        checkFileType(file);
+                    }
+                }
+            }            
         }
+    }
+    
+    /**
+     * Checks what type of file is found and if video file is found, calls openSubCrawler
+     * @param fileName
+     */
+    private void checkFileType(File file) {
+        String fileType = file.getName().substring((file.getName().length()-4), file.getName().length());
+        String fileName = file.getName().substring(0,(file.getName().length()-4));
+        if(fileName.endsWith(".")) {
+            fileName = fileName.substring(0, (fileName.length()-1));
+        }
+        
+        System.out.println(fileType);
+        System.out.println(fileName);
+        if(fileType==".avi") {
+            openSubCrawler(fileName);
+        }
+        else if(fileType==".mpg") {
+            openSubCrawler(fileName);
+        }
+        else if(fileType==".mp4") {
+            openSubCrawler(fileName);
+        }        
+        else if(fileType=="divx") {
+            openSubCrawler(fileName);
+        }
+        else if(fileType==".mkv") {
+            openSubCrawler(fileName);
+        }
+        else if(fileType=="xvid") {
+            openSubCrawler(fileName);
+        }
+        else if(fileType=="mpeg") {
+            openSubCrawler(fileName);
+        }
+        else if(fileType=="m4v") {
+            openSubCrawler(fileName);
+        }
+    }
+    
+    /**
+     * Loads SubtitleCrawlerFrame
+     * @param fileName
+     */
+    public void openSubCrawler(String fileName) {
+        System.out.println("Testing");
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(fileName);
+        subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
+        subtitleCrawler.setVisible(true);
     }
     
     /**
