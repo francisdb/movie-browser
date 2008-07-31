@@ -7,6 +7,8 @@
 package eu.somatik.moviebrowser.gui;
 
 import javax.swing.ImageIcon;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  *
@@ -15,11 +17,11 @@ import javax.swing.ImageIcon;
 public class SubtitleCrawlerFrame extends javax.swing.JFrame {
 
     /** Creates new form SubtitleCrawlerFrame */
-    public SubtitleCrawlerFrame(String fileName) {
+    public SubtitleCrawlerFrame(List<String> files) {
         initComponents();
-        this.setTitle("Subtitle Crawler (" + fileName + ")");
-        crawl(fileName);
-        searchText.setText(fileName);
+        this.setTitle("Subtitle Crawler (" + files.toString() + ")");
+        crawl(files);
+        searchText.setText("");
         searchButton.setEnabled(false);
         
     }
@@ -73,7 +75,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         });
         subtitlesTable.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(subtitlesTable);
-        subtitlesTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        subtitlesTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         subtitlesTable.getColumnModel().getColumn(0).setPreferredWidth(5);
         subtitlesTable.getColumnModel().getColumn(1).setMinWidth(20);
         subtitlesTable.getColumnModel().getColumn(2).setPreferredWidth(10);
@@ -114,8 +116,17 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-public void crawl(String fileName) {
-    
+public void crawl(List<String> files) {
+    String fileName;
+    Iterator<String> i = files.iterator();
+    while(i.hasNext()) {
+        fileName = (String) i.next();
+        fileName = fileName.substring(0,(fileName.length()-4));
+        if(fileName.endsWith(".")) {
+            fileName = fileName.substring(0, (fileName.length()-1));
+        }
+        System.out.println(fileName);
+    }
 }
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
