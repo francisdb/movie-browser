@@ -8,6 +8,7 @@ package eu.somatik.moviebrowser.gui;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Desktop;
@@ -71,6 +72,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     }
 
     private void update() {
+        Movie movie = info.getMovie();
         // TODO need better image cache, if loading takes a lot of time the
         // image might be shown after a new movie was selected
         if (info.getImage() == null) {
@@ -83,15 +85,15 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         } else {
             updateImage(info);
         }
-        if (info.getMovie().getTitle() == null) {
+        if (movie.getTitle() == null) {
             movieHeader.setTitle(info.getDirectory().getName());
         } else {
-            movieHeader.setTitle(info.getMovie().getTitle());
+            movieHeader.setTitle(movie.getTitle());
         }
-        movieHeader.setDescription(info.getMovie().getPlot());
+        movieHeader.setDescription(movie.getPlot());
 
-        updateButton(imdbButton, MovieFinder.generateImdbUrl(info.getMovie()));
-        updateButton(tomatoesButton, MovieFinder.generateTomatoesUrl(info.getMovie()));
+        updateButton(imdbButton, MovieFinder.generateImdbUrl(movie));
+        updateButton(tomatoesButton, MovieFinder.generateTomatoesUrl(movie));
         updateButton(moviewebButton, null);
         updateButton(omdbButton, null);
 
@@ -103,10 +105,10 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
         StringBuilder builder = new StringBuilder("<html>");
 
-        builder.append("<h2>").append(info.getMovie().getTitle()).append("</h2><br/>");
+        builder.append("<h2>").append(movie.getTitle()).append("</h2><br/>");
         boolean first = true;
         builder.append("<strong>Genres</strong> ");
-        for (Genre genre : info.getMovie().getGenres()) {
+        for (Genre genre : movie.getGenres()) {
             if (first) {
                 first = false;
             } else {
@@ -117,7 +119,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         builder.append("<br/>");
         builder.append("<strong>Languages</strong> ");
         first = true;
-        for (Language language : info.getMovie().getLanguages()) {
+        for (Language language : movie.getLanguages()) {
             if (first) {
                 first = false;
             } else {
@@ -126,18 +128,26 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             builder.append(language);
         }
         builder.append("<br/>");
-        builder.append("<strong>Runtime</strong> ").append(info.getMovie().getRuntime()).append(" min<br/>");
-        builder.append("<strong>IMDB</strong> ").append(info.getMovie().getImdbScore()).append(" ").append(info.getMovie().getVotes()).append("<br/>");
-        builder.append("<strong>TOMATO</strong> ").append(info.getMovie().getTomatoScore()).append("<br/>");
-        builder.append("<strong>MovieWeb</strong> ").append(info.getMovie().getMovieWebScore()).append("<br/>");
-        builder.append(info.getMovie().getPlot());
+        builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
+        builder.append("<strong>IMDB</strong> ").append(scoreString(movie.getImdbScore())).append(" ").append(movie.getVotes()).append("<br/>");
+        builder.append("<strong>TOMATO</strong> ").append(scoreString(movie.getTomatoScore())).append("<br/>");
+        builder.append("<strong>MovieWeb</strong> ").append(scoreString(movie.getMovieWebScore())).append("<br/>");
+        //builder.append("<strong>OMDB</strong> ").append(scoreString(movie.get)).append("<br/>");
+        builder.append(movie.getPlot());
         builder.append("</html>");
         infoTextPane.setText(builder.toString());
         infoTextPane.setCaretPosition(0);
-
-
+    }
+    
+    private String scoreString(Integer score){
+        String result = "N/A";
+        if(score != null){
+            result = score.toString();
+        }
+        return result;
     }
 
+    
     private void updateImage(MovieInfo info) {
         if (info.getImage() == null) {
             movieHeader.setIcon(null);
