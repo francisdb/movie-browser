@@ -36,9 +36,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
-import eu.somatik.moviebrowser.config.SettingsImpl;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.service.AppleTrailerFinder;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -46,8 +46,7 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -408,7 +407,11 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             source.changeSelection(row, column, false, false);
 
             JPopupMenu popup = new JPopupMenu();
-            popup.add(new TrailerAction());
+            JMenu menu = new JMenu("Trailer");
+            menu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
+            menu.add(new AppleTrailerAction());
+            menu.add(new ImdbTrailerAction());
+            popup.add(menu);
             popup.add(new WatchSampleAction());
             popup.add(new CrawlSubtitleAction());
             popup.add(new EditAction());
@@ -506,10 +509,10 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * This action  tries to show the trailer
      * @param evt
      */
-    private class TrailerAction extends AbstractAction {
+    private class ImdbTrailerAction extends AbstractAction {
 
-        public TrailerAction() {
-            super("IMDB Trailer", iconLoader.loadIcon("images/16/video-x-generic.png"));
+        public ImdbTrailerAction() {
+            super("IMDB Trailer", iconLoader.loadIcon("images/16/imdb.png"));
         }
 
         @Override
@@ -522,6 +525,35 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 LOGGER.error("Failed launching default browser for " + url, ex);
             } catch (IOException ex) {
                 LOGGER.error("Failed launching default browser for " + url, ex);
+            }
+        }
+    }
+    
+     /**
+     * This action tries to show the apple trailer site
+     * @param evt
+     */
+    private class AppleTrailerAction extends AbstractAction {
+
+        public AppleTrailerAction() {
+            super("Apple Trailer", iconLoader.loadIcon("images/16/apple.png"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MovieInfo info = getSelectedMovie();
+            AppleTrailerFinder finder = new AppleTrailerFinder();
+            String url = finder.findTrailerUrl(info.getMovie());
+            if(url == null){
+                JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.apple.com");
+            }else{
+                try {
+                    Desktop.getDesktop().browse(new URI(url));
+                } catch (URISyntaxException ex) {
+                    LOGGER.error("Failed launching default browser for " + url, ex);
+                } catch (IOException ex) {
+                    LOGGER.error("Failed launching default browser for " + url, ex);
+                }
             }
         }
     }
