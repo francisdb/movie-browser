@@ -129,9 +129,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
         builder.append("<br/>");
         builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
-        builder.append("<strong>IMDB</strong> ").append(scoreString(movie.getImdbScore())).append("% ").append(movie.getVotes()).append("<br/>");
-        builder.append("<strong>TOMATO</strong> ").append(scoreString(movie.getTomatoScore())).append("%<br/>");
-        builder.append("<strong>MovieWeb</strong> ").append(scoreString(movie.getMovieWebScore())).append("%<br/>");
+        builder.append("<strong>IMDB</strong> ").append(scoreString(movie.getImdbScore())).append(" ").append(movie.getVotes()).append("<br/>");
+        builder.append("<strong>TOMATO</strong> ").append(scoreString(movie.getTomatoScore())).append("<br/>");
+        builder.append("<strong>MovieWeb</strong> ").append(scoreString(movie.getMovieWebScore())).append("<br/>");
         //builder.append("<strong>OMDB</strong> ").append(scoreString(movie.get)).append("%<br/>");
         builder.append(movie.getPlot());
         builder.append("</html>");
@@ -142,7 +142,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private String scoreString(Integer score){
         String result = "N/A";
         if(score != null){
-            result = score.toString();
+            result = score.toString()+"%";
         }
         return result;
     }
