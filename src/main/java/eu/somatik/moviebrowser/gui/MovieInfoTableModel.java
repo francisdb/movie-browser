@@ -31,6 +31,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     public static final String MOVIE_COLUMN_NAME = "Movie";
     public static final String STATUS_COLUMN_NAME = "?";
+    public static final String SCORE_COLUMN_NAME = "Score";
     
     /**
      * Movie column number
@@ -42,7 +43,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Year",
         "Date",
         "Runtime",
-        "Score",
+        SCORE_COLUMN_NAME,
         "IMDB",
         "Tomato",
         "MWeb"
