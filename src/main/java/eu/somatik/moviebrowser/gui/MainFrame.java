@@ -699,7 +699,12 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             Integer score = (Integer) value;
             if(score != null){
-                this.setBackground(colors[score]);
+                
+                if(isSelected){
+                    this.setBackground(colors[score].darker());
+                }else{
+                    this.setBackground(colors[score]);
+                }
             }
             return this;
         }
