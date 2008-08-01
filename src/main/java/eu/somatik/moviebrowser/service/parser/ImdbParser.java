@@ -39,6 +39,11 @@ public class ImdbParser implements Parser {
         if (titleYear.endsWith(")")) {
             int index = titleYear.lastIndexOf("(");
             String year = titleYear.substring(index + 1, titleYear.length() - 1);
+            // get rid of the /I in for example "1998/I"
+            int slashIndex = year.indexOf('/');
+            if(slashIndex != -1){
+                year = year.substring(0, slashIndex);
+            }
             try {
                 movie.setYear(Integer.valueOf(year));
             } catch (NumberFormatException ex) {
