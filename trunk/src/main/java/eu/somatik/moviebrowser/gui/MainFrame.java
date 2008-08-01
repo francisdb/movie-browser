@@ -8,7 +8,6 @@ package eu.somatik.moviebrowser.gui;
 import eu.somatik.moviebrowser.*;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.ImageIcon;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -37,17 +36,12 @@ import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
 import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,100 +56,41 @@ public class MainFrame extends javax.swing.JFrame {
     private File selectedFile;
     private final MovieBrowser browser;
     private final ImageCache imageCache;
+    private final IconLoader iconLoader;
+    private final MovieInfoPanel movieInfoPanel;
 
-    private JButton imdbButton;
-    private JButton tomatoesButton;
-    private JButton moviewebButton;
-    private JButton omdbButton;
-    
     /** 
      * Creates new form MainFrame
      * @param browser
-     * @param imageCache 
+     * @param imageCache
+     * @param iconLoader 
      */
     @Inject
-    public MainFrame(final MovieBrowser browser, final ImageCache imageCache) {
+    public MainFrame(final MovieBrowser browser, final ImageCache imageCache, final IconLoader iconLoader) {
         this.browser = browser;
         this.imageCache = imageCache;
-        this.setIconImage(loadIcon("images/32/video-x-generic.png").getImage());
+        this.iconLoader = iconLoader;
+        this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
+
         initComponents();
+        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader);
+        jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         movieTable.setModel(new MovieInfoTableModel());
         setColumnWidths();
-        addIcons();
-       
-        
+
+
         this.setVisible(true);
     }
-    
-    private void setColumnWidths(){
-        movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new StatusCellRenderer());
+
+    private void setColumnWidths() {
+        movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new StatusCellRenderer(iconLoader));
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
         movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setPreferredWidth(150);
     }
-    
-    private void addIcons() {
-        buttonPanel.setLayout(new FlowLayout());
-       
-        imdbButton = new JButton(loadIcon("images/16/imdb.png"));
-        imdbButton.setToolTipText("Open on imdb website");
-        imdbButton.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(imdbButton);
-            }
-        });
-        buttonPanel.add(imdbButton);
-        tomatoesButton = new JButton(loadIcon("images/16/rottentomatoes.png"));
-        tomatoesButton.setToolTipText("Open on rottentomatoes website");
-        tomatoesButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(tomatoesButton);
-            }
-        });
-        buttonPanel.add(tomatoesButton);
-        moviewebButton = new JButton(loadIcon("images/16/movieweb.png"));
-        moviewebButton.setToolTipText("Open on movieweb website");
-        moviewebButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(moviewebButton);
-            }
-        });
-        buttonPanel.add(moviewebButton);
-        omdbButton = new JButton(loadIcon("images/16/omdb.png"));
-        omdbButton.setToolTipText("Open on omdb website");
-        omdbButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(omdbButton);
-            }
-        });
-        buttonPanel.add(omdbButton);
-    }
-
-    private void openLinkFor(JButton button) {
-        String link = button.getActionCommand();
-        if (link != null && link.length() > 0) {
-            try {
-                Desktop.getDesktop().browse(new URI(link));
-            } catch (URISyntaxException ex) {
-                LOGGER.error("Failed launching default browser for " + link, ex);
-            } catch (IOException ex) {
-                LOGGER.error("Failed launching default browser for " + link, ex);
-            }
-        }else{
-            JOptionPane.showMessageDialog(this, "No movie selected or no link found", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-    }
-    
     /**
      * Makes the frame ready for use
      */
@@ -172,8 +107,8 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() && movieTable.getSelectedRowCount() == 1) {
-                    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-                    showMovie(info);
+                    MovieInfo info = getSelectedMovie();
+                    movieInfoPanel.setMovieInfo(info);
                 }
             }
         });
@@ -219,11 +154,6 @@ public class MainFrame extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         movieTableScrollPane = new javax.swing.JScrollPane();
         movieTable = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        infoTextPane = new javax.swing.JTextPane();
-        movieHeader = new org.jdesktop.swingx.JXHeader();
-        buttonPanel = new javax.swing.JPanel();
         loadProgressBar = new javax.swing.JProgressBar();
         infoLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -275,46 +205,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(movieTableScrollPane);
 
-        jScrollPane2.setViewportView(infoTextPane);
-
-        movieHeader.setDescription("");
-        movieHeader.setTitle("");
-        movieHeader.setToolTipText("Movie info");
-
-        javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
-        buttonPanel.setLayout(buttonPanelLayout);
-        buttonPanelLayout.setHorizontalGroup(
-            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 420, Short.MAX_VALUE)
-        );
-        buttonPanelLayout.setVerticalGroup(
-            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 25, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
-                    .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(movieHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(movieHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE))
-        );
-
-        jSplitPane1.setRightComponent(jPanel1);
-
         infoLabel.setText("Ready to load movies");
 
         movieMenu.setMnemonic('M');
@@ -361,7 +251,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -372,7 +262,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(infoLabel)
@@ -522,92 +412,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }.execute();
 
     }
-    
-    private void setImage(MovieInfo info){
-        if(info.getImage() == null){
-            movieHeader.setIcon(null);
-        }else{
-            movieHeader.setIcon(new ImageIcon(info.getImage()));
-        }
-    }
-    
-    private void showMovie(final MovieInfo info){
-        // TODO need better image cache, if loading takes a lot of time the
-        // image might be shown after a new movie was selected
-        if(info.getImage() == null){
-            imageCache.loadImg(info);
-            if(info.getImage() == null){
-                new SwingWorker<Void, Void>() {
-
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        imageCache.saveImgToCache(info.getMovie());
-                        imageCache.loadImg(info);
-                        return null;
-                    }
-
-                    @Override
-                    protected void done() {
-                        try {
-                            get();
-                            setImage(info);
-                        } catch (InterruptedException ex) {
-                            LOGGER.error("Worker interrupted", ex);
-                        } catch (ExecutionException ex) {
-                            LOGGER.error("Worker failed", ex.getCause());
-                        }
-                    }
-                }.execute();
-            }else{
-                setImage(info);
-            }
-        }else{
-            setImage(info);
-        }
-        if(info.getMovie().getTitle() == null){
-            movieHeader.setTitle(info.getDirectory().getName());
-        }else{
-            movieHeader.setTitle(info.getMovie().getTitle());
-        }
-        movieHeader.setDescription(info.getMovie().getPlot());
-        imdbButton.setActionCommand(MovieFinder.generateImdbUrl(info.getMovie()));
-        tomatoesButton.setActionCommand(MovieFinder.generateTomatoesUrl(info.getMovie()));
-        // TODO save and use these links
-        moviewebButton.setActionCommand("");
-        omdbButton.setActionCommand("");
-        
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(info.getMovie().getTitle()).append("\n");
-        boolean first = true;
-        for(Genre genre:info.getMovie().getGenres()){
-            if(first){
-                first = false;
-            }else{
-                builder.append(", ");                
-            }
-            builder.append(genre);
-        }
-        builder.append("\n");
-        first = true;
-        for(Language language:info.getMovie().getLanguages()){
-            if(first){
-                first = false; 
-            }else{
-                builder.append(", ");
-            }
-            builder.append(language);
-        }
-        builder.append("\n");
-        builder.append(info.getMovie().getRuntime()).append(" min\n");
-        builder.append("IMDB ").append(info.getMovie().getImdbScore()).append(" ").append(info.getMovie().getVotes()).append("\n");
-        builder.append("TOMATO ").append(info.getMovie().getTomatoScore()).append("\n");
-        builder.append("MovieWeb ").append(info.getMovie().getMovieWebScore()).append("\n");
-        builder.append(info.getMovie().getPlot());
-        infoTextPane.setText(builder.toString());
-        infoTextPane.setCaretPosition(0);
-    }
-        
+           
     
     private MovieInfo getSelectedMovie(){
         return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
@@ -620,7 +425,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private class EditAction extends AbstractAction {
 
         public EditAction() {
-            super("Edit", loadIcon("images/16/edit.png"));
+            super("Edit", iconLoader.loadIcon("images/16/edit.png"));
         }
 
         @Override
@@ -634,19 +439,19 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     
     
      /**
-     * This action  tries to play the sample video if any. 
-     * TODO Code duplicated here, from movieTable.addMouseListener in Load() method. 
+     * This action  tries to show the trailer
      * @param evt
      */
     private class TrailerAction extends AbstractAction {
 
         public TrailerAction() {
-            super("IMDB Trailer", loadIcon("images/16/video-x-generic.png"));
+            super("IMDB Trailer", iconLoader.loadIcon("images/16/video-x-generic.png"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            String url = imdbButton.getActionCommand() + "trailers";
+            MovieInfo info = getSelectedMovie();
+            String url = MovieFinder.generateImdbUrl(info.getMovie()) + "trailers";
             try {
                 Desktop.getDesktop().browse(new URI(url));
             } catch (URISyntaxException ex) {
@@ -663,7 +468,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      */
     private class  WatchSampleAction extends AbstractAction{
         public WatchSampleAction() {
-            super("Watch Sample", loadIcon("images/16/video-display.png"));
+            super("Watch Sample", iconLoader.loadIcon("images/16/video-display.png"));
         }
 
         @Override
@@ -688,14 +493,14 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      */
     private class CrawlSubtitleAction extends AbstractAction {
         public CrawlSubtitleAction() {
-            super("Subtitle Crawler", loadIcon("images/16/subtitles.png"));
+            super("Subtitle Crawler", iconLoader.loadIcon("images/16/subtitles.png"));
         }
         
         @Override 
         public void actionPerformed(ActionEvent e) {
             //TO DO:
             //JOptionPane.showMessageDialog(MainFrame.this, "Subtitle Crawler Coming Soon.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
-            List files = new ArrayList<String>();
+            List<String> files = new ArrayList<String>();
             MovieInfo info = getSelectedMovie(); 
             File dir = info.getDirectory();
             String alternateSearchKey = getSelectedMovie().toString();
@@ -773,31 +578,21 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         subtitleCrawler.setVisible(true);
     }
     
-    /**
-     * Loads an icon from the specified filename
-     * @param fileName
-     * @return the loaded ImageIcon
-     */
-    private static final ImageIcon loadIcon(String fileName) {
-        ImageIcon icon = null;
-        URL resource = MainFrame.class.getClassLoader().getResource(fileName);
-        if (resource != null) {
-            icon = new ImageIcon(resource);
-        } else {
-            LOGGER.error("Icon does not exist: " + fileName);
-        }
-        return icon;
-    }
+
     
     private static final class StatusCellRenderer extends DefaultTableCellRenderer{
-
-        private final Icon defaultIcon = loadIcon("images/16/bullet_black.png");
-        private final Icon loadedIcon = loadIcon("images/16/bullet_green.png");
-        private final Icon loadingIcon = loadIcon("images/16/bullet_orange.png");
-        //private final Icon failedIcon = loadIcon("images/16/bullet_red.png");
+        
+        private final Icon defaultIcon;
+        private final Icon loadedIcon;
+        private final Icon loadingIcon;
+        //private final Icon failedIcon;
         
         
-        public StatusCellRenderer() {
+        public StatusCellRenderer(final IconLoader iconLoader) {
+            this.defaultIcon = iconLoader.loadIcon("images/16/bullet_black.png");
+            this.loadedIcon = iconLoader.loadIcon("images/16/bullet_green.png");
+            this.loadingIcon = iconLoader.loadIcon("images/16/bullet_orange.png");
+            //this.failedIcon = iconLoader.loadIcon("images/16/bullet_red.png");
             setIcon(defaultIcon);
         }
 
@@ -834,18 +629,13 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel buttonPanel;
     private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JTextPane infoTextPane;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
-    private org.jdesktop.swingx.JXHeader movieHeader;
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
     private javax.swing.JScrollPane movieTableScrollPane;

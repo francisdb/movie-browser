@@ -17,6 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FolderScanner;
@@ -41,6 +42,7 @@ public class MovieBrowser {
     private final FileSystemScanner fileSystemScanner;
     private final ImdbSearch imdbSearch;
     private final ImageCache imageCache;
+    private final IconLoader iconLoader;
 
     /** 
      * Creates a new instance of MovieBrowser
@@ -48,7 +50,8 @@ public class MovieBrowser {
      * @param folderScanner
      * @param fileSystemScanner
      * @param imdbSearch
-     * @param imageCache 
+     * @param imageCache
+     * @param iconLoader 
      */
     @Inject
     public MovieBrowser(
@@ -56,12 +59,14 @@ public class MovieBrowser {
             final FolderScanner folderScanner, 
             final FileSystemScanner fileSystemScanner,
             final ImdbSearch imdbSearch,
-            final ImageCache imageCache) {
+            final ImageCache imageCache,
+            final IconLoader iconLoader) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
         this.imdbSearch = imdbSearch;
         this.imageCache = imageCache;
+        this.iconLoader = iconLoader;
     }
 
     private void configureLogging() {
@@ -104,7 +109,7 @@ public class MovieBrowser {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache);
+                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader);
                 mainFrame.setVisible(true);
                 mainFrame.load();
             }

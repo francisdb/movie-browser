@@ -5,6 +5,7 @@ import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.ImageCacheImpl;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
+import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScannerImpl;
 import eu.somatik.moviebrowser.service.FolderScanner;
@@ -29,6 +30,7 @@ public class MovieBrowserModule extends AbstractModule {
     protected void configure() {
         bind(MovieFinder.class);
         bind(MovieNameExtractor.class);
+        bind(IconLoader.class);
         
         bind(MovieCache.class).to(MovieCacheImpl.class);
         bind(ImageCache.class).to(ImageCacheImpl.class);
