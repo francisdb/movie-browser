@@ -3,8 +3,6 @@
  *
  * Created on April 9, 2007, 2:55 PM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 package eu.somatik.moviebrowser.cache;
 
@@ -34,15 +32,18 @@ public class MovieCacheImpl implements MovieCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieCacheImpl.class);
     
+    private final Settings settings;
+    
     private EntityManagerFactory emf;
     private MovieDAO movieDAO;
 
     /** 
      * Creates a new instance of MovieCache 
+     * @param settings 
      */
     @Inject
-    public MovieCacheImpl() {
-        // nothing here
+    public MovieCacheImpl(final Settings settings) {
+        this.settings = settings;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class MovieCacheImpl implements MovieCache {
     public void startup() {
         LOGGER.info("Starting up the cache.");
         Map<String,String> props = new HashMap<String,String>();
-        String databaseLocation = Settings.getSettingsDir()+File.separator+"database/moviecache";
+        String databaseLocation = settings.getSettingsDir()+File.separator+"database/moviecache";
         props.put("hibernate.connection.url", "jdbc:hsqldb:file:"+databaseLocation+";shutdown=true");
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
         this.movieDAO = new MovieDAO(emf);

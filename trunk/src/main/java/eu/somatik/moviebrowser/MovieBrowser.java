@@ -17,6 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
@@ -43,6 +44,7 @@ public class MovieBrowser {
     private final ImdbSearch imdbSearch;
     private final ImageCache imageCache;
     private final IconLoader iconLoader;
+    private final Settings settings;
 
     /** 
      * Creates a new instance of MovieBrowser
@@ -51,7 +53,8 @@ public class MovieBrowser {
      * @param fileSystemScanner
      * @param imdbSearch
      * @param imageCache
-     * @param iconLoader 
+     * @param iconLoader
+     * @param settings 
      */
     @Inject
     public MovieBrowser(
@@ -60,13 +63,15 @@ public class MovieBrowser {
             final FileSystemScanner fileSystemScanner,
             final ImdbSearch imdbSearch,
             final ImageCache imageCache,
-            final IconLoader iconLoader) {
+            final IconLoader iconLoader,
+            final Settings settings) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
         this.imdbSearch = imdbSearch;
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
+        this.settings = settings;
     }
 
     private void configureLogging() {
@@ -85,7 +90,7 @@ public class MovieBrowser {
 
     private void configurelookAndFeel() {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(settings.loadPreferences().get("lookandfeel"));
         } catch (ClassNotFoundException ex) {
             LOGGER.error("Error setting native LAF", ex);
         } catch (InstantiationException ex) {
@@ -109,7 +114,7 @@ public class MovieBrowser {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader);
+                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings);
                 mainFrame.setVisible(true);
                 mainFrame.load();
             }
