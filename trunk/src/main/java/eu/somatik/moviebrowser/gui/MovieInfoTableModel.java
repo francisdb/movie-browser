@@ -44,8 +44,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Runtime",
         "Score",
         "IMDB",
-        "Tomatometer",
-        "MovieWeb"
+        "Tomato",
+        "MWeb"
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class, 

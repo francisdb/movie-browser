@@ -52,6 +52,10 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +97,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
+        movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         movieTable.setModel(new MovieInfoTableModel());
         setColumnWidths();
@@ -438,6 +443,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     MovieInfoTableModel model = (MovieInfoTableModel) movieTable.getModel();
                     model.clear();
                     model.addAll(movies);
+                    packColumns(movieTable, 3);
                     infoLabel.setText(model.getRowCount() + " movies found, loading info...");
                     loadMovies(movies);
                 } catch (InterruptedException ex) {
@@ -719,10 +725,50 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             setText(null);
             return this;
         }
-        
-        
-        
     }
+
+    private void packColumns(JTable table, int margin) {
+        for (int c = 0; c < table.getColumnCount(); c++) {
+            packColumn(table, c, margin);
+        }
+    }
+
+    /**
+     * From: http://exampledepot.com/egs/javax.swing.table/PackCol.html?l=new
+    // Sets the preferred width of the visible column specified by vColIndex. The column
+    // will be just wide enough to show the column head and the widest cell in the column.
+    // margin pixels are added to the left and right
+    // (resulting in an additional width of 2*margin pixels).
+    */
+    private void packColumn(JTable table, int vColIndex, int margin) {
+        DefaultTableColumnModel colModel = (DefaultTableColumnModel)table.getColumnModel();
+        TableColumn col = colModel.getColumn(vColIndex);
+        int width = 0;
+    
+        // Get width of column header
+        TableCellRenderer renderer = col.getHeaderRenderer();
+        if (renderer == null) {
+            renderer = table.getTableHeader().getDefaultRenderer();
+        }
+        Component comp = renderer.getTableCellRendererComponent(
+            table, col.getHeaderValue(), false, false, 0, 0);
+        width = comp.getPreferredSize().width;
+    
+        // Get maximum width of column data
+        for (int r=0; r<table.getRowCount(); r++) {
+            renderer = table.getCellRenderer(r, vColIndex);
+            comp = renderer.getTableCellRendererComponent(
+                table, table.getValueAt(r, vColIndex), false, false, r, vColIndex);
+            width = Math.max(width, comp.getPreferredSize().width);
+        }
+    
+        // Add margin
+        width += 2*margin;
+    
+        // Set the width
+        col.setPreferredWidth(width);
+    }
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem clearCacheMenuItem;
