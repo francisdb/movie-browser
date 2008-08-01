@@ -9,8 +9,8 @@ import eu.somatik.moviebrowser.domain.Movie;
 public interface MovieInfoFetcher {
     /**
      * Fetched movie info from a servie and complements the movieInfo object
-     * @param movieInfo
+     * @param movie
      */
-    void fetch(Movie movieInfo);
+    void fetch(Movie movie);
     
 }
