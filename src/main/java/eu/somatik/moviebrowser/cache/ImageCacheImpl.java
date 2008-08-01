@@ -3,13 +3,12 @@
  *
  * Created on May 14, 2007, 11:23:30 PM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 package eu.somatik.moviebrowser.cache;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import eu.somatik.moviebrowser.config.Settings;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,7 +21,6 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 
-import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
@@ -41,10 +39,12 @@ public class ImageCacheImpl implements ImageCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageCacheImpl.class);
 
+    private final Settings settings;
+    
     @Inject
-    public ImageCacheImpl() {
-        // TODO refactor to be a real image cache, cached images should be saved inhere and not in the MovieInfo
-        
+    public ImageCacheImpl(final Settings settings) {
+        this.settings = settings;
+        // TODO refactor to be a real image cache, cached images should be saved inhere and not in the MovieInfo 
     }
 
     /**
@@ -82,7 +82,7 @@ public class ImageCacheImpl implements ImageCache {
         int startIndex = imgUrl.indexOf(startAfter) + startAfter.length();
         String cacheName = imgUrl.substring(startIndex);
         cacheName = cacheName.replaceAll("/", "_");
-        cached = new File(Settings.getImageCacheDir(), cacheName);
+        cached = new File(settings.getImageCacheDir(), cacheName);
         return cached;
     }
 

@@ -8,6 +8,7 @@ package eu.somatik.moviebrowser.gui;
 import eu.somatik.moviebrowser.*;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.config.Settings;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
@@ -35,13 +36,22 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
-import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.config.SettingsImpl;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.util.Map;
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,19 +67,26 @@ public class MainFrame extends javax.swing.JFrame {
     private final MovieBrowser browser;
     private final ImageCache imageCache;
     private final IconLoader iconLoader;
+    private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
 
     /** 
      * Creates new form MainFrame
      * @param browser
      * @param imageCache
-     * @param iconLoader 
+     * @param iconLoader
+     * @param settings 
      */
     @Inject
-    public MainFrame(final MovieBrowser browser, final ImageCache imageCache, final IconLoader iconLoader) {
+    public MainFrame(
+            final MovieBrowser browser,
+            final ImageCache imageCache,
+            final IconLoader iconLoader,
+            final Settings settings) {
         this.browser = browser;
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
+        this.settings = settings;
         this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
 
@@ -81,7 +98,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.setModel(new MovieInfoTableModel());
         setColumnWidths();
 
-
+        loadLookAndFeels();
         this.setVisible(true);
     }
 
@@ -89,6 +106,44 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new StatusCellRenderer(iconLoader));
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
         movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setPreferredWidth(150);
+    }
+
+    private void loadLookAndFeels() {
+        lookAndFeelMenu.removeAll();
+        LookAndFeel current = UIManager.getLookAndFeel();
+        ButtonGroup group = new ButtonGroup();
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            final String className = info.getClassName();
+            final JRadioButtonMenuItem item = new JRadioButtonMenuItem(info.getName());
+            group.add(item);
+            if (current.getClass().getName().equals(className)) {
+                item.setSelected(true);
+            }
+            item.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        UIManager.setLookAndFeel(className);
+                        Map<String, String> prefs = settings.loadPreferences();
+                        prefs.put("lookandfeel", className);
+                        settings.savePreferences(prefs);
+                        SwingUtilities.updateComponentTreeUI(MainFrame.this);
+                        item.setSelected(true);
+                    } catch (ClassNotFoundException ex) {
+                        LOGGER.error("Error setting native LAF", ex);
+                    } catch (InstantiationException ex) {
+                        LOGGER.error("Error setting native LAF", ex);
+                    } catch (IllegalAccessException ex) {
+                        LOGGER.error("Error setting native LAF", ex);
+                    } catch (UnsupportedLookAndFeelException ex) {
+                        LOGGER.error("Error setting native LAF", ex);
+                    }
+                }
+            });
+            lookAndFeelMenu.add(item);
+        }
+
     }
 
     /**
@@ -162,6 +217,8 @@ public class MainFrame extends javax.swing.JFrame {
         clearListMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         clearCacheMenuItem = new javax.swing.JMenuItem();
+        extraMenu = new javax.swing.JMenu();
+        lookAndFeelMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Movie browser");
@@ -242,6 +299,13 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(toolsMenu);
 
+        extraMenu.setText("Extra");
+
+        lookAndFeelMenu.setText("Look and feel");
+        extraMenu.add(lookAndFeelMenu);
+
+        jMenuBar1.add(extraMenu);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -278,7 +342,7 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
-            Settings.addFolder(newFolder);
+            settings.addFolder(newFolder);
             this.selectedFile = newFolder;
             fillTable();
         } else {
@@ -304,7 +368,7 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
 //    //Clear the image folder
-//    File imagesDir = new File(Settings.getImageCacheDir().getName());
+//    File imagesDir = new File(SettingsImpl.getImageCacheDir().getName());
 //    System.out.println(imagesDir.getAbsolutePath());
 //    imagesDir.delete();
 //       
@@ -357,7 +421,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private void fillTable() {
         infoLabel.setText("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
-        final Set<String> folders = Settings.loadFolders();
+        final Set<String> folders = settings.loadFolders();
         new SwingWorker<List<MovieInfo>, Void>() {
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
@@ -631,11 +695,13 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
+    private javax.swing.JMenu extraMenu;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
+    private javax.swing.JMenu lookAndFeelMenu;
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
     private javax.swing.JScrollPane movieTableScrollPane;

@@ -5,6 +5,8 @@ import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.ImageCacheImpl;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.config.SettingsImpl;
 import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
 import eu.somatik.moviebrowser.service.scanner.FileSystemScannerImpl;
@@ -36,6 +38,7 @@ public class MovieBrowserModule extends AbstractModule {
         bind(ImageCache.class).to(ImageCacheImpl.class);
         bind(FolderScanner.class).to(SimpleFolderScanner.class);
         bind(FileSystemScanner.class).to(FileSystemScannerImpl.class);
+        bind(Settings.class).to(SettingsImpl.class);
 
         bind(Parser.class).annotatedWith(MovieWeb.class).to(MovieWebParser.class);
         bind(Parser.class).annotatedWith(Imdb.class).to(ImdbParser.class);
