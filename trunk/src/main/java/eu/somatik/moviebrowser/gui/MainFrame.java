@@ -38,8 +38,9 @@ import javax.swing.JPopupMenu;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.service.AppleTrailerFinder;
-import eu.somatik.moviebrowser.service.MovieFinder;
+import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
+import eu.somatik.moviebrowser.service.imdb.ImdbTrailerFinder;
+import eu.somatik.moviebrowser.api.TrailerFinder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -511,6 +512,16 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
     }
     
+    private void openUrl(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (URISyntaxException ex) {
+            LOGGER.error("Failed launching default browser for " + url, ex);
+        } catch (IOException ex) {
+            LOGGER.error("Failed launching default browser for " + url, ex);
+        }
+    }
+    
     
      /**
      * This action  tries to show the trailer
@@ -525,13 +536,12 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         @Override
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
-            String url = MovieFinder.generateImdbUrl(info.getMovie()) + "trailers";
-            try {
-                Desktop.getDesktop().browse(new URI(url));
-            } catch (URISyntaxException ex) {
-                LOGGER.error("Failed launching default browser for " + url, ex);
-            } catch (IOException ex) {
-                LOGGER.error("Failed launching default browser for " + url, ex);
+            TrailerFinder finder = new ImdbTrailerFinder();
+            String url = finder.findTrailerUrl(info.getMovie());
+            if(url == null){
+                JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.imdb.com");
+            }else{
+                openUrl(url);
             }
         }
     }
@@ -549,18 +559,12 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         @Override
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
-            AppleTrailerFinder finder = new AppleTrailerFinder();
+            TrailerFinder finder = new AppleTrailerFinder();
             String url = finder.findTrailerUrl(info.getMovie());
             if(url == null){
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.apple.com");
             }else{
-                try {
-                    Desktop.getDesktop().browse(new URI(url));
-                } catch (URISyntaxException ex) {
-                    LOGGER.error("Failed launching default browser for " + url, ex);
-                } catch (IOException ex) {
-                    LOGGER.error("Failed launching default browser for " + url, ex);
-                }
+                openUrl(url);
             }
         }
     }

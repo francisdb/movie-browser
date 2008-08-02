@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service.fetcher;
+package eu.somatik.moviebrowser.service.imdb;
 
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;

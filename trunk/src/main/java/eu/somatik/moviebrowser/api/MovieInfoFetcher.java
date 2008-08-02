@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service.fetcher;
+package eu.somatik.moviebrowser.api;
 
 import eu.somatik.moviebrowser.domain.Movie;
 

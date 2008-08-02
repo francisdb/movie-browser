@@ -6,7 +6,7 @@
  */
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.service.fetcher.MovieInfoFetcher;
+import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,12 +23,12 @@ import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.module.Imdb;
-import eu.somatik.moviebrowser.module.MovieWeb;
-import eu.somatik.moviebrowser.module.RottenTomatoes;
-import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
-import eu.somatik.moviebrowser.service.scanner.FileSystemScanner;
-import eu.somatik.moviebrowser.service.parser.Parser;
+import eu.somatik.moviebrowser.service.imdb.Imdb;
+import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
+import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
+import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
+import eu.somatik.moviebrowser.service.FileSystemScanner;
+import eu.somatik.moviebrowser.api.Parser;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.slf4j.Logger;

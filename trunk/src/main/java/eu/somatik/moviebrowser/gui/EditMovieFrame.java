@@ -25,7 +25,7 @@ import java.lang.Exception;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
-import eu.somatik.moviebrowser.service.fetcher.ImdbSearch;
+import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
 import java.io.File;
 import javax.swing.DefaultListCellRenderer;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.module;
+package eu.somatik.moviebrowser.service.tomatoes;
 
 import com.google.inject.BindingAnnotation;
 import java.lang.annotation.Retention;

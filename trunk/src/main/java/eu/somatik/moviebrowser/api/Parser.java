@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service.parser;
+package eu.somatik.moviebrowser.api;
 
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.domain.Movie;
