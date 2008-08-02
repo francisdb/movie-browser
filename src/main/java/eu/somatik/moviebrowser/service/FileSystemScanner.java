@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.service.scanner;
+package eu.somatik.moviebrowser.service;
 
 import java.io.File;
 

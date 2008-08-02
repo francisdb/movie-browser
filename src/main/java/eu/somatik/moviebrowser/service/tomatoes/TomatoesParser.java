@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package eu.somatik.moviebrowser.service.parser;
+package eu.somatik.moviebrowser.service.tomatoes;
 
+import eu.somatik.moviebrowser.api.Parser;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;

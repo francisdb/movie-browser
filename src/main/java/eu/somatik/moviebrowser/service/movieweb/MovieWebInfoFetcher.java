@@ -1,18 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package eu.somatik.moviebrowser.service.fetcher;
+package eu.somatik.moviebrowser.service.movieweb;
 
+import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.module.MovieWeb;
+import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
 import eu.somatik.moviebrowser.service.HttpSourceLoader;
-import eu.somatik.moviebrowser.service.parser.Parser;
+import eu.somatik.moviebrowser.api.Parser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -71,7 +68,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
                 }
             }
             if (movieUrl == null) {
-                throw new IOException("Movie not found on MovieWeb");
+                throw new IOException("Movie not found on MovieWeb: "+movie.getTitle());
             }
             source = httpLoader.load(movieUrl);
             movieWebInfoParser.parse(source, movie);

@@ -1,13 +1,14 @@
-package eu.somatik.moviebrowser.service.fetcher;
+package eu.somatik.moviebrowser.service.tomatoes;
 
+import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.module.RottenTomatoes;
+import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
 import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.service.MovieFinder;
-import eu.somatik.moviebrowser.service.parser.Parser;
+import eu.somatik.moviebrowser.api.Parser;
 import java.io.IOException;
 
 import org.slf4j.Logger;

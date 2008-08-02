@@ -1,5 +1,6 @@
-package eu.somatik.moviebrowser.service.parser;
+package eu.somatik.moviebrowser.service.movieweb;
 
+import eu.somatik.moviebrowser.api.Parser;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Segment;

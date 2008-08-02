@@ -1,5 +1,6 @@
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.apple;
 
+import eu.somatik.moviebrowser.api.TrailerFinder;
 import eu.somatik.moviebrowser.domain.Movie;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -25,10 +26,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
-public class AppleTrailerFinder {
+public class AppleTrailerFinder implements TrailerFinder {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AppleTrailerFinder.class);
     
+    @Override
     public String findTrailerUrl(Movie movie){
         String url = null;
         String query = movie.getTitle()+" site:www.apple.com";
