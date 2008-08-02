@@ -7,6 +7,25 @@
     <name>moviebrowser</name>
     <description>Browse the movies on your harddrive using this tool</description>
     <url>http://code.google.com/p/movie-browser/</url>
+    <developers>
+        <developer>
+            <id>francisdb</id>
+            <name>Francis De Brabandere</name>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>Ravi Undupitiya</id>
+            <name>Ravi Undupitiya</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
     <scm>
         <connection>scm:svn:http://movie-browser.googlecode.com/svn/tags/moviebrowser-0.5</connection>
         <developerConnection>scm:svn:https://movie-browser.googlecode.com/svn/tags/moviebrowser-0.5</developerConnection>
@@ -101,7 +120,7 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20080701</version>
-        </dependency> 
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
