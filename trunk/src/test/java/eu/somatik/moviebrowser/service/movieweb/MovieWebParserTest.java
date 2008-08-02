@@ -1,6 +1,5 @@
 package eu.somatik.moviebrowser.service.movieweb;
 
-import eu.somatik.moviebrowser.service.movieweb.MovieWebParser;
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.FileSourceLoader;
