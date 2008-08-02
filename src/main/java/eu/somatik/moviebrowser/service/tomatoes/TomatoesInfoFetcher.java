@@ -5,7 +5,6 @@ import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
 import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.api.Parser;
