@@ -1,5 +1,6 @@
 package eu.somatik.moviebrowser.service;
 
+import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
 import eu.somatik.moviebrowser.domain.Movie;
 
 import org.junit.Test;

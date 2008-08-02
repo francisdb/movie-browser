@@ -1,9 +1,9 @@
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.service.fetcher.MovieWebInfoFetcher;
+import eu.somatik.moviebrowser.service.movieweb.MovieWebInfoFetcher;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.service.parser.MovieWebParser;
+import eu.somatik.moviebrowser.service.movieweb.MovieWebParser;
 import java.io.File;
 import org.junit.Ignore;
 import org.junit.Test;
