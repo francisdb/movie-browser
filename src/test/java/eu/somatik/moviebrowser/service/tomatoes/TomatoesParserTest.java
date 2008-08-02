@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.service.parser;
+package eu.somatik.moviebrowser.service.tomatoes;
 
+import eu.somatik.moviebrowser.service.tomatoes.TomatoesParser;
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.FileSourceLoader;

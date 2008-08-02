@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.service.parser;
+package eu.somatik.moviebrowser.service.imdb;
 
+import eu.somatik.moviebrowser.service.imdb.ImdbParser;
 import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
