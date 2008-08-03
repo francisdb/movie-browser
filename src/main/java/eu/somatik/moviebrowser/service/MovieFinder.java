@@ -27,7 +27,6 @@ import eu.somatik.moviebrowser.service.imdb.Imdb;
 import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
 import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
 import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
-import eu.somatik.moviebrowser.service.FileSystemScanner;
 import eu.somatik.moviebrowser.api.Parser;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -152,7 +151,7 @@ public class MovieFinder {
                     secondaryService.submit(new MovieWebCaller(loaded));
                     movieCache.saveMovie(loaded.getMovie());
                 }catch(Exception ex){
-                    LOGGER.error("oops", ex);
+                    LOGGER.error("Exception while loading/saving movie", ex);
                 }
             } else {
                 LOGGER.info("Loading cached data for "+info.getMovie().getPath());
