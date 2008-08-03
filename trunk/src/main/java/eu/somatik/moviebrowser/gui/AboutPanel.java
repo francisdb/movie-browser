@@ -77,6 +77,7 @@ public class AboutPanel extends javax.swing.JPanel {
         aboutScrollPane = new javax.swing.JScrollPane();
         aboutTextPane = new javax.swing.JTextPane();
 
+        aboutTextPane.setEditable(false);
         aboutScrollPane.setViewportView(aboutTextPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
