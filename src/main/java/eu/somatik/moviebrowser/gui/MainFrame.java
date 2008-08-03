@@ -225,6 +225,7 @@ public class MainFrame extends javax.swing.JFrame {
         clearCacheMenuItem = new javax.swing.JMenuItem();
         extraMenu = new javax.swing.JMenu();
         lookAndFeelMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Movie browser");
@@ -309,6 +310,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         lookAndFeelMenu.setText("Look and feel");
         extraMenu.add(lookAndFeelMenu);
+
+        aboutMenuItem.setText("About");
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
+        extraMenu.add(aboutMenuItem);
 
         jMenuBar1.add(extraMenu);
 
@@ -405,6 +414,11 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     // needed for linux gtk look and feel
     showPopup(evt);
 }//GEN-LAST:event_movieTableMousePressed
+
+private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+    AboutPanel aboutPanel = new AboutPanel(settings);
+    JOptionPane.showMessageDialog(this, aboutPanel, "About", JOptionPane.PLAIN_MESSAGE);
+}//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void showPopup(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -803,6 +817,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
     private javax.swing.JMenu extraMenu;
