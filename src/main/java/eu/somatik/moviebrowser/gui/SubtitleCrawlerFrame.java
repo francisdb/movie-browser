@@ -175,9 +175,9 @@ public void crawl(List<String> files, String imdbID) {
     Iterator<String> i = files.iterator();
     while(i.hasNext()) {
         fileName = (String) i.next();
-        fileName = fileName.substring(0,(fileName.length()-4));
-        if(fileName.endsWith(".")) {
-            fileName = fileName.substring(0, (fileName.length()-1));
+        String split[] = fileName.split(".");
+        if (split.length!=0) {
+            fileName = split[0];
         }
         
         System.out.println(fileName);
