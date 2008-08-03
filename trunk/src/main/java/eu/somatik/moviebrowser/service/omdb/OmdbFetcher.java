@@ -31,8 +31,7 @@ public class OmdbFetcher implements MovieInfoFetcher {
         // Outputting the content of a Web page
         // Prepare the request
         Request request = new Request(Method.GET, "http://www.omdb-beta.org/search/movies?query=test");
-        Preference<MediaType> preference2 = new Preference<MediaType>(MediaType.APPLICATION_XML);
-        Preference<MediaType> preference3 = new Preference<MediaType>(MediaType.TEXT_XML);
+        Preference<MediaType> preference2 = new Preference<MediaType>(MediaType.APPLICATION_XML); // MediaType.TEXT_XML
         List<Preference<MediaType>> types = new ArrayList<Preference<MediaType>>();
         types.add(preference2);
         //types.add(preference3);
