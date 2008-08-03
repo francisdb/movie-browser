@@ -31,9 +31,7 @@ import org.slf4j.LoggerFactory;
 public class MovieCacheImpl implements MovieCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieCacheImpl.class);
-    
     private final Settings settings;
-    
     private EntityManagerFactory emf;
     private MovieDAO movieDAO;
 
@@ -54,9 +52,9 @@ public class MovieCacheImpl implements MovieCache {
     @Override
     public void startup() {
         LOGGER.info("Starting up the cache.");
-        Map<String,String> props = new HashMap<String,String>();
-        String databaseLocation = settings.getSettingsDir()+File.separator+"database/moviecache";
-        props.put("hibernate.connection.url", "jdbc:hsqldb:file:"+databaseLocation+";shutdown=true");
+        Map<String, String> props = new HashMap<String, String>();
+        String databaseLocation = settings.getSettingsDir() + File.separator + "database/moviecache";
+        props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + databaseLocation + ";shutdown=true");
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
         this.movieDAO = new MovieDAO(emf);
     }
@@ -81,41 +79,60 @@ public class MovieCacheImpl implements MovieCache {
      */
     @Override
     public Movie find(String path) {
-        EntityManager em = emf.createEntityManager();
-        Movie found = em.find(Movie.class, path);
-        em.close();
+        Movie found = null;
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            found = em.find(Movie.class, path);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
         return found;
     }
 
     @Override
-    public void removeMovie(Movie movie){
-        EntityManager em = emf.createEntityManager();
-        Movie found = em.find(Movie.class, movie.getPath());
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        em.remove(found);
-        transaction.commit();
-        em.close();
+    public void removeMovie(Movie movie) {
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            Movie found = em.find(Movie.class, movie.getPath());
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            em.remove(found);
+            transaction.commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
-    
+
     /**
      * @param movie
      */
     @Override
     public void saveMovie(Movie movie) {
-        EntityManager em = emf.createEntityManager();
-        Movie found = em.find(Movie.class, movie.getPath());
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
-        if (found == null) {
-            LOGGER.trace("Saving movie " + movie.getPath());
-            em.persist(movie);
-        } else {
-            LOGGER.trace("Updating movie " + movie.getPath());
-            /*movie = */            em.merge(movie);
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            Movie found = em.find(Movie.class, movie.getPath());
+            EntityTransaction transaction = em.getTransaction();
+            transaction.begin();
+            if (found == null) {
+                LOGGER.trace("Saving movie " + movie.getPath());
+                em.persist(movie);
+            } else {
+                LOGGER.trace("Updating movie " + movie.getPath());
+                /*movie = */ em.merge(movie);
+            }
+            transaction.commit();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
         }
-        transaction.commit();
-        em.close();
     }
 
     /**
@@ -124,19 +141,26 @@ public class MovieCacheImpl implements MovieCache {
      */
     @Override
     public Genre getOrCreateGenre(String name) {
-        EntityManager em = emf.createEntityManager();
+        Genre found = null;
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
 
-        Genre found = em.find(Genre.class, name);
-        if (found == null) {
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
-            LOGGER.trace("New genre " + name);
-            found = new Genre();
-            found.setName(name);
-            em.persist(found);
-            transaction.commit();
+            found = em.find(Genre.class, name);
+            if (found == null) {
+                EntityTransaction transaction = em.getTransaction();
+                transaction.begin();
+                LOGGER.trace("New genre " + name);
+                found = new Genre();
+                found.setName(name);
+                em.persist(found);
+                transaction.commit();
+            }
+        } finally {
+            if (em != null) {
+                em.close();
+            }
         }
-        em.close();
         return found;
     }
 
@@ -146,32 +170,36 @@ public class MovieCacheImpl implements MovieCache {
      */
     @Override
     public Language getOrCreateLanguage(String name) {
-        EntityManager em = emf.createEntityManager();
-        Language found = em.find(Language.class, name);
-        if (found == null) {
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
-            LOGGER.trace("New language " + name);
-            found = new Language();
-            found.setName(name);
-            em.persist(found);
-            transaction.commit();
-        }
+        Language found = null;
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            found = em.find(Language.class, name);
+            if (found == null) {
+                EntityTransaction transaction = em.getTransaction();
+                transaction.begin();
+                LOGGER.trace("New language " + name);
+                found = new Language();
+                found.setName(name);
+                em.persist(found);
+                transaction.commit();
+            }
 
-        em.close();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
         return found;
     }
 
-    /**
-     * 
-     */
-    @Override
-    public void printList() {
-        LOGGER.info("Printing movie list");
-        for (Movie movie : movieDAO.loadMovies()) {
-            LOGGER.info(movie.getPath() + "" + movie);
-        }
-    }
+//    private void printList() {
+//        LOGGER.info("Printing movie list");
+//        for (Movie movie : movieDAO.loadMovies()) {
+//            LOGGER.info(movie.getPath() + "" + movie);
+//        }
+//    }
+    
     /**
      * Clear the movies list from DB. Simillar to deleteMovie() in MovieDAO, but doesn't work, 
      * as it throws an exception saying: Removing a detached instance.

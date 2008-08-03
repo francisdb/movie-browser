@@ -71,11 +71,6 @@ public class ImdbParserTest {
         }
 
         @Override
-        public void printList() {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
-
-        @Override
         public void saveMovie(Movie movie) {
             throw new UnsupportedOperationException("Not implemented in mock");
         }

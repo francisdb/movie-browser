@@ -32,11 +32,6 @@ public interface MovieCache {
     boolean isStarted();
 
     /**
-     *
-     */
-    void printList();
-
-    /**
      * @param movie
      */
     void saveMovie(Movie movie);
