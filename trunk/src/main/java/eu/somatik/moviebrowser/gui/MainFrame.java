@@ -635,7 +635,7 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 }
             }
             files.add(alternateSearchKey);
-            openSubCrawler(files);
+            openSubCrawler(files, info.getMovie().getImdbId());
         }
     }
     
@@ -679,8 +679,8 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * Loads SubtitleCrawlerFrame
      * @param fileName
      */
-    private void openSubCrawler(List<String> file) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file);
+    private void openSubCrawler(List<String> file, String imdbID) {
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, imdbID, null);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }
