@@ -475,10 +475,10 @@ private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 try {
                     get();
                 } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                    LOGGER.error("Movie loader worker interrupted", ex);
                 } catch (ExecutionException ex) {
+                    LOGGER.error("Loading movies failed", ex);
                     JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-                    ex.getCause().printStackTrace();
                 } finally {
                     loadProgressBar.setIndeterminate(false);
                     infoLabel.setText("All movie info loaded.");
