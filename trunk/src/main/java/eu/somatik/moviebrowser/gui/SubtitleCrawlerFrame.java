@@ -54,7 +54,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         this.httpLoader = httpLoader;
         
         //Prepare table model
-        String[] columnNames = {"Language", "File Name", "Type", "Source"};
+        String[] columnNames = {"Language", "File Name", "#. CD", "Type", "Source"};
         model = new DefaultTableModel(null, columnNames);
         
         initComponents();
@@ -182,10 +182,11 @@ public void crawl(List<String> files, String imdbID) {
         
         System.out.println(fileName);
         try {
-            //Add other methods to get subs from other sources. 
+            //Add other methods to get subs from other sources.
+            results.addAll(getOpenSubsResults(generateUrl(fileName)));
         }
         catch (Exception ex) {
-            LOGGER.error("Error retrieveng subtitle results. ", ex);
+            LOGGER.error("Error retrieveng opensubtitle.org results. ", ex);
         }
     }
     
@@ -207,9 +208,73 @@ public void crawl(List<String> files, String imdbID) {
     searchButton.setEnabled(true);
 }
 
-   public String[] getSubtitleSourceResults(String imdbID) throws IOException{
-       String[] results = {"N/A", "http://www.subtitlesource.org/title/tt" + imdbID, "Various", "subtitlesource.org"};
+   public String[] getSubtitleSourceResults(String imdbID) throws IOException {
+       String[] results = {"N/A", "http://www.subtitlesource.org/title/tt" + imdbID, "N/A", "Various", "SubtitleSource.org"};
        return  results;
+    }
+   
+   public Set<String[]> getOpenSubsResults(String fileName) throws IOException {
+       Source source = httpLoader.load("http://www.opensubtitles.org/en/search2/?moviename=" + fileName + "&sublanguageid=all");
+       return getOpenSubsResults(source);
+   }
+   
+   public Set<String[]> getOpenSubsResults(Source source) throws IOException {
+    
+    String fileName, language, noCd, type, subSource;
+    fileName = "";
+    language = "";
+    
+    Set<String[]> results = new HashSet<String[]>();
+    subSource = "OpenSubtitles.org";
+    Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
+    String title = titleElement.getContent().getTextExtractor().toString();
+    if (!title.contains("download divx subtitles from the biggest open")) {
+        List<?> tableElements = source.findAllElements(HTMLElementName.TD);
+        Element tableElement;
+        Iterator<?> j = tableElements.iterator();
+        while(j.hasNext()) {
+            tableElement = (Element) j.next();
+            
+            //System.out.println(tableElement.getTextExtractor().toString());
+            String newList = tableElement.getChildElements().toString();
+            Source newSource = new Source(newList);
+            List<?> linkElements = newSource.findAllElements(HTMLElementName.A);
+            Element linkElement;
+            Iterator<?> i = linkElements.iterator();
+            
+            while (i.hasNext()) {
+                linkElement = (Element) i.next();
+                String href = linkElement.getAttributeValue("href");
+                if (href != null && href.startsWith("/en/download/sub/")) {
+                    fileName = "http://www.opensubtitles.org" + href;
+                }
+                else if(href != null && href.startsWith("/en/search/")) {
+                    String split[] = href.split("/");
+                    language = split[4];
+                }
+                System.out.println(tableElement.getTextExtractor().toString());
+                String[] result = {language, fileName, "N/A", "sub/srt", subSource};
+                results.add(result);
+            }
+        }
+
+    }
+    
+    return results;
+   }
+   
+    /**
+     * @param title 
+     * @return the imdb url
+     */
+    public String generateUrl(String fileName) {
+        String encoded = "";
+        try {
+            encoded = URLEncoder.encode(fileName, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.error("Could not cencode UTF-8", ex);
+        }
+        return encoded;
     }
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
