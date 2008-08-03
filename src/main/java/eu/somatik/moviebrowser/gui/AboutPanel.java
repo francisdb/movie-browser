@@ -6,10 +6,15 @@
 package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.config.Settings;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +22,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  francisdb
  */
-public class AboutPanel extends javax.swing.JPanel {
+public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AboutPanel.class);
 
@@ -36,6 +41,20 @@ public class AboutPanel extends javax.swing.JPanel {
         builder.append("</html>");
         aboutTextPane.setContentType("text/html");
         aboutTextPane.setText(builder.toString());
+        aboutTextPane.addHyperlinkListener(this);
+    }
+
+    @Override
+    public void hyperlinkUpdate(HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            try {
+                Desktop.getDesktop().browse(event.getURL().toURI());
+            } catch (IOException ex) {
+                LOGGER.error("Could not open hyperlink", ex);
+            } catch (URISyntaxException ex) {
+                LOGGER.error("Could not open hyperlink", ex);
+            }
+        }
     }
 
     private String getVersion() {
