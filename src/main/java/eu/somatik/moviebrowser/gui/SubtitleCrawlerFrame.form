@@ -28,7 +28,6 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="515" max="32767" attributes="0"/>
                   <Component id="statusProgressBar" alignment="0" pref="515" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="searchText" pref="438" max="32767" attributes="0"/>
@@ -36,6 +35,7 @@
                       <Component id="searchButton" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="infoLabel" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="515" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -50,9 +50,9 @@
                   <Component id="searchButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="searchText" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="214" max="32767" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="statusProgressBar" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -81,13 +81,8 @@
       <SubComponents>
         <Component class="javax.swing.JTable" name="subtitlesTable">
           <Properties>
-            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="1">
-                <Column editable="false" title="Language" type="java.lang.Object"/>
-                <Column editable="false" title="Name" type="java.lang.String"/>
-                <Column editable="false" title="Type" type="java.lang.String"/>
-                <Column editable="false" title="Source" type="java.lang.String"/>
-              </Table>
+            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+              <Connection code="model" type="code"/>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="2">
@@ -118,6 +113,10 @@
               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subtitlesTableMouseClicked"/>
+            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subtitlesTableMousePressed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -127,6 +126,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Search"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
