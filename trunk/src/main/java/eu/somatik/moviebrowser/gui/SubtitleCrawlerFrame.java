@@ -89,7 +89,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         infoLabel.setText("Double click on the subtitle you require below to begin download. Use the search box to refine your search.");
 
         subtitlesTable.setModel(model);
-        subtitlesTable.setColumnSelectionAllowed(true);
+        subtitlesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         subtitlesTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 subtitlesTableMouseClicked(evt);
@@ -155,14 +155,15 @@ private void subtitlesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FI
 
 private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subtitlesTableMousePressed
 if (evt.getClickCount() == 2) {
-    String[] info = (String[]) subtitlesTable.getValueAt(subtitlesTable.getSelectedRow(), subtitlesTable.convertColumnIndexToView(1));
+    String URL = (String) subtitlesTable.getValueAt(subtitlesTable.getSelectedRow(), subtitlesTable.convertColumnIndexToView(1));
+    System.out.print(URL);
     if (SwingUtilities.isLeftMouseButton(evt)) {
         try {
-            Desktop.getDesktop().browse(new URI(info[1]));
+            Desktop.getDesktop().browse(new URI(URL));
         } catch (IOException ex) {
-            LOGGER.error("Could not open " + info[1], ex);
+            LOGGER.error("Could not open " + URL, ex);
         } catch (URISyntaxException ex) {
-            LOGGER.error("Could not open " + info[1], ex);
+            LOGGER.error("Could not open " + URL, ex);
         }
     }
 }
