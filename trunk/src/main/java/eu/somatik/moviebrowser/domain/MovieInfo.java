@@ -9,10 +9,13 @@
 
 package eu.somatik.moviebrowser.domain;
 
+import eu.somatik.moviebrowser.domain.MovieService;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -28,14 +31,16 @@ public class MovieInfo {
     private File directory;
     private MovieStatus status;
     
-
+    private Map<MovieService,Integer> scores;
     
     private PropertyChangeSupport propertyChangeSupport;
+    
     
     /** Creates a new instance of MovieInfo 
      * @param directory 
      */
     public MovieInfo(File directory) {
+        this.scores = new HashMap<MovieService, Integer>();
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         this.directory = directory;
         this.status = MovieStatus.NEW;
@@ -49,6 +54,14 @@ public class MovieInfo {
      */
     public void addPropertyChangeListener(PropertyChangeListener listener){
         this.propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+    
+    public void addScore(MovieService service, Integer score){
+        scores.put(service, score);
+    }
+    
+    public Integer getScore(MovieService service){
+        return scores.get(service);
     }
 
     /**

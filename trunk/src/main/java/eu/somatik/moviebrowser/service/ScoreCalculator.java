@@ -1,8 +1,6 @@
 package eu.somatik.moviebrowser.service;
 
 import eu.somatik.moviebrowser.domain.Movie;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Calculates the average score for all services
@@ -25,6 +23,10 @@ public class ScoreCalculator {
         }
         if(movie.getMovieWebScore() != null){
             score += movie.getMovieWebScore();
+            count++;
+        }
+        if(movie.getGoogleScore() != null){
+            score += movie.getGoogleScore();
             count++;
         }
         

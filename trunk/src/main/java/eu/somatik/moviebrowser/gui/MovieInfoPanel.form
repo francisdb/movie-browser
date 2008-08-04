@@ -49,10 +49,10 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="infoTextPane">
           <Properties>
+            <Property name="editable" type="boolean" value="false"/>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="fe" green="fe" red="fe" type="rgb"/>
             </Property>
-            <Property name="editable" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>

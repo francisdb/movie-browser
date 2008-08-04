@@ -46,7 +46,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         SCORE_COLUMN_NAME,
         "IMDB",
         "Tomato",
-        "MWeb"
+        "MWeb",
+        "Google"
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class, 
@@ -57,6 +58,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class, 
         Integer.class, 
         Integer.class, 
+        Integer.class,
         Integer.class
     };
     
@@ -111,6 +113,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 return movies.get(rowIndex).getMovie().getTomatoScore();
             case 8:
                 return movies.get(rowIndex).getMovie().getMovieWebScore();
+            case 9:
+                return movies.get(rowIndex).getMovie().getGoogleScore();
             default:
                 assert false: "Should never come here";
                 return null;

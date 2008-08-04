@@ -36,9 +36,15 @@ public class Movie {
     private String url;
     private String imgUrl;
     
+    /**
+     * TODO refactor all scores to some other entity class
+     */
     private Integer imdbScore;
     private Integer tomatoScore;
     private Integer movieWebScore;
+    private Integer omdbScore;
+    private Integer googleScore;
+    
     
     /**
      * Runtime in minutes 
@@ -209,6 +215,24 @@ public class Movie {
     public void setTomatoScore(Integer tomatoScore) {
         this.tomatoScore = tomatoScore;
     }
+
+    public Integer getGoogleScore() {
+        return googleScore;
+    }
+
+    public void setGoogleScore(Integer googleScore) {
+        this.googleScore = googleScore;
+    }
+
+    public Integer getOmdbScore() {
+        return omdbScore;
+    }
+
+    public void setOmdbScore(Integer omdbScore) {
+        this.omdbScore = omdbScore;
+    }
+    
+    
 
 
 

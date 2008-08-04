@@ -1,5 +1,6 @@
 package eu.somatik.moviebrowser.service.movieweb;
 
+import eu.somatik.moviebrowser.tools.ElementOnlyTextExtractor;
 import eu.somatik.moviebrowser.api.Parser;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
@@ -52,20 +53,6 @@ public class MovieWebParser implements Parser{
                 // TODO use?
                 }
             }
-        }
-    }
-    
-    
-    private static class ElementOnlyTextExtractor extends TextExtractor {
-
-        public ElementOnlyTextExtractor(final Segment segment) {
-            super(segment);
-        }
-
-        @Override
-        public boolean excludeElement(StartTag startTag) {
-            //LOGGER.debug(startTag.toString());
-            return true;
         }
     }
 
