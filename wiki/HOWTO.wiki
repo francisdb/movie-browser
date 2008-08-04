@@ -3,15 +3,13 @@
 
 = Introduction =
 
-Well I mostly made it for my own use and I'm not sure the current version is usable without problems.
-
 The program only works if your _movies are in subdirectories_ like this:
 
 movies (dir)
    * forest gump  (subdir)
    * pulp fiction (subdir)
 
-after choosing movie - import folder in the menu the folder will be scanned and all info will be fetched from imdb / rotten tomatoes.
+after choosing movie - import folder in the menu the folder will be scanned and all info will be fetched from imdb / rotten tomatoes / ...
 
 
 = Let us know / help out =
