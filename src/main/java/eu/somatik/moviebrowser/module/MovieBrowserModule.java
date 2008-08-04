@@ -23,6 +23,9 @@ import eu.somatik.moviebrowser.service.tomatoes.TomatoesInfoFetcher;
 import eu.somatik.moviebrowser.service.imdb.ImdbParser;
 import eu.somatik.moviebrowser.service.movieweb.MovieWebParser;
 import eu.somatik.moviebrowser.api.Parser;
+import eu.somatik.moviebrowser.service.google.Google;
+import eu.somatik.moviebrowser.service.google.GoogleInfoFetcher;
+import eu.somatik.moviebrowser.service.google.GoogleParser;
 import eu.somatik.moviebrowser.service.tomatoes.TomatoesParser;
 
 /**
@@ -46,9 +49,11 @@ public class MovieBrowserModule extends AbstractModule {
         bind(Parser.class).annotatedWith(MovieWeb.class).to(MovieWebParser.class);
         bind(Parser.class).annotatedWith(Imdb.class).to(ImdbParser.class);
         bind(Parser.class).annotatedWith(RottenTomatoes.class).to(TomatoesParser.class);
+        bind(Parser.class).annotatedWith(Google.class).to(GoogleParser.class);
         
         bind(MovieInfoFetcher.class).annotatedWith(MovieWeb.class).to(MovieWebInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(RottenTomatoes.class).to(TomatoesInfoFetcher.class);
+        bind(MovieInfoFetcher.class).annotatedWith(Google.class).to(GoogleInfoFetcher.class);
 
     }
 }

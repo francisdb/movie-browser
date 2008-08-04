@@ -28,6 +28,7 @@ import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
 import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
 import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
 import eu.somatik.moviebrowser.api.Parser;
+import eu.somatik.moviebrowser.service.google.Google;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class MovieFinder {
     private final FileSystemScanner fileSystemScanner;
     private final MovieInfoFetcher movieWebInfoFetcher;
     private final MovieInfoFetcher tomatoesInfoFetcher;
+    private final MovieInfoFetcher googleInfoFetcher;
     private final MovieNameExtractor movieNameExtractor;
     private final MovieCacheImpl movieCache;
     private final Parser imdbParser;
@@ -55,6 +57,7 @@ public class MovieFinder {
      * Creates a new instance of MovieFinder
      * @param movieWebInfoFetcher
      * @param tomatoesInfoFetcher
+     * @param googleInfoFetcher 
      * @param movieCache
      * @param fileSystemScanner
      * @param movieNameExtractor
@@ -66,6 +69,7 @@ public class MovieFinder {
     public MovieFinder(
             final @MovieWeb MovieInfoFetcher movieWebInfoFetcher,
             final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
+            final @Google MovieInfoFetcher googleInfoFetcher,
             final MovieCacheImpl movieCache,
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor,
@@ -74,6 +78,7 @@ public class MovieFinder {
             final HttpSourceLoader httpLoader) {
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
+        this.googleInfoFetcher = googleInfoFetcher;
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
@@ -149,6 +154,7 @@ public class MovieFinder {
                     loaded = getMovieInfo(info);
                     secondaryService.submit(new TomatoesCaller(loaded));
                     secondaryService.submit(new MovieWebCaller(loaded));
+                    secondaryService.submit(new GoogleCaller(loaded));
                     movieCache.saveMovie(loaded.getMovie());
                 }catch(Exception ex){
                     LOGGER.error("Exception while loading/saving movie", ex);
@@ -184,6 +190,18 @@ public class MovieFinder {
          */
         public MovieWebCaller(MovieInfo info) {
             super(movieWebInfoFetcher, info);
+        }
+    }
+    
+    private class GoogleCaller extends AbstractMovieCaller {
+
+        /**
+         * Constructs a new MovieCaller object
+         *
+         * @param info
+         */
+        public GoogleCaller(MovieInfo info) {
+            super(googleInfoFetcher, info);
         }
     }
 

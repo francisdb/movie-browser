@@ -39,6 +39,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private JButton tomatoesButton;
     private JButton moviewebButton;
     private JButton omdbButton;
+    private JButton googleButton;
     private MovieInfo info;
 
     /** Creates new form MovieInfoPanel
@@ -96,11 +97,12 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         updateButton(tomatoesButton, MovieFinder.generateTomatoesUrl(movie));
         updateButton(moviewebButton, null);
         updateButton(omdbButton, null);
+        updateButton(googleButton, null);
 
         // TODO save and use these links
         moviewebButton.setActionCommand("");
         omdbButton.setActionCommand("");
-
+        googleButton.setActionCommand("");
 
 
         StringBuilder builder = new StringBuilder("<html>");
@@ -132,6 +134,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         builder.append("<strong>IMDB</strong> ").append(scoreString(movie.getImdbScore())).append(" ").append(movie.getVotes()).append("<br/>");
         builder.append("<strong>TOMATO</strong> ").append(scoreString(movie.getTomatoScore())).append("<br/>");
         builder.append("<strong>MovieWeb</strong> ").append(scoreString(movie.getMovieWebScore())).append("<br/>");
+        builder.append("<strong>Google</strong> ").append(scoreString(movie.getGoogleScore())).append("<br/>");
         //builder.append("<strong>OMDB</strong> ").append(scoreString(movie.get)).append("%<br/>");
         builder.append(movie.getPlot());
         builder.append("</html>");
@@ -203,6 +206,17 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             }
         });
         buttonPanel.add(omdbButton);
+        googleButton = new JButton(iconLoader.loadIcon("images/16/google.png"));
+        googleButton.setToolTipText("Open on omdb website");
+        googleButton.setEnabled(false);
+        googleButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(googleButton);
+            }
+        });
+        buttonPanel.add(googleButton);
     }
 
     private void openLinkFor(JButton button) {
