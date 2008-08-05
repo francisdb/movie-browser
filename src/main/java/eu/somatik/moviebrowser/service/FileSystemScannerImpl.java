@@ -35,15 +35,17 @@ public class FileSystemScannerImpl implements FileSystemScanner {
     @Override
     public File findSample(File folder){
     	File sample = null;
-    	for(File file:folder.listFiles()){
-    		if("sample".equals(file.getName().toLowerCase())){
-    			for(File sampleFolderFile:file.listFiles()){
-    				if(sampleFolderFile.getName().toLowerCase().endsWith(".avi")){
-    					sample = sampleFolderFile;
-    				}
-    			}
-    		}
-    	}
+        if(folder.isDirectory()){
+            for(File file:folder.listFiles()){
+                    if("sample".equals(file.getName().toLowerCase())){
+                            for(File sampleFolderFile:file.listFiles()){
+                                    if(sampleFolderFile.getName().toLowerCase().endsWith(".avi")){
+                                            sample = sampleFolderFile;
+                                    }
+                            }
+                    }
+            }
+        }
     	return sample;
     }
     
@@ -67,13 +69,14 @@ public class FileSystemScannerImpl implements FileSystemScanner {
     @Override
     public String findNfoImdbUrl(File dir){
         String url = null;
-        for(File file:dir.listFiles()){
-            if(file.getName().toLowerCase().endsWith(".nfo")){
-                LOGGER.debug("checking nfo: "+file.getName());
-                url = findImdbUrl(file); 
+        if(dir.isDirectory()){
+            for(File file:dir.listFiles()){
+                if(file.getName().toLowerCase().endsWith(".nfo")){
+                    LOGGER.debug("checking nfo: "+file.getName());
+                    url = findImdbUrl(file); 
+                }
             }
         }
-        
         return url;
     }
     

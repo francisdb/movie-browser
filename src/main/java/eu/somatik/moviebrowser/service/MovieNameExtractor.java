@@ -1,12 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.somatik.moviebrowser.service;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -14,6 +12,8 @@ import java.util.GregorianCalendar;
  */
 public class MovieNameExtractor {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(MovieNameExtractor.class);
+
     private static final String TO_REMOVE[] = {
         ".dvdrip",
         ".samplefix",
@@ -33,28 +33,38 @@ public class MovieNameExtractor {
         ".limited",
         ".nfofix"    //".ws"        
     };
-    
-    public String removeCrap(String name) {
-        String movieName = name.toLowerCase();
-        for (String bad : TO_REMOVE) {
-            movieName = movieName.replaceAll(bad, "");
-        }
+    private final MovieFileFilter filter;
 
-        Calendar calendar = new GregorianCalendar();
-        int thisYear = calendar.get(Calendar.YEAR);
+    public MovieNameExtractor() {
+        this.filter = new MovieFileFilter(false);
+    }
 
-        //TODO recup the movie year!
+    public String removeCrap(File file) {
+        String movieName;
+        if (file.isDirectory()) {
+            movieName = file.getName().toLowerCase();
+            for (String bad : TO_REMOVE) {
+                movieName = movieName.replaceAll(bad, "");
+            }
 
-        for (int i = 1800; i < thisYear; i++) {
-            movieName = movieName.replaceAll(Integer.toString(i), "");
-        }
-        int dashPos = movieName.lastIndexOf('-');
-        if (dashPos != -1) {
-            movieName = movieName.substring(0, movieName.lastIndexOf('-'));
+            Calendar calendar = new GregorianCalendar();
+            int thisYear = calendar.get(Calendar.YEAR);
+
+            //TODO recup the movie year!
+
+            for (int i = 1800; i < thisYear; i++) {
+                movieName = movieName.replaceAll(Integer.toString(i), "");
+            }
+            int dashPos = movieName.lastIndexOf('-');
+            if (dashPos != -1) {
+                movieName = movieName.substring(0, movieName.lastIndexOf('-'));
+            }
+        } else {
+            movieName = filter.clearMovieExtension(file);
         }
         movieName = movieName.replaceAll("\\.", " ");
         movieName = movieName.trim();
+        LOGGER.debug(movieName);
         return movieName;
-    }    
-
+    }
 }
