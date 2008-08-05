@@ -14,10 +14,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
-import au.id.jericho.lib.html.Element;
-import au.id.jericho.lib.html.HTMLElementName;
-import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.domain.Movie;
@@ -30,7 +26,7 @@ import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.service.flixter.Flixter;
 import eu.somatik.moviebrowser.service.google.Google;
-import java.io.IOException;
+import eu.somatik.moviebrowser.service.imdb.ImdbUrlGenerator;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +41,7 @@ public class MovieFinder {
     private final ExecutorService service;
     private final ExecutorService secondaryService;
     private final FileSystemScanner fileSystemScanner;
+    private final MovieInfoFetcher imdbInfoFetcher;
     private final MovieInfoFetcher movieWebInfoFetcher;
     private final MovieInfoFetcher tomatoesInfoFetcher;
     private final MovieInfoFetcher googleInfoFetcher;
@@ -57,6 +54,7 @@ public class MovieFinder {
 
     /**
      * Creates a new instance of MovieFinder
+     * @param imdbInfoFetcher 
      * @param movieWebInfoFetcher
      * @param tomatoesInfoFetcher
      * @param googleInfoFetcher 
@@ -70,6 +68,7 @@ public class MovieFinder {
      */
     @Inject
     public MovieFinder(
+            final @Imdb MovieInfoFetcher imdbInfoFetcher,
             final @MovieWeb MovieInfoFetcher movieWebInfoFetcher,
             final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
             final @Google MovieInfoFetcher googleInfoFetcher,
@@ -80,6 +79,7 @@ public class MovieFinder {
             final @Imdb Parser imdbParser,
             final ImdbSearch imdbSearch,
             final HttpSourceLoader httpLoader) {
+        this.imdbInfoFetcher = imdbInfoFetcher;
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
         this.googleInfoFetcher = googleInfoFetcher;
@@ -258,72 +258,27 @@ public class MovieFinder {
      * @throws java.lang.Exception
      */
     private MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
-        movieInfo.setStatus(MovieStatus.LOADING_IMDB);
         String url = null;
         if(movieInfo.getMovie().getImdbId() != null){
-            url = generateImdbUrl(movieInfo.getMovie());
+            LOGGER.info("Generating IMDB url form IMDB id");
+            url = ImdbUrlGenerator.generateImdbUrl(movieInfo.getMovie());
         }
         if (url == null) {
-            url = fileSystemScanner.findNfoUrl(movieInfo.getDirectory());
+            LOGGER.info("Finding NFO");
+            url = fileSystemScanner.findNfoImdbUrl(movieInfo.getDirectory());
         }
-        if (url == null) {
-            String title = movieNameExtractor.removeCrap(movieInfo.getDirectory().getName());
-            url = imdbSearch.generateImdbTitleSearchUrl(title);
-
-        }
-
-        movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]", "").trim());
-        movieInfo.getMovie().setImdbUrl(url);
         
-        String source = httpLoader.load(generateImdbUrl(movieInfo.getMovie()));
-
-        return parseImdbHtml(source, movieInfo);
-
-    }
-
-    private MovieInfo parseImdbHtml(String source, MovieInfo movieInfo) throws Exception {
-        Source jerichoSource = new Source(source);
-        jerichoSource.fullSequentialParse();
-        Element titleElement = (Element) jerichoSource.findAllElements(HTMLElementName.TITLE).get(0);
-        if (titleElement.getContent().getTextExtractor().toString().contains("Title Search")) {
-            List<Movie> movies = imdbSearch.parseResults(source);
-            if(movies.size() == 0){
-                throw new IOException("No movies found");
-            }else{
-                //use the first link
-                Movie firstMovie = movies.get(0);
-                movieInfo.getMovie().setImdbId(firstMovie.getImdbId());
-                source = httpLoader.load(generateImdbUrl(firstMovie));
-            }
+        if(url == null){
+            movieInfo.getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory().getName()));
         }
-        movieInfo.getMovie().setImdbUrl(generateImdbUrl(movieInfo.getMovie()));
-        imdbParser.parse(source, movieInfo.getMovie());
+        
+        movieInfo.getMovie().setImdbUrl(url);
+        imdbInfoFetcher.fetch(movieInfo.getMovie());
         return movieInfo;
     }
 
 
-    /**
-     *
-     * @param movie 
-     * @return the tomatoes url
-     */
-    public static String generateTomatoesUrl(Movie movie) {
-        return "http://www.rottentomatoes.com/alias?type=imdbid&s=" + movie.getImdbId();
-    }
-
-    /**
-     * @param movie 
-     * @return the imdb url
-     */
-    public static String generateImdbUrl(Movie movie) {
-        String id = movie.getImdbId();
-        if ("".equals(id)) {
-            return movie.getImdbUrl();
-        } else {
-            return "http://www.imdb.com/title/tt" + id + "/";
-        }
-    }
-
+    
 
     
     

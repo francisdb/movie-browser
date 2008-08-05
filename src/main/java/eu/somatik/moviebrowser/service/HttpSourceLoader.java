@@ -30,9 +30,10 @@ public class HttpSourceLoader implements SourceLoader {
         HttpMethod method = null;
         InputStream is = null;
         try{
+            LOGGER.info("Loading "+url);
             method = new GetMethod(url);
             client.executeMethod(method);
-            LOGGER.info(method.getURI().toString());
+            LOGGER.info("Finished loading at "+method.getURI().toString());
             is = method.getResponseBodyAsStream();
             source = IOTools.inputSreamToString(is);
         }finally{

@@ -65,7 +65,7 @@ public class FileSystemScannerImpl implements FileSystemScanner {
      * @return the nfo URL or null
      */
     @Override
-    public String findNfoUrl(File dir){
+    public String findNfoImdbUrl(File dir){
         String url = null;
         for(File file:dir.listFiles()){
             if(file.getName().toLowerCase().endsWith(".nfo")){

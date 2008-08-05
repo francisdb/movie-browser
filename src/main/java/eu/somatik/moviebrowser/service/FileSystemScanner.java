@@ -18,7 +18,7 @@ public interface FileSystemScanner {
      * @param dir
      * @return the nfo URL or null
      */
-    String findNfoUrl(File dir);
+    String findNfoImdbUrl(File dir);
 
     /**
      * Locates parent directory name and returns it
