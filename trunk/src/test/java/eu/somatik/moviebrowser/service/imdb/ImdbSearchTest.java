@@ -18,6 +18,7 @@ public class ImdbSearchTest {
 
     /**
      * Test of getResults method, of class ImdbSearch.
+     * TODO fix nullpointer because of imdbparser dependency!
      * @throws Exception 
      */
     @Test
@@ -28,9 +29,9 @@ public class ImdbSearchTest {
         assertTrue(result.size() > 0);
         assertEquals("Pulp Fiction", result.get(0).getTitle());
         
-        result = instance.getResults("The Dark Knight");
+        result = instance.getResults("Die Hard 4");
         assertTrue(result.size() > 0);
-        assertEquals("The Dark Knight", result.get(0).getTitle());
+        assertEquals("Flive Free or Die Hard", result.get(0).getTitle());
     }
 
     /**
