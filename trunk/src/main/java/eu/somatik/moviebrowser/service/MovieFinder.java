@@ -269,7 +269,7 @@ public class MovieFinder {
         }
         
         if(url == null){
-            movieInfo.getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory().getName()));
+            movieInfo.getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
         }
         
         movieInfo.getMovie().setImdbUrl(url);
