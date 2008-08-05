@@ -33,7 +33,7 @@ public class Movie {
     
     private String title;
     private Integer year;
-    private String url;
+    
     private String imgUrl;
     
     /**
@@ -135,22 +135,6 @@ public class Movie {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * 
-     * @return the url
-     */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * 
-     * @param url 
-     */
-    public void setUrl(String url) {
-        this.url = url;
     }
     
         /**

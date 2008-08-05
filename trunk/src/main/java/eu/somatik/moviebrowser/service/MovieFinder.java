@@ -272,9 +272,9 @@ public class MovieFinder {
 
         }
 
-        movieInfo.getMovie().setUrl(url);
         movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]", "").trim());
-
+        movieInfo.getMovie().setImdbUrl(url);
+        
         String source = httpLoader.load(generateImdbUrl(movieInfo.getMovie()));
 
         return parseImdbHtml(source, movieInfo);
@@ -296,6 +296,7 @@ public class MovieFinder {
                 source = httpLoader.load(generateImdbUrl(firstMovie));
             }
         }
+        movieInfo.getMovie().setImdbUrl(generateImdbUrl(movieInfo.getMovie()));
         imdbParser.parse(source, movieInfo.getMovie());
         return movieInfo;
     }
@@ -317,7 +318,7 @@ public class MovieFinder {
     public static String generateImdbUrl(Movie movie) {
         String id = movie.getImdbId();
         if ("".equals(id)) {
-            return movie.getUrl();
+            return movie.getImdbUrl();
         } else {
             return "http://www.imdb.com/title/tt" + id + "/";
         }
