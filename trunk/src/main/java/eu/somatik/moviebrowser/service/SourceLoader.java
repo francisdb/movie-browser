@@ -5,7 +5,6 @@
 
 package eu.somatik.moviebrowser.service;
 
-import au.id.jericho.lib.html.Source;
 import java.io.IOException;
 
 /**
@@ -20,6 +19,6 @@ public interface SourceLoader {
      * @return
      * @throws java.io.IOException
      */
-    Source load(String url) throws IOException;
+    String load(String url) throws IOException;
 
 }

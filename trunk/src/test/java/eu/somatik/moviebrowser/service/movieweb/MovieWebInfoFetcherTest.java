@@ -1,9 +1,8 @@
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.movieweb;
 
-import eu.somatik.moviebrowser.service.movieweb.MovieWebInfoFetcher;
+import eu.somatik.moviebrowser.service.*;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.service.movieweb.MovieWebParser;
 import java.io.File;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,15 +22,13 @@ public class MovieWebInfoFetcherTest {
      * Test of load method, of class MovieWebInfoFetcher.
      */
     @Test
-    @Ignore
+    @Ignore(value="Disabled for CI")
     public void testFetch() {
-        MovieInfo movieInfo = new MovieInfo(new File("/tmp"));
         Movie movie = new Movie();
         movie.setTitle("Pulp Fiction");
-        movieInfo.setMovie(movie);
         MovieWebParser parser = new MovieWebParser();
         MovieWebInfoFetcher fetcher = new MovieWebInfoFetcher(parser, new HttpSourceLoader());
-        fetcher.fetch(movieInfo.getMovie());
+        fetcher.fetch(movie);
         assertNotNull("MovieWebStars is null", movie.getMovieWebScore());
     }
 

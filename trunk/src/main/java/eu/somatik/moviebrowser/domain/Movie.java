@@ -44,7 +44,17 @@ public class Movie {
     private Integer movieWebScore;
     private Integer omdbScore;
     private Integer googleScore;
+    private Integer flixterScore;
     
+    /**
+     * TODO refactor all urls to some other entity class
+     */
+    private String imdbUrl;
+    private String tomatoUrl;
+    private String moviewebUrl;
+    private String omdbUrl;
+    private String googleUrl;
+    private String flixterUrl;
     
     /**
      * Runtime in minutes 
@@ -231,6 +241,16 @@ public class Movie {
     public void setOmdbScore(Integer omdbScore) {
         this.omdbScore = omdbScore;
     }
+
+    public Integer getFlixterScore() {
+        return flixterScore;
+    }
+
+    public void setFlixterScore(Integer flixterScore) {
+        this.flixterScore = flixterScore;
+    }
+    
+    
     
     
 
@@ -274,6 +294,56 @@ public class Movie {
     public void setYear(Integer year) {
         this.year = year;
     }
+
+    public String getFlixterUrl() {
+        return flixterUrl;
+    }
+
+    public void setFlixterUrl(String flixterUrl) {
+        this.flixterUrl = flixterUrl;
+    }
+
+    public String getGoogleUrl() {
+        return googleUrl;
+    }
+
+    public void setGoogleUrl(String googleUrl) {
+        this.googleUrl = googleUrl;
+    }
+
+    public String getImdbUrl() {
+        return imdbUrl;
+    }
+
+    public void setImdbUrl(String imdbUrl) {
+        this.imdbUrl = imdbUrl;
+    }
+
+    public String getMoviewebUrl() {
+        return moviewebUrl;
+    }
+
+    public void setMoviewebUrl(String moviewebUrl) {
+        this.moviewebUrl = moviewebUrl;
+    }
+
+    public String getOmdbUrl() {
+        return omdbUrl;
+    }
+
+    public void setOmdbUrl(String omdbUrl) {
+        this.omdbUrl = omdbUrl;
+    }
+
+    public String getTomatoUrl() {
+        return tomatoUrl;
+    }
+
+    public void setTomatoUrl(String tomatoUrl) {
+        this.tomatoUrl = tomatoUrl;
+    }
+    
+    
     
     
     

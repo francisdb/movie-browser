@@ -43,9 +43,10 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
     @Override
     public void fetch(Movie movie) {
         try {
-            Source source = httpLoader.load(createMovieWebSearchUrl(movie));
+            String source = httpLoader.load(createMovieWebSearchUrl(movie));
+            Source jerichoSource = new Source(source);
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-            source.fullSequentialParse();
+            jerichoSource.fullSequentialParse();
 
             //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
             //System.out.println(titleElement.getContent().extractText());
@@ -53,7 +54,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             // <div id="bubble_allCritics" class="percentBubble" style="display:none;">     57%    </div>
 
             String movieUrl = null;
-            List<?> aElements = source.findAllElements(HTMLElementName.A);
+            List<?> aElements = jerichoSource.findAllElements(HTMLElementName.A);
             for (Iterator<?> i = aElements.iterator(); i.hasNext();) {
                 Element aElement = (Element) i.next();
                 String url = aElement.getAttributeValue("href");
@@ -69,6 +70,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             if (movieUrl == null) {
                 throw new IOException("Movie not found on MovieWeb: "+movie.getTitle());
             }
+            movie.setMoviewebUrl(movieUrl);
             source = httpLoader.load(movieUrl);
             movieWebInfoParser.parse(source, movie);
         } catch (IOException ex) {

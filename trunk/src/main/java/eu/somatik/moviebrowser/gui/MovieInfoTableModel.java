@@ -47,7 +47,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "IMDB",
         "Tomato",
         "MWeb",
-        "Google"
+        "Google",
+        "Flixter"
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class, 
@@ -58,6 +59,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class, 
         Integer.class, 
         Integer.class, 
+        Integer.class,
         Integer.class,
         Integer.class
     };
@@ -78,15 +80,15 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     }
 
     @Override
-	public String getColumnName(int columnIndex){
+    public String getColumnName(int columnIndex) {
         return COL_NAMES[columnIndex];
     }
-    
+
     @Override
-	public Class<?> getColumnClass(int columnIndex){
+    public Class<?> getColumnClass(int columnIndex) {
         return COL_CLASSES[columnIndex];
     }
-    
+
     @Override
     public int getColumnCount() {
         return COL_CLASSES.length;
@@ -115,6 +117,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 return movies.get(rowIndex).getMovie().getMovieWebScore();
             case 9:
                 return movies.get(rowIndex).getMovie().getGoogleScore();
+            case 10:
+                return movies.get(rowIndex).getMovie().getFlixterScore();
             default:
                 assert false: "Should never come here";
                 return null;

@@ -1,6 +1,5 @@
 package eu.somatik.moviebrowser.service.omdb;
 
-import eu.somatik.moviebrowser.service.omdb.OmdbFetcher;
 import eu.somatik.moviebrowser.domain.Movie;
 import org.junit.Ignore;
 import org.junit.Test;

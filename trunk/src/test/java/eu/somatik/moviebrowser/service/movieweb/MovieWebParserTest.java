@@ -1,6 +1,5 @@
 package eu.somatik.moviebrowser.service.movieweb;
 
-import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.FileSourceLoader;
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class MovieWebParserTest {
      */
     @Test
     public void testParse() throws Exception {
-        Source source = new FileSourceLoader().load("movieweb/pulp_fiction_summary.php.html");
+        String source = new FileSourceLoader().load("movieweb/pulp_fiction_summary.php.html");
         Movie movie = new Movie();
         MovieWebParser instance = new MovieWebParser();
         instance.parse(source, movie);

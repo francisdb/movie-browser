@@ -3,27 +3,18 @@
  *
  * Created on 31 July 2008, 02:22
  */
-
 package eu.somatik.moviebrowser.gui;
 
-import javax.swing.table.DefaultTableModel;
+import eu.somatik.moviebrowser.api.SubtitlesLoader;
+import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.awt.Desktop;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,13 +22,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.id.jericho.lib.html.Element;
-import au.id.jericho.lib.html.HTMLElementName;
-import au.id.jericho.lib.html.Source;
-import com.google.inject.Inject;
 
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.service.HttpSourceLoader;
+import eu.somatik.moviebrowser.domain.Subtitle;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -45,24 +32,25 @@ import eu.somatik.moviebrowser.service.HttpSourceLoader;
  */
 public class SubtitleCrawlerFrame extends javax.swing.JFrame {
 
-    private DefaultTableModel model;
     private static final Logger LOGGER = LoggerFactory.getLogger(SubtitleCrawlerFrame.class);
-    private final HttpSourceLoader httpLoader;
-    
-    /** Creates new form SubtitleCrawlerFrame */
-    public SubtitleCrawlerFrame(List<String> files, String imdbID, HttpSourceLoader httpLoader) {
-        this.httpLoader = httpLoader;
-        
-        //Prepare table model
-        String[] columnNames = {"Language", "File Name", "#. CD", "Type", "Source"};
-        model = new DefaultTableModel(null, columnNames);
-        
+    private final SubtitleTableModel model;
+    private final SubtitlesLoader subtitlesLoader;
+
+    /** Creates new form SubtitleCrawlerFrame
+     * @param files
+     * @param imdbID
+     * @param subtitlesLoader 
+     */
+    public SubtitleCrawlerFrame(List<String> files, String imdbID, final SubtitlesLoader subtitlesLoader) {
+        this.subtitlesLoader = subtitlesLoader;
+        this.model = new SubtitleTableModel();
+
         initComponents();
         this.setTitle("Subtitle Crawler " + files.toString());
         crawl(files, imdbID);
         searchButton.setEnabled(false);
-        
-    };
+
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -150,132 +138,90 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void subtitlesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subtitlesTableMouseClicked
-
 }//GEN-LAST:event_subtitlesTableMouseClicked
 
 private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subtitlesTableMousePressed
-if (evt.getClickCount() == 2) {
-    String URL = (String) subtitlesTable.getValueAt(subtitlesTable.getSelectedRow(), subtitlesTable.convertColumnIndexToView(1));
-    System.out.print(URL);
-    if (SwingUtilities.isLeftMouseButton(evt)) {
-        try {
-            Desktop.getDesktop().browse(new URI(URL));
-        } catch (IOException ex) {
-            LOGGER.error("Could not open " + URL, ex);
-        } catch (URISyntaxException ex) {
-            LOGGER.error("Could not open " + URL, ex);
-        }
-    }
-}
-}//GEN-LAST:event_subtitlesTableMousePressed
-
-public void crawl(List<String> files, String imdbID) {
-    String fileName;
-    Set<String[]> results = new HashSet<String[]>();
-    Iterator<String> i = files.iterator();
-    while(i.hasNext()) {
-        fileName = (String) i.next();
-        String split[] = fileName.split(".");
-        if (split.length!=0) {
-            fileName = split[0];
-        }
-        
-        System.out.println(fileName);
-        try {
-            //Add other methods to get subs from other sources.
-            results.addAll(getOpenSubsResults(generateUrl(fileName)));
-        }
-        catch (Exception ex) {
-            LOGGER.error("Error retrieveng opensubtitle.org results. ", ex);
-        }
-    }
-    
-    try {
-        //Get subtitlesource
-        results.add(getSubtitleSourceResults(imdbID));
-    }
-    catch (Exception ex) {
-         LOGGER.error("Error retrieveng subtitlesource.org results. ", ex);
-    }
-    
-    Iterator<String[]> j = results.iterator();
-    String[] result;
-    while (j.hasNext()) {
-        result = (String[]) j.next();
-        model.addRow(result);
-    }
-    
-    searchButton.setEnabled(true);
-}
-
-   public String[] getSubtitleSourceResults(String imdbID) throws IOException {
-       String[] results = {"N/A", "http://www.subtitlesource.org/title/tt" + imdbID, "N/A", "Various", "SubtitleSource.org"};
-       return  results;
-    }
-   
-   public Set<String[]> getOpenSubsResults(String fileName) throws IOException {
-       Source source = httpLoader.load("http://www.opensubtitles.org/en/search2/?moviename=" + fileName + "&sublanguageid=all");
-       return getOpenSubsResults(source);
-   }
-   
-   public Set<String[]> getOpenSubsResults(Source source) throws IOException {
-    
-    String fileName, language, noCd, type, subSource;
-    fileName = "";
-    language = "";
-    
-    Set<String[]> results = new HashSet<String[]>();
-    subSource = "OpenSubtitles.org";
-    Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
-    String title = titleElement.getContent().getTextExtractor().toString();
-    if (!title.contains("download divx subtitles from the biggest open")) {
-        List<?> tableElements = source.findAllElements(HTMLElementName.TD);
-        Element tableElement;
-        Iterator<?> j = tableElements.iterator();
-        while(j.hasNext()) {
-            tableElement = (Element) j.next();
-            
-            //System.out.println(tableElement.getTextExtractor().toString());
-            String newList = tableElement.getChildElements().toString();
-            Source newSource = new Source(newList);
-            List<?> linkElements = newSource.findAllElements(HTMLElementName.A);
-            Element linkElement;
-            Iterator<?> i = linkElements.iterator();
-            
-            while (i.hasNext()) {
-                linkElement = (Element) i.next();
-                String href = linkElement.getAttributeValue("href");
-                if (href != null && href.startsWith("/en/download/sub/")) {
-                    fileName = "http://www.opensubtitles.org" + href;
-                }
-                else if(href != null && href.startsWith("/en/search/")) {
-                    String split[] = href.split("/");
-                    language = split[4];
-                }
-                System.out.println(tableElement.getTextExtractor().toString());
-                String[] result = {language, fileName, "N/A", "sub/srt", subSource};
-                results.add(result);
+    if (evt.getClickCount() == 2) {
+        String URL = (String) subtitlesTable.getValueAt(subtitlesTable.getSelectedRow(), subtitlesTable.convertColumnIndexToView(1));
+        System.out.print(URL);
+        if (SwingUtilities.isLeftMouseButton(evt)) {
+            try {
+                Desktop.getDesktop().browse(new URI(URL));
+            } catch (IOException ex) {
+                LOGGER.error("Could not open " + URL, ex);
+            } catch (URISyntaxException ex) {
+                LOGGER.error("Could not open " + URL, ex);
             }
         }
+    }
+}//GEN-LAST:event_subtitlesTableMousePressed
+
+    public void crawl(final List<String> files, final String imdbID) {
+        new SwingWorker<Set<Subtitle>,Void>() {
+
+            @Override
+            protected Set<Subtitle> doInBackground() throws Exception {
+                String fileName;
+                Set<Subtitle> results = new HashSet<Subtitle>();
+                Iterator<String> i = files.iterator();
+                while (i.hasNext()) {
+                    fileName = i.next();
+                    String split[] = fileName.split(".");
+                    if (split.length != 0) {
+                        fileName = split[0];
+                    }
+
+                    LOGGER.info("fileName = " + fileName);
+                    try {
+                        //Add other methods to get subs from other sources.
+                        results.addAll(subtitlesLoader.getOpenSubsResults(fileName));
+                    } catch (IOException ex) {
+                        LOGGER.error("Exception while fetching subtitles", ex);
+                    }
+
+                }
+
+                if (results.size() == 0) {
+                    try {
+                        //Get subtitlesource
+                        results.add(makeDummyEntry(imdbID));
+                    } catch (Exception ex) {
+                        LOGGER.error("Error retrieveng subtitlesource.org results. ", ex);
+                    }
+                }
+                return results;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    Set<Subtitle> subtitles = get();
+                    for (Subtitle subtitle:subtitles) {
+                        model.add(subtitle);
+                    }
+                    searchButton.setEnabled(true);
+                } catch (InterruptedException ex) {
+                    LOGGER.error("Worker interrupted", ex);
+                } catch (ExecutionException ex) {
+                    LOGGER.error("Fetching subs failed", ex.getCause());
+                }
+            }
+
+        }.execute();
 
     }
-    
-    return results;
-   }
-   
-    /**
-     * @param title 
-     * @return the imdb url
-     */
-    public String generateUrl(String fileName) {
-        String encoded = "";
-        try {
-            encoded = URLEncoder.encode(fileName, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("Could not cencode UTF-8", ex);
-        }
-        return encoded;
+
+    public Subtitle makeDummyEntry(String imdbID) throws IOException {
+        Subtitle sub = new Subtitle();
+        sub.setFileName("http://www.subtitlesource.org/title/tt" + imdbID);
+        sub.setSubSource("SubtitleSource.org");
+        sub.setLanguage("Various");
+        sub.setNoCd("N/A");
+        sub.setType("N/A");
+        return sub;
     }
+
+
             
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel infoLabel;

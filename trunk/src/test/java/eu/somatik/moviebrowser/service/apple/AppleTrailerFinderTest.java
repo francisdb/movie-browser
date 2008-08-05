@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.apple;
 
 import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
 import eu.somatik.moviebrowser.domain.Movie;

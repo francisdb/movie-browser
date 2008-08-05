@@ -694,7 +694,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
      * @param fileName
      */
     private void openSubCrawler(List<String> file, String imdbID) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, imdbID, null);
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, imdbID, browser.getSubtitlesLoader());
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }

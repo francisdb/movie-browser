@@ -29,6 +29,10 @@ public class ScoreCalculator {
             score += movie.getGoogleScore();
             count++;
         }
+        if(movie.getFlixterScore() != null){
+            score += movie.getFlixterScore();
+            count++;
+        }
         
         Integer value = null;
         if(count > 0){

@@ -1,6 +1,5 @@
 package eu.somatik.moviebrowser.service;
 
-import au.id.jericho.lib.html.Source;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,6 +8,7 @@ import java.io.InputStream;
  * @author francisdb
  */
 public class FileSourceLoader implements SourceLoader {
+
     /**
      * Loads a page source file from the class path
      * @param url
@@ -16,21 +16,26 @@ public class FileSourceLoader implements SourceLoader {
      * @throws java.io.IOException
      */
     @Override
-    public Source load(String url) throws IOException {
-        
-        Source source = null;
+    public String load(String url) throws IOException {
+        String source = null;
         InputStream fis = null;
-        try{
+        try {
             fis = FileSourceLoader.class.getClassLoader().getResourceAsStream(url);
-            //fis = new FileInputStream(url);
-            source = new Source(fis);
-            //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-            source.fullSequentialParse();
-        }finally{
-            if(fis != null){
+            source = slurp(fis);
+        } finally {
+            if (fis != null) {
                 fis.close();
             }
         }
         return source;
+    }
+
+    public String slurp(InputStream in) throws IOException {
+        StringBuilder out = new StringBuilder();
+        byte[] b = new byte[4096];
+        for (int n; (n = in.read(b)) != -1;) {
+            out.append(new String(b, 0, n));
+        }
+        return out.toString();
     }
 }
