@@ -41,6 +41,7 @@ import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
 import eu.somatik.moviebrowser.service.imdb.ImdbTrailerFinder;
 import eu.somatik.moviebrowser.api.TrailerFinder;
+import eu.somatik.moviebrowser.service.MovieFileFilter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -73,6 +74,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final IconLoader iconLoader;
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
+    private final MovieFileFilter movieFileFilter;
 
     /** 
      * Creates new form MainFrame
@@ -91,6 +93,7 @@ public class MainFrame extends javax.swing.JFrame {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.settings = settings;
+        this.movieFileFilter = new MovieFileFilter(false);
         this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
 
@@ -428,12 +431,19 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             source.changeSelection(row, column, false, false);
 
             JPopupMenu popup = new JPopupMenu();
-            JMenu menu = new JMenu("Trailer");
-            menu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
-            menu.add(new AppleTrailerAction());
-            menu.add(new ImdbTrailerAction());
-            popup.add(menu);
-            popup.add(new WatchSampleAction());
+            
+            JMenu trailerMenu = new JMenu("Trailer");
+            trailerMenu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
+            trailerMenu.add(new AppleTrailerAction());
+            trailerMenu.add(new ImdbTrailerAction());
+            popup.add(trailerMenu);
+            
+            JMenu watchMenu = new JMenu("Watch");
+            watchMenu.setIcon(iconLoader.loadIcon("images/16/video-display.png"));
+            watchMenu.add(new WatchMovieFileAction());
+            watchMenu.add(new WatchSampleAction());
+            popup.add(watchMenu);
+            
             popup.add(new CrawlSubtitleAction());
             popup.add(new EditAction());
             LOGGER.info("Showing popup");
@@ -536,6 +546,15 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
     }
     
+    private void openFile(File file) {
+        LOGGER.info("Trying to open "+file.getAbsolutePath());
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException ex) {
+            LOGGER.error("Failed launching default browser for " + file.getAbsolutePath(), ex);
+        }
+    }
+    
     
      /**
      * This action  tries to show the trailer
@@ -589,7 +608,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
      */
     private class  WatchSampleAction extends AbstractAction{
         public WatchSampleAction() {
-            super("Watch Sample", iconLoader.loadIcon("images/16/video-display.png"));
+            super("Sample", iconLoader.loadIcon("images/16/video-display.png"));
         }
 
         @Override
@@ -597,14 +616,39 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             MovieInfo info = getSelectedMovie();
             File sample = browser.getFileSystemScanner().findSample(info.getDirectory());
             if (sample != null) {
-                try {
-                    LOGGER.info("OPENING: " + sample);
-                    Desktop.getDesktop().open(sample);
-                } catch (IOException ex) {
-                    LOGGER.error("Could not launch default app for " + sample, ex);
-                }
+                openFile(sample);
             } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
+            }
+        }
+    }
+    
+    /**
+     * This action opens the sample if a sample is found
+     * @param evt
+     */
+    private class WatchMovieFileAction extends AbstractAction{
+        public WatchMovieFileAction() {
+            super("Video", iconLoader.loadIcon("images/16/video-display.png"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MovieInfo info = getSelectedMovie();
+            File file = info.getDirectory();
+            if (file.isDirectory()) {
+                File[] movieFiles = file.listFiles(movieFileFilter);
+                if(movieFiles.length > 0){
+                    for(File movieFile:movieFiles){
+                        openFile(movieFile);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(MainFrame.this, "No video found");
+                }
+            } else if(movieFileFilter.accept(file)){
+                openFile(file);
+            } else {
+                JOptionPane.showMessageDialog(MainFrame.this, "No video found");
             }
         }
     }
@@ -625,13 +669,14 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             MovieInfo info = getSelectedMovie(); 
             File dir = info.getDirectory();
             String alternateSearchKey = getSelectedMovie().toString();
+            File child;
             for(File file:dir.listFiles()) {
                 if(file.isDirectory()) {
-                    File child = file;
+                    child = file;
                     for(File file2:child.listFiles()) {
                         if(file2.isFile()) {
                             if(!file2.getName().contains("sample")) {
-                                if(checkFileType(file2)) {
+                                if(movieFileFilter.accept(file2)) {
                                     files.add(file2.getName());
                                 }
                             }
@@ -641,7 +686,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 else {
                     if(file.isFile()) {
                         if(!file.getName().contains("sample")) {
-                            if(checkFileType(file)) {
+                            if(movieFileFilter.accept(file)) {
                                 files.add(file.getName());
                             }
                         }
@@ -653,41 +698,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         }
     }
     
-    /**
-     * Checks what type of file is found and if video file is found, calls openSubCrawler
-     * @param fileName
-     */
-    private Boolean checkFileType(File file) {
-        String fileType = file.getName().substring((file.getName().length()-4), file.getName().length());
- 
-        if(fileType.equals(".avi")) {
-            return true;
-        }
-        else if(fileType.equals(".mpg")) {
-            return true;
-        }
-        else if(fileType.equals(".mp4")) {
-            return true;
-        }        
-        else if(fileType.equals("divx")) {
-            return true;
-        }
-        else if(fileType.equals(".mkv")) {
-            return true;
-        }
-        else if(fileType.equals("xvid")) {
-            return true;
-        }
-        else if(fileType.equals("mpeg")) {
-            return true;
-        }
-        else if(fileType.equals("m4v")) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+
     
     /**
      * Loads SubtitleCrawlerFrame
