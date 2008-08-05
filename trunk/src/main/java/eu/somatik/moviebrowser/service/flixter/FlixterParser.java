@@ -4,6 +4,7 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import au.id.jericho.lib.html.TextExtractor;
+import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.AbstractJerichoParser;
 import eu.somatik.moviebrowser.tools.ElementOnlyTextExtractor;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
+@Singleton
 public class FlixterParser extends AbstractJerichoParser{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlixterParser.class);

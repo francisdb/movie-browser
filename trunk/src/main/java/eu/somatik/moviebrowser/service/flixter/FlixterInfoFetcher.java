@@ -4,6 +4,7 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.Movie;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
+@Singleton
 public class FlixterInfoFetcher implements MovieInfoFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlixterInfoFetcher.class);

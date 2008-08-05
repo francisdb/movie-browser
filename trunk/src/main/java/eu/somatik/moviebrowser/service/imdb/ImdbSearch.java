@@ -145,7 +145,13 @@ public class ImdbSearch {
 
     }
 
-    public List<Movie> getResults(String search) throws Exception {
+    /**
+     * 
+     * @param search
+     * @return
+     * @throws java.io.IOException
+     */
+    public List<Movie> getResults(String search) throws IOException {
         String url = generateImdbTitleSearchUrl(search);
         LOGGER.info(url);
         String source = sourceLoader.load(url);

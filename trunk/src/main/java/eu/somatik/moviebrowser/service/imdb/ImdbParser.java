@@ -1,6 +1,5 @@
 package eu.somatik.moviebrowser.service.imdb;
 
-import eu.somatik.moviebrowser.api.Parser;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;

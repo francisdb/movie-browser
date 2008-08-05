@@ -95,7 +95,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         movieHeader.setDescription(movie.getPlot());
 
         // TODO save imdb url and use links
-        updateButton(imdbButton, MovieFinder.generateImdbUrl(movie));
+        updateButton(imdbButton, movie.getImdbUrl());
         updateButton(tomatoesButton, movie.getTomatoUrl());
         updateButton(moviewebButton, movie.getMoviewebUrl());
         updateButton(omdbButton, movie.getOmdbUrl());

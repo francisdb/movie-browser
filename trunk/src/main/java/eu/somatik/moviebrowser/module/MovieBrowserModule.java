@@ -32,6 +32,7 @@ import eu.somatik.moviebrowser.service.flixter.FlixterParser;
 import eu.somatik.moviebrowser.service.google.Google;
 import eu.somatik.moviebrowser.service.google.GoogleInfoFetcher;
 import eu.somatik.moviebrowser.service.google.GoogleParser;
+import eu.somatik.moviebrowser.service.imdb.ImdbInfoFetcher;
 import eu.somatik.moviebrowser.service.subs.OpenSubtitlesLoader;
 import eu.somatik.moviebrowser.service.tomatoes.TomatoesParser;
 
@@ -55,12 +56,14 @@ public class MovieBrowserModule extends AbstractModule {
         bind(SourceLoader.class).to(HttpSourceLoader.class);
         bind(SubtitlesLoader.class).to(OpenSubtitlesLoader.class);
 
+        
         bind(Parser.class).annotatedWith(MovieWeb.class).to(MovieWebParser.class);
         bind(Parser.class).annotatedWith(Imdb.class).to(ImdbParser.class);
         bind(Parser.class).annotatedWith(RottenTomatoes.class).to(TomatoesParser.class);
         bind(Parser.class).annotatedWith(Google.class).to(GoogleParser.class);
         bind(Parser.class).annotatedWith(Flixter.class).to(FlixterParser.class);
         
+        bind(MovieInfoFetcher.class).annotatedWith(Imdb.class).to(ImdbInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(MovieWeb.class).to(MovieWebInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(RottenTomatoes.class).to(TomatoesInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(Google.class).to(GoogleInfoFetcher.class);

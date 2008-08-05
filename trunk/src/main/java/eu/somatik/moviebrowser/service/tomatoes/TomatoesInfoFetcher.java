@@ -4,8 +4,6 @@ import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.service.HttpSourceLoader;
-import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.service.SourceLoader;
 import java.io.IOException;
@@ -35,12 +33,21 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     public void fetch(Movie movie) {
         if (!"".equals(movie.getImdbId())) {
             try {
-                movie.setTomatoUrl(MovieFinder.generateTomatoesUrl(movie));
+                movie.setTomatoUrl(generateTomatoesUrl(movie));
                 String source = sourceLoader.load(movie.getTomatoUrl());
                 tomatoesParser.parse(source, movie);
             } catch (IOException ex) {
                 LOGGER.error("Loading from rotten tomatoes failed", ex);
             }
         }
+    }
+
+    /**
+     *
+     * @param movie 
+     * @return the tomatoes url
+     */
+    private String generateTomatoesUrl(Movie movie) {
+        return "http://www.rottentomatoes.com/alias?type=imdbid&s=" + movie.getImdbId();
     }
 }
