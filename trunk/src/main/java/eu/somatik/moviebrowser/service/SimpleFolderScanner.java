@@ -31,7 +31,7 @@ public class SimpleFolderScanner implements FolderScanner {
         for (String path : folders) {
             folder = new File(path);
             if (folder.exists()) {
-                for (File file : folder.listFiles()) {
+                for (File file : folder.listFiles(new MovieFileFilter(true))) {
                     //if (file.isDirectory()) {
                     movies.add(new MovieInfo(file));
                     //}
