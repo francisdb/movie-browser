@@ -57,7 +57,7 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
 
             String movieUrl = null;
             List<?> aElements = source.findAllElements(HTMLElementName.A);
-            for (Iterator<?> i = aElements.iterator(); i.hasNext();) {
+            for (Iterator<?> i = aElements.iterator(); i.hasNext() && movieUrl == null;) {
                 Element aElement = (Element) i.next();
                 String url = aElement.getAttributeValue("href");
                 // /movies/reviews?cid=b939f27b219eb36f&fq=Pulp+Fiction&hl=en

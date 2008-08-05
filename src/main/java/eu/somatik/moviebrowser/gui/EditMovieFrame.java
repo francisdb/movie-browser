@@ -218,6 +218,7 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         movieInfo.getMovie().setImgUrl(null);
         movieInfo.getMovie().setPlot(null);
         movieInfo.getMovie().setImdbId(selectedMovie.getImdbId());
+        movieInfo.getMovie().setImdbUrl(selectedMovie.getImdbUrl());
         movieFinder.reloadMovie(movieInfo);
         this.dispose();
     }
@@ -239,7 +240,7 @@ private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {
 
 private void resultsListDoubleClick() {
     Movie movie = (Movie) resultsList.getSelectedValue();
-    String url = movie.getUrl();
+    String url = movie.getImdbUrl();
     try {
         Desktop.getDesktop().browse(new URI(url));
     } catch (URISyntaxException ex) {
@@ -272,7 +273,7 @@ private void resultsListDoubleClick() {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             Movie movie = (Movie) value;
-            setText(movie.getTitle());
+            setText(movie.getTitle()+" ("+movie.getYear()+")");
             return this;
         }
     }
