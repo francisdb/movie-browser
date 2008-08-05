@@ -45,7 +45,8 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
     public void fetch(Movie movie) {
         try {
             String movieParam = URLEncoder.encode(movie.getTitle(), "utf-8");
-            Source source = httpLoader.load("http://www.google.com/movies?q="+movieParam);
+            String sourceString = httpLoader.load("http://www.google.com/movies?q="+movieParam);
+            Source source = new Source(sourceString);
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
             source.fullSequentialParse();
 
@@ -69,8 +70,9 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
             if (movieUrl == null) {
                 throw new IOException("Movie not found on Google: "+movie.getTitle());
             }
-            source = httpLoader.load(movieUrl);
-            googleParser.parse(source, movie);
+            movie.setGoogleUrl(movieUrl);
+            sourceString = httpLoader.load(movieUrl);
+            googleParser.parse(sourceString, movie);
         } catch (IOException ex) {
             LOGGER.error("Loading from Google failed", ex);
         }

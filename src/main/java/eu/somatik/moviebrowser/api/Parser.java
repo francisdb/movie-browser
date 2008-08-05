@@ -1,6 +1,5 @@
 package eu.somatik.moviebrowser.api;
 
-import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.domain.Movie;
 
 /**
@@ -13,5 +12,5 @@ public interface Parser {
      * @param source
      * @param movie
      */
-    public void parse(Source source, Movie movie);
+    public void parse(String source, Movie movie);
 }

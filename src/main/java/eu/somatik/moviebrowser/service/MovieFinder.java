@@ -28,6 +28,7 @@ import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
 import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
 import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
 import eu.somatik.moviebrowser.api.Parser;
+import eu.somatik.moviebrowser.service.flixter.Flixter;
 import eu.somatik.moviebrowser.service.google.Google;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class MovieFinder {
     private final MovieInfoFetcher movieWebInfoFetcher;
     private final MovieInfoFetcher tomatoesInfoFetcher;
     private final MovieInfoFetcher googleInfoFetcher;
+    private final MovieInfoFetcher flixterInfoFetcher;
     private final MovieNameExtractor movieNameExtractor;
     private final MovieCacheImpl movieCache;
     private final Parser imdbParser;
@@ -58,6 +60,7 @@ public class MovieFinder {
      * @param movieWebInfoFetcher
      * @param tomatoesInfoFetcher
      * @param googleInfoFetcher 
+     * @param flixterInfoFetcher 
      * @param movieCache
      * @param fileSystemScanner
      * @param movieNameExtractor
@@ -70,6 +73,7 @@ public class MovieFinder {
             final @MovieWeb MovieInfoFetcher movieWebInfoFetcher,
             final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
             final @Google MovieInfoFetcher googleInfoFetcher,
+            final @Flixter MovieInfoFetcher flixterInfoFetcher,
             final MovieCacheImpl movieCache,
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor,
@@ -79,6 +83,7 @@ public class MovieFinder {
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
         this.googleInfoFetcher = googleInfoFetcher;
+        this.flixterInfoFetcher = flixterInfoFetcher;
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
@@ -155,6 +160,7 @@ public class MovieFinder {
                     secondaryService.submit(new TomatoesCaller(loaded));
                     secondaryService.submit(new MovieWebCaller(loaded));
                     secondaryService.submit(new GoogleCaller(loaded));
+                    secondaryService.submit(new FlixterCaller(loaded));
                     movieCache.saveMovie(loaded.getMovie());
                 }catch(Exception ex){
                     LOGGER.error("Exception while loading/saving movie", ex);
@@ -202,6 +208,18 @@ public class MovieFinder {
          */
         public GoogleCaller(MovieInfo info) {
             super(googleInfoFetcher, info);
+        }
+    }
+    
+    private class FlixterCaller extends AbstractMovieCaller {
+
+        /**
+         * Constructs a new MovieCaller object
+         *
+         * @param info
+         */
+        public FlixterCaller(MovieInfo info) {
+            super(flixterInfoFetcher, info);
         }
     }
 
@@ -257,16 +275,18 @@ public class MovieFinder {
         movieInfo.getMovie().setUrl(url);
         movieInfo.getMovie().setImdbId(url.replaceAll("[a-zA-Z:/.+=?]", "").trim());
 
-        Source source = httpLoader.load(generateImdbUrl(movieInfo.getMovie()));
+        String source = httpLoader.load(generateImdbUrl(movieInfo.getMovie()));
 
         return parseImdbHtml(source, movieInfo);
 
     }
 
-    private MovieInfo parseImdbHtml(Source source, MovieInfo movieInfo) throws Exception {
-        Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
+    private MovieInfo parseImdbHtml(String source, MovieInfo movieInfo) throws Exception {
+        Source jerichoSource = new Source(source);
+        jerichoSource.fullSequentialParse();
+        Element titleElement = (Element) jerichoSource.findAllElements(HTMLElementName.TITLE).get(0);
         if (titleElement.getContent().getTextExtractor().toString().contains("Title Search")) {
-            List<Movie> movies = imdbSearch.getResults(source);
+            List<Movie> movies = imdbSearch.parseResults(source);
             if(movies.size() == 0){
                 throw new IOException("No movies found");
             }else{

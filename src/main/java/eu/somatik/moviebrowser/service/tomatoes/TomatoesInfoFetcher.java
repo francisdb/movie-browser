@@ -1,13 +1,13 @@
 package eu.somatik.moviebrowser.service.tomatoes;
 
 import eu.somatik.moviebrowser.api.MovieInfoFetcher;
-import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.api.Parser;
+import eu.somatik.moviebrowser.service.SourceLoader;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -22,12 +22,12 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesInfoFetcher.class);
 
-    private Parser tomatoesParser;
-    private final HttpSourceLoader httpLoader;
+    private final SourceLoader sourceLoader;
+    private final Parser tomatoesParser;
 
     @Inject
-    public TomatoesInfoFetcher(final @RottenTomatoes Parser tomatoesParser, final HttpSourceLoader httpLoader) {
-        this.httpLoader = httpLoader;
+    public TomatoesInfoFetcher(final @RottenTomatoes Parser tomatoesParser, final SourceLoader sourceLoader) {
+        this.sourceLoader = sourceLoader;
         this.tomatoesParser = tomatoesParser;
     }
 
@@ -35,15 +35,8 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     public void fetch(Movie movie) {
         if (!"".equals(movie.getImdbId())) {
             try {
-                Source source = httpLoader.load(MovieFinder.generateTomatoesUrl(movie));
-                //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
-                source.fullSequentialParse();
-
-                //Element titleElement = (Element)source.findAllElements(HTMLElementName.TITLE).get(0);
-                //System.out.println(titleElement.getContent().extractText());
-
-                // <div id="bubble_allCritics" class="percentBubble" style="display:none;">     57%    </div>
-
+                movie.setTomatoUrl(MovieFinder.generateTomatoesUrl(movie));
+                String source = sourceLoader.load(movie.getTomatoUrl());
                 tomatoesParser.parse(source, movie);
             } catch (IOException ex) {
                 LOGGER.error("Loading from rotten tomatoes failed", ex);

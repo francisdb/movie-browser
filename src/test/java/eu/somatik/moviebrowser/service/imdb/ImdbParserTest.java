@@ -1,12 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.somatik.moviebrowser.service.imdb;
 
-import eu.somatik.moviebrowser.service.imdb.ImdbParser;
-import au.id.jericho.lib.html.Source;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
@@ -31,7 +24,7 @@ public class ImdbParserTest {
      */
     @Test
     public void testParse() throws Exception{
-        Source source = new FileSourceLoader().load("imdb/Pulp Fiction (1994).html");
+        String source = new FileSourceLoader().load("imdb/Pulp Fiction (1994).html");
         Movie movie = new Movie();
         ImdbParser instance = new ImdbParser(new MovieCacheMock());
         instance.parse(source, movie);

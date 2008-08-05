@@ -16,6 +16,7 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import eu.somatik.moviebrowser.api.SubtitlesLoader;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
@@ -45,6 +46,7 @@ public class MovieBrowser {
     private final ImageCache imageCache;
     private final IconLoader iconLoader;
     private final Settings settings;
+    private final SubtitlesLoader subtitlesLoader;
 
     /** 
      * Creates a new instance of MovieBrowser
@@ -54,7 +56,8 @@ public class MovieBrowser {
      * @param imdbSearch
      * @param imageCache
      * @param iconLoader
-     * @param settings 
+     * @param settings
+     * @param subtitlesLoader 
      */
     @Inject
     public MovieBrowser(
@@ -64,7 +67,8 @@ public class MovieBrowser {
             final ImdbSearch imdbSearch,
             final ImageCache imageCache,
             final IconLoader iconLoader,
-            final Settings settings) {
+            final Settings settings,
+            final SubtitlesLoader subtitlesLoader) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
@@ -72,6 +76,7 @@ public class MovieBrowser {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.settings = settings;
+        this.subtitlesLoader = subtitlesLoader;
     }
 
     private void configureLogging() {
@@ -145,6 +150,12 @@ public class MovieBrowser {
     public ImdbSearch getImdbSearch() {
         return imdbSearch;
     }
+
+    public SubtitlesLoader getSubtitlesLoader() {
+        return subtitlesLoader;
+    }
+    
+    
 
     private static class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler {
 

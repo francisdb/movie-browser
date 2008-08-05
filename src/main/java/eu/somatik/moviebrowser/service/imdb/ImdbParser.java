@@ -11,6 +11,7 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.service.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @author francisdb
  */
 @Singleton
-public class ImdbParser implements Parser {
+public class ImdbParser extends AbstractJerichoParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImdbParser.class);
     

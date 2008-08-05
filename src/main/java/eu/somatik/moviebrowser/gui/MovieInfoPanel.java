@@ -40,6 +40,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private JButton moviewebButton;
     private JButton omdbButton;
     private JButton googleButton;
+    private JButton flixterButton;
     private MovieInfo info;
 
     /** Creates new form MovieInfoPanel
@@ -93,17 +94,13 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
         movieHeader.setDescription(movie.getPlot());
 
+        // TODO save imdb url and use links
         updateButton(imdbButton, MovieFinder.generateImdbUrl(movie));
-        updateButton(tomatoesButton, MovieFinder.generateTomatoesUrl(movie));
-        updateButton(moviewebButton, null);
-        updateButton(omdbButton, null);
-        updateButton(googleButton, null);
-
-        // TODO save and use these links
-        moviewebButton.setActionCommand("");
-        omdbButton.setActionCommand("");
-        googleButton.setActionCommand("");
-
+        updateButton(tomatoesButton, movie.getTomatoUrl());
+        updateButton(moviewebButton, movie.getMoviewebUrl());
+        updateButton(omdbButton, movie.getOmdbUrl());
+        updateButton(googleButton, movie.getGoogleUrl());
+        updateButton(flixterButton, movie.getFlixterUrl());
 
         StringBuilder builder = new StringBuilder("<html>");
 
@@ -136,6 +133,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         builder.append("<strong>MovieWeb</strong> ").append(scoreString(movie.getMovieWebScore())).append("<br/>");
         builder.append("<strong>Google</strong> ").append(scoreString(movie.getGoogleScore())).append("<br/>");
         //builder.append("<strong>OMDB</strong> ").append(scoreString(movie.get)).append("%<br/>");
+        builder.append("<strong>Flixter</strong> ").append(scoreString(movie.getFlixterScore())).append("<br/>");
         builder.append(movie.getPlot());
         builder.append("</html>");
         infoTextPane.setText(builder.toString());
@@ -207,7 +205,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         });
         buttonPanel.add(omdbButton);
         googleButton = new JButton(iconLoader.loadIcon("images/16/google.png"));
-        googleButton.setToolTipText("Open on omdb website");
+        googleButton.setToolTipText("Open on google movie website");
         googleButton.setEnabled(false);
         googleButton.addActionListener(new ActionListener() {
 
@@ -217,6 +215,17 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             }
         });
         buttonPanel.add(googleButton);
+        flixterButton = new JButton(iconLoader.loadIcon("images/16/flixter.png"));
+        flixterButton.setToolTipText("Open on flixter website");
+        flixterButton.setEnabled(false);
+        flixterButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(flixterButton);
+            }
+        });
+        buttonPanel.add(flixterButton);
     }
 
     private void openLinkFor(JButton button) {

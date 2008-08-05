@@ -1,15 +1,13 @@
 package eu.somatik.moviebrowser.service.movieweb;
 
 import eu.somatik.moviebrowser.tools.ElementOnlyTextExtractor;
-import eu.somatik.moviebrowser.api.Parser;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
-import au.id.jericho.lib.html.Segment;
 import au.id.jericho.lib.html.Source;
-import au.id.jericho.lib.html.StartTag;
 import au.id.jericho.lib.html.TextExtractor;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.service.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -20,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author francisdb
  */
 @Singleton
-public class MovieWebParser implements Parser{
+public class MovieWebParser extends AbstractJerichoParser{
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieWebParser.class);
 
