@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.somatik.moviebrowser.service;
 
 import com.google.inject.Singleton;
@@ -20,7 +16,6 @@ public class SimpleFolderScanner implements FolderScanner {
 
     /**
      * Scans the folders
-     * TODO also add avi/mpg/mov files
      * @param folders
      * @return a List of MovieInfo
      */
