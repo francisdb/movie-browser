@@ -7,7 +7,7 @@ package eu.somatik.moviebrowser.api;
 
 import eu.somatik.moviebrowser.domain.Subtitle;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 /**
  *
@@ -15,6 +15,6 @@ import java.util.Set;
  */
 public interface SubtitlesLoader {
 
-    Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException;
+    List<Subtitle> getOpenSubsResults(String localFileName) throws IOException;
 
 }

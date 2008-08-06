@@ -41,6 +41,7 @@ import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
 import eu.somatik.moviebrowser.service.imdb.ImdbTrailerFinder;
 import eu.somatik.moviebrowser.api.TrailerFinder;
+import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -693,7 +694,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                 }
             }
             files.add(alternateSearchKey);
-            openSubCrawler(files, info.getMovie().getImdbId());
+            openSubCrawler(files, info.getMovie());
         }
     }
     
@@ -703,8 +704,8 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
      * Loads SubtitleCrawlerFrame
      * @param fileName
      */
-    private void openSubCrawler(List<String> file, String imdbID) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, imdbID, browser.getSubtitlesLoader(), iconLoader);
+    private void openSubCrawler(List<String> file, Movie movie) {
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }
