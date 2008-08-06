@@ -6,6 +6,7 @@
 package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.api.SubtitlesLoader;
+import eu.somatik.moviebrowser.domain.Movie;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -15,16 +16,15 @@ import java.net.URISyntaxException;
 
 import java.awt.Desktop;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import eu.somatik.moviebrowser.domain.Subtitle;
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTable;
@@ -43,17 +43,17 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
 
     /** Creates new form SubtitleCrawlerFrame
      * @param files
-     * @param imdbID
+     * @param movie 
      * @param subtitlesLoader
      * @param iconLoader 
      */
-    public SubtitleCrawlerFrame(List<String> files, String imdbID, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
+    public SubtitleCrawlerFrame(List<String> files, Movie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.model = new SubtitleTableModel();
 
         initComponents();
         this.setTitle("Subtitle Crawler " + files.toString());
-        crawl(files, imdbID);
+        crawl(files, movie);
         searchButton.setEnabled(false);
 
         subtitlesTable.getColumn(SubtitleTableModel.LANG_COL).setCellRenderer(new LangIconRenderer(iconLoader));
@@ -163,14 +163,16 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
     }
 }//GEN-LAST:event_subtitlesTableMousePressed
 
-    public void crawl(final List<String> files, final String imdbID) {
+    public void crawl(final List<String> files, final Movie movie) {
         statusProgressBar.setIndeterminate(true);
-        new SwingWorker<Set<Subtitle>,Void>() {
+        new SwingWorker<List<Subtitle>,Void>() {
 
             @Override
-            protected Set<Subtitle> doInBackground() throws Exception {
+            protected List<Subtitle> doInBackground() throws Exception {
                 String fileName;
-                Set<Subtitle> results = new HashSet<Subtitle>();
+                List<Subtitle> results = new ArrayList<Subtitle>();
+                results.add(makeSubtitlesourceEntry(movie));
+                
                 Iterator<String> i = files.iterator();
                 while (i.hasNext()) {
                     fileName = i.next();
@@ -190,21 +192,13 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
 
                 }
 
-                if (results.size() == 0) {
-                    try {
-                        //Get subtitlesource
-                        results.add(makeDummyEntry(imdbID));
-                    } catch (Exception ex) {
-                        LOGGER.error("Error retrieveng subtitlesource.org results. ", ex);
-                    }
-                }
                 return results;
             }
 
             @Override
             protected void done() {
                 try {
-                    Set<Subtitle> subtitles = get();
+                    List<Subtitle> subtitles = get();
                     for (Subtitle subtitle:subtitles) {
                         model.add(subtitle);
                     }
@@ -222,10 +216,18 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
 
     }
 
-    public Subtitle makeDummyEntry(String imdbID) throws IOException {
+    /**
+     * TODO move to service class
+     * @param movie 
+     * @return
+     * @throws java.io.IOException
+     */
+    public Subtitle makeSubtitlesourceEntry(Movie movie) throws IOException {
         Subtitle sub = new Subtitle();
-        sub.setFileName("http://www.subtitlesource.org/title/tt" + imdbID);
-        sub.setSubSource("SubtitleSource.org");
+        sub.setFileName(movie.getTitle());
+        String url = "http://www.subtitlesource.org/title/tt" + movie.getImdbId();
+        sub.setFileUrl(url);
+        sub.setSubSource("http://www.subtitlesource.org");
         sub.setLanguage("Various");
         sub.setNoCd("N/A");
         sub.setType("N/A");

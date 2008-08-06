@@ -11,10 +11,9 @@ import eu.somatik.moviebrowser.tools.ElementOnlyTextExtractor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +35,13 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
     }
 
     @Override
-    public Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
+    public List<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
         String url = searchUrl(localFileName);
         LOGGER.info("url = " + url);
         String source = sourceLoader.load(url);
         Source jerichoSource = new Source(source);
         jerichoSource.fullSequentialParse();
-        Set<Subtitle> results = new HashSet<Subtitle>();
+        List<Subtitle> results = new ArrayList<Subtitle>();
 
         Element titleElement = (Element) jerichoSource.findAllElements(HTMLElementName.TITLE).get(0);
         String title = titleElement.getContent().getTextExtractor().toString();
@@ -69,8 +68,8 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
         return results;
     }
 
-    private Set<Subtitle> loadSubtitlesPage(Source jerichoSource) {
-        Set<Subtitle> results = new HashSet<Subtitle>();
+    private List<Subtitle> loadSubtitlesPage(Source jerichoSource) {
+        List<Subtitle> results = new ArrayList<Subtitle>();
 
         Element tableElement = (Element) jerichoSource.findAllElements("id", "search_results", false).get(0);
 

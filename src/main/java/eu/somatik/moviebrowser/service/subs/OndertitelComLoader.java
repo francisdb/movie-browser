@@ -5,7 +5,8 @@ import eu.somatik.moviebrowser.api.SubtitlesLoader;
 import eu.somatik.moviebrowser.domain.Subtitle;
 import eu.somatik.moviebrowser.service.SourceLoader;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
+
 
 /**
  *
@@ -30,7 +31,7 @@ public class OndertitelComLoader implements SubtitlesLoader{
     
 
     @Override
-    public Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
+    public List<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
         // http://www.ondertitel.com/?type=&trefwoord=the+dark+knight&p=zoek
         
         throw new IOException("not implemented");
