@@ -7,6 +7,7 @@ package eu.somatik.moviebrowser.domain;
 public class Subtitle {
 
     private String fileName;
+    private String fileUrl;
     private String language;
     private String noCd;
     private String type;
@@ -56,4 +57,14 @@ public class Subtitle {
     public void setType(String type) {
         this.type = type;
     }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+    
+    
 }

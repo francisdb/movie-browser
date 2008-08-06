@@ -15,16 +15,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.google.inject.Inject;
+import eu.somatik.moviebrowser.api.InfoFetcherFactory;
 import eu.somatik.moviebrowser.cache.JPAMovieCache;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieService;
 import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.service.imdb.Imdb;
-import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
-import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
-import eu.somatik.moviebrowser.service.flixter.Flixter;
-import eu.somatik.moviebrowser.service.google.Google;
 import eu.somatik.moviebrowser.service.imdb.ImdbUrlGenerator;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -40,43 +37,28 @@ public class MovieFinder {
     private final ExecutorService service;
     private final ExecutorService secondaryService;
     private final FileSystemScanner fileSystemScanner;
-    private final MovieInfoFetcher imdbInfoFetcher;
-    private final MovieInfoFetcher movieWebInfoFetcher;
-    private final MovieInfoFetcher tomatoesInfoFetcher;
-    private final MovieInfoFetcher googleInfoFetcher;
-    private final MovieInfoFetcher flixterInfoFetcher;
     private final MovieNameExtractor movieNameExtractor;
     private final JPAMovieCache movieCache;
+    private final InfoFetcherFactory fetcherFactory;
 
     /**
      * Creates a new instance of MovieFinder
-     * @param imdbInfoFetcher 
-     * @param movieWebInfoFetcher
-     * @param tomatoesInfoFetcher
-     * @param googleInfoFetcher 
-     * @param flixterInfoFetcher 
      * @param movieCache
      * @param fileSystemScanner
      * @param movieNameExtractor
+     * @param fetcherFactory 
      */
     @Inject
     public MovieFinder(
-            final @Imdb MovieInfoFetcher imdbInfoFetcher,
-            final @MovieWeb MovieInfoFetcher movieWebInfoFetcher,
-            final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
-            final @Google MovieInfoFetcher googleInfoFetcher,
-            final @Flixter MovieInfoFetcher flixterInfoFetcher,
             final JPAMovieCache movieCache,
             final FileSystemScanner fileSystemScanner,
-            final MovieNameExtractor movieNameExtractor) {
-        this.imdbInfoFetcher = imdbInfoFetcher;
-        this.movieWebInfoFetcher = movieWebInfoFetcher;
-        this.tomatoesInfoFetcher = tomatoesInfoFetcher;
-        this.googleInfoFetcher = googleInfoFetcher;
-        this.flixterInfoFetcher = flixterInfoFetcher;
+            final MovieNameExtractor movieNameExtractor,
+            final InfoFetcherFactory fetcherFactory) {
+       
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
+        this.fetcherFactory = fetcherFactory;
         
         this.service = Executors.newFixedThreadPool(5);
         this.secondaryService = Executors.newFixedThreadPool(5);
@@ -145,10 +127,11 @@ public class MovieFinder {
                     info.setStatus(MovieStatus.LOADING_IMDB);
                     loaded = getMovieInfo(info);
                     movieCache.saveMovie(loaded.getMovie());
-                    secondaryService.submit(new TomatoesCaller(loaded));
-                    secondaryService.submit(new MovieWebCaller(loaded));
-                    secondaryService.submit(new GoogleCaller(loaded));
-                    secondaryService.submit(new FlixterCaller(loaded));
+                    // TODO FOR EACH SELECTED SERVICE
+                    secondaryService.submit(new MovieServiceCaller(MovieService.TOMATOES, loaded));
+                    secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, loaded));
+                    secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, loaded));
+                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXTER, loaded));
                 }catch(Exception ex){
                     LOGGER.error("Exception while loading/saving movie", ex);
                 }
@@ -162,67 +145,19 @@ public class MovieFinder {
         }
     }
 
-    private class TomatoesCaller extends AbstractMovieCaller {
-
-        /**
-         * Constructs a new MovieCaller object
-         *
-         * @param info
-         */
-        public TomatoesCaller(MovieInfo info) {
-            super(tomatoesInfoFetcher, info);
-        }
-    }
-
-    private class MovieWebCaller extends AbstractMovieCaller {
-
-        /**
-         * Constructs a new MovieCaller object
-         *
-         * @param info
-         */
-        public MovieWebCaller(MovieInfo info) {
-            super(movieWebInfoFetcher, info);
-        }
-    }
-    
-    private class GoogleCaller extends AbstractMovieCaller {
-
-        /**
-         * Constructs a new MovieCaller object
-         *
-         * @param info
-         */
-        public GoogleCaller(MovieInfo info) {
-            super(googleInfoFetcher, info);
-        }
-    }
-    
-    private class FlixterCaller extends AbstractMovieCaller {
-
-        /**
-         * Constructs a new MovieCaller object
-         *
-         * @param info
-         */
-        public FlixterCaller(MovieInfo info) {
-            super(flixterInfoFetcher, info);
-        }
-    }
-
-    private abstract class AbstractMovieCaller implements Callable<MovieInfo> {
+    private class MovieServiceCaller implements Callable<MovieInfo> {
 
         private final MovieInfoFetcher fetcher;
         private final MovieInfo info;
 
         /**
          * Constructs a new MovieCaller object
-         *
+         * @param service
          * @param info
          */
-        public AbstractMovieCaller(final MovieInfoFetcher fetcher, final MovieInfo info) {
-            LOGGER.info("New caller for " + fetcher.getClass().getSimpleName());
-            this.fetcher = fetcher;
+        public MovieServiceCaller(final MovieService service, final MovieInfo info) {
+            LOGGER.info("New caller for " + service);
+            this.fetcher = fetcherFactory.get(service);
             this.info = info;
         }
 
@@ -261,7 +196,7 @@ public class MovieFinder {
         }
         
         movieInfo.getMovie().setImdbUrl(url);
-        MovieSite site = imdbInfoFetcher.fetch(movieInfo.getMovie());
+        MovieSite site = fetcherFactory.get(MovieService.IMDB).fetch(movieInfo.getMovie());
         // todo save the site?
         return movieInfo;
     }

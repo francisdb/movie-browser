@@ -107,7 +107,6 @@ public class MainFrame extends javax.swing.JFrame {
         setColumnWidths();
 
         loadLookAndFeels();
-        this.setVisible(true);
     }
 
     private void setColumnWidths() {
@@ -705,7 +704,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
      * @param fileName
      */
     private void openSubCrawler(List<String> file, String imdbID) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, imdbID, browser.getSubtitlesLoader());
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, imdbID, browser.getSubtitlesLoader(), iconLoader);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }
