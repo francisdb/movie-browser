@@ -1,6 +1,7 @@
 package eu.somatik.moviebrowser.api;
 
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 
 /**
  *
@@ -10,7 +11,8 @@ public interface MovieInfoFetcher {
     /**
      * Fetched movie info from a servie and complements the movieInfo object
      * @param movie
+     * @return 
      */
-    void fetch(Movie movie);
+    MovieSite fetch(Movie movie);
     
 }

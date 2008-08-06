@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * http://www.opensubtitles.org
  * @author francisdb
  */
 public class OpenSubtitlesLoader implements SubtitlesLoader {
@@ -35,7 +35,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
     
     @Override
     public Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
-        String encodedFileName = generateUrl(localFileName);
+        String encodedFileName = encode(localFileName);
         String url = "http://www.opensubtitles.org/en/search2/?moviename=" + encodedFileName + "&sublanguageid=all";
         LOGGER.info("url = "+url);
         String source = sourceLoader.load(url);
@@ -89,7 +89,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
      * @param fileName 
      * @return the imdb url
      */
-    private String generateUrl(String fileName) {
+    private String encode(String fileName) {
         String encoded = "";
         try {
             encoded = URLEncoder.encode(fileName, "UTF-8");

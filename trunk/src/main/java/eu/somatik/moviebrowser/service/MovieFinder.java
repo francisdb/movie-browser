@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.MovieCacheImpl;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.imdb.Imdb;
 import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
@@ -143,11 +144,11 @@ public class MovieFinder {
                     LOGGER.info("Fetching data for "+info.getMovie().getPath());
                     info.setStatus(MovieStatus.LOADING_IMDB);
                     loaded = getMovieInfo(info);
+                    movieCache.saveMovie(loaded.getMovie());
                     secondaryService.submit(new TomatoesCaller(loaded));
                     secondaryService.submit(new MovieWebCaller(loaded));
                     secondaryService.submit(new GoogleCaller(loaded));
                     secondaryService.submit(new FlixterCaller(loaded));
-                    movieCache.saveMovie(loaded.getMovie());
                 }catch(Exception ex){
                     LOGGER.error("Exception while loading/saving movie", ex);
                 }
@@ -229,7 +230,8 @@ public class MovieFinder {
         public MovieInfo call() throws Exception {
             LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
             info.setStatus(MovieStatus.LOADING_TOMATOES);
-            fetcher.fetch(info.getMovie());
+            MovieSite site = fetcher.fetch(info.getMovie());
+            // TODO save site?
             movieCache.saveMovie(info.getMovie());
             info.setStatus(MovieStatus.LOADED);
             return info;
@@ -259,7 +261,8 @@ public class MovieFinder {
         }
         
         movieInfo.getMovie().setImdbUrl(url);
-        imdbInfoFetcher.fetch(movieInfo.getMovie());
+        MovieSite site = imdbInfoFetcher.fetch(movieInfo.getMovie());
+        // todo save the site?
         return movieInfo;
     }
 

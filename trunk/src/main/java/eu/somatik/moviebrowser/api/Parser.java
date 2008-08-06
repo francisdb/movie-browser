@@ -1,6 +1,6 @@
 package eu.somatik.moviebrowser.api;
 
-import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 
 /**
  *
@@ -12,5 +12,5 @@ public interface Parser {
      * @param source
      * @param movie
      */
-    public void parse(String source, Movie movie);
+    public void parse(String source, MovieSite movie);
 }

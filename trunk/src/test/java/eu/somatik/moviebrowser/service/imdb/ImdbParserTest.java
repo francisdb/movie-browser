@@ -4,6 +4,7 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -25,16 +26,17 @@ public class ImdbParserTest {
     @Test
     public void testParse() throws Exception{
         String source = new FileSourceLoader().load("imdb/Pulp Fiction (1994).html");
-        Movie movie = new Movie();
+        MovieSite site = new MovieSite();
+        site.setMovie(new Movie());
         ImdbParser instance = new ImdbParser(new MovieCacheMock());
-        instance.parse(source, movie);
-        assertEquals(Integer.valueOf(89), movie.getImdbScore());
-        assertEquals("Pulp Fiction", movie.getTitle());
-        assertEquals(Integer.valueOf(1994), movie.getYear());
-        assertEquals("Pulp%20Fiction%20%281994%29_files/MV5BMjE0ODk2NjczOV5BMl5BanBnXkFtZTYwNDQ0NDg4.jpg", movie.getImgUrl());
-        assertEquals("The lives of two mob hit men, a boxer, a gangster's wife, and a pair of\ndiner bandits intertwine in four tales of violence and redemption.", movie.getPlot());
-        assertEquals(Integer.valueOf(154), movie.getRuntime());
-        assertEquals("(298,638 votes)", movie.getVotes());
+        instance.parse(source, site);
+        assertEquals(Integer.valueOf(89), site.getMovie().getImdbScore());
+        assertEquals("Pulp Fiction", site.getMovie().getTitle());
+        assertEquals(Integer.valueOf(1994), site.getMovie().getYear());
+        assertEquals("Pulp%20Fiction%20%281994%29_files/MV5BMjE0ODk2NjczOV5BMl5BanBnXkFtZTYwNDQ0NDg4.jpg", site.getMovie().getImgUrl());
+        assertEquals("The lives of two mob hit men, a boxer, a gangster's wife, and a pair of\ndiner bandits intertwine in four tales of violence and redemption.", site.getMovie().getPlot());
+        assertEquals(Integer.valueOf(154), site.getMovie().getRuntime());
+        assertEquals("(298,638 votes)", site.getMovie().getVotes());
         // TODO test other fields
     }
 

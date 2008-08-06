@@ -1,6 +1,7 @@
 package eu.somatik.moviebrowser.service.movieweb;
 
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -21,10 +22,11 @@ public class MovieWebParserTest {
     @Test
     public void testParse() throws Exception {
         String source = new FileSourceLoader().load("movieweb/pulp_fiction_summary.php.html");
-        Movie movie = new Movie();
+        MovieSite site = new MovieSite();
+        site.setMovie(new Movie());
         MovieWebParser instance = new MovieWebParser();
-        instance.parse(source, movie);
-        assertEquals(Integer.valueOf(100), movie.getMovieWebScore());
+        instance.parse(source, site);
+        assertEquals(Integer.valueOf(100), site.getMovie().getMovieWebScore());
     }
 
 

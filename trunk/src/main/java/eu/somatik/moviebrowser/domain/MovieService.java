@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.somatik.moviebrowser.domain;
 
 /**
@@ -28,6 +23,16 @@ public enum MovieService {
     /**
      * http://www.omdb.com
      */
-    OMDB
+    OMDB,
+    
+    /**
+     * http://www.google.com/movies
+     */
+    GOOGLE,
+    
+    /**
+     * http://www.flixter.com
+     */
+    FLIXTER
 
 }

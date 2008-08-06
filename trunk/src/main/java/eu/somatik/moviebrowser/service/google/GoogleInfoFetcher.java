@@ -13,9 +13,12 @@ import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -42,7 +45,11 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
     
 
     @Override
-    public void fetch(Movie movie) {
+    public MovieSite fetch(Movie movie) {
+        MovieSite site = new MovieSite();
+        site.setMovie(movie);
+        site.setService(MovieService.GOOGLE);
+        site.setTime(new Date());
         try {
             String movieParam = URLEncoder.encode(movie.getTitle(), "utf-8");
             String sourceString = httpLoader.load("http://www.google.com/movies?q="+movieParam);
@@ -70,12 +77,14 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
             if (movieUrl == null) {
                 throw new IOException("Movie not found on Google: "+movie.getTitle());
             }
-            movie.setGoogleUrl(movieUrl);
+            site.getMovie().setGoogleUrl(movieUrl);
+            site.setUrl(movieUrl);
             sourceString = httpLoader.load(movieUrl);
-            googleParser.parse(sourceString, movie);
+            googleParser.parse(sourceString, site);
         } catch (IOException ex) {
             LOGGER.error("Loading from Google failed", ex);
         }
+        return site;
     }
 
 }

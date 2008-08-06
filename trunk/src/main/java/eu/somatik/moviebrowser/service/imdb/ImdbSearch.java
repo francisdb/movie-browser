@@ -6,12 +6,15 @@ import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.SourceLoader;
 import eu.somatik.moviebrowser.tools.ElementOnlyTextExtractor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -137,8 +140,12 @@ public class ImdbSearch {
                 }
             }
 
-            
-            imdbParser.parse(source, result);
+            // FIXME
+            MovieSite site = new MovieSite();
+            site.setMovie(result);
+            site.setService(MovieService.IMDB);
+            site.setTime(new Date());
+            imdbParser.parse(source, site);
             results.add(result);
         }
         return results;

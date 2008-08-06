@@ -8,10 +8,13 @@ import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.SourceLoader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -35,7 +38,11 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public void fetch(Movie movie) {
+    public MovieSite fetch(Movie movie) {
+        MovieSite site = new MovieSite();
+        site.setMovie(movie);
+        site.setService(MovieService.FLIXTER);
+        site.setTime(new Date());
         try {
             String source = sourceLoader.load(createFlixterSearchUrl(movie));
             Source jerichoSource = new Source(source);
@@ -63,12 +70,14 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
             if (movieUrl == null) {
                 throw new IOException("Movie not found on Flixter: " + movie.getTitle());
             }
-            movie.setFlixterUrl(movieUrl);
+            site.getMovie().setFlixterUrl(movieUrl);
+            site.setUrl(movieUrl);
             source = sourceLoader.load(movieUrl);
-            parser.parse(source, movie);
+            parser.parse(source, site);
         } catch (IOException ex) {
             LOGGER.error("Loading from Flixter failed", ex);
         }
+        return site;
     }
 
     private String createFlixterSearchUrl(Movie movie) {

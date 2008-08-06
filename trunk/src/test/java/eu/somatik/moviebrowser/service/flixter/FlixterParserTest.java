@@ -1,6 +1,7 @@
 package eu.somatik.moviebrowser.service.flixter;
 
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -19,10 +20,11 @@ public class FlixterParserTest {
     @Test
     public void testParse() throws Exception{
         String source = new FileSourceLoader().load("flixter/the-x-files-i-want-to-believe-the-x-files-2.html");
-        Movie movie = new Movie();
+        MovieSite site = new MovieSite();
+        site.setMovie(new Movie());
         FlixterParser instance = new FlixterParser();
-        instance.parse(source, movie);
-        assertEquals(Integer.valueOf(60), movie.getFlixterScore());
+        instance.parse(source, site);
+        assertEquals(Integer.valueOf(60), site.getMovie().getFlixterScore());
     }
 
 }
