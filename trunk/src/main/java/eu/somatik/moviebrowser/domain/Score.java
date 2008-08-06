@@ -58,11 +58,11 @@ public class Score {
     }
 
     public Date getTime() {
-        return time;
+        return (Date) time.clone();
     }
 
     public void setTime(Date time) {
-        this.time = time;
+        this.time = (Date) time.clone();
     }
     
     
