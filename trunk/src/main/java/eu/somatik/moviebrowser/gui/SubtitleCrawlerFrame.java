@@ -24,7 +24,12 @@ import org.slf4j.LoggerFactory;
 
 
 import eu.somatik.moviebrowser.domain.Subtitle;
+import java.awt.Component;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -39,9 +44,10 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     /** Creates new form SubtitleCrawlerFrame
      * @param files
      * @param imdbID
-     * @param subtitlesLoader 
+     * @param subtitlesLoader
+     * @param iconLoader 
      */
-    public SubtitleCrawlerFrame(List<String> files, String imdbID, final SubtitlesLoader subtitlesLoader) {
+    public SubtitleCrawlerFrame(List<String> files, String imdbID, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.model = new SubtitleTableModel();
 
@@ -50,6 +56,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         crawl(files, imdbID);
         searchButton.setEnabled(false);
 
+        subtitlesTable.getColumn(SubtitleTableModel.LANG_COL).setCellRenderer(new LangIconRenderer(iconLoader));
     }
 
     /** This method is called from within the constructor to
@@ -142,21 +149,22 @@ private void subtitlesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FI
 
 private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subtitlesTableMousePressed
     if (evt.getClickCount() == 2) {
-        String URL = (String) subtitlesTable.getValueAt(subtitlesTable.getSelectedRow(), subtitlesTable.convertColumnIndexToView(1));
-        System.out.print(URL);
+        Subtitle sub = model.getSubtitle(subtitlesTable.convertRowIndexToModel(subtitlesTable.getSelectedRow()));
+        System.out.print(sub.getFileUrl());
         if (SwingUtilities.isLeftMouseButton(evt)) {
             try {
-                Desktop.getDesktop().browse(new URI(URL));
+                Desktop.getDesktop().browse(new URI(sub.getFileUrl()));
             } catch (IOException ex) {
-                LOGGER.error("Could not open " + URL, ex);
+                LOGGER.error("Could not open " + sub.getFileUrl(), ex);
             } catch (URISyntaxException ex) {
-                LOGGER.error("Could not open " + URL, ex);
+                LOGGER.error("Could not open " + sub.getFileUrl(), ex);
             }
         }
     }
 }//GEN-LAST:event_subtitlesTableMousePressed
 
     public void crawl(final List<String> files, final String imdbID) {
+        statusProgressBar.setIndeterminate(true);
         new SwingWorker<Set<Subtitle>,Void>() {
 
             @Override
@@ -205,6 +213,8 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
                     LOGGER.error("Worker interrupted", ex);
                 } catch (ExecutionException ex) {
                     LOGGER.error("Fetching subs failed", ex.getCause());
+                } finally {
+                    statusProgressBar.setIndeterminate(false);
                 }
             }
 
@@ -220,6 +230,35 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
         sub.setNoCd("N/A");
         sub.setType("N/A");
         return sub;
+    }
+    
+    private static final class LangIconRenderer extends DefaultTableCellRenderer{
+        
+        private final Map<String, ImageIcon> iconCache;
+        private final IconLoader iconLoader;
+        
+        
+        public LangIconRenderer(final IconLoader iconLoader) {
+            this.iconLoader = iconLoader;
+            this.iconCache = new HashMap<String, ImageIcon>();
+        }
+        
+        private ImageIcon getIcon(final String lang){
+            ImageIcon icon = iconCache.get(lang);
+            if(icon == null && !iconCache.containsKey(lang)){
+                icon = iconLoader.loadIcon("images/flags/"+lang+".png");
+                iconCache.put(lang, icon);
+            }
+            return icon;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            String lang = (String) value;
+            setIcon(getIcon(lang));
+            return this;
+        }
     }
 
 

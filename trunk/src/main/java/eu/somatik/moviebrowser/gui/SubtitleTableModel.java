@@ -15,7 +15,9 @@ public class SubtitleTableModel extends AbstractTableModel{
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SubtitleTableModel.class);
     
-    private static final String[] columnNames = {"Language", "File Name", "#. CD", "Type", "Source"};
+    public static final String LANG_COL = "Language";
+    
+    private static final String[] columnNames = {LANG_COL, "File Name", "#CD", "Type", "Source"};
     
     private List<Subtitle> subs;
 
@@ -31,6 +33,10 @@ public class SubtitleTableModel extends AbstractTableModel{
     @Override
     public int getColumnCount() {
         return columnNames.length;
+    }
+    
+    public Subtitle getSubtitle(int rowIndex){
+        return subs.get(rowIndex);
     }
 
     @Override

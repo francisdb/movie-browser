@@ -7,6 +7,7 @@ import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.domain.Subtitle;
 import eu.somatik.moviebrowser.service.SourceLoader;
+import eu.somatik.moviebrowser.tools.ElementOnlyTextExtractor;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -18,85 +19,138 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TODO implement paging loading
+ * 
  * http://www.opensubtitles.org
  * @author francisdb
  */
 public class OpenSubtitlesLoader implements SubtitlesLoader {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSubtitlesLoader.class);
-    
+    private static final String SITE = "http://www.opensubtitles.org";
     private final SourceLoader sourceLoader;
 
     @Inject
     public OpenSubtitlesLoader(final SourceLoader sourceLoader) {
         this.sourceLoader = sourceLoader;
     }
-    
-    
+
     @Override
     public Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
-        String encodedFileName = encode(localFileName);
-        String url = "http://www.opensubtitles.org/en/search2/?moviename=" + encodedFileName + "&sublanguageid=all";
-        LOGGER.info("url = "+url);
+        String url = searchUrl(localFileName);
+        LOGGER.info("url = " + url);
         String source = sourceLoader.load(url);
         Source jerichoSource = new Source(source);
         jerichoSource.fullSequentialParse();
         Set<Subtitle> results = new HashSet<Subtitle>();
-        
+
         Element titleElement = (Element) jerichoSource.findAllElements(HTMLElementName.TITLE).get(0);
         String title = titleElement.getContent().getTextExtractor().toString();
-        if (!title.contains("download divx subtitles from the biggest open")) {
-            List<?> tableElements = jerichoSource.findAllElements(HTMLElementName.TD);
-            Element tableElement;
-            Iterator<?> j = tableElements.iterator();
-            Subtitle sub;
-            while (j.hasNext()) {
-                sub = new Subtitle();
-                sub.setSubSource("OpenSubtitles.org");
-                tableElement = (Element) j.next();
-
-                //System.out.println(tableElement.getTextExtractor().toString());
-                String newList = tableElement.getChildElements().toString();
-                Source newSource = new Source(newList);
-                List<?> linkElements = newSource.findAllElements(HTMLElementName.A);
-                Element linkElement;
-                Iterator<?> i = linkElements.iterator();
-
-                while (i.hasNext()) {
-                    linkElement = (Element) i.next();
-                    String href = linkElement.getAttributeValue("href");
-                    if (href != null && href.startsWith("/en/download/sub/")) {
-                        sub.setFileName("http://www.opensubtitles.org" + href);
-                    } else if (href != null && href.startsWith("/en/search/")) {
-                        String split[] = href.split("/");
-                        sub.setLanguage(split[4]);
-                    }
-                    System.out.println(tableElement.getTextExtractor().toString());
-                    sub.setType("sub/srt");
-                    sub.setNoCd("N/A");
-                    results.add(sub);
+        if (title.contains("(results)")) {
+            //load first link
+            String subsUrl = null;
+            List<?> aElements = jerichoSource.findAllElements(HTMLElementName.A);
+            for (int i = 0; i < aElements.size() && subsUrl == null; i++) {
+                Element aElement = (Element) aElements.get(i);
+                if ("bnone".equals(aElement.getAttributeValue("class"))) {
+                    subsUrl = SITE + aElement.getAttributeValue("href");
                 }
             }
 
+            source = sourceLoader.load(subsUrl);
+            jerichoSource = new Source(source);
+            jerichoSource.fullSequentialParse();
+            results = loadSubtitlesPage(jerichoSource);
+        } else {
+            // direct hit
+            results = loadSubtitlesPage(jerichoSource);
         }
 
         return results;
     }
-    
-        
-   
+
+    private Set<Subtitle> loadSubtitlesPage(Source jerichoSource) {
+        Set<Subtitle> results = new HashSet<Subtitle>();
+
+        Element tableElement = (Element) jerichoSource.findAllElements("id", "search_results", false).get(0);
+
+        List<?> trElements = tableElement.findAllElements(HTMLElementName.TR);
+        Element trElement;
+        Subtitle sub;
+        for (Object trObject : trElements) {
+            trElement = (Element) trObject;
+            String style = trElement.getAttributeValue("style");
+            if (!"display:none".equals(style)) {
+
+                sub = new Subtitle();
+                sub.setSubSource(SITE);
+
+                List<?> tdElements = trElement.findAllElements(HTMLElementName.TD);
+                if (tdElements.size() >= 4) {
+
+
+                    // TITLE/URL
+                    Element titleTd = (Element) tdElements.get(0);
+                    Element firstLink = (Element) titleTd.findAllElements(HTMLElementName.A).get(0);
+                    String fileName = firstLink.getContent().getTextExtractor().toString();
+
+                    ElementOnlyTextExtractor extractor = new ElementOnlyTextExtractor(titleTd.getContent());
+                    String extra = extractor.toString();
+                    if(extra.trim().length() > 0){
+                        fileName +=" " + extractor.toString();
+                    }
+                    sub.setFileName(fileName);
+
+
+                    // LANG
+                    Element flagTd = (Element) tdElements.get(1);
+                    List<?> divElements = flagTd.findAllElements(HTMLElementName.DIV);
+                    Element divElement;
+                    Iterator<?> divs = divElements.iterator();
+                    while (divs.hasNext()) {
+                        divElement = (Element) divs.next();
+                        //LOGGER.info(divElement.toString());
+                        String cls = divElement.getAttributeValue("class");
+                        if (cls != null && cls.startsWith("flag")) {
+                            sub.setLanguage(cls.substring(5));
+                        }
+                    }
+
+                    // CD
+                    Element cdTd = (Element) tdElements.get(2);
+                    sub.setNoCd(cdTd.getContent().getTextExtractor().toString());
+
+                    // TYPE & URL
+                    Element typeTd = (Element) tdElements.get(4);
+                    Element span = (Element) typeTd.findAllElements("class", "p", false).get(0);
+                    Element link = (Element) typeTd.findAllElements("a").get(0);
+                    sub.setType(span.getContent().getTextExtractor().toString());
+                    sub.setFileUrl(SITE + link.getAttributeValue("href"));
+
+                    results.add(sub);
+                }
+
+            }
+        }
+        return results;
+    }
+
+    private String searchUrl(String title) {
+        String encoded = encode(title);
+        return SITE + "/en/search2/sublanguageid-all/moviename-" + encoded;
+    }
+
     /**
      * @param fileName 
      * @return the imdb url
      */
-    private String encode(String fileName) {
+    private String encode(String str) {
         String encoded = "";
         try {
-            encoded = URLEncoder.encode(fileName, "UTF-8");
+            encoded = URLEncoder.encode(str, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
             LOGGER.error("Could not cencode UTF-8", ex);
         }
         return encoded;
     }
-
 }
