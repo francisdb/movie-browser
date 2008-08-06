@@ -169,20 +169,7 @@ public class ImdbSearch {
         } catch (UnsupportedEncodingException ex) {
             LOGGER.error("Could not cencode UTF-8", ex);
         }
-        return "http://www.imdb.com/Tsearch?title=" + encoded;
-    }
-
-    /**
-     * @param title 
-     * @return the imdb url
-     */
-    private String generateImdbSearchUrl(String title) {
-        String encoded = "";
-        try {
-            encoded = URLEncoder.encode(title, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("Could not cencode UTF-8", ex);
-        }
-        return "http://www.imdb.com/find?q=" + encoded;
+        // global search is without s=tt
+        return "http://www.imdb.com/find?q="+encoded+";s=tt";
     }
 }
