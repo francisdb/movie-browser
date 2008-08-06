@@ -1,7 +1,7 @@
 package eu.somatik.moviebrowser.domain;
 
-import eu.somatik.moviebrowser.domain.MovieService;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -11,18 +11,25 @@ import javax.persistence.ManyToOne;
  * @author francisdb
  */
 @Entity
-public class Score {
-    
+public class MovieSite {
     @Id
     private long id;
     
     @ManyToOne
     private Movie movie;
-    private Integer score;
+    
     private MovieService service;
+    
+    @Column(unique=true)
+    private String url;
+    
+    private Integer score;
+    
+    private Integer votes;
+    
     private Date time;
 
-    public Score() {
+    public MovieSite() {
     }
 
     public long getId() {
@@ -63,6 +70,22 @@ public class Score {
 
     public void setTime(Date time) {
         this.time = (Date) time.clone();
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Integer getVotes() {
+        return votes;
+    }
+
+    public void setVotes(Integer votes) {
+        this.votes = votes;
     }
     
     

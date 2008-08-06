@@ -5,9 +5,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.api.Parser;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.SourceLoader;
 import java.io.IOException;
 
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +33,23 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public void fetch(Movie movie) {
+    public MovieSite fetch(Movie movie) {
+        MovieSite site = new MovieSite();
+        site.setMovie(movie);
+        site.setService(MovieService.TOMATOES);
+        site.setTime(new Date());
         if (!"".equals(movie.getImdbId())) {
             try {
-                movie.setTomatoUrl(generateTomatoesUrl(movie));
+                String url = generateTomatoesUrl(movie);
+                site.getMovie().setTomatoUrl(url);
+                site.setUrl(url);
                 String source = sourceLoader.load(movie.getTomatoUrl());
-                tomatoesParser.parse(source, movie);
+                tomatoesParser.parse(source, site);
             } catch (IOException ex) {
                 LOGGER.error("Loading from rotten tomatoes failed", ex);
             }
         }
+        return site;
     }
 
     /**

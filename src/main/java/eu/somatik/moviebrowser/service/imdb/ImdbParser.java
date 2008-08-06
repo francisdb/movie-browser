@@ -10,6 +10,7 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,8 @@ public class ImdbParser extends AbstractJerichoParser {
     }
 
     @Override
-    public void parse(Source source, Movie movie) {
+    public void parse(Source source, MovieSite movieSite) {
+        Movie movie = movieSite.getMovie();
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
         String titleYear = titleElement.getContent().getTextExtractor().toString();
 
@@ -86,12 +88,16 @@ public class ImdbParser extends AbstractJerichoParser {
                 rating = rating.replace("/10", "");
                 try {
                     int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
-                    movie.setImdbScore(Integer.valueOf(theScore));
+                    movie.setImdbScore(theScore);
+                    movieSite.setScore(theScore);
                 } catch (NumberFormatException ex) {
                     LOGGER.error("Could not parse " + rating + " to Float", ex);
                 }
                 next = source.findNextElement(next.getEndTag().getEnd());
-                movie.setVotes(next.getContent().getTextExtractor().toString());
+                String votes = next.getContent().getTextExtractor().toString();
+                movie.setVotes(votes);
+                // TODO parse votes to int!
+                // site.setVotes(votes);
             }
         }
 

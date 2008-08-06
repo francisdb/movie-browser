@@ -2,9 +2,12 @@ package eu.somatik.moviebrowser.service.omdb;
 
 import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.restlet.Client;
 import org.restlet.data.MediaType;
@@ -27,7 +30,11 @@ public class OmdbFetcher implements MovieInfoFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieInfoFetcher.class);
 
     @Override
-    public void fetch(Movie movie) {
+    public MovieSite fetch(Movie movie) {
+        MovieSite site = new MovieSite();
+        site.setMovie(movie);
+        site.setService(MovieService.MOVIEWEB);
+        site.setTime(new Date());
         // Outputting the content of a Web page
         // Prepare the request
         Request request = new Request(Method.GET, "http://www.omdb-beta.org/search/movies?query=test");
@@ -48,7 +55,7 @@ public class OmdbFetcher implements MovieInfoFetcher {
         } catch (IOException ex) {
             LOGGER.error("Could not load rest",ex);
         }
-
+        return site;
     }
 
 }

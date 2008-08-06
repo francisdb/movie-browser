@@ -1,6 +1,7 @@
 package eu.somatik.moviebrowser.service.tomatoes;
 
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -21,10 +22,11 @@ public class TomatoesParserTest {
     @Test
     public void testParse() throws Exception {
         String source = new FileSourceLoader().load("tomatoes/Pulp Fiction Movie Reviews, Pictures - Rotten Tomatoes.html");
-        Movie movie = new Movie();
+        MovieSite site = new MovieSite();
+        site.setMovie(new Movie());
         TomatoesParser instance = new TomatoesParser();
-        instance.parse(source, movie);
-        assertEquals(Integer.valueOf(96), movie.getTomatoScore());
+        instance.parse(source, site);
+        assertEquals(Integer.valueOf(96), site.getMovie().getTomatoScore());
     }
 
 }

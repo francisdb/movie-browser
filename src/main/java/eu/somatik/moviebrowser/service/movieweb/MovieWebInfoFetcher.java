@@ -9,9 +9,12 @@ import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.api.Parser;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -41,7 +44,11 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public void fetch(Movie movie) {
+    public MovieSite fetch(Movie movie) {
+        MovieSite site = new MovieSite();
+        site.setMovie(movie);
+        site.setService(MovieService.MOVIEWEB);
+        site.setTime(new Date());
         try {
             String source = httpLoader.load(createMovieWebSearchUrl(movie));
             Source jerichoSource = new Source(source);
@@ -70,12 +77,14 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             if (movieUrl == null) {
                 throw new IOException("Movie not found on MovieWeb: "+movie.getTitle());
             }
-            movie.setMoviewebUrl(movieUrl);
+            site.getMovie().setMoviewebUrl(movieUrl);
+            site.setUrl(movieUrl);
             source = httpLoader.load(movieUrl);
-            movieWebInfoParser.parse(source, movie);
+            movieWebInfoParser.parse(source, site);
         } catch (IOException ex) {
             LOGGER.error("Loading from MovieWeb failed", ex);
         }
+        return site;
     }
 
     private String createMovieWebSearchUrl(Movie movie) {

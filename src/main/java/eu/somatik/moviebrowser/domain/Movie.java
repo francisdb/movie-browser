@@ -9,13 +9,17 @@
 
 package eu.somatik.moviebrowser.domain;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -67,12 +71,17 @@ public class Movie {
     @ManyToMany(fetch=FetchType.EAGER)
     private Set<Language> languages;
     
+    @OneToMany
+    private List<MovieSite> sites;
+
+    
     
     
     /** Creates a new instance of Movie */
     public Movie() {
         this.genres = new HashSet<Genre>();
         this.languages = new HashSet<Language>();
+        this.sites = new ArrayList<MovieSite>();
     }
 
     /**
@@ -326,9 +335,27 @@ public class Movie {
     public void setTomatoUrl(String tomatoUrl) {
         this.tomatoUrl = tomatoUrl;
     }
+
+    public List<MovieSite> getSites() {
+        return sites;
+    }
+
+    public void setSites(List<MovieSite> sites) {
+        this.sites = sites;
+    }   
     
-    
-    
+    public MovieSite siteFor(MovieService service){
+        MovieSite site = null;
+        Iterator<MovieSite> siteIterator = sites.iterator();
+        MovieSite next;
+        while(site == null && siteIterator.hasNext()){
+            next = siteIterator.next();
+            if(next.getService() == service){
+                site = next;
+            }
+        }
+        return site;
+    }
     
     
     @Override

@@ -6,8 +6,11 @@ import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.api.MovieInfoFetcher;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.SourceLoader;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +35,11 @@ public class ImdbInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public void fetch(Movie movie) {
-        
+    public MovieSite fetch(Movie movie) {
+        MovieSite site = new MovieSite();
+        site.setMovie(movie);
+        site.setService(MovieService.IMDB);
+        site.setTime(new Date());
         // NOT SURE THIS IS NEEDED !!!
         if( movie.getImdbUrl() != null && movie.getImdbUrl().startsWith("http://www.imdb.com/title/tt")){
             movie.setImdbId(movie.getImdbUrl().replaceAll("[a-zA-Z:/.+=?]", "").trim());
@@ -50,20 +56,23 @@ public class ImdbInfoFetcher implements MovieInfoFetcher {
                     // TODO copy all data instead of reload
                     movie.setImdbUrl(movies.get(0).getImdbUrl());
                     movie.setImdbId(movies.get(0).getImdbId());
+                    site.setUrl(movies.get(0).getImdbUrl());
                 }else{
                     // TAKE FIRST RESULT
                     // TODO Move code below to this level
                     movie.setImdbUrl(movies.get(0).getImdbUrl());
                     movie.setImdbId(movies.get(0).getImdbId());
+                    site.setUrl(movies.get(0).getImdbUrl());
                 }
             }
 
             String source = loader.load(movie.getImdbUrl());
             Source jerichoSource = new Source(source);
             jerichoSource.fullSequentialParse();
-            imdbParser.parse(source, movie);
+            imdbParser.parse(source, site);
         } catch (IOException ex) {
             LOGGER.error("Loading from IMDB failed", ex);
         }
+        return site;
     }
 }

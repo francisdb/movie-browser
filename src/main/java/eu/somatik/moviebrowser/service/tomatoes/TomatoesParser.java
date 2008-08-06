@@ -5,6 +5,7 @@ import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.Movie;
+import eu.somatik.moviebrowser.domain.MovieSite;
 import eu.somatik.moviebrowser.service.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +22,7 @@ public class TomatoesParser extends AbstractJerichoParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesParser.class);
 
     @Override
-    public void parse(Source source, Movie movie) {
+    public void parse(Source source, MovieSite movieSite) {
         List<?> divElements = source.findAllElements(HTMLElementName.DIV);
         for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
             Element divElement = (Element) i.next();
@@ -31,7 +32,9 @@ public class TomatoesParser extends AbstractJerichoParser {
                 if (!"".equals(userRating)) {
                     userRating = userRating.replace("%", "");
                     try {
-                        movie.setTomatoScore(Integer.valueOf(userRating));
+                        int score = Integer.valueOf(userRating);
+                        movieSite.getMovie().setTomatoScore(score);
+                        movieSite.setScore(score);
                     } catch (NumberFormatException ex) {
                         LOGGER.error("Could not parse " + userRating + " to Integer", ex);
                     }
