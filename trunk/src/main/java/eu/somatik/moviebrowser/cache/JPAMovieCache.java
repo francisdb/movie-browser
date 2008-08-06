@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
  * @author francisdb
  */
 @Singleton
-public class MovieCacheImpl implements MovieCache {
+public class JPAMovieCache implements MovieCache {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MovieCacheImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JPAMovieCache.class);
     private final Settings settings;
     private EntityManagerFactory emf;
 
@@ -39,7 +39,7 @@ public class MovieCacheImpl implements MovieCache {
      * @param settings 
      */
     @Inject
-    public MovieCacheImpl(final Settings settings) {
+    public JPAMovieCache(final Settings settings) {
         this.settings = settings;
     }
 

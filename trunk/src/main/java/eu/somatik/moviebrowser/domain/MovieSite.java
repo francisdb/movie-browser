@@ -3,6 +3,8 @@ package eu.somatik.moviebrowser.domain;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -13,6 +15,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class MovieSite {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     
     @ManyToOne

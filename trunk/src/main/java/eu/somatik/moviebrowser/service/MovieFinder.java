@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.google.inject.Inject;
-import eu.somatik.moviebrowser.cache.MovieCacheImpl;
+import eu.somatik.moviebrowser.cache.JPAMovieCache;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieSite;
@@ -46,7 +46,7 @@ public class MovieFinder {
     private final MovieInfoFetcher googleInfoFetcher;
     private final MovieInfoFetcher flixterInfoFetcher;
     private final MovieNameExtractor movieNameExtractor;
-    private final MovieCacheImpl movieCache;
+    private final JPAMovieCache movieCache;
 
     /**
      * Creates a new instance of MovieFinder
@@ -66,7 +66,7 @@ public class MovieFinder {
             final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
             final @Google MovieInfoFetcher googleInfoFetcher,
             final @Flixter MovieInfoFetcher flixterInfoFetcher,
-            final MovieCacheImpl movieCache,
+            final JPAMovieCache movieCache,
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor) {
         this.imdbInfoFetcher = imdbInfoFetcher;
