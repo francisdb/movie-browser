@@ -22,8 +22,6 @@ import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.imdb.Imdb;
 import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
 import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
-import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
-import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.service.flixter.Flixter;
 import eu.somatik.moviebrowser.service.google.Google;
 import eu.somatik.moviebrowser.service.imdb.ImdbUrlGenerator;
@@ -48,9 +46,6 @@ public class MovieFinder {
     private final MovieInfoFetcher flixterInfoFetcher;
     private final MovieNameExtractor movieNameExtractor;
     private final MovieCacheImpl movieCache;
-    private final Parser imdbParser;
-    private final ImdbSearch imdbSearch;
-    private final HttpSourceLoader httpLoader;
 
     /**
      * Creates a new instance of MovieFinder
@@ -62,9 +57,6 @@ public class MovieFinder {
      * @param movieCache
      * @param fileSystemScanner
      * @param movieNameExtractor
-     * @param imdbParser
-     * @param imdbSearch
-     * @param httpLoader
      */
     @Inject
     public MovieFinder(
@@ -75,10 +67,7 @@ public class MovieFinder {
             final @Flixter MovieInfoFetcher flixterInfoFetcher,
             final MovieCacheImpl movieCache,
             final FileSystemScanner fileSystemScanner,
-            final MovieNameExtractor movieNameExtractor,
-            final @Imdb Parser imdbParser,
-            final ImdbSearch imdbSearch,
-            final HttpSourceLoader httpLoader) {
+            final MovieNameExtractor movieNameExtractor) {
         this.imdbInfoFetcher = imdbInfoFetcher;
         this.movieWebInfoFetcher = movieWebInfoFetcher;
         this.tomatoesInfoFetcher = tomatoesInfoFetcher;
@@ -87,9 +76,6 @@ public class MovieFinder {
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
-        this.imdbParser = imdbParser;
-        this.imdbSearch = imdbSearch;
-        this.httpLoader = httpLoader;
         
         this.service = Executors.newFixedThreadPool(5);
         this.secondaryService = Executors.newFixedThreadPool(5);
