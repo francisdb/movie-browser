@@ -47,11 +47,12 @@ public class FlixterParser extends AbstractJerichoParser{
                         }
                     }
                 }
-            } else if (content.equals("Female")) {
-                // TODO use?
-                
             } 
-            // ...
+//            else if (content.equals("Female")) {
+//                // TODO use?
+//                
+//            } 
+//            // ...
         }
     }
 
