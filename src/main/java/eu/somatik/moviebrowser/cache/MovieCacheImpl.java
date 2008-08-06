@@ -33,7 +33,6 @@ public class MovieCacheImpl implements MovieCache {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieCacheImpl.class);
     private final Settings settings;
     private EntityManagerFactory emf;
-    private MovieDAO movieDAO;
 
     /** 
      * Creates a new instance of MovieCache 
@@ -56,7 +55,6 @@ public class MovieCacheImpl implements MovieCache {
         String databaseLocation = settings.getSettingsDir() + File.separator + "database/moviecache";
         props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + databaseLocation + ";shutdown=true");
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
-        this.movieDAO = new MovieDAO(emf);
     }
 
     /**
