@@ -166,7 +166,8 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
                 Iterator<String> i = files.iterator();
                 while (i.hasNext()) {
                     fileName = i.next();
-                    String split[] = fileName.split(".");
+                    // regex . is any character
+                    String split[] = fileName.split("\\.");
                     if (split.length != 0) {
                         fileName = split[0];
                     }
