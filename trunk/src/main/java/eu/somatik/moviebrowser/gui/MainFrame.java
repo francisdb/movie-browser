@@ -38,9 +38,9 @@ import javax.swing.JPopupMenu;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
-import eu.somatik.moviebrowser.service.imdb.ImdbTrailerFinder;
-import eu.somatik.moviebrowser.api.TrailerFinder;
+import com.flicklib.service.movie.apple.AppleTrailerFinder;
+import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
+import com.flicklib.api.TrailerFinder;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.SwingTools;

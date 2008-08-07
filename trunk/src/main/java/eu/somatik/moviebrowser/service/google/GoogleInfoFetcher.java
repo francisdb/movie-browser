@@ -15,12 +15,15 @@ import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieService;
 import eu.somatik.moviebrowser.domain.MovieSite;
-import eu.somatik.moviebrowser.service.HttpSourceLoader;
+import com.flicklib.service.HttpSourceLoader;
+import com.flicklib.tools.Param;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +54,8 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
         site.setService(MovieService.GOOGLE);
         site.setTime(new Date());
         try {
-            String movieParam = URLEncoder.encode(movie.getTitle(), "utf-8");
-            String sourceString = httpLoader.load("http://www.google.com/movies?q="+movieParam);
+            String params = Param.paramString("q", movie.getTitle());
+            String sourceString = httpLoader.load("http://www.google.com/movies"+params);
             Source source = new Source(sourceString);
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
             source.fullSequentialParse();

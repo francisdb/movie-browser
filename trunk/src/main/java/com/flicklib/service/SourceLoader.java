@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service;
+package com.flicklib.service;
 
 import java.io.IOException;
 

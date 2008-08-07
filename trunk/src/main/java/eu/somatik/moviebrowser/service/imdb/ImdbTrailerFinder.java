@@ -1,6 +1,6 @@
 package eu.somatik.moviebrowser.service.imdb;
 
-import eu.somatik.moviebrowser.api.TrailerFinder;
+import com.flicklib.api.TrailerFinder;
 import eu.somatik.moviebrowser.domain.Movie;
 
 /**

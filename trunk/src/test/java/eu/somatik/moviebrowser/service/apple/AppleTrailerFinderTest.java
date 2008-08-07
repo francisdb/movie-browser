@@ -1,6 +1,6 @@
 package eu.somatik.moviebrowser.service.apple;
 
-import eu.somatik.moviebrowser.service.apple.AppleTrailerFinder;
+import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import eu.somatik.moviebrowser.domain.Movie;
 
 import org.junit.Test;
