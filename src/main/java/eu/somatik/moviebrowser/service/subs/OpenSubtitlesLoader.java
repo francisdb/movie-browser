@@ -40,7 +40,6 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
     public Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
         String url = searchUrl(localFileName);
         int carryOn = 1;
-        LOGGER.info("url = " + url);
         String source = sourceLoader.load(url);
         Source jerichoSource = new Source(source);
         jerichoSource.fullSequentialParse();
@@ -128,7 +127,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
             Element linkElement = (Element) i.next();
             String href = linkElement.getAttributeValue("href");
             if(!href.isEmpty() && href.contains("/offset-")) {
-                System.out.println(linkElement.getTextExtractor().toString());
+                LOGGER.info(linkElement.getTextExtractor().toString());
                 links.add(href);
             }
         }
