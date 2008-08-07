@@ -162,7 +162,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
                     ElementOnlyTextExtractor extractor = new ElementOnlyTextExtractor(titleTd.getContent());
                     String extra = extractor.toString();
                     if(extra.trim().length() > 0){
-                        fileName +=" " + extractor.toString();
+                        fileName = extractor.toString()+" "+fileName;
                     }
                     sub.setFileName(fileName);
 
