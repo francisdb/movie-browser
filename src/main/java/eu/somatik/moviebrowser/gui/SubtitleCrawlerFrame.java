@@ -23,11 +23,13 @@ import org.slf4j.LoggerFactory;
 
 
 import eu.somatik.moviebrowser.domain.Subtitle;
+import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -57,6 +59,8 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
         crawl(files, movie);
         searchButton.setEnabled(false);
 
+        subtitlesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        subtitlesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         subtitlesTable.getColumn(SubtitleTableModel.LANG_COL).setCellRenderer(new LangIconRenderer(iconLoader));
     }
 
@@ -208,9 +212,8 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
             protected void done() {
                 try {
                     List<Subtitle> subtitles = get();
-                    for (Subtitle subtitle:subtitles) {
-                        model.add(subtitle);
-                    }
+                    model.addAll(subtitles);
+                    SwingTools.packColumns(subtitlesTable, 3);
                     searchButton.setEnabled(true);
                 } catch (InterruptedException ex) {
                     LOGGER.error("Worker interrupted", ex);
