@@ -1,6 +1,6 @@
 package com.flicklib.api;
 
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 
 /**
  * Finds the url for the trailer site/page

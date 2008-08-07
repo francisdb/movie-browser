@@ -6,10 +6,10 @@
 package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.Genre;
+import com.flicklib.domain.Language;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import java.awt.Desktop;
 import java.awt.FlowLayout;

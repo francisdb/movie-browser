@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.tools;
+package com.flicklib.tools;
 
 import au.id.jericho.lib.html.Segment;
 import au.id.jericho.lib.html.StartTag;

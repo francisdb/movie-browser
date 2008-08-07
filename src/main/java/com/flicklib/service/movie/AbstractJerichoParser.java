@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package eu.somatik.moviebrowser.service;
+package com.flicklib.service.movie;
 
 import au.id.jericho.lib.html.Source;
-import eu.somatik.moviebrowser.api.Parser;
-import eu.somatik.moviebrowser.domain.MovieSite;
+import com.flicklib.api.Parser;
+import com.flicklib.domain.MovieSite;
 
 /**
  *

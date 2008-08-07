@@ -9,9 +9,9 @@ package eu.somatik.moviebrowser.cache;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Genre;
+import com.flicklib.domain.Language;
+import com.flicklib.domain.Movie;
 
 import java.io.File;
 import java.util.HashMap;

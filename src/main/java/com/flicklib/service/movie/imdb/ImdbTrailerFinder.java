@@ -1,8 +1,7 @@
 package com.flicklib.service.movie.imdb;
 
-import eu.somatik.moviebrowser.service.imdb.*;
 import com.flicklib.api.TrailerFinder;
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 
 /**
  *

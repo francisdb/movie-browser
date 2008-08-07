@@ -6,7 +6,7 @@
  */
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.api.MovieInfoFetcher;
+import com.flicklib.api.MovieInfoFetcher;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,14 +15,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.google.inject.Inject;
-import eu.somatik.moviebrowser.api.InfoFetcherFactory;
+import com.flicklib.api.InfoFetcherFactory;
 import eu.somatik.moviebrowser.cache.JPAMovieCache;
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.MovieService;
-import eu.somatik.moviebrowser.domain.MovieSite;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieInfo;
+import com.flicklib.domain.MovieService;
+import com.flicklib.domain.MovieSite;
 import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.service.imdb.ImdbUrlGenerator;
+import com.flicklib.service.movie.imdb.ImdbUrlGenerator;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,11 +181,8 @@ public class MovieFinder {
      * @throws java.lang.Exception
      */
     private MovieInfo getMovieInfo(MovieInfo movieInfo) throws UnknownHostException, Exception {
-        String url = null;
-        if(movieInfo.getMovie().getImdbId() != null){
-            LOGGER.info("Generating IMDB url form IMDB id");
-            url = ImdbUrlGenerator.generateImdbUrl(movieInfo.getMovie());
-        }
+        String url = movieInfo.getMovie().getImdbUrl();
+
         if (url == null) {
             LOGGER.info("Finding NFO");
             url = fileSystemScanner.findNfoImdbUrl(movieInfo.getDirectory());

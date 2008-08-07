@@ -1,6 +1,6 @@
 package com.flicklib.service;
 
-import eu.somatik.moviebrowser.tools.IOTools;
+import com.flicklib.tools.IOTools;
 import java.io.IOException;
 import java.io.InputStream;
 

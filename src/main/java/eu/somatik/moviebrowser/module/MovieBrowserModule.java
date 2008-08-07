@@ -1,10 +1,10 @@
 package eu.somatik.moviebrowser.module;
 
-import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
-import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
-import eu.somatik.moviebrowser.service.imdb.Imdb;
+import com.flicklib.service.movie.tomatoes.RottenTomatoes;
+import com.flicklib.service.movie.movieweb.MovieWeb;
+import com.flicklib.service.movie.imdb.Imdb;
 import com.google.inject.AbstractModule;
-import eu.somatik.moviebrowser.api.InfoFetcherFactory;
+import com.flicklib.api.InfoFetcherFactory;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.ImageCacheImpl;
 import eu.somatik.moviebrowser.cache.MovieCache;
@@ -16,25 +16,25 @@ import eu.somatik.moviebrowser.service.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FileSystemScannerImpl;
 import eu.somatik.moviebrowser.service.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
-import eu.somatik.moviebrowser.api.MovieInfoFetcher;
+import com.flicklib.api.MovieInfoFetcher;
 import eu.somatik.moviebrowser.service.MovieNameExtractor;
-import eu.somatik.moviebrowser.service.movieweb.MovieWebInfoFetcher;
+import com.flicklib.service.movie.movieweb.MovieWebInfoFetcher;
 import eu.somatik.moviebrowser.service.SimpleFolderScanner;
-import eu.somatik.moviebrowser.service.tomatoes.TomatoesInfoFetcher;
-import eu.somatik.moviebrowser.service.imdb.ImdbParser;
-import eu.somatik.moviebrowser.service.movieweb.MovieWebParser;
-import eu.somatik.moviebrowser.api.Parser;
-import eu.somatik.moviebrowser.service.InfoFetcherFactoryImpl;
-import eu.somatik.moviebrowser.service.flixter.Flixter;
-import eu.somatik.moviebrowser.service.flixter.FlixterInfoFetcher;
-import eu.somatik.moviebrowser.service.flixter.FlixterParser;
-import eu.somatik.moviebrowser.service.google.Google;
-import eu.somatik.moviebrowser.service.google.GoogleInfoFetcher;
-import eu.somatik.moviebrowser.service.google.GoogleParser;
-import eu.somatik.moviebrowser.service.imdb.ImdbInfoFetcher;
-import eu.somatik.moviebrowser.service.omdb.Omdb;
-import eu.somatik.moviebrowser.service.omdb.OmdbFetcher;
-import eu.somatik.moviebrowser.service.tomatoes.TomatoesParser;
+import com.flicklib.service.movie.tomatoes.TomatoesInfoFetcher;
+import com.flicklib.service.movie.imdb.ImdbParser;
+import com.flicklib.service.movie.movieweb.MovieWebParser;
+import com.flicklib.api.Parser;
+import com.flicklib.service.movie.InfoFetcherFactoryImpl;
+import com.flicklib.service.movie.flixter.Flixter;
+import com.flicklib.service.movie.flixter.FlixterInfoFetcher;
+import com.flicklib.service.movie.flixter.FlixterParser;
+import com.flicklib.service.movie.google.Google;
+import com.flicklib.service.movie.google.GoogleInfoFetcher;
+import com.flicklib.service.movie.google.GoogleParser;
+import com.flicklib.service.movie.imdb.ImdbInfoFetcher;
+import com.flicklib.service.movie.omdb.Omdb;
+import com.flicklib.service.movie.omdb.OmdbFetcher;
+import com.flicklib.service.movie.tomatoes.TomatoesParser;
 
 /**
  * Guice configuration module

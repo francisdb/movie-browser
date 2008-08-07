@@ -1,5 +1,6 @@
-package eu.somatik.moviebrowser.domain;
+package com.flicklib.domain;
 
+import com.flicklib.domain.MovieService;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;

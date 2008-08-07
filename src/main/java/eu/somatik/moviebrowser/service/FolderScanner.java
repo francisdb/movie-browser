@@ -5,7 +5,7 @@
 
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.MovieInfo;
 import java.util.List;
 import java.util.Set;
 

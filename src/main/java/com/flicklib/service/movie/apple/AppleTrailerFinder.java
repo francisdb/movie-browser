@@ -2,7 +2,7 @@ package com.flicklib.service.movie.apple;
 
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.tools.Param;
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;

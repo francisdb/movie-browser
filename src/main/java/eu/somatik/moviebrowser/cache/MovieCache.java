@@ -1,8 +1,8 @@
 package eu.somatik.moviebrowser.cache;
 
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Genre;
+import com.flicklib.domain.Language;
+import com.flicklib.domain.Movie;
 
 /**
  *
