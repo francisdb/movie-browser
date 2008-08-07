@@ -75,13 +75,62 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
                 jerichoSource = new Source(source);
                 jerichoSource.fullSequentialParse();
                 results = loadSubtitlesPage(jerichoSource);
+                
+                //Get links for other pages.
+                List<String> pages = new ArrayList<String>();
+                pages.addAll(getPageLinks(jerichoSource));
+                Iterator k;
+                k = pages.iterator();
+                while(k.hasNext()) {
+                    String link = (String) k.next();
+                    source = sourceLoader.load(SITE + link);
+                    jerichoSource = new Source(source);
+                    jerichoSource.fullSequentialParse();
+                    results.addAll(loadSubtitlesPage(jerichoSource));
+                }
             }
+            
         } else {
             // direct hit
             results = loadSubtitlesPage(jerichoSource);
+            
+            //Get links for other pages.
+            List<String> pages = new ArrayList<String>();
+            pages.addAll(getPageLinks(jerichoSource));
+            Iterator k;
+            k = pages.iterator();
+            while(k.hasNext()) {
+                String link = (String) k.next();
+                source = sourceLoader.load(SITE + link);
+                jerichoSource = new Source(source);
+                jerichoSource.fullSequentialParse();
+                results.addAll(loadSubtitlesPage(jerichoSource));
+            }
         }
 
         return results;
+    }
+    
+    /**
+     * This method retrieves the links for all pages other than the first page. 
+     * @param URL
+     * @return
+     */
+    private List<String> getPageLinks(Source source) {
+        List<String> links = new ArrayList<String>();
+        List<?> linksElements = source.findAllElements(HTMLElementName.A);
+        Iterator<?> i;
+        i = linksElements.iterator();
+        
+        while (i.hasNext()) {
+            Element linkElement = (Element) i.next();
+            String href = linkElement.getAttributeValue("href");
+            if(!href.isEmpty() && href.contains("/offset-")) {
+                System.out.println(linkElement.getTextExtractor().toString());
+                links.add(href);
+            }
+        }
+        return links;
     }
 
     private List<Subtitle> loadSubtitlesPage(Source jerichoSource) {
@@ -147,6 +196,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
 
             }
         }
+        
         return results;
     }
 
