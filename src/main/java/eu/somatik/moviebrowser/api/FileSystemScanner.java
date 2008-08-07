@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.api;
 
 import java.io.File;
 

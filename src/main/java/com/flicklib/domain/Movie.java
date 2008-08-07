@@ -3,13 +3,10 @@
  *
  * Created on May 7, 2007, 9:31 PM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 
 package com.flicklib.domain;
 
-import com.flicklib.domain.MovieService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;

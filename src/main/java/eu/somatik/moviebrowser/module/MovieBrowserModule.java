@@ -12,7 +12,7 @@ import eu.somatik.moviebrowser.cache.JPAMovieCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.config.SettingsImpl;
 import eu.somatik.moviebrowser.gui.IconLoader;
-import eu.somatik.moviebrowser.service.FileSystemScanner;
+import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FileSystemScannerImpl;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
