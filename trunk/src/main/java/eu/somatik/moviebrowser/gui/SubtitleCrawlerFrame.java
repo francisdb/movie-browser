@@ -245,16 +245,16 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
     
     private static final class LangIconRenderer extends DefaultTableCellRenderer{
         
-        private static final Map<String,String> langCountryMap = new HashMap<String, String>();
+        private static final Map<String,String> LANG_COUNTRY = new HashMap<String, String>();
         static {
-            langCountryMap.put("da", "dk");
-            langCountryMap.put("pb", "br");//?
-            langCountryMap.put("el", "gr");
-            langCountryMap.put("en", "gb");
-            langCountryMap.put("fa", "ir");
-            langCountryMap.put("zh", "cn");
-            langCountryMap.put("he", "il");
-            langCountryMap.put("po", "br");//?
+            LANG_COUNTRY.put("da", "dk");
+            LANG_COUNTRY.put("pb", "br");//?
+            LANG_COUNTRY.put("el", "gr");
+            LANG_COUNTRY.put("en", "gb");
+            LANG_COUNTRY.put("fa", "ir");
+            LANG_COUNTRY.put("zh", "cn");
+            LANG_COUNTRY.put("he", "il");
+            LANG_COUNTRY.put("po", "br");//?
         }
         
         private final Map<String, ImageIcon> iconCache;
@@ -269,7 +269,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
         private ImageIcon getIcon(final String lang){
             ImageIcon icon = iconCache.get(lang);
             if(icon == null && !iconCache.containsKey(lang)){
-                String country = langCountryMap.get(lang);
+                String country = LANG_COUNTRY.get(lang);
                 if(country == null){
                     country = lang;
                 }
