@@ -60,6 +60,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+import javax.swing.table.TableModel;
+import javax.swing.RowFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,7 +223,8 @@ public class MainFrame extends javax.swing.JFrame {
         movieTableScrollPane = new javax.swing.JScrollPane();
         movieTable = new javax.swing.JTable();
         loadProgressBar = new javax.swing.JProgressBar();
-        infoLabel = new javax.swing.JLabel();
+        filterLabel = new javax.swing.JLabel();
+        filterText = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
@@ -273,7 +277,22 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(movieTableScrollPane);
 
-        infoLabel.setText("Ready to load movies");
+        loadProgressBar.setString("");
+        loadProgressBar.setStringPainted(true);
+
+        filterLabel.setText("Filter:");
+
+        filterText.setFont(new java.awt.Font("Tahoma", 1, 9)); // NOI18N
+        filterText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterTextActionPerformed(evt);
+            }
+        });
+        filterText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filterTextKeyReleased(evt);
+            }
+        });
 
         movieMenu.setMnemonic('M');
         movieMenu.setText("Movies");
@@ -335,9 +354,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(filterLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
                         .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -345,12 +366,14 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(infoLabel)
-                    .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(filterLabel)
+                        .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(13, 13, 13))
         );
 
         pack();
@@ -424,6 +447,23 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     JOptionPane.showMessageDialog(this, aboutPanel, "About", JOptionPane.PLAIN_MESSAGE);
 }//GEN-LAST:event_aboutMenuItemActionPerformed
 
+private void filterTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextKeyReleased
+    final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(movieTable.getModel());
+    movieTable.setRowSorter(sorter);
+
+    String text = filterText.getText();
+    if (text.length() == 0) {
+        sorter.setRowFilter(null);
+    } 
+    else {
+        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+    }
+}//GEN-LAST:event_filterTextKeyReleased
+
+private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterTextActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_filterTextActionPerformed
+
     private void showPopup(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
             JTable source = (JTable) evt.getSource();
@@ -454,7 +494,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
 
     
     private void fillTable() {
-        infoLabel.setText("Scanning folders...");
+        loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
         final Set<String> folders = settings.loadFolders();
         new SwingWorker<List<MovieInfo>, Void>() {
@@ -471,7 +511,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                     model.clear();
                     model.addAll(movies);
                     SwingTools.packColumns(movieTable, 3);
-                    infoLabel.setText(model.getRowCount() + " movies found, loading info...");
+                    loadProgressBar.setString(model.getRowCount() + " movies found, loading info...");
                     loadMovies(movies);
                 } catch (InterruptedException ex) {
                     LOGGER.error("Loading interrupted", ex);
@@ -506,7 +546,7 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
                     JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                 } finally {
                     loadProgressBar.setIndeterminate(false);
-                    infoLabel.setText("All movie info loaded.");
+                    loadProgressBar.setString("All movie info loaded.");
                 }
             }
         }.execute();
@@ -795,8 +835,9 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
     private javax.swing.JMenu extraMenu;
+    private javax.swing.JLabel filterLabel;
+    private javax.swing.JTextField filterText;
     private javax.swing.JMenuItem importMenuItem;
-    private javax.swing.JLabel infoLabel;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
