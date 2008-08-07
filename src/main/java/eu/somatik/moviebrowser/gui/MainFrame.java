@@ -671,29 +671,32 @@ private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN
             File dir = info.getDirectory();
             String alternateSearchKey = getSelectedMovie().toString();
             File child;
-            for(File file:dir.listFiles()) {
-                if(file.isDirectory()) {
-                    child = file;
-                    for(File file2:child.listFiles()) {
-                        if(file2.isFile()) {
-                            if(!file2.getName().contains("sample")) {
-                                if(movieFileFilter.accept(file2)) {
-                                    files.add(file2.getName());
+            if(!dir.isFile()) {
+                for(File file:dir.listFiles()) {
+                    if(file.isDirectory()) {
+                        child = file;
+                        for(File file2:child.listFiles()) {
+                            if(file2.isFile()) {
+                                if(!file2.getName().contains("sample")) {
+                                    if(movieFileFilter.accept(file2)) {
+                                        files.add(file2.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        if(file.isFile()) {
+                            if(!file.getName().contains("sample")) {
+                                if(movieFileFilter.accept(file)) {
+                                    files.add(file.getName());
                                 }
                             }
                         }
                     }
                 }
-                else {
-                    if(file.isFile()) {
-                        if(!file.getName().contains("sample")) {
-                            if(movieFileFilter.accept(file)) {
-                                files.add(file.getName());
-                            }
-                        }
-                    }
-                }
             }
+
             files.add(alternateSearchKey);
             openSubCrawler(files, info.getMovie());
         }
