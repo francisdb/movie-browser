@@ -72,5 +72,13 @@ public class SubtitleTableModel extends AbstractTableModel{
             this.fireTableRowsInserted(row, row);
         }
     }
+    
+    /**
+     * Clears the subtitles list
+     */
+    public void clear(){
+        subs.clear();
+        this.fireTableDataChanged();
+    }
 
 }

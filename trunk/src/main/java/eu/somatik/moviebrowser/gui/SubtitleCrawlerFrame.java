@@ -40,6 +40,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubtitleCrawlerFrame.class);
     private final SubtitleTableModel model;
     private final SubtitlesLoader subtitlesLoader;
+    private final Movie theMovie;
 
     /** Creates new form SubtitleCrawlerFrame
      * @param files
@@ -50,7 +51,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     public SubtitleCrawlerFrame(List<String> files, Movie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.model = new SubtitleTableModel();
-
+        theMovie = movie;
         initComponents();
         this.setTitle("Subtitle Crawler " + files.toString());
         crawl(files, movie);
@@ -141,7 +142,11 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-// TODO add your handling code here:
+    String searchKey = searchText.getText();
+    List<String> searchList = new ArrayList<String>();
+    searchList.add(searchKey);
+    model.clear();
+    crawl(searchList, theMovie);
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void subtitlesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subtitlesTableMouseClicked
