@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,14 +37,14 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
     }
 
     @Override
-    public List<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
+    public Set<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
         String url = searchUrl(localFileName);
         int carryOn = 1;
         LOGGER.info("url = " + url);
         String source = sourceLoader.load(url);
         Source jerichoSource = new Source(source);
         jerichoSource.fullSequentialParse();
-        List<Subtitle> results = new ArrayList<Subtitle>();
+        Set<Subtitle> results = new HashSet<Subtitle>();
 
         Element titleElement = (Element) jerichoSource.findAllElements(HTMLElementName.TITLE).get(0);
         String title = titleElement.getContent().getTextExtractor().toString();
@@ -133,8 +135,8 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
         return links;
     }
 
-    private List<Subtitle> loadSubtitlesPage(Source jerichoSource) {
-        List<Subtitle> results = new ArrayList<Subtitle>();
+    private Set<Subtitle> loadSubtitlesPage(Source jerichoSource) {
+        Set<Subtitle> results = new HashSet<Subtitle>();
 
         Element tableElement = (Element) jerichoSource.findAllElements("id", "search_results", false).get(0);
 
