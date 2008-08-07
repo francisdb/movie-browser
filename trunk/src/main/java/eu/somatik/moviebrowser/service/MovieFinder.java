@@ -6,6 +6,7 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import eu.somatik.moviebrowser.api.FileSystemScanner;
 import com.flicklib.api.MovieInfoFetcher;
 import java.net.UnknownHostException;
 import java.util.LinkedList;

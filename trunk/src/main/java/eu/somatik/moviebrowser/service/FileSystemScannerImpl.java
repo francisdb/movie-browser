@@ -1,5 +1,6 @@
 package eu.somatik.moviebrowser.service;
 
+import eu.somatik.moviebrowser.api.FileSystemScanner;
 import com.google.inject.Singleton;
 import java.io.DataInputStream;
 import java.io.File;
