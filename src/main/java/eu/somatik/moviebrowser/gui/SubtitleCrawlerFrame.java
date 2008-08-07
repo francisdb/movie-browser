@@ -172,7 +172,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
 
     public void crawl(final List<String> files, final Movie movie) {
         statusProgressBar.setIndeterminate(true);
-        statusProgressBar.setString("Crawling sites for subtitles...");
+        statusProgressBar.setString("Crawling sites for subtitles. This may take a while...");
         new SwingWorker<List<Subtitle>,Void>() {
 
             @Override
