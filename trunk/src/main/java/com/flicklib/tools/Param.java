@@ -46,6 +46,7 @@ public class Param {
         for (Map.Entry<String, String> param : params.entrySet()) {
             if (first) {
                 result.append('?');
+                first = false;
             } else {
                 result.append('&');
             }
