@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.somatik</groupId>
             <artifactId>moviebrowser</artifactId>
-            <version>0.5.2</version>
+            <version>0.6</version>
         </dependency>
     </dependencies>
 </project>
