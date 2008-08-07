@@ -96,7 +96,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
             results = loadSubtitlesPage(jerichoSource);
             
             //Get links for other pages.
-            List<String> pages = new ArrayList<String>();
+            Set<String> pages = new HashSet<String>();
             pages.addAll(getPageLinks(jerichoSource));
             Iterator k;
             k = pages.iterator();
@@ -108,7 +108,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
                 results.addAll(loadSubtitlesPage(jerichoSource));
             }
         }
-
+        
         return results;
     }
     
@@ -117,8 +117,8 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
      * @param URL
      * @return
      */
-    private List<String> getPageLinks(Source source) {
-        List<String> links = new ArrayList<String>();
+    private Set<String> getPageLinks(Source source) {
+        Set<String> links = new HashSet<String>();
         List<?> linksElements = source.findAllElements(HTMLElementName.A);
         Iterator<?> i;
         i = linksElements.iterator();
