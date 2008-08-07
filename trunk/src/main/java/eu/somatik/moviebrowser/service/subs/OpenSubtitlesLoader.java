@@ -98,10 +98,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
             //Get links for other pages.
             Set<String> pages = new HashSet<String>();
             pages.addAll(getPageLinks(jerichoSource));
-            Iterator k;
-            k = pages.iterator();
-            while(k.hasNext()) {
-                String link = (String) k.next();
+            for(String link:pages){
                 source = sourceLoader.load(SITE + link);
                 jerichoSource = new Source(source);
                 jerichoSource.fullSequentialParse();
