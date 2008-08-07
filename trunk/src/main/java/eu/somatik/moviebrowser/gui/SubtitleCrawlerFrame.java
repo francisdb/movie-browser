@@ -259,6 +259,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
             LANG_COUNTRY.put("zh", "cn");
             LANG_COUNTRY.put("he", "il");
             LANG_COUNTRY.put("ko", "kr");
+            LANG_COUNTRY.put("uk", "ua");
             LANG_COUNTRY.put("po", "br");//?
         }
         
