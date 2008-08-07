@@ -245,6 +245,18 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
     
     private static final class LangIconRenderer extends DefaultTableCellRenderer{
         
+        private static final Map<String,String> langCountryMap = new HashMap<String, String>();
+        static {
+            langCountryMap.put("da", "dk");
+            langCountryMap.put("pb", "br");//?
+            langCountryMap.put("el", "gr");
+            langCountryMap.put("en", "gb");
+            langCountryMap.put("fa", "ir");
+            langCountryMap.put("zh", "cn");
+            langCountryMap.put("he", "il");
+            langCountryMap.put("po", "br");//?
+        }
+        
         private final Map<String, ImageIcon> iconCache;
         private final IconLoader iconLoader;
         
@@ -257,7 +269,12 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
         private ImageIcon getIcon(final String lang){
             ImageIcon icon = iconCache.get(lang);
             if(icon == null && !iconCache.containsKey(lang)){
-                icon = iconLoader.loadIcon("images/flags/"+lang+".png");
+                String country = langCountryMap.get(lang);
+                if(country == null){
+                    country = lang;
+                }
+                // TODO don't save the same flags twice
+                icon = iconLoader.loadIcon("images/flags/"+country+".png");
                 iconCache.put(lang, icon);
             }
             return icon;
