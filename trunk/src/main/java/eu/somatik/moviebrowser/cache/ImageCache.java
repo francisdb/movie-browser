@@ -5,8 +5,8 @@
 
 package eu.somatik.moviebrowser.cache;
 
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieInfo;
 import java.io.File;
 
 /**

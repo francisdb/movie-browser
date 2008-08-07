@@ -36,12 +36,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.flicklib.api.TrailerFinder;
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Color;

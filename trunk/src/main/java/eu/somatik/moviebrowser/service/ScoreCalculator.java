@@ -1,6 +1,6 @@
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 
 /**
  * Calculates the average score for all services

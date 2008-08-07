@@ -21,8 +21,8 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

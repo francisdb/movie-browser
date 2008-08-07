@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.lang.Exception;
 
 
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
-import eu.somatik.moviebrowser.service.imdb.ImdbSearch;
+import com.flicklib.service.movie.imdb.ImdbSearch;
 import java.io.File;
 import javax.swing.DefaultListCellRenderer;
 import org.slf4j.Logger;

@@ -9,7 +9,7 @@
 
 package eu.somatik.moviebrowser.gui;
 
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 
 import eu.somatik.moviebrowser.service.ScoreCalculator;

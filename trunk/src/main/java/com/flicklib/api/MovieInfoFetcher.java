@@ -1,7 +1,7 @@
-package eu.somatik.moviebrowser.api;
+package com.flicklib.api;
 
-import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.domain.MovieSite;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieSite;
 
 /**
  *

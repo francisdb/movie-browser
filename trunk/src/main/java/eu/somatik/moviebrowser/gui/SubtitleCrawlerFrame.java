@@ -6,7 +6,7 @@
 package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.api.SubtitlesLoader;
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 
 import com.flicklib.domain.Subtitle;
-import com.flicklib.service.subs.SubtitleSourceLoader;
+import com.flicklib.service.sub.SubtitleSourceLoader;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Component;
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package com.flicklib.module;
 import com.flicklib.api.SubtitlesLoader;
 import com.flicklib.service.HttpSourceLoader;
 import com.flicklib.service.SourceLoader;
-import com.flicklib.service.subs.OpenSubtitlesLoader;
+import com.flicklib.service.sub.OpenSubtitlesLoader;
 import com.google.inject.AbstractModule;
 
 /**

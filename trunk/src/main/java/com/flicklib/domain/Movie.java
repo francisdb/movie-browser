@@ -7,8 +7,9 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.domain;
+package com.flicklib.domain;
 
+import com.flicklib.domain.MovieService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;

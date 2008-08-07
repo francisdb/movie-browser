@@ -7,9 +7,10 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.domain;
+package com.flicklib.domain;
 
-import eu.somatik.moviebrowser.domain.MovieService;
+import eu.somatik.moviebrowser.domain.*;
+import com.flicklib.domain.MovieService;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

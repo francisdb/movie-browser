@@ -1,7 +1,7 @@
 package eu.somatik.moviebrowser.service;
 
 import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.domain.MovieInfo;
+import com.flicklib.domain.MovieInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

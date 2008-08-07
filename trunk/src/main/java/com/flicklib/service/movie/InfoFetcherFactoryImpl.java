@@ -1,16 +1,16 @@
-package eu.somatik.moviebrowser.service;
+package com.flicklib.service.movie;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.api.InfoFetcherFactory;
-import eu.somatik.moviebrowser.api.MovieInfoFetcher;
-import eu.somatik.moviebrowser.domain.MovieService;
-import eu.somatik.moviebrowser.service.flixter.Flixter;
-import eu.somatik.moviebrowser.service.google.Google;
-import eu.somatik.moviebrowser.service.imdb.Imdb;
-import eu.somatik.moviebrowser.service.movieweb.MovieWeb;
-import eu.somatik.moviebrowser.service.omdb.Omdb;
-import eu.somatik.moviebrowser.service.tomatoes.RottenTomatoes;
+import com.flicklib.api.InfoFetcherFactory;
+import com.flicklib.api.MovieInfoFetcher;
+import com.flicklib.domain.MovieService;
+import com.flicklib.service.movie.flixter.Flixter;
+import com.flicklib.service.movie.google.Google;
+import com.flicklib.service.movie.imdb.Imdb;
+import com.flicklib.service.movie.movieweb.MovieWeb;
+import com.flicklib.service.movie.omdb.Omdb;
+import com.flicklib.service.movie.tomatoes.RottenTomatoes;
 
 /**
  *
