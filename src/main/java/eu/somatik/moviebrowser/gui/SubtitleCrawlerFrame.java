@@ -42,7 +42,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubtitleCrawlerFrame.class);
     private final SubtitleTableModel model;
     private final SubtitlesLoader subtitlesLoader;
-    private final Movie theMovie;
+    private final Movie movie;
 
     /** Creates new form SubtitleCrawlerFrame
      * @param files
@@ -53,7 +53,8 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     public SubtitleCrawlerFrame(List<String> files, Movie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.model = new SubtitleTableModel();
-        theMovie = movie;
+        this.movie = movie;
+        this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
         initComponents();
         this.setTitle("Subtitle Crawler " + files.toString());
         crawl(files, movie);
@@ -82,7 +83,6 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Subtitle Crawler");
-        setIconImage(new ImageIcon(EditMovieFrame.getFrames().getClass().getResource("/images/movie.png")).getImage());
 
         statusProgressBar.setForeground(new java.awt.Color(0, 153, 51));
         statusProgressBar.setString("");
@@ -153,7 +153,7 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     List<String> searchList = new ArrayList<String>();
     searchList.add(searchKey);
     model.clear();
-    crawl(searchList, theMovie);
+    crawl(searchList, movie);
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void subtitlesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subtitlesTableMouseClicked
