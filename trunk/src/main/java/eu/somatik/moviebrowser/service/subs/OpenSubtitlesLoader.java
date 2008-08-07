@@ -60,7 +60,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
                 }
             }
             
-            //if it does then load first link
+            //if the results page does contain results then load first link
             if(carryOn!=0) {
                 String subsUrl = null;
                 List<?> aElements = jerichoSource.findAllElements(HTMLElementName.A);
