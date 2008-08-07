@@ -37,6 +37,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
     @Override
     public List<Subtitle> getOpenSubsResults(String localFileName) throws IOException {
         String url = searchUrl(localFileName);
+        int carryOn = 1;
         LOGGER.info("url = " + url);
         String source = sourceLoader.load(url);
         Source jerichoSource = new Source(source);
@@ -46,20 +47,35 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
         Element titleElement = (Element) jerichoSource.findAllElements(HTMLElementName.TITLE).get(0);
         String title = titleElement.getContent().getTextExtractor().toString();
         if (title.contains("(results)")) {
-            //load first link
-            String subsUrl = null;
-            List<?> aElements = jerichoSource.findAllElements(HTMLElementName.A);
-            for (int i = 0; i < aElements.size() && subsUrl == null; i++) {
-                Element aElement = (Element) aElements.get(i);
-                if ("bnone".equals(aElement.getAttributeValue("class"))) {
-                    subsUrl = SITE + aElement.getAttributeValue("href");
+            //first check if the results page contains no results. 
+            List<?> divElements = jerichoSource.findAllElements(HTMLElementName.DIV);
+            Iterator j = divElements.iterator();
+            while(j.hasNext() && carryOn==1) {
+                Element divElement  = (Element) j.next();
+                if(divElement.getTextExtractor().toString().contains("No results found")) {
+                    carryOn = 0;
+                }
+                else {
+                    carryOn = 1;
                 }
             }
+            
+            //if it does then load first link
+            if(carryOn!=0) {
+                String subsUrl = null;
+                List<?> aElements = jerichoSource.findAllElements(HTMLElementName.A);
+                for (int i = 0; i < aElements.size() && subsUrl == null; i++) {
+                    Element aElement = (Element) aElements.get(i);
+                    if ("bnone".equals(aElement.getAttributeValue("class"))) {
+                        subsUrl = SITE + aElement.getAttributeValue("href");
+                    }
+                }
 
-            source = sourceLoader.load(subsUrl);
-            jerichoSource = new Source(source);
-            jerichoSource.fullSequentialParse();
-            results = loadSubtitlesPage(jerichoSource);
+                source = sourceLoader.load(subsUrl);
+                jerichoSource = new Source(source);
+                jerichoSource.fullSequentialParse();
+                results = loadSubtitlesPage(jerichoSource);
+            }
         } else {
             // direct hit
             results = loadSubtitlesPage(jerichoSource);
