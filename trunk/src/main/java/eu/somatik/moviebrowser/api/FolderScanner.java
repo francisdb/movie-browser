@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.api;
 
 import com.flicklib.domain.MovieInfo;
 import java.util.List;

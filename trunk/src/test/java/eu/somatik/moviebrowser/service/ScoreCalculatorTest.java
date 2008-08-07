@@ -5,7 +5,7 @@
 
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.domain.Movie;
+import com.flicklib.domain.Movie;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -23,7 +23,7 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
 import eu.somatik.moviebrowser.service.FileSystemScanner;
-import eu.somatik.moviebrowser.service.FolderScanner;
+import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import com.flicklib.service.movie.imdb.ImdbSearch;
 import java.lang.Thread.UncaughtExceptionHandler;
