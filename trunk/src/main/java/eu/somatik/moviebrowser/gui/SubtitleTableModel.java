@@ -2,6 +2,7 @@ package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.domain.Subtitle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.slf4j.Logger;
@@ -70,6 +71,21 @@ public class SubtitleTableModel extends AbstractTableModel{
             int row = subs.size();
             subs.add(sub);
             this.fireTableRowsInserted(row, row);
+        }
+    }
+    
+    /**
+     * Adds all movies
+     * @param items 
+     */
+    public void addAll(Collection<Subtitle> items){
+        if(items.size() != 0){
+            int firstRow = subs.size();
+            subs.addAll(items);
+//            for(Subtitle subtitle:items){
+//                subtitle.addPropertyChangeListener(this);
+//            }
+            this.fireTableRowsInserted(firstRow, firstRow+items.size()-1);
         }
     }
     
