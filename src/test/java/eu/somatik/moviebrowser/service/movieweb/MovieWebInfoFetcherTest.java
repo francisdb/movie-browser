@@ -1,5 +1,6 @@
 package eu.somatik.moviebrowser.service.movieweb;
 
+import com.flicklib.service.HttpSourceLoader;
 import eu.somatik.moviebrowser.service.*;
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieInfo;

@@ -5,7 +5,7 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import eu.somatik.moviebrowser.api.SubtitlesLoader;
+import com.flicklib.api.SubtitlesLoader;
 import eu.somatik.moviebrowser.domain.Movie;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
@@ -22,7 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import eu.somatik.moviebrowser.domain.Subtitle;
+import com.flicklib.domain.Subtitle;
+import com.flicklib.service.subs.SubtitleSourceLoader;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubtitleCrawlerFrame.class);
     private final SubtitleTableModel model;
     private final SubtitlesLoader subtitlesLoader;
+    private final SubtitlesLoader subtitlesLoader2;
     private final Movie movie;
 
     /** Creates new form SubtitleCrawlerFrame
@@ -52,6 +54,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
      */
     public SubtitleCrawlerFrame(List<String> files, Movie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
+        this.subtitlesLoader2 = new SubtitleSourceLoader();
         this.model = new SubtitleTableModel();
         this.movie = movie;
         this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
@@ -184,7 +187,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
             protected List<Subtitle> doInBackground() throws Exception {
                 String fileName;
                 List<Subtitle> results = new ArrayList<Subtitle>();
-                results.add(makeSubtitlesourceEntry(movie));
+                results.addAll(subtitlesLoader2.search(movie.getTitle(), movie.getImdbId()));
                 
                 Iterator<String> i = files.iterator();
                 while (i.hasNext()) {
@@ -198,12 +201,12 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
                     LOGGER.info("fileName = " + fileName);
                     try {
                         //Add other methods to get subs from other sources.
-                        results.addAll(subtitlesLoader.getOpenSubsResults(fileName));
+                        results.addAll(subtitlesLoader.search(fileName, movie.getImdbId()));
                     } catch (IOException ex) {
                         LOGGER.error("Exception while fetching subtitles", ex);
                     }
-
                 }
+                
 
                 return results;
             }
@@ -229,23 +232,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
 
     }
 
-    /**
-     * TODO move to service class
-     * @param movie 
-     * @return
-     * @throws java.io.IOException
-     */
-    public Subtitle makeSubtitlesourceEntry(Movie movie) throws IOException {
-        Subtitle sub = new Subtitle();
-        sub.setFileName(movie.getTitle());
-        String url = "http://www.subtitlesource.org/title/tt" + movie.getImdbId();
-        sub.setFileUrl(url);
-        sub.setSubSource("http://www.subtitlesource.org");
-        sub.setLanguage("Various");
-        sub.setNoCd("N/A");
-        sub.setType("N/A");
-        return sub;
-    }
+
     
     private static final class LangIconRenderer extends DefaultTableCellRenderer{
         

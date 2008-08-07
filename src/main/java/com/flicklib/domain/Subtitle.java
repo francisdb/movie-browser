@@ -1,4 +1,4 @@
-package eu.somatik.moviebrowser.domain;
+package com.flicklib.domain;
 
 /**
  *

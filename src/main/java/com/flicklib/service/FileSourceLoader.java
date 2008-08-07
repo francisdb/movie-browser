@@ -1,23 +1,21 @@
-package eu.somatik.moviebrowser.service;
+package com.flicklib.service;
 
 import eu.somatik.moviebrowser.tools.IOTools;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
+ * Loads a page source file from the class path
  * @author francisdb
  */
 public class FileSourceLoader implements SourceLoader {
 
-    /**
-     * Loads a page source file from the class path
-     * @param url
-     * @return
-     * @throws java.io.IOException
-     */
     @Override
     public String load(String url) throws IOException {
+        return getOrPost(url);
+    }
+    
+    private String getOrPost(String url) throws IOException {
         String source = null;
         InputStream fis = null;
         try {

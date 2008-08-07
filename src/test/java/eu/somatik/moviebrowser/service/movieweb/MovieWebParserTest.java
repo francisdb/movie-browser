@@ -2,7 +2,7 @@ package eu.somatik.moviebrowser.service.movieweb;
 
 import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.domain.MovieSite;
-import eu.somatik.moviebrowser.service.FileSourceLoader;
+import com.flicklib.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

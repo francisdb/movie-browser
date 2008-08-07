@@ -1,6 +1,6 @@
 package eu.somatik.moviebrowser.gui;
 
-import eu.somatik.moviebrowser.domain.Subtitle;
+import com.flicklib.domain.Subtitle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

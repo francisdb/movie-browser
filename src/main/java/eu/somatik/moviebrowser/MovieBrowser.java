@@ -16,7 +16,8 @@ import ch.qos.logback.core.util.StatusPrinter;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import eu.somatik.moviebrowser.api.SubtitlesLoader;
+import com.flicklib.api.SubtitlesLoader;
+import com.flicklib.module.FlicklibModule;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
@@ -130,7 +131,7 @@ public class MovieBrowser {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        Injector injector = Guice.createInjector(new MovieBrowserModule());
+        Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule());
         MovieBrowser browser = injector.getInstance(MovieBrowser.class);
         browser.start();
     }

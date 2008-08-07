@@ -1,11 +1,10 @@
-package eu.somatik.moviebrowser.service.apple;
+package com.flicklib.service.movie.apple;
 
-import eu.somatik.moviebrowser.api.TrailerFinder;
+import com.flicklib.api.TrailerFinder;
+import com.flicklib.tools.Param;
 import eu.somatik.moviebrowser.domain.Movie;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
@@ -33,12 +32,7 @@ public class AppleTrailerFinder implements TrailerFinder {
     @Override
     public String findTrailerUrl(Movie movie){
         String url = null;
-        String query = movie.getTitle()+" site:www.apple.com";
-        try {
-            query = URLEncoder.encode(query, "utf-8");
-        } catch (UnsupportedEncodingException ex) {
-            LOGGER.error("Could not encode url", ex);
-        }
+        String query = Param.encode(movie.getTitle()+" site:www.apple.com");
         String queryUrl = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="+query;
         Request request = new Request(Method.GET, queryUrl);
         Preference<MediaType> preference = new Preference<MediaType>(MediaType.APPLICATION_JSON);

@@ -1,7 +1,7 @@
 package eu.somatik.moviebrowser.service.imdb;
 
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.service.HttpSourceLoader;
+import com.flicklib.service.HttpSourceLoader;
 import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;

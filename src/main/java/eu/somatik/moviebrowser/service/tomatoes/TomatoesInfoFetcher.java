@@ -7,7 +7,7 @@ import eu.somatik.moviebrowser.domain.Movie;
 import eu.somatik.moviebrowser.api.Parser;
 import eu.somatik.moviebrowser.domain.MovieService;
 import eu.somatik.moviebrowser.domain.MovieSite;
-import eu.somatik.moviebrowser.service.SourceLoader;
+import com.flicklib.service.SourceLoader;
 import java.io.IOException;
 
 import java.util.Date;

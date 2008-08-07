@@ -1,7 +1,7 @@
 package eu.somatik.moviebrowser.service.flixter;
 
 import eu.somatik.moviebrowser.domain.Movie;
-import eu.somatik.moviebrowser.service.HttpSourceLoader;
+import com.flicklib.service.HttpSourceLoader;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
