@@ -2,7 +2,6 @@ package com.flicklib.service.movie.apple;
 
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.tools.Param;
-import com.flicklib.domain.Movie;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -30,9 +29,9 @@ public class AppleTrailerFinder implements TrailerFinder {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppleTrailerFinder.class);
     
     @Override
-    public String findTrailerUrl(Movie movie){
+    public String findTrailerUrl(String title, String localId){
         String url = null;
-        String query = Param.encode(movie.getTitle()+" site:www.apple.com");
+        String query = Param.encode(title+" site:www.apple.com");
         String queryUrl = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q="+query;
         Request request = new Request(Method.GET, queryUrl);
         Preference<MediaType> preference = new Preference<MediaType>(MediaType.APPLICATION_JSON);

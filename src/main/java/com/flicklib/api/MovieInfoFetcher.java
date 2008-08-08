@@ -1,7 +1,7 @@
 package com.flicklib.api;
 
 import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 
 /**
  *
@@ -11,8 +11,9 @@ public interface MovieInfoFetcher {
     /**
      * Fetched movie info from a servie and complements the movieInfo object
      * @param movie
-     * @return 
+     * @param id possible known id for this site, null for none
+     * @return
      */
-    MovieSite fetch(Movie movie);
+    MoviePage fetch(Movie movie, String id);
     
 }

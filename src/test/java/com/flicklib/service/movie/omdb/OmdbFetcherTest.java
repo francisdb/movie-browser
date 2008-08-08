@@ -1,6 +1,5 @@
 package com.flicklib.service.movie.omdb;
 
-import com.flicklib.service.movie.omdb.OmdbFetcher;
 import com.flicklib.domain.Movie;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class OmdbFetcherTest {
     public void testFetch() {
         Movie movie = new Movie();
         OmdbFetcher instance = new OmdbFetcher();
-        instance.fetch(movie);
+        instance.fetch(movie, null);
         assertNotNull(movie);
     }
 

@@ -1,8 +1,12 @@
 package eu.somatik.moviebrowser.cache;
 
-import com.flicklib.domain.Genre;
-import com.flicklib.domain.Language;
-import com.flicklib.domain.Movie;
+import eu.somatik.moviebrowser.domain.Genre;
+import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovieFile;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import java.util.List;
 
 /**
  *
@@ -15,37 +19,61 @@ public interface MovieCache {
      * @param path the movie path
      * @return the movie of null if not found in cache
      */
-    Movie find(String path);
+    StorableMovie find(String path);
 
     /**
-     * @param name
-     * @return the Genre
+     * @param path
+     * @return the StorableMovieFile
      */
-    Genre getOrCreateGenre(String name);
-
-    /**
-     * @param name
-     * @return the Language
-     */
-    Language getOrCreateLanguage(String name);
+    StorableMovieFile getOrCreateFile(String path);
 
     boolean isStarted();
 
     /**
      * @param movie
      */
-    void saveMovie(Movie movie);
-    
-        /**
+    void inserOrUpdate(StorableMovie movie);
+
+    /**
      * @param movie
      */
-    void removeMovie(Movie movie);
+    void remove(StorableMovie movie);
+    
+    
+    /**
+     * 
+     * @param site
+     */
+    void remove(StorableMovieSite site);
 
+    /**
+     * 
+     * @param movieFile
+     */
+    void update(StorableMovieFile movieFile);
+
+    /**
+     * @param movieFile 
+     */
+    void remove(StorableMovieFile movieFile);
+    
+    /**
+     * 
+     * @param site
+     */
+    void insert(StorableMovieSite site);
+
+    /**
+     * Load stored movies
+     * @param movie
+     * @return
+     */
+    List<StorableMovieSite> loadSites(StorableMovie movie);
+    
     /**
      * Shuts down the cache
      */
     void shutdown();
 
     void startup();
-
 }

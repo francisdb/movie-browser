@@ -7,10 +7,9 @@ import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.api.Parser;
 import com.flicklib.domain.Movie;
 import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.SourceLoader;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,44 +34,38 @@ public class ImdbInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public MovieSite fetch(Movie movie) {
-        
-        if(movie.getImdbId() != null){
-            LOGGER.info("Generating IMDB url form IMDB id");
-            movie.setImdbUrl(ImdbUrlGenerator.generateImdbUrl(movie));
-        }
-        
-        MovieSite site = new MovieSite();
+    public MoviePage fetch(Movie movie, String id) {
+        MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.IMDB);
-        site.setTime(new Date());
-        // NOT SURE THIS IS NEEDED !!!
-        if( movie.getImdbUrl() != null && movie.getImdbUrl().startsWith("http://www.imdb.com/title/tt")){
-            movie.setImdbId(movie.getImdbUrl().replaceAll("[a-zA-Z:/.+=?]", "").trim());
+
+        if (id != null) {
+            LOGGER.info("Generating IMDB url form known IMDB id");
+            site.setUrl(ImdbUrlGenerator.generateImdbUrl(id));
+            site.setIdForSite(id);
         }
-        
+
         // TODO should be better way to deal with direct IMDB results
-        
+
         try {
-            if(movie.getImdbUrl() == null){
-                List<Movie> movies = imdbSearch.getResults(movie.getTitle());
+            if (site.getUrl() == null) {
+                List<MoviePage> movies = imdbSearch.getResults(movie.getTitle());
                 if (movies.size() == 0) {
                     throw new IOException("No movies found");
-                } if(movies.size() == 1) {
+                }
+                if (movies.size() == 1) {
                     // TODO copy all data instead of reload
-                    movie.setImdbUrl(movies.get(0).getImdbUrl());
-                    movie.setImdbId(movies.get(0).getImdbId());
-                    site.setUrl(movies.get(0).getImdbUrl());
-                }else{
+                    site.setIdForSite(movies.get(0).getIdForSite());
+                    site.setUrl(movies.get(0).getUrl());
+                } else {
                     // TAKE FIRST RESULT
                     // TODO Move code below to this level
-                    movie.setImdbUrl(movies.get(0).getImdbUrl());
-                    movie.setImdbId(movies.get(0).getImdbId());
-                    site.setUrl(movies.get(0).getImdbUrl());
+                    site.setIdForSite(movies.get(0).getIdForSite());
+                    site.setUrl(movies.get(0).getUrl());
                 }
             }
 
-            String source = loader.load(movie.getImdbUrl());
+            String source = loader.load(site.getUrl());
             Source jerichoSource = new Source(source);
             jerichoSource.fullSequentialParse();
             imdbParser.parse(source, site);

@@ -9,13 +9,11 @@ import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.api.Parser;
 import com.flicklib.domain.Movie;
 import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.SourceLoader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -39,11 +37,10 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public MovieSite fetch(Movie movie) {
-        MovieSite site = new MovieSite();
+    public MoviePage fetch(Movie movie, String id) {
+        MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.FLIXTER);
-        site.setTime(new Date());
         try {
             String source = sourceLoader.load(createFlixterSearchUrl(movie));
             Source jerichoSource = new Source(source);
@@ -71,7 +68,6 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
             if (movieUrl == null) {
                 throw new IOException("Movie not found on Flixter: " + movie.getTitle());
             }
-            site.getMovie().setFlixterUrl(movieUrl);
             site.setUrl(movieUrl);
             source = sourceLoader.load(movieUrl);
             parser.parse(source, site);

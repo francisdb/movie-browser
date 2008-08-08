@@ -5,8 +5,8 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import au.id.jericho.lib.html.TextExtractor;
+import com.flicklib.domain.MoviePage;
 import com.google.inject.Singleton;
-import com.flicklib.domain.MovieSite;
 import com.flicklib.service.movie.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
@@ -23,7 +23,7 @@ public class MovieWebParser extends AbstractJerichoParser{
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieWebParser.class);
 
     @Override
-    public void parse(Source source, MovieSite movieSite) {
+    public void parse(Source source, MoviePage movieSite) {
          List<?> divElements = source.findAllElements(HTMLElementName.DIV);
         for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
             Element divElement = (Element) i.next();
@@ -37,7 +37,6 @@ public class MovieWebParser extends AbstractJerichoParser{
                         try {
                             float theScore = Float.valueOf(score).floatValue() * 20;
                             int intScore = Math.round(theScore);
-                            movieSite.getMovie().setMovieWebScore(intScore);
                             movieSite.setScore(intScore);
                         } catch (NumberFormatException ex) {
                             LOGGER.error("Could not parse " + score + " to Float", ex);

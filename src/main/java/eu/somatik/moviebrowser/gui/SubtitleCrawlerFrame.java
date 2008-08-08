@@ -6,7 +6,7 @@
 package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.api.SubtitlesLoader;
-import com.flicklib.domain.Movie;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -44,7 +44,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     private final SubtitleTableModel model;
     private final SubtitlesLoader subtitlesLoader;
     private final SubtitlesLoader subtitlesLoader2;
-    private final Movie movie;
+    private final StorableMovie movie;
 
     /** Creates new form SubtitleCrawlerFrame
      * @param files
@@ -52,7 +52,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
      * @param subtitlesLoader
      * @param iconLoader 
      */
-    public SubtitleCrawlerFrame(List<String> files, Movie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
+    public SubtitleCrawlerFrame(List<String> files, StorableMovie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.subtitlesLoader2 = new SubtitleSourceLoader();
         this.model = new SubtitleTableModel();
@@ -178,7 +178,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
     }
 }//GEN-LAST:event_subtitlesTableMousePressed
 
-    public void crawl(final List<String> files, final Movie movie) {
+    public void crawl(final List<String> files, final StorableMovie movie) {
         statusProgressBar.setIndeterminate(true);
         statusProgressBar.setString("Crawling sites for subtitles. This may take a while...");
         new SwingWorker<List<Subtitle>,Void>() {

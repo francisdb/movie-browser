@@ -2,7 +2,7 @@ package eu.somatik.moviebrowser.service;
 
 import eu.somatik.moviebrowser.api.FolderScanner;
 import com.google.inject.Singleton;
-import com.flicklib.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

@@ -36,12 +36,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
-import com.flicklib.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.flicklib.api.TrailerFinder;
-import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Color;
@@ -57,9 +59,6 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableModel;
 import javax.swing.RowFilter;
@@ -80,20 +79,24 @@ public class MainFrame extends javax.swing.JFrame {
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
     private final MovieFileFilter movieFileFilter;
+    private final InfoHandler infoHandler;
 
     /** 
      * Creates new form MainFrame
      * @param browser
      * @param imageCache
      * @param iconLoader
-     * @param settings 
+     * @param settings
+     * @param infoHandler 
      */
     @Inject
     public MainFrame(
             final MovieBrowser browser,
             final ImageCache imageCache,
             final IconLoader iconLoader,
-            final Settings settings) {
+            final Settings settings,
+            final InfoHandler infoHandler) {
+        this.infoHandler = infoHandler;
         this.browser = browser;
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
@@ -103,12 +106,12 @@ public class MainFrame extends javax.swing.JFrame {
         this.setPreferredSize(new Dimension(1000, 600));
 
         initComponents();
-        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader);
+        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        movieTable.setModel(new MovieInfoTableModel());
+        movieTable.setModel(new MovieInfoTableModel(infoHandler));
         setColumnWidths();
 
         loadLookAndFeels();
@@ -282,7 +285,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         filterLabel.setText("Filter:");
 
-        filterText.setFont(new java.awt.Font("Tahoma", 1, 9)); // NOI18N
+        filterText.setFont(filterText.getFont().deriveFont(filterText.getFont().getSize()-2f));
         filterText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 filterTextActionPerformed(evt);
@@ -353,8 +356,8 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(filterLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -368,10 +371,9 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(filterLabel)
-                        .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filterLabel)
+                    .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(13, 13, 13))
         );
@@ -409,7 +411,8 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-//    //Clear the image folder
+    JOptionPane.showMessageDialog(this, "Not implemented");
+    //    //Clear the image folder
 //    File imagesDir = new File(SettingsImpl.getImageCacheDir().getName());
 //    System.out.println(imagesDir.getAbsolutePath());
 //    imagesDir.delete();
@@ -611,7 +614,8 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
             TrailerFinder finder = new ImdbTrailerFinder();
-            String url = finder.findTrailerUrl(info.getMovie());
+            LOGGER.error("Not implemented");
+            String url = finder.findTrailerUrl(info.getMovieFile().getMovie().getTitle(), info.siteFor(MovieService.IMDB).getIdForSite());
             if(url == null){
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.imdb.com");
             }else{
@@ -634,7 +638,8 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
             TrailerFinder finder = new AppleTrailerFinder();
-            String url = finder.findTrailerUrl(info.getMovie());
+            LOGGER.error("Not implemented");
+            String url = finder.findTrailerUrl(info.getMovieFile().getMovie().getTitle(), null);
             if(url == null){
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.apple.com");
             }else{
@@ -738,7 +743,7 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             }
 
             files.add(alternateSearchKey);
-            openSubCrawler(files, info.getMovie());
+            openSubCrawler(files, info.getMovieFile().getMovie());
         }
     }
     
@@ -748,7 +753,7 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
      * Loads SubtitleCrawlerFrame
      * @param fileName
      */
-    private void openSubCrawler(List<String> file, Movie movie) {
+    private void openSubCrawler(List<String> file, StorableMovie movie) {
         SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
@@ -813,13 +818,7 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 case LOADED:
                     setIcon(loadedIcon);
                     break;
-                case LOADING_IMDB:
-                    setIcon(loadingIcon);
-                    break;
-                case LOADING_IMG:
-                    setIcon(loadingIcon);
-                    break;
-                case LOADING_TOMATOES:
+                case LOADING:
                     setIcon(loadingIcon);
                     break;
             }

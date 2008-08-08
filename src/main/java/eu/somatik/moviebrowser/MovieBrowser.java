@@ -26,6 +26,7 @@ import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import com.flicklib.service.movie.imdb.ImdbSearch;
+import eu.somatik.moviebrowser.service.InfoHandler;
 import java.lang.Thread.UncaughtExceptionHandler;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -48,6 +49,7 @@ public class MovieBrowser {
     private final IconLoader iconLoader;
     private final Settings settings;
     private final SubtitlesLoader subtitlesLoader;
+    private final InfoHandler infoHandler;
 
     /** 
      * Creates a new instance of MovieBrowser
@@ -58,7 +60,8 @@ public class MovieBrowser {
      * @param imageCache
      * @param iconLoader
      * @param settings
-     * @param subtitlesLoader 
+     * @param subtitlesLoader
+     * @param infoHandler 
      */
     @Inject
     public MovieBrowser(
@@ -69,7 +72,8 @@ public class MovieBrowser {
             final ImageCache imageCache,
             final IconLoader iconLoader,
             final Settings settings,
-            final SubtitlesLoader subtitlesLoader) {
+            final SubtitlesLoader subtitlesLoader,
+            final InfoHandler infoHandler) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
@@ -78,6 +82,7 @@ public class MovieBrowser {
         this.iconLoader = iconLoader;
         this.settings = settings;
         this.subtitlesLoader = subtitlesLoader;
+        this.infoHandler = infoHandler;
     }
 
     private void configureLogging() {
@@ -120,7 +125,7 @@ public class MovieBrowser {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings);
+                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler);
                 mainFrame.setVisible(true);
                 mainFrame.load();
             }

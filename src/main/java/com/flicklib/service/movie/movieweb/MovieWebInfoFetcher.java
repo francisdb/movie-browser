@@ -6,15 +6,14 @@ import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.flicklib.domain.Movie;
 import com.flicklib.service.HttpSourceLoader;
 import com.flicklib.api.Parser;
+import com.flicklib.domain.Movie;
 import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
@@ -44,11 +43,10 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public MovieSite fetch(Movie movie) {
-        MovieSite site = new MovieSite();
+    public MoviePage fetch(Movie movie, String id) {
+        MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.MOVIEWEB);
-        site.setTime(new Date());
         try {
             String source = httpLoader.load(createMovieWebSearchUrl(movie));
             Source jerichoSource = new Source(source);
@@ -77,7 +75,6 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             if (movieUrl == null) {
                 throw new IOException("Movie not found on MovieWeb: "+movie.getTitle());
             }
-            site.getMovie().setMoviewebUrl(movieUrl);
             site.setUrl(movieUrl);
             source = httpLoader.load(movieUrl);
             movieWebInfoParser.parse(source, site);

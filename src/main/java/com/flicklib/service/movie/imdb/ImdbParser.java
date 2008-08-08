@@ -4,13 +4,11 @@ import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MoviePage;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.cache.MovieCache;
-import com.flicklib.domain.Genre;
-import com.flicklib.domain.Language;
-import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
 import com.flicklib.service.movie.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
@@ -25,16 +23,13 @@ import org.slf4j.LoggerFactory;
 public class ImdbParser extends AbstractJerichoParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImdbParser.class);
-    
-    private final MovieCache movieCache;
 
     @Inject
-    public ImdbParser(MovieCache movieCache) {
-        this.movieCache = movieCache;
+    public ImdbParser() {
     }
 
     @Override
-    public void parse(Source source, MovieSite movieSite) {
+    public void parse(Source source, MoviePage movieSite) {
         Movie movie = movieSite.getMovie();
         Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
         String titleYear = titleElement.getContent().getTextExtractor().toString();
@@ -64,16 +59,18 @@ public class ImdbParser extends AbstractJerichoParser {
                 List<?> imgs = linkElement.getContent().findAllElements(HTMLElementName.IMG);
                 Element img = (Element) imgs.get(0);
                 String imgUrl = img.getAttributeValue("src");
-                movie.setImgUrl(imgUrl);
+                movieSite.setImgUrl(imgUrl);
             }
             String href = linkElement.getAttributeValue("href");
             if (href != null && href.contains("/Sections/Genres/")) {
-                Genre genre = movieCache.getOrCreateGenre(linkElement.getContent().getTextExtractor().toString());
-                movie.addGenre(genre);
+                String genre = linkElement.getContent().getTextExtractor().toString();
+                // TODO find a better way to parse these out, make sure it are only the movie genres
+                if(!genre.toLowerCase().contains("imdb")){
+                    movie.addGenre(linkElement.getContent().getTextExtractor().toString());
+                }
             }
             if (href != null && href.contains("/Sections/Languages/")) {
-                Language language = movieCache.getOrCreateLanguage(linkElement.getContent().getTextExtractor().toString());
-                movie.addLanguage(language);
+                movie.addLanguage(linkElement.getContent().getTextExtractor().toString());
             }
 
         }
@@ -88,14 +85,17 @@ public class ImdbParser extends AbstractJerichoParser {
                 rating = rating.replace("/10", "");
                 try {
                     int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
-                    movie.setImdbScore(theScore);
                     movieSite.setScore(theScore);
                 } catch (NumberFormatException ex) {
                     LOGGER.error("Could not parse " + rating + " to Float", ex);
                 }
                 next = source.findNextElement(next.getEndTag().getEnd());
                 String votes = next.getContent().getTextExtractor().toString();
-                movie.setVotes(votes);
+                votes = votes.replaceAll("\\(", "");
+                votes = votes.replaceAll("votes\\)", "");
+                votes = votes.replaceAll(",", "");
+                votes = votes = votes.trim();
+                movieSite.setVotes(Integer.valueOf(votes));
                 // TODO parse votes to int!
                 // site.setVotes(votes);
             }
@@ -118,6 +118,10 @@ public class ImdbParser extends AbstractJerichoParser {
                 //System.out.println(next);
                 String runtime = source.subSequence(end, next.getBegin()).toString().trim();
                 movie.setRuntime(parseRuntime(runtime));
+            } else if (hText.contains("Director")) {
+                int end = hElement.getEnd();
+                Element aElement = source.findNextElement(end);
+                movie.setDirector(aElement.getContent().getTextExtractor().toString());
             }
         }
 

@@ -3,13 +3,11 @@
  *
  * Created on January 24, 2007, 11:47 PM
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
  */
 
-package com.flicklib.domain;
+package eu.somatik.moviebrowser.domain;
 
-import eu.somatik.moviebrowser.domain.*;
+
 import com.flicklib.domain.MovieService;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
@@ -25,7 +23,8 @@ import java.util.Map;
  */
 public class MovieInfo {
     
-    private Movie movie;
+    private StorableMovieFile movieFile;
+    private Map<MovieService, StorableMovieSite> sites;
     
     private Image image;
 
@@ -45,8 +44,8 @@ public class MovieInfo {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         this.directory = directory;
         this.status = MovieStatus.NEW;
-        this.movie = new Movie();
-        this.movie.setPath(directory.getAbsolutePath());
+        this.movieFile = new StorableMovieFile();
+        this.sites = new HashMap<MovieService, StorableMovieSite>();
     }
     
     /**
@@ -120,23 +119,45 @@ public class MovieInfo {
         this.status = status;
         propertyChangeSupport.firePropertyChange("loading", oldValue, this.status);
     }
-    
-    /**
-     * @param movie
-     */
-    public void setMovie(Movie movie) {
-        this.movie = movie;
+
+    public StorableMovieFile getMovieFile() {
+        return movieFile;
     }
 
-    /**
-     * @return the Movie
-     */
-    public Movie getMovie() {
-        return movie;
+    public void setMovieFile(StorableMovieFile movieFile) {
+        this.movieFile = movieFile;
     }
 
-    
-    
+    public PropertyChangeSupport getPropertyChangeSupport() {
+        return propertyChangeSupport;
+    }
 
+    public void setPropertyChangeSupport(PropertyChangeSupport propertyChangeSupport) {
+        this.propertyChangeSupport = propertyChangeSupport;
+    }
+
+    public Map<MovieService, Integer> getScores() {
+        return scores;
+    }
+
+    public void setScores(Map<MovieService, Integer> scores) {
+        this.scores = scores;
+    }
+
+    public Map<MovieService, StorableMovieSite> getSites() {
+        return sites;
+    }
+
+    public void setSites(Map<MovieService, StorableMovieSite> sites) {
+        this.sites = sites;
+    }
+    
+    public void addSite(StorableMovieSite storableMovieSite){
+        this.sites.put(storableMovieSite.getService(), storableMovieSite);
+    }
+    
+    public StorableMovieSite siteFor(MovieService service){
+        return sites.get(service);
+    }
     
 }

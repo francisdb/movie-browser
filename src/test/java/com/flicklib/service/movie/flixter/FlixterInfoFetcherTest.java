@@ -1,8 +1,7 @@
 package com.flicklib.service.movie.flixter;
 
-import com.flicklib.service.movie.flixter.FlixterInfoFetcher;
-import com.flicklib.service.movie.flixter.FlixterParser;
 import com.flicklib.domain.Movie;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.HttpSourceLoader;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,8 +23,8 @@ public class FlixterInfoFetcherTest {
         movie.setTitle("Pulp Fiction");
         FlixterParser parser = new FlixterParser();
         FlixterInfoFetcher fetcher = new FlixterInfoFetcher(parser, new HttpSourceLoader());
-        fetcher.fetch(movie);
-        assertNotNull("MovieWebStars is null", movie.getFlixterScore());
+        MoviePage site = fetcher.fetch(movie, null);
+        assertNotNull("MovieWebStars is null", site.getScore());
     }
 
 }

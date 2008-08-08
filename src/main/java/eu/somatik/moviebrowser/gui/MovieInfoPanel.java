@@ -5,12 +5,13 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.cache.ImageCache;
-import com.flicklib.domain.Genre;
-import com.flicklib.domain.Language;
-import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieInfo;
-import eu.somatik.moviebrowser.service.MovieFinder;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.Genre;
+import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.service.InfoHandler;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -35,6 +36,13 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieInfoPanel.class);
     private final IconLoader iconLoader;
     private final ImageCache imageCache;
+    private final InfoHandler infoHandler;
+    
+    /**
+     * Make generic version for all buttons
+     * @deprecated
+     */
+    @Deprecated
     private JButton imdbButton;
     private JButton tomatoesButton;
     private JButton moviewebButton;
@@ -42,14 +50,17 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private JButton googleButton;
     private JButton flixterButton;
     private MovieInfo info;
+   
 
     /** Creates new form MovieInfoPanel
      * @param imageCache 
      * @param iconLoader
+     * @param infoHandler 
      */
-    public MovieInfoPanel(final ImageCache imageCache, final IconLoader iconLoader) {
+    public MovieInfoPanel(final ImageCache imageCache, final IconLoader iconLoader, final InfoHandler infoHandler) {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
+        this.infoHandler = infoHandler;
         initComponents();
         addIcons();
         infoTextPane.setContentType("text/html");
@@ -74,7 +85,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     }
 
     private void update() {
-        Movie movie = info.getMovie();
+        StorableMovie movie = info.getMovieFile().getMovie();
         // TODO need better image cache, if loading takes a lot of time the
         // image might be shown after a new movie was selected
         if (info.getImage() == null) {
@@ -94,18 +105,19 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
         movieHeader.setDescription(movie.getPlot());
 
-        // TODO save imdb url and use links
-        updateButton(imdbButton, movie.getImdbUrl());
-        updateButton(tomatoesButton, movie.getTomatoUrl());
-        updateButton(moviewebButton, movie.getMoviewebUrl());
-        updateButton(omdbButton, movie.getOmdbUrl());
-        updateButton(googleButton, movie.getGoogleUrl());
-        updateButton(flixterButton, movie.getFlixterUrl());
+        // TODO make generified button bar
+        updateButton(imdbButton, infoHandler.url(info, MovieService.IMDB));
+        updateButton(tomatoesButton, infoHandler.url(info, MovieService.TOMATOES));
+        updateButton(moviewebButton, infoHandler.url(info, MovieService.MOVIEWEB));
+        updateButton(omdbButton, infoHandler.url(info, MovieService.OMDB));
+        updateButton(googleButton, infoHandler.url(info, MovieService.GOOGLE));
+        updateButton(flixterButton, infoHandler.url(info, MovieService.FLIXTER));
 
         StringBuilder builder = new StringBuilder("<html>");
 
-        builder.append("<h2>").append(movie.getTitle()).append("</h2><br/>");
+        builder.append("<h2>").append(movie.getTitle()).append("</h2>");
         boolean first = true;
+        builder.append("<strong>Director</strong> ").append(movie.getDirector()).append("<br/>");
         builder.append("<strong>Genres</strong> ");
         for (Genre genre : movie.getGenres()) {
             if (first) {
@@ -128,12 +140,14 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
         builder.append("<br/>");
         builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
-        builder.append("<strong>IMDB</strong> ").append(scoreString(movie.getImdbScore())).append(" ").append(movie.getVotes()).append("<br/>");
-        builder.append("<strong>TOMATO</strong> ").append(scoreString(movie.getTomatoScore())).append("<br/>");
-        builder.append("<strong>MovieWeb</strong> ").append(scoreString(movie.getMovieWebScore())).append("<br/>");
-        builder.append("<strong>Google</strong> ").append(scoreString(movie.getGoogleScore())).append("<br/>");
-        //builder.append("<strong>OMDB</strong> ").append(scoreString(movie.get)).append("%<br/>");
-        builder.append("<strong>Flixter</strong> ").append(scoreString(movie.getFlixterScore())).append("<br/>");
+        builder.append("<br/>");
+        builder.append("<strong>IMDB</strong> ").append(info(info, MovieService.IMDB)).append("<br/>");
+        builder.append("<strong>Tomato</strong> ").append(info(info, MovieService.TOMATOES)).append("<br/>");
+        builder.append("<strong>MovieWeb</strong> ").append(info(info, MovieService.MOVIEWEB)).append("<br/>");
+        builder.append("<strong>Goolge</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
+        //builder.append("<strong>OMDB</strong> ").append(info(info, MovieService.OMDB)).append("<br/>");
+        builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXTER)).append("<br/>");
+        builder.append("<br/>");
         builder.append(movie.getPlot());
         builder.append("</html>");
         infoTextPane.setText(builder.toString());
@@ -146,6 +160,18 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             result = score.toString()+"%";
         }
         return result;
+    }
+    
+    private CharSequence info(MovieInfo info, MovieService service){
+        StringBuilder builder = new StringBuilder();
+        builder.append(scoreString(infoHandler.score(info, service)));
+        Integer votes = infoHandler.votes(info, service);
+        if(votes != null){
+            builder.append(" ");
+            builder.append(votes);
+            builder.append(" votes");
+        }
+        return builder;
     }
 
     
@@ -247,7 +273,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
         @Override
         protected Void doInBackground() throws Exception {
-            imageCache.saveImgToCache(info.getMovie());
+            imageCache.saveImgToCache(info);
             imageCache.loadImg(info);
             return null;
         }

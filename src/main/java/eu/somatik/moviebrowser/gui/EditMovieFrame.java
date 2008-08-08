@@ -5,6 +5,8 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import com.flicklib.domain.MoviePage;
+import com.flicklib.domain.MovieService;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.MouseEvent;
@@ -22,8 +24,8 @@ import java.io.IOException;
 import java.lang.Exception;
 
 
-import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import com.flicklib.service.movie.imdb.ImdbSearch;
 import java.io.File;
@@ -53,7 +55,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
         this.imdbSearch = imdbSearch;
         this.movieFinder = movieFinder;
         this.movieInfo = movieInfo;
-        File file = new File(movieInfo.getMovie().getPath());
+        File file = movieInfo.getDirectory();
         String searchkey = file.getName();
 
 
@@ -147,14 +149,14 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+                .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(updateButton)
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -168,11 +170,11 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(statusProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateButton))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(updateButton)
+                    .addComponent(statusProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -183,11 +185,11 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     statusProgressBar.setIndeterminate(true);
     statusProgressBar.setString("Searching...");
 
-    SwingWorker<List<Movie>, Void> worker =
-            new SwingWorker<List<Movie>, Void>() {
+    SwingWorker<List<MoviePage>, Void> worker =
+            new SwingWorker<List<MoviePage>, Void>() {
 
                 @Override
-                public List<Movie> doInBackground() throws Exception {
+                public List<MoviePage> doInBackground() throws Exception {
                     return imdbSearch.getResults(searchTextField.getText().trim());
                 }
 
@@ -210,15 +212,11 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-    Movie selectedMovie = (Movie) resultsList.getSelectedValue();
-    if (selectedMovie == null) {
+    MoviePage imdbPage = (MoviePage) resultsList.getSelectedValue();
+    if (imdbPage == null) {
         JOptionPane.showMessageDialog(EditMovieFrame.this, "No movie selected");
     } else {
-        movieInfo.setImage(null);
-        movieInfo.getMovie().setImgUrl(null);
-        movieInfo.getMovie().setPlot(null);
-        movieInfo.getMovie().setImdbId(selectedMovie.getImdbId());
-        movieInfo.getMovie().setImdbUrl(selectedMovie.getImdbUrl());
+        movieInfo.siteFor(MovieService.IMDB).setIdForSite(imdbPage.getIdForSite());
         movieFinder.reloadMovie(movieInfo);
         this.dispose();
     }
@@ -232,15 +230,15 @@ private void resultsListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_resultsListMouseReleased
 
 private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_resultsListValueChanged
-    Movie movie = (Movie) resultsList.getSelectedValue();   
-    String tooltip = "You have selected " + movie.getTitle();
+    MoviePage moviePage = (MoviePage) resultsList.getSelectedValue();   
+    String tooltip = "You have selected " + moviePage.getMovie().getTitle();
     resultsList.setToolTipText(tooltip + ". Double click selection to go to the IMDB page or click Update button to update.");
     updateButton.setToolTipText(tooltip + ". Click here to update.");
 }//GEN-LAST:event_resultsListValueChanged
 
 private void resultsListDoubleClick() {
-    Movie movie = (Movie) resultsList.getSelectedValue();
-    String url = movie.getImdbUrl();
+    MoviePage moviePage = (MoviePage) resultsList.getSelectedValue();
+    String url = moviePage.getUrl();
     try {
         Desktop.getDesktop().browse(new URI(url));
     } catch (URISyntaxException ex) {
@@ -251,10 +249,10 @@ private void resultsListDoubleClick() {
 }    
 
  
- private void showResults(List<Movie> movies){
+ private void showResults(List<MoviePage> movies){
      
         listModel.clear();
-        for(Movie movie : movies){
+        for(MoviePage movie : movies){
             listModel.addElement(movie);
         }
         
@@ -272,8 +270,8 @@ private void resultsListDoubleClick() {
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            Movie movie = (Movie) value;
-            setText(movie.getTitle()+" ("+movie.getYear()+")");
+            MoviePage movieSite = (MoviePage) value;
+            setText(movieSite.getMovie().getTitle()+" ("+movieSite.getMovie().getYear()+")");
             return this;
         }
     }

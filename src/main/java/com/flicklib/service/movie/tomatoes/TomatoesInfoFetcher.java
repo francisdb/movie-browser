@@ -3,14 +3,13 @@ package com.flicklib.service.movie.tomatoes;
 import com.flicklib.api.MovieInfoFetcher;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.flicklib.domain.Movie;
 import com.flicklib.api.Parser;
+import com.flicklib.domain.Movie;
 import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.SourceLoader;
 import java.io.IOException;
 
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +32,17 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
     }
 
     @Override
-    public MovieSite fetch(Movie movie) {
-        MovieSite site = new MovieSite();
+    public MoviePage fetch(Movie movie, String id) {
+        MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.TOMATOES);
-        site.setTime(new Date());
-        if (!"".equals(movie.getImdbId())) {
+        if (id == null || "".equals(id)) {
+            LOGGER.error("IMDB id missing", new IOException("No imdb id available, not implemented"));
+        }else{
             try {
-                String url = generateTomatoesUrl(movie);
-                site.getMovie().setTomatoUrl(url);
+                String url = generateTomatoesUrl(id);
                 site.setUrl(url);
-                String source = sourceLoader.load(movie.getTomatoUrl());
+                String source = sourceLoader.load(site.getUrl());
                 tomatoesParser.parse(source, site);
             } catch (IOException ex) {
                 LOGGER.error("Loading from rotten tomatoes failed", ex);
@@ -57,7 +56,7 @@ public class TomatoesInfoFetcher implements MovieInfoFetcher {
      * @param movie 
      * @return the tomatoes url
      */
-    private String generateTomatoesUrl(Movie movie) {
-        return "http://www.rottentomatoes.com/alias?type=imdbid&s=" + movie.getImdbId();
+    private String generateTomatoesUrl(String imdbId) {
+        return "http://www.rottentomatoes.com/alias?type=imdbid&s=" + imdbId;
     }
 }

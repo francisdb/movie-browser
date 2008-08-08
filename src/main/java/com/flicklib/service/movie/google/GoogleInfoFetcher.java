@@ -13,17 +13,16 @@ import com.google.inject.Singleton;
 import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.api.Parser;
 import com.flicklib.domain.Movie;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import com.flicklib.service.HttpSourceLoader;
 import com.flicklib.tools.Param;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +47,10 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
     
 
     @Override
-    public MovieSite fetch(Movie movie) {
-        MovieSite site = new MovieSite();
+    public MoviePage fetch(Movie movie, String id) {
+        MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.GOOGLE);
-        site.setTime(new Date());
         try {
             String params = Param.paramString("q", movie.getTitle());
             String sourceString = httpLoader.load("http://www.google.com/movies"+params);
@@ -80,7 +78,6 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
             if (movieUrl == null) {
                 throw new IOException("Movie not found on Google: "+movie.getTitle());
             }
-            site.getMovie().setGoogleUrl(movieUrl);
             site.setUrl(movieUrl);
             sourceString = httpLoader.load(movieUrl);
             googleParser.parse(sourceString, site);

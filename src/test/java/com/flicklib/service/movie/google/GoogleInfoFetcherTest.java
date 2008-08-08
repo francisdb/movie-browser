@@ -1,8 +1,7 @@
 package com.flicklib.service.movie.google;
 
-import com.flicklib.service.movie.google.GoogleParser;
-import com.flicklib.service.movie.google.GoogleInfoFetcher;
 import com.flicklib.domain.Movie;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.HttpSourceLoader;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,8 +26,8 @@ public class GoogleInfoFetcherTest {
         movie.setTitle("Pulp Fiction");
         GoogleParser googleParser = new GoogleParser();
         GoogleInfoFetcher instance = new GoogleInfoFetcher(googleParser, new HttpSourceLoader());
-        instance.fetch(movie);
-        assertNotNull("Google score is null", movie.getGoogleScore());
+        MoviePage site = instance.fetch(movie, null);
+        assertNotNull("Google score is null", site.getScore());
     }
 
 }

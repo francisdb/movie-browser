@@ -1,11 +1,7 @@
 package com.flicklib.service.movie.imdb;
 
-import com.flicklib.service.movie.imdb.ImdbParser;
-import eu.somatik.moviebrowser.cache.MovieCache;
-import com.flicklib.domain.Genre;
-import com.flicklib.domain.Language;
 import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -16,10 +12,6 @@ import static org.junit.Assert.*;
  */
 public class ImdbParserTest {
 
-    public ImdbParserTest() {
-    }
-
-
     /**
      * Test of parse method, of class ImdbParser.
      * @throws Exception 
@@ -27,64 +19,19 @@ public class ImdbParserTest {
     @Test
     public void testParse() throws Exception{
         String source = new FileSourceLoader().load("imdb/Pulp Fiction (1994).html");
-        MovieSite site = new MovieSite();
+        MoviePage site = new MoviePage();
         site.setMovie(new Movie());
-        ImdbParser instance = new ImdbParser(new MovieCacheMock());
+        ImdbParser instance = new ImdbParser();
         instance.parse(source, site);
-        assertEquals(Integer.valueOf(89), site.getMovie().getImdbScore());
+        //assertEquals(Integer.valueOf(89), site.getIdForSite());
         assertEquals("Pulp Fiction", site.getMovie().getTitle());
+        assertEquals("Quentin Tarantino", site.getMovie().getDirector());
         assertEquals(Integer.valueOf(1994), site.getMovie().getYear());
-        assertEquals("Pulp%20Fiction%20%281994%29_files/MV5BMjE0ODk2NjczOV5BMl5BanBnXkFtZTYwNDQ0NDg4.jpg", site.getMovie().getImgUrl());
+        assertEquals("Pulp%20Fiction%20%281994%29_files/MV5BMjE0ODk2NjczOV5BMl5BanBnXkFtZTYwNDQ0NDg4.jpg", site.getImgUrl());
         assertEquals("The lives of two mob hit men, a boxer, a gangster's wife, and a pair of\ndiner bandits intertwine in four tales of violence and redemption.", site.getMovie().getPlot());
         assertEquals(Integer.valueOf(154), site.getMovie().getRuntime());
-        assertEquals("(298,638 votes)", site.getMovie().getVotes());
+        assertEquals(Integer.valueOf(298638), site.getVotes());
         // TODO test other fields
-    }
-
-    private static class MovieCacheMock implements MovieCache {
-
-        public MovieCacheMock() {
-        }
-
-        @Override
-        public Movie find(String path) {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
-
-        @Override
-        public Genre getOrCreateGenre(String name) {
-            return new Genre(name);
-        }
-
-        @Override
-        public Language getOrCreateLanguage(String name) {
-            return new Language(name);
-        }
-
-        @Override
-        public boolean isStarted() {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
-
-        @Override
-        public void saveMovie(Movie movie) {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
-
-        @Override
-        public void removeMovie(Movie movie) {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
-
-        @Override
-        public void shutdown() {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
-
-        @Override
-        public void startup() {
-            throw new UnsupportedOperationException("Not implemented in mock");
-        }
     }
 
 }
