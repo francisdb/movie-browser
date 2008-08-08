@@ -172,4 +172,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         movies.clear();
         this.fireTableDataChanged();
     }
+    
+    public MovieInfo getMovie(int rowIndex){
+        return movies.get(rowIndex);
+    }
 }
