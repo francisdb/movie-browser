@@ -36,10 +36,20 @@ public class Param {
         return params;
     }
 
+    /**
+     * Transforms paramValue pairs to a parameter string
+     * @param paramValue
+     * @return the parameter string
+     */
     public static final String paramString(final String... paramValue) {
         return paramString(map(paramValue));
     }
 
+    /**
+     * Transforms parameter map to a parameter string
+     * @param params
+     * @return the parameter string
+     */
     public static final String paramString(Map<String, String> params) {
         StringBuilder result = new StringBuilder();
         boolean first = true;

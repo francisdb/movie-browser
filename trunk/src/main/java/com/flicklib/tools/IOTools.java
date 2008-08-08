@@ -22,7 +22,7 @@ public class IOTools {
     /**
      * Reads an inputstream to String
      * @param in
-     * @return
+     * @return the result from reading the stream
      * @throws java.io.IOException
      */
     public static String inputSreamToString(InputStream in) throws IOException {

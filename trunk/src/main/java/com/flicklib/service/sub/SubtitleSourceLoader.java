@@ -20,10 +20,10 @@ public class SubtitleSourceLoader implements SubtitlesLoader {
     }
 
     /**
-     * TODO move to service class
+     * Generates a dummy entry that links to the site
      * @param localFileName 
      * @param imdbId 
-     * @return
+     * @return the Subtitle entry
      * @throws java.io.IOException
      */
     public Subtitle makeSubtitlesourceEntry(String localFileName, String imdbId) throws IOException {

@@ -30,6 +30,11 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
     private final SourceLoader sourceLoader;
     private final Parser parser;
 
+    /**
+     * Constructs a new FlixterInfoFetcher
+     * @param parser
+     * @param sourceLoader
+     */
     @Inject
     public FlixterInfoFetcher(final @Flixster Parser parser, final SourceLoader sourceLoader) {
         this.sourceLoader = sourceLoader;

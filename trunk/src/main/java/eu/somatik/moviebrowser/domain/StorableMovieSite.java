@@ -12,112 +12,169 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
- *
+ * 
  * @author francisdb
  */
 @Entity
-@Table(name="Site")
-@NamedQueries(
-    @NamedQuery(name="StorableMovieSite.findByMovie", query="SELECT s FROM StorableMovieSite s WHERE s.movie = :movie")
-)
+@Table(name = "Site")
+@NamedQueries(@NamedQuery(name = "StorableMovieSite.findByMovie", query = "SELECT s FROM StorableMovieSite s WHERE s.movie = :movie"))
 public class StorableMovieSite {
-    @Id
-    @GeneratedValue
-    private long id;
-    
-    @ManyToOne
-    private StorableMovie movie;
-    
-    private MovieService service;
-    
-    @Column(unique=true)
-    private String url;
-    
-    private Integer score;
-    
-    private Integer votes;
-    
-    private Date time;
-    
-    private String idForSite;
-    
-    private String imgUrl;
+	@Id
+	@GeneratedValue
+	private long id;
 
-    public StorableMovieSite() {
-    }
+	@ManyToOne
+	private StorableMovie movie;
 
-    public long getId() {
-        return id;
-    }
+	private MovieService service;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+	@Column(unique = true)
+	private String url;
 
-    public StorableMovie getMovie() {
-        return movie;
-    }
+	private Integer score;
 
-    public void setMovie(StorableMovie movie) {
-        this.movie = movie;
-    }
+	private Integer votes;
 
-    public Integer getScore() {
-        return score;
-    }
+	private Date time;
 
-    public void setScore(Integer score) {
-        this.score = score;
-    }
+	private String idForSite;
 
-    public MovieService getService() {
-        return service;
-    }
+	private String imgUrl;
 
-    public void setService(MovieService service) {
-        this.service = service;
-    }
+	/**
+	 * Constructs a new StorableMovieSite
+	 */
+	public StorableMovieSite() {
+	}
 
-    public Date getTime() {
-        return (Date) time.clone();
-    }
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return this.id;
+	}
 
-    public void setTime(Date time) {
-        this.time = (Date) time.clone();
-    }
+	/**
+	 * @param id
+	 */
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	/**
+	 * @return the StorableMovie
+	 */
+	public StorableMovie getMovie() {
+		return this.movie;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	/**
+	 * @param movie
+	 */
+	public void setMovie(StorableMovie movie) {
+		this.movie = movie;
+	}
 
-    public Integer getVotes() {
-        return votes;
-    }
+	/**
+	 * @return the score
+	 */
+	public Integer getScore() {
+		return this.score;
+	}
 
-    public void setVotes(Integer votes) {
-        this.votes = votes;
-    }
+	/**
+	 * @param score
+	 */
+	public void setScore(Integer score) {
+		this.score = score;
+	}
 
-    public String getIdForSite() {
-        return idForSite;
-    }
+	/**
+	 * @return the MovieService
+	 */
+	public MovieService getService() {
+		return this.service;
+	}
 
-    public void setIdForSite(String idForSite) {
-        this.idForSite = idForSite;
-    }
+	/**
+	 * @param service
+	 */
+	public void setService(MovieService service) {
+		this.service = service;
+	}
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
+	/**
+	 * @return the time
+	 */
+	public Date getTime() {
+		return (Date) this.time.clone();
+	}
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-    
-    
+	/**
+	 * @param time
+	 */
+	public void setTime(Date time) {
+		this.time = (Date) time.clone();
+	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return this.url;
+	}
+
+	/**
+	 * @param url
+	 *            the url to set
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * @return the votes
+	 */
+	public Integer getVotes() {
+		return this.votes;
+	}
+
+	/**
+	 * @param votes
+	 *            the votes to set
+	 */
+	public void setVotes(Integer votes) {
+		this.votes = votes;
+	}
+
+	/**
+	 * @return the idForSite
+	 */
+	public String getIdForSite() {
+		return idForSite;
+	}
+
+	/**
+	 * @param idForSite
+	 *            the idForSite to set
+	 */
+	public void setIdForSite(String idForSite) {
+		this.idForSite = idForSite;
+	}
+
+	/**
+	 * @return the imgUrl
+	 */
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	/**
+	 * @param imgUrl
+	 *            the imgUrl to set
+	 */
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
 
 }
