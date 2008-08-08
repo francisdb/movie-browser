@@ -1,14 +1,15 @@
 package com.flicklib.service.movie.imdb;
 
-import com.flicklib.domain.MoviePage;
-import com.flicklib.service.movie.imdb.ImdbSearch;
-import com.flicklib.service.movie.imdb.ImdbParser;
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import com.flicklib.service.HttpSourceLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.flicklib.domain.MoviePage;
+import com.flicklib.service.HttpSourceLoader;
 
 /**
  *
