@@ -156,9 +156,12 @@ public class MovieFinder {
                     getMovieInfoImdb(info);
                     movieCache.inserOrUpdate(info.getMovieFile().getMovie());
                     movieCache.update(info.getMovieFile());
+                    
+                    // TODO only do if not available
                     movieCache.insert(info.siteFor(MovieService.IMDB));
 
                     // TODO FOR EACH SELECTED SERVICE
+                    // TODO only do if not available
                     secondaryService.submit(new MovieServiceCaller(MovieService.TOMATOES, info));
                     secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, info));
                     secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, info));
