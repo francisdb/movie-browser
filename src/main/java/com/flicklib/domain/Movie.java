@@ -4,97 +4,152 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
+ * 
  * @author francisdb
  */
 public class Movie {
 
+	private String title;
+	private String plot;
+	private Integer year;
+	private String director;
 
-    private String title;
-    private String plot;    
-    private Integer year;
-    private String director;
-   
-    /**
-     * Runtime in minutes 
-     */
-    private Integer runtime;
-    
-    private Set<String> genres;
-    private Set<String> languages;
-    
-    // TODO add cast
-    // private List<String> cast;
+	/**
+	 * Runtime in minutes
+	 */
+	private Integer runtime;
 
-    public Movie() {
-        this.genres = new HashSet<String>();
-        this.languages = new HashSet<String>();
-    }
-    
-    public Set<String> getGenres() {
-        return this.genres;
-    }
+	private Set<String> genres;
+	private Set<String> languages;
 
-    public void setGenres(Set<String> genres) {
-        this.genres = genres;
-    }
-    public Set<String> getLanguages() {
-        return this.languages;
-    }
+	// TODO add cast
+	// private List<String> cast;
 
-    public void setLanguages(Set<String> languages) {
-        this.languages = languages;
-    }
+	/**
+	 * Constructs a new Movie
+	 */
+	public Movie() {
+		this.genres = new HashSet<String>();
+		this.languages = new HashSet<String>();
+	}
 
-    public String getPlot() {
-        return this.plot;
-    }
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-    public void setPlot(String plot) {
-        this.plot = plot;
-    }
+	/**
+	 * @param title
+	 *            the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public String getTitle() {
-        return this.title;
-    }
+	/**
+	 * @return the plot
+	 */
+	public String getPlot() {
+		return plot;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	/**
+	 * @param plot
+	 *            the plot to set
+	 */
+	public void setPlot(String plot) {
+		this.plot = plot;
+	}
 
-    public Integer getYear() {
-        return this.year;
-    }
+	/**
+	 * @return the year
+	 */
+	public Integer getYear() {
+		return year;
+	}
 
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+	/**
+	 * @param year
+	 *            the year to set
+	 */
+	public void setYear(Integer year) {
+		this.year = year;
+	}
 
-    public Integer getRuntime() {
-        return this.runtime;
-    }
+	/**
+	 * @return the director
+	 */
+	public String getDirector() {
+		return director;
+	}
 
-    public void setRuntime(Integer runtime) {
-        this.runtime = runtime;
-    }
-    
-    
-    
-    public void addGenre(String genre){
-        this.genres.add(genre);
-    }
-    
-    public void addLanguage(String language){
-        this.languages.add(language);
-    }
+	/**
+	 * @param director
+	 *            the director to set
+	 */
+	public void setDirector(String director) {
+		this.director = director;
+	}
 
-    public String getDirector() {
-        return this.director;
-    }
+	/**
+	 * @return the runtime
+	 */
+	public Integer getRuntime() {
+		return runtime;
+	}
 
-    public void setDirector(String director) {
-        this.director = director;
-    }
-    
-    
+	/**
+	 * @param runtime
+	 *            the runtime to set
+	 */
+	public void setRuntime(Integer runtime) {
+		this.runtime = runtime;
+	}
+
+	/**
+	 * @return the genres
+	 */
+	public Set<String> getGenres() {
+		return genres;
+	}
+
+	/**
+	 * @param genres
+	 *            the genres to set
+	 */
+	public void setGenres(Set<String> genres) {
+		this.genres = genres;
+	}
+
+	/**
+	 * @return the languages
+	 */
+	public Set<String> getLanguages() {
+		return languages;
+	}
+
+	/**
+	 * @param languages
+	 *            the languages to set
+	 */
+	public void setLanguages(Set<String> languages) {
+		this.languages = languages;
+	}
+
+	/**
+	 * @param genre
+	 */
+	public void addGenre(String genre) {
+		this.genres.add(genre);
+	}
+
+	/**
+	 * @param language
+	 */
+	public void addLanguage(String language) {
+		this.languages.add(language);
+	}
+
 }

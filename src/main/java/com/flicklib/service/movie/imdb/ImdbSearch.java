@@ -154,9 +154,9 @@ public class ImdbSearch {
     }
 
     /**
-     * 
+     * Performs a search on imdb
      * @param search
-     * @return
+     * @return the results found as List of MoviePage
      * @throws java.io.IOException
      */
     public List<MoviePage> getResults(String search) throws IOException {

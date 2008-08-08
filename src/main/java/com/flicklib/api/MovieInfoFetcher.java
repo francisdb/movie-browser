@@ -9,10 +9,10 @@ import com.flicklib.domain.MoviePage;
  */
 public interface MovieInfoFetcher {
     /**
-     * Fetched movie info from a servie and complements the movieInfo object
+     * Fetched movie info from a service and complements the movieInfo object
      * @param movie
      * @param id possible known id for this site, null for none
-     * @return
+     * @return the parsed moviePage
      */
     MoviePage fetch(Movie movie, String id);
     

@@ -6,6 +6,12 @@ package com.flicklib.api;
  */
 public interface TrailerFinder {
 
+    /**
+     * Finds a trailer for this title or id
+     * @param title
+     * @param localId
+     * @return the url String for this title
+     */
     String findTrailerUrl(String title, String localId);
 
 }

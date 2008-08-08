@@ -10,6 +10,13 @@ import java.util.Set;
  */
 public interface SubtitlesLoader {
 
+    /**
+     * Performs a subtitle search
+     * @param localFileName
+     * @param imdbId
+     * @return the Set of Subtitles
+     * @throws IOException
+     */
     Set<Subtitle> search(String localFileName, String imdbId) throws IOException;
 
 }

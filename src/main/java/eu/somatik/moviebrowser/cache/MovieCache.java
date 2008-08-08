@@ -63,7 +63,7 @@ public interface MovieCache {
     /**
      * Load stored movies
      * @param movie
-     * @return
+     * @return the list of StorableMovieSites
      */
     List<StorableMovieSite> loadSites(StorableMovie movie);
     

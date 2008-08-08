@@ -12,7 +12,7 @@ public interface Settings {
     
     /**
      * Loads the user preferences
-     * @return
+     * @return the preferences map
      */
     Map<String,String> loadPreferences();
 

@@ -26,6 +26,15 @@ public class InfoFetcherFactoryImpl implements InfoFetcherFactory{
     private final MovieInfoFetcher flixterInfoFetcher;
     private final MovieInfoFetcher omdbInfoFetcher;
 
+    /**
+     * Constructs a new InfoFetcherFactoryImpl
+     * @param imdbInfoFetcher
+     * @param movieWebInfoFetcher
+     * @param tomatoesInfoFetcher
+     * @param googleInfoFetcher
+     * @param flixterInfoFetcher
+     * @param omdbInfoFetcher
+     */
     @Inject
     public InfoFetcherFactoryImpl(
             final @Imdb MovieInfoFetcher imdbInfoFetcher,

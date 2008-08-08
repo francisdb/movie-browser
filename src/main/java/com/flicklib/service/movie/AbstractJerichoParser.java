@@ -18,5 +18,10 @@ public abstract class AbstractJerichoParser implements Parser{
         parse(source, movieSite);
     }
 
+    /**
+     * Parses jericho source to MovieSite
+     * @param source
+     * @param movieSite
+     */
     public abstract void parse(Source source, MoviePage movieSite);
 }
