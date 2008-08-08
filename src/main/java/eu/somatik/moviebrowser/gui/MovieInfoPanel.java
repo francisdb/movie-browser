@@ -37,7 +37,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final IconLoader iconLoader;
     private final ImageCache imageCache;
     private final InfoHandler infoHandler;
-    
     /**
      * Make generic version for all buttons
      * @deprecated
@@ -50,7 +49,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private JButton googleButton;
     private JButton flixterButton;
     private MovieInfo info;
-   
 
     /** Creates new form MovieInfoPanel
      * @param imageCache 
@@ -85,7 +83,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     }
 
     private void update() {
-        StorableMovie movie = info.getMovieFile().getMovie();
+
         // TODO need better image cache, if loading takes a lot of time the
         // image might be shown after a new movie was selected
         if (info.getImage() == null) {
@@ -98,75 +96,92 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         } else {
             updateImage(info);
         }
-        if (movie.getTitle() == null) {
-            movieHeader.setTitle(info.getDirectory().getName());
+
+        movieHeader.setTitle(info.getDirectory().getName());
+        StorableMovie movie = info.getMovieFile().getMovie();
+        if (movie == null) {
+            movieHeader.setTitle("");
+            movieHeader.setDescription("");
+            infoTextPane.setText("");            
+            updateButton(imdbButton, null);
+            updateButton(tomatoesButton, null);
+            updateButton(moviewebButton, null);
+            updateButton(omdbButton, null);
+            updateButton(googleButton, null);
+            updateButton(flixterButton, null);
         } else {
-            movieHeader.setTitle(movie.getTitle());
-        }
-        movieHeader.setDescription(movie.getPlot());
 
-        // TODO make generified button bar
-        updateButton(imdbButton, infoHandler.url(info, MovieService.IMDB));
-        updateButton(tomatoesButton, infoHandler.url(info, MovieService.TOMATOES));
-        updateButton(moviewebButton, infoHandler.url(info, MovieService.MOVIEWEB));
-        updateButton(omdbButton, infoHandler.url(info, MovieService.OMDB));
-        updateButton(googleButton, infoHandler.url(info, MovieService.GOOGLE));
-        updateButton(flixterButton, infoHandler.url(info, MovieService.FLIXTER));
+//            if (movie.getTitle() == null) {
+//                movieHeader.setTitle(info.getDirectory().getName());
+//            } else {
+//                movieHeader.setTitle(movie.getTitle());
+//            }
+            movieHeader.setDescription(movie.getPlot());
 
-        StringBuilder builder = new StringBuilder("<html>");
+            // TODO make generified button bar
+            updateButton(imdbButton, infoHandler.url(info, MovieService.IMDB));
+            updateButton(tomatoesButton, infoHandler.url(info, MovieService.TOMATOES));
+            updateButton(moviewebButton, infoHandler.url(info, MovieService.MOVIEWEB));
+            updateButton(omdbButton, infoHandler.url(info, MovieService.OMDB));
+            updateButton(googleButton, infoHandler.url(info, MovieService.GOOGLE));
+            updateButton(flixterButton, infoHandler.url(info, MovieService.FLIXTER));
 
-        builder.append("<h2>").append(movie.getTitle()).append("</h2>");
-        boolean first = true;
-        builder.append("<strong>Director</strong> ").append(movie.getDirector()).append("<br/>");
-        builder.append("<strong>Genres</strong> ");
-        for (Genre genre : movie.getGenres()) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(", ");
+            StringBuilder builder = new StringBuilder("<html>");
+
+            builder.append("<h2>").append(movie.getTitle()).append("</h2>");
+            boolean first = true;
+            builder.append("<strong>Director</strong> ").append(movie.getDirector()).append("<br/>");
+            builder.append("<strong>Genres</strong> ");
+            for (Genre genre : movie.getGenres()) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(genre);
             }
-            builder.append(genre);
-        }
-        builder.append("<br/>");
-        builder.append("<strong>Languages</strong> ");
-        first = true;
-        for (Language language : movie.getLanguages()) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(", ");
+            builder.append("<br/>");
+            builder.append("<strong>Languages</strong> ");
+            first = true;
+            for (Language language : movie.getLanguages()) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(language);
             }
-            builder.append(language);
+            builder.append("<br/>");
+            builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
+            builder.append("<br/>");
+            builder.append("<strong>IMDB</strong> ").append(info(info, MovieService.IMDB)).append("<br/>");
+            builder.append("<strong>Tomato</strong> ").append(info(info, MovieService.TOMATOES)).append("<br/>");
+            builder.append("<strong>MovieWeb</strong> ").append(info(info, MovieService.MOVIEWEB)).append("<br/>");
+            builder.append("<strong>Goolge</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
+            //builder.append("<strong>OMDB</strong> ").append(info(info, MovieService.OMDB)).append("<br/>");
+            builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXTER)).append("<br/>");
+            builder.append("<br/>");
+            builder.append(movie.getPlot());
+            builder.append("</html>");
+            infoTextPane.setText(builder.toString());
         }
-        builder.append("<br/>");
-        builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
-        builder.append("<br/>");
-        builder.append("<strong>IMDB</strong> ").append(info(info, MovieService.IMDB)).append("<br/>");
-        builder.append("<strong>Tomato</strong> ").append(info(info, MovieService.TOMATOES)).append("<br/>");
-        builder.append("<strong>MovieWeb</strong> ").append(info(info, MovieService.MOVIEWEB)).append("<br/>");
-        builder.append("<strong>Goolge</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
-        //builder.append("<strong>OMDB</strong> ").append(info(info, MovieService.OMDB)).append("<br/>");
-        builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXTER)).append("<br/>");
-        builder.append("<br/>");
-        builder.append(movie.getPlot());
-        builder.append("</html>");
-        infoTextPane.setText(builder.toString());
+        
         infoTextPane.setCaretPosition(0);
     }
-    
-    private String scoreString(Integer score){
+
+    private String scoreString(Integer score) {
         String result = "N/A";
-        if(score != null){
-            result = score.toString()+"%";
+        if (score != null) {
+            result = score.toString() + "%";
         }
         return result;
     }
-    
-    private CharSequence info(MovieInfo info, MovieService service){
+
+    private CharSequence info(MovieInfo info, MovieService service) {
         StringBuilder builder = new StringBuilder();
         builder.append(scoreString(infoHandler.score(info, service)));
         Integer votes = infoHandler.votes(info, service);
-        if(votes != null){
+        if (votes != null) {
             builder.append(" ");
             builder.append(votes);
             builder.append(" votes");
@@ -174,7 +189,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         return builder;
     }
 
-    
     private void updateImage(MovieInfo info) {
         if (info.getImage() == null) {
             movieHeader.setIcon(null);
