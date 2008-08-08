@@ -468,15 +468,16 @@ private void filterTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:eve
                 boolean include = false;
                 MovieInfoTableModel model = (MovieInfoTableModel) entry.getModel();
                 MovieInfo info = model.getMovie(entry.getIdentifier());
+                StorableMovie movie = info.getMovieFile().getMovie();
                 if(info.getMovieFile().getPath().toLowerCase().contains(text)){
                     include = true;
-                }else if(info.getMovieFile().getMovie().getTitle().toLowerCase().contains(text)){
+                }else if(movie.getTitle() != null && movie.getTitle().toLowerCase().contains(text)){
                     include = true;
-                }else if(info.getMovieFile().getMovie().getDirector().toLowerCase().contains(text)){
+                }else if(movie.getDirector() != null && movie.getDirector().toLowerCase().contains(text)){
                     include = true;
-                }else if(info.getMovieFile().getMovie().getPlot().toLowerCase().contains(text)){
+                }else if(movie.getPlot() != null && movie.getPlot().toLowerCase().contains(text)){
                     include = true;
-                }else if(info.getMovieFile().getMovie().getYear().toString().contains(text)){
+                }else if(movie.getYear() != null && movie.getYear().toString().contains(text)){
                     include = true;
                 }else{
                     for(Genre genre:info.getMovieFile().getMovie().getGenres()){
@@ -485,7 +486,6 @@ private void filterTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:eve
                         }
                     }
                 }
-                
                 return include;
             }
         };
