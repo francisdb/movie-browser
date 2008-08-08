@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter.Entry;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +43,7 @@ import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
@@ -412,7 +414,7 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
     JOptionPane.showMessageDialog(this, "Not implemented");
-    //    //Clear the image folder
+//    //Clear the image folder
 //    File imagesDir = new File(SettingsImpl.getImageCacheDir().getName());
 //    System.out.println(imagesDir.getAbsolutePath());
 //    imagesDir.delete();
@@ -454,12 +456,42 @@ private void filterTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:eve
     final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(movieTable.getModel());
     movieTable.setRowSorter(sorter);
 
-    String text = filterText.getText();
+    final String text = filterText.getText().toLowerCase();
     if (text.length() == 0) {
         sorter.setRowFilter(null);
-    } 
-    else {
-        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+    } else {
+        //sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+
+        RowFilter<TableModel, Integer> filter = new RowFilter<TableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                boolean include = false;
+                MovieInfoTableModel model = (MovieInfoTableModel) entry.getModel();
+                MovieInfo info = model.getMovie(entry.getIdentifier());
+                if(info.getMovieFile().getPath().toLowerCase().contains(text)){
+                    include = true;
+                }else if(info.getMovieFile().getMovie().getTitle().toLowerCase().contains(text)){
+                    include = true;
+                }else if(info.getMovieFile().getMovie().getDirector().toLowerCase().contains(text)){
+                    include = true;
+                }else if(info.getMovieFile().getMovie().getPlot().toLowerCase().contains(text)){
+                    include = true;
+                }else if(info.getMovieFile().getMovie().getYear().toString().contains(text)){
+                    include = true;
+                }else{
+                    for(Genre genre:info.getMovieFile().getMovie().getGenres()){
+                        if(genre.getName().toLowerCase().contains(text)){
+                            include = true;
+                        }
+                    }
+                }
+                
+                return include;
+            }
+        };
+        sorter.setRowFilter(filter);
+
+
     }
 }//GEN-LAST:event_filterTextKeyReleased
 
