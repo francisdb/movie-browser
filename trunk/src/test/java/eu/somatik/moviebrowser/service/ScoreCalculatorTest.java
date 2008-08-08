@@ -18,14 +18,15 @@ public class ScoreCalculatorTest {
     @Test
     public void testCalculate() {
         MovieInfo movie = new MovieInfo(null);
-        InfoHandlerImpl instance = new InfoHandlerImpl();
-        assertNull("Result should be null when no data", instance.calculate(movie));
+        InfoHandler handler = new InfoHandlerImpl();
+        ScoreCalculator calc = new WeightedScoreCalculator(handler);
+        assertNull("Result should be null when no data", calc.calculate(movie));
         
         StorableMovieSite site = new StorableMovieSite();
         site.setService(MovieService.IMDB);
         site.setScore(32);
         movie.addSite(site);
-        assertEquals(Integer.valueOf(32), instance.calculate(movie));
+        assertEquals(Integer.valueOf(32), calc.calculate(movie));
         
         site = new StorableMovieSite();
         site.setService(MovieService.TOMATOES);
@@ -35,13 +36,13 @@ public class ScoreCalculatorTest {
         site.setService(MovieService.MOVIEWEB);
         site.setScore(32);
         movie.addSite(site);
-        assertEquals(Integer.valueOf(32), instance.calculate(movie));
+        assertEquals(Integer.valueOf(32), calc.calculate(movie));
         
         site = new StorableMovieSite();
         site.setService(MovieService.TOMATOES);
         site.setScore(80);
         movie.addSite(site);
-        assertEquals(Integer.valueOf((32*3+80)/4), instance.calculate(movie));
+        assertEquals(Integer.valueOf((32*3+80)/4), calc.calculate(movie));
         
     }
 

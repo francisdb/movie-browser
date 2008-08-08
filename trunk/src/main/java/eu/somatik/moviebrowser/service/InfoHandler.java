@@ -10,13 +10,6 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 public interface InfoHandler {
 
     /**
-     * Calculates the global score
-     * @param movie
-     * @return
-     */
-    Integer calculate(MovieInfo movie);
-
-    /**
      * Gets the score for a service
      * @param info
      * @param movieService
