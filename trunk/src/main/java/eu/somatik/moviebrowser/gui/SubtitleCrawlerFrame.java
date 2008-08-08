@@ -192,12 +192,12 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
                 Iterator<String> i = files.iterator();
                 while (i.hasNext()) {
                     fileName = i.next();
-                    // regex . is any character
-                    String split[] = fileName.split("\\.");
-                    if (split.length != 0) {
-                        fileName = split[0];
+                    
+                    // remove extension
+                    int lastDot = fileName.lastIndexOf('.');
+                    if(lastDot > 0){
+                        fileName = fileName.substring(0, lastDot);
                     }
-
                     LOGGER.info("fileName = " + fileName);
                     try {
                         //Add other methods to get subs from other sources.
