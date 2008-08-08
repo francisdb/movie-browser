@@ -61,7 +61,6 @@ public class ImageCacheImpl implements ImageCache {
      */
     @Override
     public void loadImg(MovieInfo info) {
-        StorableMovie movie = info.getMovieFile().getMovie();
         // TODO might accept images form other services
         String imgUrl = imageUrl(info);
         if (imgUrl != null) {
