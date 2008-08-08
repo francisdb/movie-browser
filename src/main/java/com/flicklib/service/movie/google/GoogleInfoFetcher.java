@@ -30,6 +30,11 @@ public class GoogleInfoFetcher implements MovieInfoFetcher{
     private final Parser googleParser;
     private final HttpSourceLoader httpLoader;
 
+    /**
+     * Constructs a new GoogleInfoFetcher
+     * @param googleParser
+     * @param httpLoader
+     */
     @Inject
     public GoogleInfoFetcher(final @Google Parser googleParser, HttpSourceLoader httpLoader) {
         this.googleParser = googleParser;
