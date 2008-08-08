@@ -564,7 +564,7 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(loadProgressBar.getString().contains("All movie info laoded.")) {
+            if(loadProgressBar.getString().contains("All movie info loaded.")) {
                 EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
                 editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
                 editMovieFrame.setVisible(true);
