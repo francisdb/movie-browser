@@ -97,7 +97,11 @@ public class ImdbParser extends AbstractJerichoParser {
                 votes = votes.replaceAll("votes\\)", "");
                 votes = votes.replaceAll(",", "");
                 votes = votes.trim();
-                movieSite.setVotes(Integer.valueOf(votes));
+                try{
+                    movieSite.setVotes(Integer.valueOf(votes));
+                }catch(NumberFormatException ex){
+                    LOGGER.error("Could not parse the votes: "+votes, ex);
+                }
                 // TODO parse votes to int!
                 // site.setVotes(votes);
             }
