@@ -461,37 +461,7 @@ private void filterTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:eve
         sorter.setRowFilter(null);
     } else {
         //sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-
-        RowFilter<TableModel, Integer> filter = new RowFilter<TableModel, Integer>() {
-            @Override
-            public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                boolean include = false;
-                MovieInfoTableModel model = (MovieInfoTableModel) entry.getModel();
-                MovieInfo info = model.getMovie(entry.getIdentifier());
-                StorableMovie movie = info.getMovieFile().getMovie();
-                if(info.getMovieFile().getPath().toLowerCase().contains(text)){
-                    include = true;
-                }else if(movie.getTitle() != null && movie.getTitle().toLowerCase().contains(text)){
-                    include = true;
-                }else if(movie.getDirector() != null && movie.getDirector().toLowerCase().contains(text)){
-                    include = true;
-                }else if(movie.getPlot() != null && movie.getPlot().toLowerCase().contains(text)){
-                    include = true;
-                }else if(movie.getYear() != null && movie.getYear().toString().contains(text)){
-                    include = true;
-                }else{
-                    for(Genre genre:info.getMovieFile().getMovie().getGenres()){
-                        if(genre.getName().toLowerCase().contains(text)){
-                            include = true;
-                        }
-                    }
-                }
-                return include;
-            }
-        };
-        sorter.setRowFilter(filter);
-
-
+        sorter.setRowFilter(new MovieTableRowFilter(text));
     }
 }//GEN-LAST:event_filterTextKeyReleased
 
@@ -741,12 +711,12 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         
         @Override 
         public void actionPerformed(ActionEvent e) {
-            //TO DO:
-            //JOptionPane.showMessageDialog(MainFrame.this, "Subtitle Crawler Coming Soon.", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+            //TODO get this out of here, this sould be somewhere in a logic class and not in the gui
+            
             List<String> files = new ArrayList<String>();
             MovieInfo info = getSelectedMovie(); 
             File dir = info.getDirectory();
-            String alternateSearchKey = getSelectedMovie().toString();
+            String alternateSearchKey = getSelectedMovie().getMovieFile().getMovie().getTitle();
             File child;
             if(!dir.isFile()) {
                 for(File file:dir.listFiles()) {

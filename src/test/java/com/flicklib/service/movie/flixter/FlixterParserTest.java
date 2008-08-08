@@ -25,6 +25,7 @@ public class FlixterParserTest {
         FlixterParser instance = new FlixterParser();
         instance.parse(source, site);
         assertEquals(Integer.valueOf(60), site.getScore());
+        assertEquals("The X-Files: I Want to Believe (The X Files 2)", site.getMovie().getTitle());
     }
 
 }
