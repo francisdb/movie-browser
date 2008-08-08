@@ -32,5 +32,10 @@ public enum MovieStatus {
     /**
      * Loaded form cache
      */
-    CACHED
+    CACHED,
+    
+    /**
+     * Something went wrong
+     */
+    ERROR
 }

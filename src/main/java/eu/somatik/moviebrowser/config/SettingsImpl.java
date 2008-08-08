@@ -196,7 +196,7 @@ public class SettingsImpl implements Settings {
         OutputStream os = null;
         try{
             os = new FileOutputStream(prefsFile);
-            props.store(os, IMG_CACHE);
+            props.store(os, "Movie browser configuration file");
         }catch(IOException ex){
             LOGGER.error("Could not save preferences to "+prefsFile.getAbsolutePath(), ex);
         }catch(SecurityException ex){

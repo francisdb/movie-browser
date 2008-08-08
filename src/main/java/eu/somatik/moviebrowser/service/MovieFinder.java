@@ -36,6 +36,11 @@ import org.slf4j.LoggerFactory;
 public class MovieFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
+    
+    // TODO make this available in settings somewhere
+    private static final int IMDB_POOL_SIZE = 5;
+    private static final int OTHERS_POOL_SIZE = 5;
+    
     private final ExecutorService service;
     private final ExecutorService secondaryService;
     private final FileSystemScanner fileSystemScanner;
@@ -67,8 +72,8 @@ public class MovieFinder {
         this.fetcherFactory = fetcherFactory;
         this.infoHandler = infoHandler;
 
-        this.service = Executors.newFixedThreadPool(5);
-        this.secondaryService = Executors.newFixedThreadPool(5);
+        this.service = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
+        this.secondaryService = Executors.newFixedThreadPool(OTHERS_POOL_SIZE);
     }
 
     /**
@@ -158,6 +163,7 @@ public class MovieFinder {
                     secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, info));
                     secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, info));
                     secondaryService.submit(new MovieServiceCaller(MovieService.FLIXTER, info));
+                    info.setStatus(MovieStatus.LOADED);
                 } else {
                     List<StorableMovieSite> sites = movieCache.loadSites(info.getMovieFile().getMovie());
                     for (StorableMovieSite site : sites) {
@@ -167,6 +173,7 @@ public class MovieFinder {
                 }
             } catch (Exception ex) {
                 LOGGER.error("Exception while loading/saving movie", ex);
+                info.setStatus(MovieStatus.ERROR);
             }
 
 //            StorableMovie movie = movieCache.find(info.getMovieFile().getMovie().getPath());
@@ -266,79 +273,5 @@ public class MovieFinder {
         storableMovieSite.setMovie(movieInfo.getMovieFile().getMovie());
         movieInfo.addSite(storableMovieSite);
     // todo insert the site?
-    }    //    /**
-    //     * Test class for the apache htpclient
-    //     */
-    //    public void httpclient(){
-    //        // initialize the POST method
-    //        GetMethod get = new GetMethod("http://www.imdb.com/Tsearch?title=idiocracy");
-    //        System.out.println(get.getQueryString());
-    //
-    //        // execute the POST
-    //        HttpClient client = new HttpClient();
-    //
-    //        try{
-    //            int status = client.executeMethod(get);
-    //            String response = get.getResponseBodyAsString();
-    //            get.releaseConnection();
-    //            System.out.println(response);
-    //        }catch(IOException ex){
-    //            ex.printStackTrace();
-    //        }
-    //    }
-    //    /**
-    //     * Runs JTidy on the source string, to produce the dest string.
-    //     */
-    //    private static String tidy(String source) {
-    //        try {
-    //            org.w3c.tidy.Tidy tidy = new org.w3c.tidy.Tidy();
-    //            tidy.setXHTML(true);
-    //            tidy.setShowWarnings(false);
-    //            tidy.setSmartIndent(true);
-    //            ByteArrayInputStream in = new ByteArrayInputStream(source.getBytes());
-    //            ByteArrayOutputStream out = new ByteArrayOutputStream();
-    //            tidy.parse(in, out);
-    //            in.close();
-    //            return out.toString();
-    //        } catch (Exception e) {
-    //            e.printStackTrace();
-    //            return source;
-    //        }
-    //    }
-    //    public void testSwingX() throws Exception{
-    //        Session s = new Session();
-    //        Response r = s.get("http://www.imdb.com/search");
-    //        Form form = Forms.getFormByIndex(r,1);
-    //        System.out.println("FORM "+form.getMethod() + "(" + form.getAction() + ")");
-    //        if(form != null){
-    //            form.getInput("s").setValue("tt");
-    //            form.getInput("q").setValue("idiocracy");
-    //            for(Input input:form.getInputs()){
-    //                System.out.println(input.getName()+":"+input.getValue());
-    //            }
-    //
-    //
-    //            r = Forms.submit(form,s);
-    //            System.out.println(r.getBody());
-    //        }
-    //    }
-    //    public void testDom() throws Exception{
-    //
-    //        Session s = new Session();
-    //        Response r = s.get("http://www.imdb.com/Tsearch?title=idiocracy");
-    //        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    //        String tidyHtml = tidy(r.getBody());
-    //        System.out.println(tidyHtml);
-    //        ByteArrayInputStream in = new ByteArrayInputStream(tidyHtml.getBytes());
-    //        Document doc = builder.parse(in);
-    //        in.close();
-    //
-    //        XPathFactory factory = XPathFactory.newInstance();
-    //        XPath xpath = factory.newXPath();
-    //        XPathExpression e = XPathUtils.compile("//form[2]");
-    //        Node foundNode = (Node)e.evaluate(doc, XPathConstants.NODE);
-    //        String href = xpath.evaluate("@action", foundNode);
-    //        String method = xpath.evaluate("@method", foundNode);
-    //        System.out.println("FORM "+method + "(" + href + ")");
-    //    }
+    }    
 }
