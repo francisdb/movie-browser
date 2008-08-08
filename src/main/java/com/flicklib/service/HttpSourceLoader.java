@@ -22,6 +22,9 @@ public class HttpSourceLoader implements SourceLoader {
     @Override
     public String load(String url) throws IOException {
         HttpClient client = new HttpClient();
+        // wait max 10 sec
+        client.getParams().setSoTimeout(10 * 1000);
+        //LOGGER.info("Tiemout = "+client.getParams().getSoTimeout());
         String source = null;
         GetMethod httpMethod = null;
         InputStream is = null;
