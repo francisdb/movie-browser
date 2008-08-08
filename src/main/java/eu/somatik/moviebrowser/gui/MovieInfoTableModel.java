@@ -14,6 +14,8 @@ import eu.somatik.moviebrowser.domain.MovieStatus;
 
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
+import eu.somatik.moviebrowser.service.ScoreCalculator;
+import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -28,7 +30,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener {
 
-    private final InfoHandler infoHandler;
     public static final String MOVIE_COLUMN_NAME = "Movie";
     public static final String STATUS_COLUMN_NAME = "?";
     public static final String SCORE_COLUMN_NAME = "Score";
@@ -62,6 +63,10 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class,
         Integer.class
     };
+    
+    private final InfoHandler infoHandler;
+    private final ScoreCalculator calculator;
+    
     private List<MovieInfo> movies;
 
     /** 
@@ -70,6 +75,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      */
     public MovieInfoTableModel(final InfoHandler infoHandler) {
         this.infoHandler = infoHandler;
+        this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
     }
 
@@ -109,7 +115,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 4:
                 return movie == null?null:movie.getRuntime();
             case 5:
-                return infoHandler.calculate(info);
+                return calculator.calculate(info);
             case 6:
                 return infoHandler.score(info, MovieService.IMDB);
                 //return movies.get(rowIndex).getMovie().getImdbScore();

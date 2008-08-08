@@ -16,6 +16,8 @@ import eu.somatik.moviebrowser.service.MovieNameExtractor;
 import eu.somatik.moviebrowser.service.SimpleFolderScanner;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.InfoHandlerImpl;
+import eu.somatik.moviebrowser.service.ScoreCalculator;
+import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 
 /**
  * Guice configuration module
@@ -35,10 +37,7 @@ public class MovieBrowserModule extends AbstractModule {
         bind(FileSystemScanner.class).to(FileSystemScannerImpl.class);
         bind(Settings.class).to(SettingsImpl.class);
         bind(InfoHandler.class).to(InfoHandlerImpl.class);
-
-       
-
-
+        bind(ScoreCalculator.class).to(WeightedScoreCalculator.class);
 
     }
 }

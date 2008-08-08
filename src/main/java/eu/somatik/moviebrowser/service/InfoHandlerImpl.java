@@ -11,46 +11,6 @@ import eu.somatik.moviebrowser.domain.StorableMovieSite;
  */
 @Singleton
 public class InfoHandlerImpl implements InfoHandler {
-
-    @Override
-    public Integer calculate(MovieInfo movie){
-        int score = 0;
-        int count = 0;
-        
-        Integer imdb = score(movie, MovieService.IMDB);
-        if(imdb != null){
-            // double weight
-            score += imdb*2;
-            count += 2;
-        }
-        Integer tomato = score(movie, MovieService.TOMATOES);
-        if(tomato != null){
-            score += tomato;
-            count++;
-        }
-        Integer movieweb = score(movie, MovieService.MOVIEWEB);
-        if(movieweb != null){
-            score += movieweb;
-            count++;
-        }
-        Integer google = score(movie, MovieService.GOOGLE);
-        if(google != null){
-            score += google;
-            count++;
-        }
-        Integer flixter = score(movie, MovieService.FLIXSTER);
-        if(flixter != null){
-            score += flixter;
-            count++;
-        }
-        
-        Integer value = null;
-        if(count > 0){
-            score = score / count;
-            value = Integer.valueOf(score);
-        }
-        return value;
-    }
     
     @Override
     public Integer score(MovieInfo info, MovieService movieService) {
