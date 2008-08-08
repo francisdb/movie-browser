@@ -47,8 +47,9 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
         MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.MOVIEWEB);
+        String urlToLoad = createMovieWebSearchUrl(movie);
         try {
-            String source = httpLoader.load(createMovieWebSearchUrl(movie));
+            String source = httpLoader.load(urlToLoad);
             Source jerichoSource = new Source(source);
             //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
             jerichoSource.fullSequentialParse();
@@ -79,7 +80,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             source = httpLoader.load(movieUrl);
             movieWebInfoParser.parse(source, site);
         } catch (IOException ex) {
-            LOGGER.error("Loading from MovieWeb failed", ex);
+            LOGGER.error("Loading from MovieWeb failed: "+urlToLoad, ex);
         }
         return site;
     }
