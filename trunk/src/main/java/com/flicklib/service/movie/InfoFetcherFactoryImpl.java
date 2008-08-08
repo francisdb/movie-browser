@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import com.flicklib.api.InfoFetcherFactory;
 import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.domain.MovieService;
-import com.flicklib.service.movie.flixter.Flixter;
+import com.flicklib.service.movie.flixter.Flixster;
 import com.flicklib.service.movie.google.Google;
 import com.flicklib.service.movie.imdb.Imdb;
 import com.flicklib.service.movie.movieweb.MovieWeb;
@@ -32,7 +32,7 @@ public class InfoFetcherFactoryImpl implements InfoFetcherFactory{
             final @MovieWeb MovieInfoFetcher movieWebInfoFetcher,
             final @RottenTomatoes MovieInfoFetcher tomatoesInfoFetcher,
             final @Google MovieInfoFetcher googleInfoFetcher,
-            final @Flixter MovieInfoFetcher flixterInfoFetcher,
+            final @Flixster MovieInfoFetcher flixterInfoFetcher,
             final @Omdb MovieInfoFetcher omdbInfoFetcher) {
         this.imdbInfoFetcher = imdbInfoFetcher;
         this.movieWebInfoFetcher = movieWebInfoFetcher;

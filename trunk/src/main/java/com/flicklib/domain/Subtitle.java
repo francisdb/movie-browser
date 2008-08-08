@@ -14,8 +14,8 @@ public class Subtitle {
     private String subSource;
 
     public Subtitle() {
-        fileName = "";
-        language = "";
+        this.fileName = "";
+        this.language = "";
     }
 
     public String getFileName() {

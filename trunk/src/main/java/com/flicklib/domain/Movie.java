@@ -32,14 +32,14 @@ public class Movie {
     }
     
     public Set<String> getGenres() {
-        return genres;
+        return this.genres;
     }
 
     public void setGenres(Set<String> genres) {
         this.genres = genres;
     }
     public Set<String> getLanguages() {
-        return languages;
+        return this.languages;
     }
 
     public void setLanguages(Set<String> languages) {
@@ -47,7 +47,7 @@ public class Movie {
     }
 
     public String getPlot() {
-        return plot;
+        return this.plot;
     }
 
     public void setPlot(String plot) {
@@ -55,7 +55,7 @@ public class Movie {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public void setTitle(String title) {
@@ -63,7 +63,7 @@ public class Movie {
     }
 
     public Integer getYear() {
-        return year;
+        return this.year;
     }
 
     public void setYear(Integer year) {
@@ -71,7 +71,7 @@ public class Movie {
     }
 
     public Integer getRuntime() {
-        return runtime;
+        return this.runtime;
     }
 
     public void setRuntime(Integer runtime) {
@@ -89,7 +89,7 @@ public class Movie {
     }
 
     public String getDirector() {
-        return director;
+        return this.director;
     }
 
     public void setDirector(String director) {

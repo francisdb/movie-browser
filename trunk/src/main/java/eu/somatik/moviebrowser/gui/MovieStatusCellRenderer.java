@@ -11,13 +11,14 @@ final class MovieStatusCellRenderer extends DefaultTableCellRenderer {
     private final Icon defaultIcon;
     private final Icon loadedIcon;
     private final Icon loadingIcon;
+    private final Icon failedIcon;
 
     public MovieStatusCellRenderer(final IconLoader iconLoader) {
         super();
         this.defaultIcon = iconLoader.loadIcon("images/16/bullet_black.png");
         this.loadedIcon = iconLoader.loadIcon("images/16/bullet_green.png");
         this.loadingIcon = iconLoader.loadIcon("images/16/bullet_orange.png");
-        //this.failedIcon = iconLoader.loadIcon("images/16/bullet_red.png");
+        this.failedIcon = iconLoader.loadIcon("images/16/bullet_red.png");
         setIcon(defaultIcon);
     }
 
@@ -38,6 +39,9 @@ final class MovieStatusCellRenderer extends DefaultTableCellRenderer {
             case LOADING:
                 setIcon(loadingIcon);
                 break;
+			case ERROR:
+				setIcon(failedIcon);
+				break;
         }
         setText(null);
         return this;

@@ -7,7 +7,7 @@ import com.flicklib.api.SubtitlesLoader;
 import com.flicklib.service.HttpSourceLoader;
 import com.flicklib.service.SourceLoader;
 import com.flicklib.service.movie.InfoFetcherFactoryImpl;
-import com.flicklib.service.movie.flixter.Flixter;
+import com.flicklib.service.movie.flixter.Flixster;
 import com.flicklib.service.movie.flixter.FlixterInfoFetcher;
 import com.flicklib.service.movie.flixter.FlixterParser;
 import com.flicklib.service.movie.google.Google;
@@ -45,13 +45,13 @@ public class FlicklibModule extends AbstractModule {
         bind(Parser.class).annotatedWith(Imdb.class).to(ImdbParser.class);
         bind(Parser.class).annotatedWith(RottenTomatoes.class).to(TomatoesParser.class);
         bind(Parser.class).annotatedWith(Google.class).to(GoogleParser.class);
-        bind(Parser.class).annotatedWith(Flixter.class).to(FlixterParser.class);
+        bind(Parser.class).annotatedWith(Flixster.class).to(FlixterParser.class);
 
         bind(MovieInfoFetcher.class).annotatedWith(Imdb.class).to(ImdbInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(MovieWeb.class).to(MovieWebInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(RottenTomatoes.class).to(TomatoesInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(Google.class).to(GoogleInfoFetcher.class);
-        bind(MovieInfoFetcher.class).annotatedWith(Flixter.class).to(FlixterInfoFetcher.class);
+        bind(MovieInfoFetcher.class).annotatedWith(Flixster.class).to(FlixterInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(Omdb.class).to(OmdbFetcher.class);
     }
 }

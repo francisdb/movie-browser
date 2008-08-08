@@ -5,33 +5,33 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MoviePage;
-import com.flicklib.domain.MovieService;
 import java.awt.Component;
 import java.awt.Desktop;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
-import javax.swing.ImageIcon;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.io.IOException;
-import java.lang.Exception;
 
-
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.service.MovieFinder;
-import com.flicklib.service.movie.imdb.ImdbSearch;
-import java.io.File;
-import javax.swing.DefaultListCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.domain.MoviePage;
+import com.flicklib.domain.MovieService;
+import com.flicklib.service.movie.imdb.ImdbSearch;
+
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.service.MovieFinder;
 
 /**
  *

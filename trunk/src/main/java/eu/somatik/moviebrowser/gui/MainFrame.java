@@ -68,12 +68,11 @@ public class MainFrame extends javax.swing.JFrame {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private File selectedFile;
     private final MovieBrowser browser;
-    private final ImageCache imageCache;
     private final IconLoader iconLoader;
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
     private final MovieFileFilter movieFileFilter;
-    private final InfoHandler infoHandler;
+
 
     /** 
      * Creates new form MainFrame
@@ -90,9 +89,7 @@ public class MainFrame extends javax.swing.JFrame {
             final IconLoader iconLoader,
             final Settings settings,
             final InfoHandler infoHandler) {
-        this.infoHandler = infoHandler;
         this.browser = browser;
-        this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.settings = settings;
         this.movieFileFilter = new MovieFileFilter(false);

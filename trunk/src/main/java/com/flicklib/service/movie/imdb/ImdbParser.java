@@ -1,19 +1,21 @@
 package com.flicklib.service.movie.imdb;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.EndTag;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+
 import com.flicklib.domain.Movie;
 import com.flicklib.domain.MoviePage;
+import com.flicklib.service.movie.AbstractJerichoParser;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.cache.MovieCache;
-import com.flicklib.service.movie.AbstractJerichoParser;
-import java.util.Iterator;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *

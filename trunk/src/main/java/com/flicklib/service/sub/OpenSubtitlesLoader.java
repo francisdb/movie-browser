@@ -49,7 +49,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
         if (title.contains("(results)")) {
             //first check if the results page contains no results. 
             List<?> divElements = jerichoSource.findAllElements(HTMLElementName.DIV);
-            Iterator j = divElements.iterator();
+            Iterator<?> j = divElements.iterator();
             while(j.hasNext() && carryOn==1) {
                 Element divElement  = (Element) j.next();
                 if(divElement.getTextExtractor().toString().contains("No results found")) {
@@ -79,8 +79,7 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
                 //Get links for other pages.
                 List<String> pages = new ArrayList<String>();
                 pages.addAll(getPageLinks(jerichoSource));
-                Iterator k;
-                k = pages.iterator();
+                Iterator<?> k = pages.iterator();
                 while(k.hasNext()) {
                     String link = (String) k.next();
                     source = sourceLoader.load(SITE + link);

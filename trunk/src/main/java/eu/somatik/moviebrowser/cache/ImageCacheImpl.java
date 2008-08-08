@@ -6,15 +6,14 @@
  */
 package eu.somatik.moviebrowser.cache;
 
-import com.flicklib.domain.MovieService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.config.Settings;
 import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -22,15 +21,17 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 
-import eu.somatik.moviebrowser.domain.StorableMovie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.flicklib.domain.MovieService;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.InfoHandler;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
