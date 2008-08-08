@@ -9,7 +9,6 @@ import eu.somatik.moviebrowser.*;
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -29,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter.Entry;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
@@ -38,32 +36,26 @@ import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.MovieStatus;
 import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.SwingTools;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import javax.swing.table.TableModel;
-import javax.swing.RowFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,10 +112,10 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void setColumnWidths() {
-        movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new StatusCellRenderer(iconLoader));
+        movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new MovieStatusCellRenderer(iconLoader));
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
         movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setPreferredWidth(150);
-        movieTable.getColumn(MovieInfoTableModel.SCORE_COLUMN_NAME).setCellRenderer(new ScoreColorRenderer());
+        movieTable.getColumn(MovieInfoTableModel.SCORE_COLUMN_NAME).setCellRenderer(new MovieScoreCellRenderer());
     }
 
     private void loadLookAndFeels() {
@@ -759,74 +751,6 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
-    }
-    
-    private static final class ScoreColorRenderer extends DefaultTableCellRenderer{
-        
-        private final Color[] colors;
-
-        public ScoreColorRenderer() {
-            colors = new Color[100];
-            for (int i = 0; i < colors.length; i++) {
-                colors[i] = new Color(Math.min((100-i)*7, 255), Math.min(i*3, 255), 128);
-            }
-        }
-        
-        
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            Integer score = (Integer) value;
-            if(score != null){
-                
-                if(isSelected){
-                    this.setBackground(colors[score].darker());
-                }else{
-                    this.setBackground(colors[score]);
-                }
-            }
-            return this;
-        }
-    }
-    
-    private static final class StatusCellRenderer extends DefaultTableCellRenderer{
-        
-        private final Icon defaultIcon;
-        private final Icon loadedIcon;
-        private final Icon loadingIcon;
-        //private final Icon failedIcon;
-        
-        
-        public StatusCellRenderer(final IconLoader iconLoader) {
-            this.defaultIcon = iconLoader.loadIcon("images/16/bullet_black.png");
-            this.loadedIcon = iconLoader.loadIcon("images/16/bullet_green.png");
-            this.loadingIcon = iconLoader.loadIcon("images/16/bullet_orange.png");
-            //this.failedIcon = iconLoader.loadIcon("images/16/bullet_red.png");
-            setIcon(defaultIcon);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            MovieStatus movieStatus = (MovieStatus) value;
-            switch(movieStatus){
-                case NEW:
-                    setIcon(defaultIcon);
-                    break;
-                case CACHED:
-                    setIcon(loadedIcon);
-                    break;
-                case LOADED:
-                    setIcon(loadedIcon);
-                    break;
-                case LOADING:
-                    setIcon(loadingIcon);
-                    break;
-            }
-            setText(null);
-            return this;
-        }
     }
 
 

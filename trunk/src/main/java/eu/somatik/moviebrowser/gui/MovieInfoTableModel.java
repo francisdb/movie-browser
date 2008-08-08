@@ -133,12 +133,11 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
 
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        final MovieInfo info = (MovieInfo) evt.getSource();
+    public void propertyChange(final PropertyChangeEvent evt) {
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
+                final MovieInfo info = (MovieInfo) evt.getSource();
                 int index = movies.indexOf(info);
                 fireTableRowsUpdated(index, index);
             }
