@@ -97,7 +97,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             updateImage(info);
         }
 
-        movieHeader.setTitle(info.getDirectory().getName());
         StorableMovie movie = info.getMovieFile().getMovie();
         if (movie == null) {
             movieHeader.setTitle("");
@@ -110,12 +109,11 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             updateButton(googleButton, null);
             updateButton(flixterButton, null);
         } else {
-
-//            if (movie.getTitle() == null) {
-//                movieHeader.setTitle(info.getDirectory().getName());
-//            } else {
-//                movieHeader.setTitle(movie.getTitle());
-//            }
+            if (movie.getTitle() == null) {
+                movieHeader.setTitle(info.getDirectory().getName());
+            } else {
+                movieHeader.setTitle(movie.getTitle());
+            }
             movieHeader.setDescription(movie.getPlot());
 
             // TODO make generified button bar

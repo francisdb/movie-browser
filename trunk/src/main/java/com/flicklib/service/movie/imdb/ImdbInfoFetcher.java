@@ -75,3 +75,79 @@ public class ImdbInfoFetcher implements MovieInfoFetcher {
         return site;
     }
 }
+
+//    /**
+    //     * Test class for the apache htpclient
+    //     */
+    //    public void httpclient(){
+    //        // initialize the POST method
+    //        GetMethod get = new GetMethod("http://www.imdb.com/Tsearch?title=idiocracy");
+    //        System.out.println(get.getQueryString());
+    //
+    //        // execute the POST
+    //        HttpClient client = new HttpClient();
+    //
+    //        try{
+    //            int status = client.executeMethod(get);
+    //            String response = get.getResponseBodyAsString();
+    //            get.releaseConnection();
+    //            System.out.println(response);
+    //        }catch(IOException ex){
+    //            ex.printStackTrace();
+    //        }
+    //    }
+    //    /**
+    //     * Runs JTidy on the source string, to produce the dest string.
+    //     */
+    //    private static String tidy(String source) {
+    //        try {
+    //            org.w3c.tidy.Tidy tidy = new org.w3c.tidy.Tidy();
+    //            tidy.setXHTML(true);
+    //            tidy.setShowWarnings(false);
+    //            tidy.setSmartIndent(true);
+    //            ByteArrayInputStream in = new ByteArrayInputStream(source.getBytes());
+    //            ByteArrayOutputStream out = new ByteArrayOutputStream();
+    //            tidy.parse(in, out);
+    //            in.close();
+    //            return out.toString();
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //            return source;
+    //        }
+    //    }
+    //    public void testSwingX() throws Exception{
+    //        Session s = new Session();
+    //        Response r = s.get("http://www.imdb.com/search");
+    //        Form form = Forms.getFormByIndex(r,1);
+    //        System.out.println("FORM "+form.getMethod() + "(" + form.getAction() + ")");
+    //        if(form != null){
+    //            form.getInput("s").setValue("tt");
+    //            form.getInput("q").setValue("idiocracy");
+    //            for(Input input:form.getInputs()){
+    //                System.out.println(input.getName()+":"+input.getValue());
+    //            }
+    //
+    //
+    //            r = Forms.submit(form,s);
+    //            System.out.println(r.getBody());
+    //        }
+    //    }
+    //    public void testDom() throws Exception{
+    //
+    //        Session s = new Session();
+    //        Response r = s.get("http://www.imdb.com/Tsearch?title=idiocracy");
+    //        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    //        String tidyHtml = tidy(r.getBody());
+    //        System.out.println(tidyHtml);
+    //        ByteArrayInputStream in = new ByteArrayInputStream(tidyHtml.getBytes());
+    //        Document doc = builder.parse(in);
+    //        in.close();
+    //
+    //        XPathFactory factory = XPathFactory.newInstance();
+    //        XPath xpath = factory.newXPath();
+    //        XPathExpression e = XPathUtils.compile("//form[2]");
+    //        Node foundNode = (Node)e.evaluate(doc, XPathConstants.NODE);
+    //        String href = xpath.evaluate("@action", foundNode);
+    //        String method = xpath.evaluate("@method", foundNode);
+    //        System.out.println("FORM "+method + "(" + href + ")");
+    //    }
