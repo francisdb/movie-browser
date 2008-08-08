@@ -38,7 +38,7 @@ public class InfoHandlerImpl implements InfoHandler {
             score += google;
             count++;
         }
-        Integer flixter = score(movie, MovieService.FLIXTER);
+        Integer flixter = score(movie, MovieService.FLIXSTER);
         if(flixter != null){
             score += flixter;
             count++;

@@ -40,6 +40,9 @@ public class FlixterParser extends AbstractJerichoParser{
             String content = extractor.toString().trim();
             if (content.equals("All Flixster")) {
                 Element next = source.findNextElement(thElement.getEnd());
+                String votes = new ElementOnlyTextExtractor(next.getContent()).toString().trim();
+                votes = votes.replaceAll("\\(", "").replaceAll("\\)", "");
+                movieSite.setVotes(Integer.valueOf(votes));
                 List<?> childs = next.getChildElements();
                 if (childs.size() > 0) {
                     Element imgElment = (Element) childs.get(0);
