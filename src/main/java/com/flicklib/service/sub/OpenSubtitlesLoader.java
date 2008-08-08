@@ -30,6 +30,10 @@ public class OpenSubtitlesLoader implements SubtitlesLoader {
     private static final String SITE = "http://www.opensubtitles.org";
     private final SourceLoader sourceLoader;
 
+    /**
+     * Constructs a new OpenSubtitlesLoader
+     * @param sourceLoader
+     */
     @Inject
     public OpenSubtitlesLoader(final SourceLoader sourceLoader) {
         this.sourceLoader = sourceLoader;
