@@ -123,7 +123,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 return infoHandler.score(info, MovieService.GOOGLE);
                 //return movies.get(rowIndex).getMovieFile().getMovie().getGoogleScore();
             case 10:
-                return infoHandler.score(info, MovieService.FLIXTER);
+                return infoHandler.score(info, MovieService.FLIXSTER);
                 //return movies.get(rowIndex).getMovieFile().getMovie().getFlixterScore();
             default:
                 assert false : "Should never come here";

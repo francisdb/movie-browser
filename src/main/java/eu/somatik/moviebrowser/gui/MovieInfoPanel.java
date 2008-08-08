@@ -122,7 +122,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             updateButton(moviewebButton, infoHandler.url(info, MovieService.MOVIEWEB));
             updateButton(omdbButton, infoHandler.url(info, MovieService.OMDB));
             updateButton(googleButton, infoHandler.url(info, MovieService.GOOGLE));
-            updateButton(flixterButton, infoHandler.url(info, MovieService.FLIXTER));
+            updateButton(flixterButton, infoHandler.url(info, MovieService.FLIXSTER));
 
             StringBuilder builder = new StringBuilder("<html>");
 
@@ -157,7 +157,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             builder.append("<strong>MovieWeb</strong> ").append(info(info, MovieService.MOVIEWEB)).append("<br/>");
             builder.append("<strong>Goolge</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
             //builder.append("<strong>OMDB</strong> ").append(info(info, MovieService.OMDB)).append("<br/>");
-            builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXTER)).append("<br/>");
+            builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXSTER)).append("<br/>");
             builder.append("<br/>");
             builder.append(movie.getPlot());
             builder.append("</html>");

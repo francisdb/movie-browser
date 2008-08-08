@@ -162,7 +162,7 @@ public class MovieFinder {
                     secondaryService.submit(new MovieServiceCaller(MovieService.TOMATOES, info));
                     secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, info));
                     secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, info));
-                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXTER, info));
+                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXSTER, info));
                     info.setStatus(MovieStatus.LOADED);
                 } else {
                     List<StorableMovieSite> sites = movieCache.loadSites(info.getMovieFile().getMovie());
@@ -188,7 +188,7 @@ public class MovieFinder {
 //                    secondaryService.submit(new MovieServiceCaller(MovieService.TOMATOES, loaded));
 //                    secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, loaded));
 //                    secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, loaded));
-//                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXTER, loaded));
+//                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXSTER, loaded));
 //                }catch(Exception ex){
 //                    LOGGER.error("Exception while loading/saving movie", ex);
 //                }

@@ -48,7 +48,7 @@ public class InfoFetcherFactoryImpl implements InfoFetcherFactory{
     public MovieInfoFetcher get(MovieService service) {
         MovieInfoFetcher fetcher = null;
         switch(service){
-            case FLIXTER:
+            case FLIXSTER:
                 fetcher = flixterInfoFetcher;
                 break;
             case GOOGLE:

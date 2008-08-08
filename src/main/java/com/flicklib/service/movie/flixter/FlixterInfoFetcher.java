@@ -40,7 +40,7 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
     public MoviePage fetch(Movie movie, String id) {
         MoviePage site = new MoviePage();
         site.setMovie(movie);
-        site.setService(MovieService.FLIXTER);
+        site.setService(MovieService.FLIXSTER);
         try {
             String source = sourceLoader.load(createFlixterSearchUrl(movie));
             Source jerichoSource = new Source(source);

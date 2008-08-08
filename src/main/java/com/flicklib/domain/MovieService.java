@@ -31,8 +31,10 @@ public enum MovieService {
     GOOGLE,
     
     /**
-     * http://www.flixter.com
+     * http://www.flixster.com
      */
-    FLIXTER
+    FLIXSTER
+
+
 
 }
