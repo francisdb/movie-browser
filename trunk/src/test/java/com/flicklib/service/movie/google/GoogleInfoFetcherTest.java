@@ -13,8 +13,6 @@ import static org.junit.Assert.*;
  */
 public class GoogleInfoFetcherTest {
 
-    public GoogleInfoFetcherTest() {
-    }
 
     /**
      * Test of fetch method, of class GoogleInfoFetcher.
