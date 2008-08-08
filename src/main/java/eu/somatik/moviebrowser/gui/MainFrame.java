@@ -564,9 +564,14 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
-            editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
-            editMovieFrame.setVisible(true);
+            if(loadProgressBar.getString().contains("All movie info laoded.")) {
+                EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
+                editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
+                editMovieFrame.setVisible(true);
+            }
+            else {
+                JOptionPane.showMessageDialog(MainFrame.this, "Editing cannot be done while movie info is being loaded. \nPlease wait till all movie info is loaded and try again.", "Loading Info", JOptionPane.WARNING_MESSAGE);
+            }
             
         }
     }
@@ -701,40 +706,44 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         @Override 
         public void actionPerformed(ActionEvent e) {
             //TODO get this out of here, this sould be somewhere in a logic class and not in the gui
-            
-            List<String> files = new ArrayList<String>();
-            MovieInfo info = getSelectedMovie(); 
-            File dir = info.getDirectory();
-            String alternateSearchKey = getSelectedMovie().getMovieFile().getMovie().getTitle();
-            File child;
-            if(!dir.isFile()) {
-                for(File file:dir.listFiles()) {
-                    if(file.isDirectory()) {
-                        child = file;
-                        for(File file2:child.listFiles()) {
-                            if(file2.isFile()) {
-                                if(!file2.getName().contains("sample")) {
-                                    if(movieFileFilter.accept(file2)) {
-                                        files.add(file2.getName());
+            if(loadProgressBar.getString().contains("All movie info loaded.")) {
+                List<String> files = new ArrayList<String>();
+                MovieInfo info = getSelectedMovie(); 
+                File dir = info.getDirectory();
+                String alternateSearchKey = getSelectedMovie().getMovieFile().getMovie().getTitle();
+                File child;
+                if(!dir.isFile()) {
+                    for(File file:dir.listFiles()) {
+                        if(file.isDirectory()) {
+                            child = file;
+                            for(File file2:child.listFiles()) {
+                                if(file2.isFile()) {
+                                    if(!file2.getName().contains("sample")) {
+                                        if(movieFileFilter.accept(file2)) {
+                                            files.add(file2.getName());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            if(file.isFile()) {
+                                if(!file.getName().contains("sample")) {
+                                    if(movieFileFilter.accept(file)) {
+                                        files.add(file.getName());
                                     }
                                 }
                             }
                         }
                     }
-                    else {
-                        if(file.isFile()) {
-                            if(!file.getName().contains("sample")) {
-                                if(movieFileFilter.accept(file)) {
-                                    files.add(file.getName());
-                                }
-                            }
-                        }
-                    }
                 }
-            }
 
-            files.add(alternateSearchKey);
-            openSubCrawler(files, info.getMovieFile().getMovie());
+                files.add(alternateSearchKey);
+                openSubCrawler(files, info.getMovieFile().getMovie());
+            }
+            else {
+                JOptionPane.showMessageDialog(MainFrame.this, "Subtitle crawling cannot be done while movie info is being loaded. \nPlease try again after all movie info is loaded.", "Loading Info", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
     
