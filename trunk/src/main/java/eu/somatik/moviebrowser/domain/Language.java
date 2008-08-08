@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package com.flicklib.domain;
+package eu.somatik.moviebrowser.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

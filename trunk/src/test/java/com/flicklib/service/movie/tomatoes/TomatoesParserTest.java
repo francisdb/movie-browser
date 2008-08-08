@@ -1,8 +1,7 @@
 package com.flicklib.service.movie.tomatoes;
 
-import com.flicklib.service.movie.tomatoes.TomatoesParser;
 import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -23,11 +22,11 @@ public class TomatoesParserTest {
     @Test
     public void testParse() throws Exception {
         String source = new FileSourceLoader().load("tomatoes/Pulp Fiction Movie Reviews, Pictures - Rotten Tomatoes.html");
-        MovieSite site = new MovieSite();
+        MoviePage site = new MoviePage();
         site.setMovie(new Movie());
         TomatoesParser instance = new TomatoesParser();
         instance.parse(source, site);
-        assertEquals(Integer.valueOf(96), site.getMovie().getTomatoScore());
+        assertEquals(Integer.valueOf(96), site.getScore());
     }
 
 }

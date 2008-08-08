@@ -5,8 +5,7 @@
 
 package eu.somatik.moviebrowser.cache;
 
-import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.io.File;
 
 /**
@@ -21,12 +20,12 @@ public interface ImageCache {
      */
     void loadImg(MovieInfo info);
 
-    void removeImgFromCache(Movie movie);
+    void removeImgFromCache(MovieInfo movie);
 
     /**
      * @param movie
      * @return the saved file
      */
-    File saveImgToCache(Movie movie);
+    File saveImgToCache(MovieInfo movie);
 
 }

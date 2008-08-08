@@ -2,8 +2,10 @@ package com.flicklib.service.movie.omdb;
 
 import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.domain.Movie;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -30,11 +32,10 @@ public class OmdbFetcher implements MovieInfoFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieInfoFetcher.class);
 
     @Override
-    public MovieSite fetch(Movie movie) {
-        MovieSite site = new MovieSite();
+    public MoviePage fetch(Movie movie, String id) {
+        MoviePage site = new MoviePage();
         site.setMovie(movie);
         site.setService(MovieService.MOVIEWEB);
-        site.setTime(new Date());
         // Outputting the content of a Web page
         // Prepare the request
         Request request = new Request(Method.GET, "http://www.omdb-beta.org/search/movies?query=test");
@@ -52,6 +53,7 @@ public class OmdbFetcher implements MovieInfoFetcher {
             LOGGER.info(response.getStatus().toString());
             Representation entity = response.getEntity();
             entity.write(System.out);
+            // todo set score....
         } catch (IOException ex) {
             LOGGER.error("Could not load rest",ex);
         }

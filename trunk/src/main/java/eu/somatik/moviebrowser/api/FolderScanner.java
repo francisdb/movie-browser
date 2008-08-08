@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.somatik.moviebrowser.api;
 
-import com.flicklib.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.util.List;
 import java.util.Set;
 

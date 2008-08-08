@@ -1,8 +1,9 @@
 package com.flicklib.service.movie.imdb;
 
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.movie.imdb.ImdbSearch;
 import com.flicklib.service.movie.imdb.ImdbParser;
-import com.flicklib.domain.Movie;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 import com.flicklib.service.HttpSourceLoader;
 import java.util.List;
 import org.junit.Ignore;
@@ -26,14 +27,14 @@ public class ImdbSearchTest {
     @Test
     @Ignore
     public void testGetResults_String() throws Exception {
-        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser(null));
-        List<Movie> result = instance.getResults("Pulp Fiction");
+        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser());
+        List<MoviePage> result = instance.getResults("Pulp Fiction");
         assertTrue(result.size() > 0);
-        assertEquals("Pulp Fiction", result.get(0).getTitle());
+        assertEquals("Pulp Fiction", result.get(0).getMovie().getTitle());
         
         result = instance.getResults("Die Hard 4");
         assertTrue(result.size() > 0);
-        assertEquals("Flive Free or Die Hard", result.get(0).getTitle());
+        assertEquals("Live Free or Die Hard", result.get(0).getMovie().getTitle());
     }
 
     /**
@@ -42,7 +43,7 @@ public class ImdbSearchTest {
     @Test
     public void testGenerateImdbTitleSearchUrl() {
         String title = "Pulp Fiction";
-        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser(null));
+        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser());
         String expResult = "http://www.imdb.com/find?q=Pulp+Fiction;s=tt";
         String result = instance.generateImdbTitleSearchUrl(title);
         assertEquals(expResult, result);

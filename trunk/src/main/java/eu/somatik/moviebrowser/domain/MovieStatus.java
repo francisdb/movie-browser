@@ -22,12 +22,7 @@ public enum MovieStatus {
     /**
      * Loading imdb data
      */
-    LOADING_IMDB, 
-    
-    /**
-     * Loading tomatoes data
-     */
-    LOADING_TOMATOES, 
+    LOADING, 
     
     /**
      * Loading completed
@@ -37,10 +32,5 @@ public enum MovieStatus {
     /**
      * Loaded form cache
      */
-    CACHED,
-    
-    /**
-     * Loading img
-     */
-    LOADING_IMG
+    CACHED
 }

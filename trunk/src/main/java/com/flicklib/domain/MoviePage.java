@@ -1,47 +1,34 @@
-package com.flicklib.domain;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
-import com.flicklib.domain.MovieService;
-import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+package com.flicklib.domain;
 
 /**
  *
  * @author francisdb
  */
-@Entity
-public class MovieSite {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class MoviePage {
     
-    @ManyToOne
     private Movie movie;
+    
+    private String idForSite;
     
     private MovieService service;
     
-    @Column(unique=true)
     private String url;
     
+    /**
+     * Score from 0 - 100
+     */
     private Integer score;
     
     private Integer votes;
     
-    private Date time;
+    private String imgUrl;
 
-    public MovieSite() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    public MoviePage() {
     }
 
     public Movie getMovie() {
@@ -68,14 +55,6 @@ public class MovieSite {
         this.service = service;
     }
 
-    public Date getTime() {
-        return (Date) time.clone();
-    }
-
-    public void setTime(Date time) {
-        this.time = (Date) time.clone();
-    }
-
     public String getUrl() {
         return url;
     }
@@ -91,7 +70,24 @@ public class MovieSite {
     public void setVotes(Integer votes) {
         this.votes = votes;
     }
+
+    public String getIdForSite() {
+        return idForSite;
+    }
+
+    public void setIdForSite(String idForSite) {
+        this.idForSite = idForSite;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
     
     
+
 
 }

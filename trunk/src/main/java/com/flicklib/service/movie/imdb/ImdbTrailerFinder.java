@@ -1,7 +1,6 @@
 package com.flicklib.service.movie.imdb;
 
 import com.flicklib.api.TrailerFinder;
-import com.flicklib.domain.Movie;
 
 /**
  *
@@ -10,8 +9,8 @@ import com.flicklib.domain.Movie;
 public class ImdbTrailerFinder implements TrailerFinder{
 
     @Override
-    public String findTrailerUrl(Movie movie) {
-        String url = ImdbUrlGenerator.generateImdbUrl(movie) + "trailers";
+    public String findTrailerUrl(String title, String localId) {
+        String url = ImdbUrlGenerator.generateImdbUrl(localId) + "trailers";
         return url;
     }
 

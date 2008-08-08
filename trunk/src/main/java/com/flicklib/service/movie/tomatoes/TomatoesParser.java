@@ -3,9 +3,8 @@ package com.flicklib.service.movie.tomatoes;
 import au.id.jericho.lib.html.Element;
 import au.id.jericho.lib.html.HTMLElementName;
 import au.id.jericho.lib.html.Source;
+import com.flicklib.domain.MoviePage;
 import com.google.inject.Singleton;
-import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
 import com.flicklib.service.movie.AbstractJerichoParser;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +21,7 @@ public class TomatoesParser extends AbstractJerichoParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesParser.class);
 
     @Override
-    public void parse(Source source, MovieSite movieSite) {
+    public void parse(Source source, MoviePage movieSite) {
         List<?> divElements = source.findAllElements(HTMLElementName.DIV);
         for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
             Element divElement = (Element) i.next();
@@ -33,7 +32,6 @@ public class TomatoesParser extends AbstractJerichoParser {
                     userRating = userRating.replace("%", "");
                     try {
                         int score = Integer.valueOf(userRating);
-                        movieSite.getMovie().setTomatoScore(score);
                         movieSite.setScore(score);
                     } catch (NumberFormatException ex) {
                         LOGGER.error("Could not parse " + userRating + " to Integer", ex);

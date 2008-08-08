@@ -6,13 +6,14 @@
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
  */
-
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieInfo;
+import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 
-import eu.somatik.moviebrowser.service.ScoreCalculator;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.service.InfoHandler;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -25,14 +26,12 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author francisdb
  */
-public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener{
-    
-    private final ScoreCalculator calculator;
-    
+public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener {
+
+    private final InfoHandler infoHandler;
     public static final String MOVIE_COLUMN_NAME = "Movie";
     public static final String STATUS_COLUMN_NAME = "?";
     public static final String SCORE_COLUMN_NAME = "Score";
-    
     /**
      * Movie column number
      */
@@ -51,26 +50,26 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Flixter"
     };
     private static final Class<?> COL_CLASSES[] = {
-        MovieStatus.class, 
-        Object.class, 
+        MovieStatus.class,
+        Object.class,
         Integer.class,
-        Date.class, 
-        Integer.class, 
-        Integer.class, 
-        Integer.class, 
-        Integer.class, 
+        Date.class,
+        Integer.class,
+        Integer.class,
+        Integer.class,
+        Integer.class,
         Integer.class,
         Integer.class,
         Integer.class
     };
-    
     private List<MovieInfo> movies;
-    
+
     /** 
      * Creates a new instance of MovieInfoTableModel 
+     * @param infoHandler 
      */
-    public MovieInfoTableModel() {
-        this.calculator = new ScoreCalculator();
+    public MovieInfoTableModel(final InfoHandler infoHandler) {
+        this.infoHandler = infoHandler;
         this.movies = new ArrayList<MovieInfo>();
     }
 
@@ -96,74 +95,81 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        switch(columnIndex){
+        MovieInfo info = movies.get(rowIndex);
+        StorableMovie movie = info.getMovieFile().getMovie();
+        switch (columnIndex) {
             case 0:
-                return movies.get(rowIndex).getStatus();
+                return info.getStatus();
             case 1:
-                return movies.get(rowIndex);
+                return info;
             case 2:
-                return movies.get(rowIndex).getMovie().getYear();
+                return movie == null?null:movie.getYear();
             case 3:
-                return new Date(movies.get(rowIndex).getDirectory().lastModified());
+                return new Date(info.getDirectory().lastModified());
             case 4:
-                return movies.get(rowIndex).getMovie().getRuntime();
+                return movie == null?null:movie.getRuntime();
             case 5:
-                return calculator.calculate(movies.get(rowIndex).getMovie());
+                return infoHandler.calculate(info);
             case 6:
-                return movies.get(rowIndex).getMovie().getImdbScore();
+                return infoHandler.score(info, MovieService.IMDB);
+                //return movies.get(rowIndex).getMovie().getImdbScore();
             case 7:
-                return movies.get(rowIndex).getMovie().getTomatoScore();
+                return infoHandler.score(info, MovieService.TOMATOES);
+                //return movies.get(rowIndex).getMovieFile().getMovie().getTomatoScore();
             case 8:
-                return movies.get(rowIndex).getMovie().getMovieWebScore();
+                return infoHandler.score(info, MovieService.MOVIEWEB);
+                //return movies.get(rowIndex).getMovieFile().getMovie().getMovieWebScore();
             case 9:
-                return movies.get(rowIndex).getMovie().getGoogleScore();
+                return infoHandler.score(info, MovieService.GOOGLE);
+                //return movies.get(rowIndex).getMovieFile().getMovie().getGoogleScore();
             case 10:
-                return movies.get(rowIndex).getMovie().getFlixterScore();
+                return infoHandler.score(info, MovieService.FLIXTER);
+                //return movies.get(rowIndex).getMovieFile().getMovie().getFlixterScore();
             default:
-                assert false: "Should never come here";
+                assert false : "Should never come here";
                 return null;
         }
     }
 
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final MovieInfo info = (MovieInfo)evt.getSource();
+        final MovieInfo info = (MovieInfo) evt.getSource();
         SwingUtilities.invokeLater(new Runnable() {
+
             @Override
             public void run() {
                 int index = movies.indexOf(info);
-                fireTableRowsUpdated(index,index);
+                fireTableRowsUpdated(index, index);
             }
         });
     }
 
     @Override
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-    
+
     /**
      * Adds all movies
      * @param items 
      */
-    public void addAll(List<MovieInfo> items){
-        if(items.size() != 0){
+    public void addAll(List<MovieInfo> items) {
+        if (items.size() != 0) {
             int firstRow = movies.size();
             movies.addAll(items);
-            for(MovieInfo movie:items){
+            for (MovieInfo movie : items) {
                 movie.addPropertyChangeListener(this);
             }
-            this.fireTableRowsInserted(firstRow, firstRow+items.size()-1);
+            this.fireTableRowsInserted(firstRow, firstRow + items.size() - 1);
         }
     }
-    
+
     /**
      * Clears the movie list
      */
-    public void clear(){
+    public void clear() {
         movies.clear();
         this.fireTableDataChanged();
     }
-
-    
 }

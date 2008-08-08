@@ -1,8 +1,7 @@
 package com.flicklib.service.movie.movieweb;
 
-import com.flicklib.service.movie.movieweb.MovieWebParser;
 import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -23,11 +22,11 @@ public class MovieWebParserTest {
     @Test
     public void testParse() throws Exception {
         String source = new FileSourceLoader().load("movieweb/pulp_fiction_summary.php.html");
-        MovieSite site = new MovieSite();
+        MoviePage site = new MoviePage();
         site.setMovie(new Movie());
         MovieWebParser instance = new MovieWebParser();
         instance.parse(source, site);
-        assertEquals(Integer.valueOf(100), site.getMovie().getMovieWebScore());
+        assertEquals(Integer.valueOf(100), site.getScore());
     }
 
 

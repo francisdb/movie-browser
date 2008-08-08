@@ -1,8 +1,7 @@
 package com.flicklib.service.movie.google;
 
-import com.flicklib.service.movie.google.GoogleParser;
 import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieSite;
+import com.flicklib.domain.MoviePage;
 import com.flicklib.service.FileSourceLoader;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -20,11 +19,11 @@ public class GoogleParserTest {
     @Test
     public void testParse() throws Exception {
         String source = new FileSourceLoader().load("google/reviews.html");
-        MovieSite site = new MovieSite();
+        MoviePage site = new MoviePage();
         site.setMovie(new Movie());
         GoogleParser instance = new GoogleParser();
         instance.parse(source, site);
-        assertEquals(Integer.valueOf(78), site.getMovie().getGoogleScore());
+        assertEquals(Integer.valueOf(78), site.getScore());
     }
 
 }

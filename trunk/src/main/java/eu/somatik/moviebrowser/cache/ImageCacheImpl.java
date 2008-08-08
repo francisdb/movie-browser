@@ -6,6 +6,7 @@
  */
 package eu.somatik.moviebrowser.cache;
 
+import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.config.Settings;
@@ -21,9 +22,10 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 
-import com.flicklib.domain.Movie;
-import com.flicklib.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.service.InfoHandler;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
@@ -38,31 +40,38 @@ import org.slf4j.LoggerFactory;
 public class ImageCacheImpl implements ImageCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageCacheImpl.class);
-
     private final Settings settings;
-    
+    private final InfoHandler infoHandler;
+
     @Inject
-    public ImageCacheImpl(final Settings settings) {
+    public ImageCacheImpl(final Settings settings, final InfoHandler infoHandler) {
         this.settings = settings;
+        this.infoHandler = infoHandler;
         // TODO refactor to be a real image cache, cached images should be saved inhere and not in the MovieInfo 
     }
 
+    
+    private String imageUrl(MovieInfo info){
+        return infoHandler.imgUrl(info, MovieService.IMDB);
+    }
+    
     /**
      *
      * @param info
      */
     @Override
     public void loadImg(MovieInfo info) {
-        String imgUrl = info.getMovie().getImgUrl();
+        StorableMovie movie = info.getMovieFile().getMovie();
+        // TODO might accept images form other services
+        String imgUrl = imageUrl(info);
         if (imgUrl != null) {
-            info.setStatus(MovieStatus.LOADING_IMG);
             Image image = null;
             try {
                 File file = getCacheFile(imgUrl);
                 if (file.exists()) {
                     image = ImageIO.read(file);
-                }else{
-                    LOGGER.debug("Image not available in local cache: "+imgUrl);
+                } else {
+                    LOGGER.debug("Image not available in local cache: " + imgUrl);
                 }
                 info.setImage(image);
             } catch (IOException ex) {
@@ -87,9 +96,10 @@ public class ImageCacheImpl implements ImageCache {
     }
 
     @Override
-    public void removeImgFromCache(Movie movie) {
-        if (movie.getImgUrl() != null) {
-            File file = new File(movie.getImgUrl());
+    public void removeImgFromCache(MovieInfo info) {
+        String url = imageUrl(info);
+        if (url != null) {
+            File file = new File(url);
             if (file.exists()) {
                 file.delete();
             }
@@ -97,16 +107,17 @@ public class ImageCacheImpl implements ImageCache {
     }
 
     /**
-     * @param movie 
+     * @param info 
      * @return the saved file
      */
     @Override
-    public File saveImgToCache(Movie movie) {
+    public File saveImgToCache(MovieInfo info) {
         File cached = null;
-        if(movie.getImgUrl() != null){
+        String url = imageUrl(info);
+        if (url != null) {
             InputStream is = null;
             try {
-                URL imgUrl = new URL(movie.getImgUrl());
+                URL imgUrl = new URL(url);
                 URLConnection urlC = imgUrl.openConnection();
                 // Copy resource to local file, use remote file
                 // if no local file name specified
@@ -114,13 +125,13 @@ public class ImageCacheImpl implements ImageCache {
                 // Print info about resource
                 Date date = new Date(urlC.getLastModified());
                 LOGGER.info("Saving resource (type: " + urlC.getContentType() + ", modified on: " + date + ")...");
-                cached = getCacheFile(movie.getImgUrl());
+                cached = getCacheFile(url);
                 writeFile(is, cached);
                 is.close();
             } catch (MalformedURLException ex) {
-                LOGGER.error("Could not save image '"+movie.getImgUrl()+"'", ex);
+                LOGGER.error("Could not save image '" + url + "'", ex);
             } catch (IOException ex) {
-                LOGGER.error("Could not save image '"+movie.getImgUrl()+"'", ex);
+                LOGGER.error("Could not save image '" + url + "'", ex);
             } finally {
                 if (is != null) {
                     try {

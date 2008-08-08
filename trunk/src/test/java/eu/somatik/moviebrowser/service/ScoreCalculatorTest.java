@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eu.somatik.moviebrowser.service;
 
-import com.flicklib.domain.Movie;
+import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -16,22 +13,34 @@ import static org.junit.Assert.*;
 public class ScoreCalculatorTest {
 
     /**
-     * Test of calculate method, of class ScoreCalculator.
+     * Test of calculate method, of class InfoHandlerImpl.
      */
     @Test
     public void testCalculate() {
-        Movie movie = new Movie();
-        ScoreCalculator instance = new ScoreCalculator();
+        MovieInfo movie = new MovieInfo(null);
+        InfoHandlerImpl instance = new InfoHandlerImpl();
         assertNull("Result should be null when no data", instance.calculate(movie));
         
-        movie.setImdbScore(32);
+        StorableMovieSite site = new StorableMovieSite();
+        site.setService(MovieService.IMDB);
+        site.setScore(32);
+        movie.addSite(site);
         assertEquals(Integer.valueOf(32), instance.calculate(movie));
         
-        movie.setTomatoScore(32);
-        movie.setMovieWebScore(32);
+        site = new StorableMovieSite();
+        site.setService(MovieService.TOMATOES);
+        site.setScore(32);
+        movie.addSite(site);
+        site = new StorableMovieSite();
+        site.setService(MovieService.MOVIEWEB);
+        site.setScore(32);
+        movie.addSite(site);
         assertEquals(Integer.valueOf(32), instance.calculate(movie));
         
-        movie.setTomatoScore(80);
+        site = new StorableMovieSite();
+        site.setService(MovieService.TOMATOES);
+        site.setScore(80);
+        movie.addSite(site);
         assertEquals(Integer.valueOf((32*3+80)/4), instance.calculate(movie));
         
     }

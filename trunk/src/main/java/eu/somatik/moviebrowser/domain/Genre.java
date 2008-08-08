@@ -5,7 +5,7 @@
  *
  */
 
-package com.flicklib.domain;
+package eu.somatik.moviebrowser.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
