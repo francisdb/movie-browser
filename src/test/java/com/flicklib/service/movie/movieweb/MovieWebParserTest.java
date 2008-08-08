@@ -11,10 +11,7 @@ import static org.junit.Assert.*;
  * @author francisdb
  */
 public class MovieWebParserTest {
-
-    public MovieWebParserTest() {
-    }
-
+	
     /**
      * Test of parse method, of class MovieWebParser.
      * @throws Exception 

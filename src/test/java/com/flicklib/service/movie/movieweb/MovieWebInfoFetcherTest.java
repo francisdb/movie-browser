@@ -13,9 +13,6 @@ import static org.junit.Assert.*;
  */
 public class MovieWebInfoFetcherTest {
 
-    public MovieWebInfoFetcherTest() {
-    }
-
 
     /**
      * Test of load method, of class MovieWebInfoFetcher.

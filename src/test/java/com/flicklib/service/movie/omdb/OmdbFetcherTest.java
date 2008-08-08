@@ -10,11 +10,7 @@ import static org.junit.Assert.*;
  * @author francisdb
  */
 public class OmdbFetcherTest {
-
-    public OmdbFetcherTest() {
-    }
-
-
+	
     /**
      * Test of fetch method, of class OmdbFetcher.
      */
