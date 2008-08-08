@@ -1,14 +1,17 @@
 package com.flicklib.service.sub;
 
-import com.flicklib.api.SubtitlesLoader;
-import com.flicklib.domain.Subtitle;
-import com.flicklib.service.HttpSourceLoader;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Set;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.junit.Assert.*;
+
+import com.flicklib.api.SubtitlesLoader;
+import com.flicklib.domain.Subtitle;
+import com.flicklib.service.HttpSourceLoader;
 
 /**
  *
@@ -22,7 +25,7 @@ public class OpenSubtitlesLoaderTest {
      * @throws Exception 
      */
     @Test
-    //@Ignore
+    @Ignore
     public void testSearch() throws Exception {
         SubtitlesLoader loader = new OpenSubtitlesLoader(new HttpSourceLoader());
         Set<Subtitle> result = loader.search("The Science of Sleep", null);
