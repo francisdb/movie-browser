@@ -14,6 +14,9 @@ public class ImdbParserTest {
 
     /**
      * Test of parse method, of class ImdbParser.
+     * 
+     * TODO test "A Couple of White Chicks at the Hairdresser" -> less than 5 votes as score
+     * 
      * @throws Exception 
      */
     @Test

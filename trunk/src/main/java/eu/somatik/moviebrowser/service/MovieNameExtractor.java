@@ -31,7 +31,9 @@ public class MovieNameExtractor {
         ".stv",
         ".dutch",
         ".limited",
-        ".nfofix"    //".ws"        
+        ".nfofix",
+        ".subpack",
+        ".subfix"//".ws"        
     };
     private final MovieFileFilter filter;
 
