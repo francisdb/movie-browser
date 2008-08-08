@@ -83,27 +83,29 @@ public class ImdbParser extends AbstractJerichoParser {
             if (bElement.getContent().getTextExtractor().toString().contains("User Rating:")) {
                 Element next = source.findNextElement(bElement.getEndTag().getEnd());
                 String rating = next.getContent().getTextExtractor().toString();
-                // to percentage
-                rating = rating.replace("/10", "");
-                try {
-                    int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
-                    movieSite.setScore(theScore);
-                } catch (NumberFormatException ex) {
-                    LOGGER.error("Could not parse " + rating + " to Float", ex);
+                // skip (awaiting 5 votes)
+                if(!rating.contains("awaiting")){
+                    // to percentage
+                    rating = rating.replace("/10", "");
+                    try {
+                        int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
+                        movieSite.setScore(theScore);
+                    } catch (NumberFormatException ex) {
+                        LOGGER.error("Could not parse rating '" + rating + "' to Float", ex);
+                    }
+                    next = source.findNextElement(next.getEndTag().getEnd());
+                    String votes = next.getContent().getTextExtractor().toString();
+
+                    votes = votes.replaceAll("\\(", "");
+                    votes = votes.replaceAll("votes\\)", "");
+                    votes = votes.replaceAll(",", "");
+                    votes = votes.trim();
+                    try{
+                        movieSite.setVotes(Integer.valueOf(votes));
+                    }catch(NumberFormatException ex){
+                        LOGGER.error("Could not parse the votes '"+votes+"' to Integer", ex);
+                    }
                 }
-                next = source.findNextElement(next.getEndTag().getEnd());
-                String votes = next.getContent().getTextExtractor().toString();
-                votes = votes.replaceAll("\\(", "");
-                votes = votes.replaceAll("votes\\)", "");
-                votes = votes.replaceAll(",", "");
-                votes = votes.trim();
-                try{
-                    movieSite.setVotes(Integer.valueOf(votes));
-                }catch(NumberFormatException ex){
-                    LOGGER.error("Could not parse the votes: "+votes, ex);
-                }
-                // TODO parse votes to int!
-                // site.setVotes(votes);
             }
         }
 
