@@ -1,13 +1,14 @@
 package com.flicklib.service;
 
-import com.flicklib.tools.IOTools;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.tools.IOTools;
 
 /**
  * Loads a http request

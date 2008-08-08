@@ -1,27 +1,24 @@
 package com.flicklib.service.movie.omdb;
 
-import com.flicklib.api.MovieInfoFetcher;
-import com.flicklib.domain.Movie;
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MoviePage;
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 import org.restlet.Client;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Protocol;
 import org.restlet.data.Request;
+import org.restlet.data.Response;
+import org.restlet.resource.Representation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.restlet.data.Response;
-import org.restlet.resource.Representation;
+import com.flicklib.api.MovieInfoFetcher;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MoviePage;
+import com.flicklib.domain.MovieService;
 
 /**
  *

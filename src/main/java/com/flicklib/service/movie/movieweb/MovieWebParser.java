@@ -30,7 +30,7 @@ public class MovieWebParser extends AbstractJerichoParser{
             TextExtractor extractor = new ElementOnlyTextExtractor(divElement.getContent());
             String content = extractor.toString();
             if (content.startsWith("MovieWeb Users:")) {
-                List childs = divElement.getChildElements();
+                List<?> childs = divElement.getChildElements();
                 if (childs.size() > 0) {
                     String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString().trim();
                     if (score.length() > 0) {
@@ -44,7 +44,7 @@ public class MovieWebParser extends AbstractJerichoParser{
                     }
                 }
             } else if (content.startsWith("The Critics:")) {
-                List childs = divElement.getChildElements();
+                List<?> childs = divElement.getChildElements();
                 if (childs.size() > 0) {
                     String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString();
                     LOGGER.debug("Critics score: " + score);
