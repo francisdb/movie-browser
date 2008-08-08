@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.flicklib.service.movie.google;
 
 import au.id.jericho.lib.html.Element;
@@ -13,14 +8,11 @@ import com.google.inject.Singleton;
 import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.api.Parser;
 import com.flicklib.domain.Movie;
-import eu.somatik.moviebrowser.domain.StorableMovie;
 import com.flicklib.domain.MovieService;
 import com.flicklib.domain.MoviePage;
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import com.flicklib.service.HttpSourceLoader;
 import com.flicklib.tools.Param;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
