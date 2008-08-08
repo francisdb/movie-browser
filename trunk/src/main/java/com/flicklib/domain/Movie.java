@@ -1,6 +1,7 @@
 package com.flicklib.domain;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,6 +23,9 @@ public class Movie {
     
     private Set<String> genres;
     private Set<String> languages;
+    
+    // TODO add cast
+    // private List<String> cast;
 
     public Movie() {
         this.genres = new HashSet<String>();
