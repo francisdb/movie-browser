@@ -285,6 +285,7 @@ public class MainFrame extends javax.swing.JFrame {
         filterLabel.setText("Filter:");
 
         filterText.setFont(filterText.getFont().deriveFont(filterText.getFont().getSize()-2f));
+        filterText.setToolTipText("Seperate filter words with a space (ex: action adventure thriller)");
         filterText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 filterTextActionPerformed(evt);
@@ -526,8 +527,6 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
             // Read bytes into string
             byte[] buffer = new byte[4096];
-            int bytes_read;
-
             while(true) {
                 int read = in.read(buffer);
                 

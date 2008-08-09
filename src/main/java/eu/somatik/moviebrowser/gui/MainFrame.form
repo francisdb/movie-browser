@@ -199,6 +199,7 @@
             <Font component="filterText" property="font" relativeSize="true" size="-2"/>
           </FontInfo>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Seperate filter words with a space (ex: action adventure thriller)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="filterTextActionPerformed"/>

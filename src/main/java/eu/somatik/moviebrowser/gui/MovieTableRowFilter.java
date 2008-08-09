@@ -34,10 +34,17 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
         } else if (movie.getYear() != null && movie.getYear().toString().contains(filterText)) {
             include = true;
         } else {
+            System.out.println(info.getMovieFile().getMovie().getTitle() + ": " + info.getMovieFile().getMovie().getGenres());
             for (Genre genre : info.getMovieFile().getMovie().getGenres()) {
-                if (genre.getName().toLowerCase().contains(filterText)) {
-                    include = true;
-                }
+                    if (genre.getName().toLowerCase().contains(filterText)) {
+                        include = true;
+                    }
+                    String[] split = filterText.split(" ");
+                    for(int i=0; i<split.length; i++) {
+                        if(genre.getName().toLowerCase().contains(split[i])) {
+                            include = true;
+                        }
+                    }   
             }
         }
         return include;
