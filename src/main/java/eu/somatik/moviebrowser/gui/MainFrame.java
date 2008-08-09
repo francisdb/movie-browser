@@ -541,6 +541,9 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             if(latestVersion.equals(version)) {
                 JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
             }
+            else if(version.contains("SNAPSHOT")) {
+                JOptionPane.showMessageDialog(MainFrame.this, "You have a development version of Movie Browser, checking for updates isn't supported. The latest stable release available is " + latestVersion + ". ", "Updates", JOptionPane.INFORMATION_MESSAGE);
+            }
             else {
                 JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\n You are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
             }
