@@ -59,6 +59,14 @@ import javax.swing.table.TableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//Check Update Imports Should remove after duplicate code reomved. 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Properties;
 /**
  *
  * @author  francisdb
@@ -72,7 +80,6 @@ public class MainFrame extends javax.swing.JFrame {
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
     private final MovieFileFilter movieFileFilter;
-
 
     /** 
      * Creates new form MainFrame
@@ -227,6 +234,7 @@ public class MainFrame extends javax.swing.JFrame {
         clearCacheMenuItem = new javax.swing.JMenuItem();
         extraMenu = new javax.swing.JMenu();
         lookAndFeelMenu = new javax.swing.JMenu();
+        checkUpdatesMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -328,6 +336,14 @@ public class MainFrame extends javax.swing.JFrame {
         lookAndFeelMenu.setText("Look and feel");
         extraMenu.add(lookAndFeelMenu);
 
+        checkUpdatesMenuItem.setText("Check for Updates");
+        checkUpdatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkUpdatesMenuItemActionPerformed(evt);
+            }
+        });
+        extraMenu.add(checkUpdatesMenuItem);
+
         aboutMenuItem.setText("About");
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -352,7 +368,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(filterLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 110, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
                         .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -457,6 +473,87 @@ private void filterTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:eve
 private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterTextActionPerformed
 // TODO add your handling code here:
 }//GEN-LAST:event_filterTextActionPerformed
+
+private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpdatesMenuItemActionPerformed
+    //TODO: Dupliacte code from AboutPanel
+        String version = "";
+        InputStream is = null;
+        try {
+            String pom = "META-INF/maven/org.somatik/moviebrowser/pom.properties";
+            URL resource = AboutPanel.class.getClassLoader().getResource(pom);
+            if (resource == null) {
+                throw new IOException("Could not load pom properties: " + pom);
+            }
+            is = resource.openStream();
+            Properties props = new Properties();
+            props.load(is);
+            version = props.getProperty("version");
+        } catch (IOException ex) {
+            LOGGER.error("Could not read pom.properties", ex);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    LOGGER.error("Could not close InputStream", ex);
+                }
+            }
+        }
+        //End of duplicate code from AboutPanel
+        
+        //Retrieve Version from web
+        String latestVersionInfoURL = "http://www.cisclassof06.com/movie-browser/latest";
+        LOGGER.info("Checking latest version info from: " + latestVersionInfoURL);
+        InputStream in = null;   
+        OutputStream out = new ByteArrayOutputStream();
+        
+        try {
+            // Set up the streams
+            LOGGER.info("Fetcing latest version info from: " + latestVersionInfoURL);
+            URL url = new URL(latestVersionInfoURL);   // Create the URL
+            URLConnection uc = url.openConnection();
+            uc.setDefaultUseCaches(false);
+            uc.setUseCaches(false);
+            uc.setRequestProperty("Cache-Control","max-age=0,no-cache");
+            uc.setRequestProperty("Pragma","no-cache");
+            
+            try {
+                in = uc.getInputStream();
+            }
+            catch (FileNotFoundException ex) {
+                LOGGER.error("Could not find file: " + latestVersionInfoURL, ex);
+            }
+
+            // Read bytes into string
+            byte[] buffer = new byte[4096];
+            int bytes_read;
+
+            while(true) {
+                int read = in.read(buffer);
+                
+                if(read==-1) {
+                    break;
+                }
+                
+                out.write(buffer, 0, read);
+            }
+            
+            String latestVersion = out.toString();
+            if(latestVersion.equals(version)) {
+                JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\n You are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        // On exceptions, print error message and usage message.
+        catch (Exception ex) {
+            LOGGER.error("Error fetching latest version info from: " + latestVersionInfoURL, ex);
+        }
+        finally {  // Always close the streams
+            try { in.close();  out.close(); } catch (Exception e) {}
+        }
+}//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
     private void showPopup(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -763,6 +860,7 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem checkUpdatesMenuItem;
     private javax.swing.JMenuItem clearCacheMenuItem;
     private javax.swing.JMenuItem clearListMenuItem;
     private javax.swing.JMenu extraMenu;
