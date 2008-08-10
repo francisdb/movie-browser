@@ -503,7 +503,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         //End of duplicate code from AboutPanel
         
         //Retrieve Version from web
-        String latestVersionInfoURL = "http://www.cisclassof06.com/movie-browser/latest";
+        String latestVersionInfoURL = "http://movie-browser.googlecode.com/svn/site/latest";
         LOGGER.info("Checking latest version info from: " + latestVersionInfoURL);
         InputStream in = null;   
         OutputStream out = new ByteArrayOutputStream();
