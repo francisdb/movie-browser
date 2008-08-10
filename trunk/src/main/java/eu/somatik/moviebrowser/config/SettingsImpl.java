@@ -213,17 +213,6 @@ public class SettingsImpl implements Settings {
     }
 
     @Override
-    public int getSiteTimout() {
-        // TODO implement
-        return 20 * 1000;
-    }
-
-    @Override
-    public void setSiteTimeout(int timeout) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public boolean isDebugMode() {
         boolean debug = false;
         Map<String, String> prefs = loadPreferences();

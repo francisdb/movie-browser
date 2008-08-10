@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.flicklib.tools.IOTools;
 import com.google.inject.Inject;
-import eu.somatik.moviebrowser.config.Settings;
+import com.google.inject.name.Named;
 
 /**
  * Loads a http request
@@ -20,22 +20,20 @@ public class HttpSourceLoader implements SourceLoader {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpSourceLoader.class);
     
-    private final Settings settings;
+    private final Integer timeout;
 
     @Inject
-    public HttpSourceLoader(final Settings settings) {
-        this.settings = settings;
+    public HttpSourceLoader(@Named(value="http.timeout") final Integer timeout) {
+        this.timeout = timeout;
     }
-    
-    
 
     @Override
     public String load(String url) throws IOException {
         HttpClient client = new HttpClient();
-        if(settings != null){
+        if(timeout != null){
             // wait max x sec
-            client.getParams().setSoTimeout(settings.getSiteTimout());
-            //LOGGER.info("Tiemout = "+client.getParams().getSoTimeout());
+            client.getParams().setSoTimeout(timeout);
+            //LOGGER.info("Timeout = "+client.getParams().getSoTimeout());
         }
         String source = null;
         GetMethod httpMethod = null;

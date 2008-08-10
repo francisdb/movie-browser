@@ -47,8 +47,8 @@ public class MovieWebParser extends AbstractJerichoParser{
                 List<?> childs = divElement.getChildElements();
                 if (childs.size() > 0) {
                     String score = ((Element) childs.get(0)).getContent().getTextExtractor().toString();
-                    LOGGER.debug("Critics score: " + score);
-                // TODO use?
+                    //LOGGER.debug("Critics score: " + score);
+                    // TODO use?
                 }
             }
         }

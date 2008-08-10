@@ -26,6 +26,7 @@ import com.flicklib.service.movie.tomatoes.TomatoesInfoFetcher;
 import com.flicklib.service.movie.tomatoes.TomatoesParser;
 import com.flicklib.service.sub.OpenSubtitlesLoader;
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 
 /**
  *
@@ -53,5 +54,7 @@ public class FlicklibModule extends AbstractModule {
         bind(MovieInfoFetcher.class).annotatedWith(Google.class).to(GoogleInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(Flixster.class).to(FlixterInfoFetcher.class);
         bind(MovieInfoFetcher.class).annotatedWith(Omdb.class).to(OmdbFetcher.class);
+
+        bindConstant().annotatedWith(Names.named("http.timeout")).to(20 * 1000);
     }
 }
