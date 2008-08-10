@@ -231,9 +231,11 @@ private void resultsListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
 private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_resultsListValueChanged
     MoviePage moviePage = (MoviePage) resultsList.getSelectedValue();   
-    String tooltip = "You have selected " + moviePage.getMovie().getTitle();
-    resultsList.setToolTipText(tooltip + ". Double click selection to go to the IMDB page or click Update button to update.");
-    updateButton.setToolTipText(tooltip + ". Click here to update.");
+    if(moviePage != null){
+        String tooltip = "You have selected " + moviePage.getMovie().getTitle();
+        resultsList.setToolTipText(tooltip + ". Double click selection to go to the IMDB page or click Update button to update.");
+        updateButton.setToolTipText(tooltip + ". Click here to update.");
+    }
 }//GEN-LAST:event_resultsListValueChanged
 
 private void resultsListDoubleClick() {

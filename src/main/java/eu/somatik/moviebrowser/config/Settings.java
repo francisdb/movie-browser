@@ -51,5 +51,16 @@ public interface Settings {
      * @param folders as Set of String
      */
     void saveFolders(Set<String> folders);
+    
+    /**
+     * Gets the timeout for web site requests
+     * @return the timeout
+     */
+    int getSiteTimout();
 
+    /**
+     * Sets the timeout for web site requests
+     */
+    void setSiteTimeout(int timeout);
+    
 }

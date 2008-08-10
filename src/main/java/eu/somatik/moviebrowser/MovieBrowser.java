@@ -26,8 +26,11 @@ import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import com.flicklib.service.movie.imdb.ImdbSearch;
+import eu.somatik.moviebrowser.gui.debug.CheckThreadViolationRepaintManager;
+import eu.somatik.moviebrowser.gui.debug.EventDispatchThreadHangMonitor;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import java.lang.Thread.UncaughtExceptionHandler;
+import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -113,8 +116,13 @@ public class MovieBrowser {
         }
     }
     
+    private void configureEdtCheckingRepaintManager(){
+        RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(true));
+    }
+    
     private void configureExceptionhandling(){
         Thread.setDefaultUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
+        EventDispatchThreadHangMonitor.initMonitoring();
     }
 
     private void start() {
@@ -125,6 +133,7 @@ public class MovieBrowser {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                configureEdtCheckingRepaintManager();
                 MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler);
                 mainFrame.setVisible(true);
                 mainFrame.load();
