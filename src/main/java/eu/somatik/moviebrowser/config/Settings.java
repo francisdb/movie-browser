@@ -53,18 +53,6 @@ public interface Settings {
     void saveFolders(Set<String> folders);
     
     /**
-     * Gets the timeout for web site requests
-     * @return the timeout
-     */
-    int getSiteTimout();
-
-    /**
-     * Sets the timeout for web site requests
-     * @param timeout 
-     */
-    void setSiteTimeout(int timeout);
-    
-    /**
      * Should return true if running in debug mode
      * @return true if in debug mode
      */
