@@ -34,7 +34,6 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
         } else if (movie.getYear() != null && movie.getYear().toString().contains(filterText)) {
             include = true;
         } else {
-            System.out.println(info.getMovieFile().getMovie().getTitle() + ": " + info.getMovieFile().getMovie().getGenres());
             for (Genre genre : info.getMovieFile().getMovie().getGenres()) {
                     if (genre.getName().toLowerCase().contains(filterText)) {
                         include = true;
