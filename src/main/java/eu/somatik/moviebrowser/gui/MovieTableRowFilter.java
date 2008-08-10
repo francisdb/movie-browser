@@ -41,7 +41,7 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
                     }
                     String[] split = filterText.split(" ");
                     for(int i=0; i<split.length; i++) {
-                        if(genre.getName().toLowerCase().contains(split[i])) {
+                        if(genre.getName().toLowerCase().equals(split[i])) {
                             include = true;
                         }
                     }   
