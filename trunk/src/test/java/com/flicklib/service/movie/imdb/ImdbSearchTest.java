@@ -26,7 +26,7 @@ public class ImdbSearchTest {
      * @throws Exception 
      */
     @Test
-    @Ignore
+    //@Ignore
     public void testGetResults_String() throws Exception {
         ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser());
         List<MoviePage> result = instance.getResults("Pulp Fiction");
@@ -36,6 +36,11 @@ public class ImdbSearchTest {
         result = instance.getResults("Die Hard 4");
         assertTrue(result.size() > 0);
         assertEquals("Live Free or Die Hard", result.get(0).getMovie().getTitle());
+        
+        result = instance.getResults("Black Tie White Noise");
+        assertTrue(result.size() > 0);
+        assertEquals(Integer.valueOf(1993), result.get(0).getMovie().getYear());
+        assertEquals("David Bowie: Black Tie White Noise", result.get(0).getMovie().getTitle());
     }
 
     /**

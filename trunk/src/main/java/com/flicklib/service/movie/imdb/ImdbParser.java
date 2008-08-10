@@ -14,6 +14,7 @@ import au.id.jericho.lib.html.Source;
 import com.flicklib.domain.Movie;
 import com.flicklib.domain.MoviePage;
 import com.flicklib.service.movie.AbstractJerichoParser;
+import com.flicklib.tools.ElementOnlyTextExtractor;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -33,25 +34,20 @@ public class ImdbParser extends AbstractJerichoParser {
     @Override
     public void parse(Source source, MoviePage movieSite) {
         Movie movie = movieSite.getMovie();
-        Element titleElement = (Element) source.findAllElements(HTMLElementName.TITLE).get(0);
-        String titleYear = titleElement.getContent().getTextExtractor().toString();
-
-        if (titleYear.endsWith(")")) {
-            int index = titleYear.lastIndexOf("(");
-            String year = titleYear.substring(index + 1, titleYear.length() - 1);
-            // get rid of the /I in for example "1998/I"
-            int slashIndex = year.indexOf('/');
-            if(slashIndex != -1){
-                year = year.substring(0, slashIndex);
-            }
+        Element titleHeader = (Element) source.findAllElements(HTMLElementName.H1).get(0);
+        String title = new ElementOnlyTextExtractor(titleHeader.getContent()).toString();
+        movie.setTitle(title);
+        
+        List<?> yearLinks = titleHeader.findAllElements(HTMLElementName.A);
+        if(yearLinks.size() > 0){
+            Element yearLink = (Element) yearLinks.get(0);
+            String year = yearLink.getContent().getTextExtractor().toString();
             try {
                 movie.setYear(Integer.valueOf(year));
             } catch (NumberFormatException ex) {
-                LOGGER.error("Could not parse '" + year + "' to integer", ex);
+                LOGGER.error("Could not parse year '" + year + "' to integer", ex);
             }
-            titleYear = titleYear.substring(0, index-1);
         }
-        movie.setTitle(titleYear);
 
         List<?> linkElements = source.findAllElements(HTMLElementName.A);
         for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {

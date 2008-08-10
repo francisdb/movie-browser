@@ -15,6 +15,8 @@ public class MovieNameExtractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieNameExtractor.class);
 
     private static final String TO_REMOVE[] = {
+        ".limited.dvdrip",
+        ".extended.dvdrip",
         ".dvdrip",
         ".samplefix",
         ".dvdivx",
@@ -29,11 +31,18 @@ public class MovieNameExtractor {
         ".ac3",
         ".unrated",
         ".stv",
-        ".dutch",
+        ".dutch", // keep this one?
         ".limited",
         ".nfofix",
         ".subpack",
-        ".subfix"//".ws"        
+        ".subfix",
+        ".syncfix",
+        ".cd1",
+        ".cd2",
+        ".screener",
+        ".dvd",
+        ".direcors.cut",
+        ".repack"//".ws"        
     };
     private final MovieFileFilter filter;
 
