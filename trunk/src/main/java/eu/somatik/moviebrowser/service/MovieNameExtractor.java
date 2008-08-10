@@ -17,6 +17,8 @@ public class MovieNameExtractor {
     private static final String TO_REMOVE[] = {
         ".limited.dvdrip",
         ".extended.dvdrip",
+        ".real.retail.dvdrip",
+        ".limited.color.fixed.dvdrip",
         ".dvdrip",
         ".samplefix",
         ".dvdivx",
@@ -42,7 +44,8 @@ public class MovieNameExtractor {
         ".screener",
         ".dvd",
         ".direcors.cut",
-        ".repack"//".ws"        
+        ".repack",
+        ".retail"//".ws"        
     };
     private final MovieFileFilter filter;
 
