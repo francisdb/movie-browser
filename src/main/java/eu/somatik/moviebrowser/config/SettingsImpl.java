@@ -222,4 +222,15 @@ public class SettingsImpl implements Settings {
     public void setSiteTimeout(int timeout) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public boolean isDebugMode() {
+        boolean debug = false;
+        Map<String, String> prefs = loadPreferences();
+        if(prefs.containsKey("debug") && "true".equals(prefs.get("debug"))){
+            LOGGER.info("Starting in DEBUG mode!");
+            debug = true;
+        }
+        return debug;    
+    }
 }
