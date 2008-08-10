@@ -60,7 +60,14 @@ public interface Settings {
 
     /**
      * Sets the timeout for web site requests
+     * @param timeout 
      */
     void setSiteTimeout(int timeout);
+    
+    /**
+     * Should return true if running in debug mode
+     * @return true if in debug mode
+     */
+    boolean isDebugMode();
     
 }

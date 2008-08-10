@@ -68,8 +68,8 @@ public class MovieBrowser {
      */
     @Inject
     public MovieBrowser(
-            final MovieFinder finder, 
-            final FolderScanner folderScanner, 
+            final MovieFinder finder,
+            final FolderScanner folderScanner,
             final FileSystemScanner fileSystemScanner,
             final ImdbSearch imdbSearch,
             final ImageCache imageCache,
@@ -115,25 +115,30 @@ public class MovieBrowser {
             LOGGER.error("Error setting native LAF", ex);
         }
     }
-    
-    private void configureEdtCheckingRepaintManager(){
+
+    private void configureEdtCheckingRepaintManager() {
+        EventDispatchThreadHangMonitor.initMonitoring();
         RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(true));
     }
-    
-    private void configureExceptionhandling(){
+
+    private void configureExceptionhandling() {
         Thread.setDefaultUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
-        EventDispatchThreadHangMonitor.initMonitoring();
     }
 
     private void start() {
         configureLogging();
         configureExceptionhandling();
         configurelookAndFeel();
-        
+
+        if (settings.isDebugMode()) {
+            configureEdtCheckingRepaintManager();
+        }
+
         SwingUtilities.invokeLater(new Runnable() {
+
             @Override
             public void run() {
-                configureEdtCheckingRepaintManager();
+
                 MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler);
                 mainFrame.setVisible(true);
                 mainFrame.load();
@@ -169,8 +174,6 @@ public class MovieBrowser {
     public SubtitlesLoader getSubtitlesLoader() {
         return subtitlesLoader;
     }
-    
-    
 
     private static class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler {
 
@@ -179,6 +182,4 @@ public class MovieBrowser {
             LOGGER.error("Uncaught exception in thread " + thread.getName(), ex);
         }
     }
-    
-    
 }
