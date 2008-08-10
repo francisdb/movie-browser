@@ -23,7 +23,7 @@ public class GoogleInfoFetcherTest {
         Movie movie = new Movie();
         movie.setTitle("Pulp Fiction");
         GoogleParser googleParser = new GoogleParser();
-        GoogleInfoFetcher instance = new GoogleInfoFetcher(googleParser, new HttpSourceLoader());
+        GoogleInfoFetcher instance = new GoogleInfoFetcher(googleParser, new HttpSourceLoader(null));
         MoviePage site = instance.fetch(movie, null);
         assertNotNull("Google score is null", site.getScore());
     }

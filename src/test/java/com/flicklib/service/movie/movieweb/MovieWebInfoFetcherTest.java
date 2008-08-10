@@ -23,7 +23,7 @@ public class MovieWebInfoFetcherTest {
         Movie movie = new Movie();
         movie.setTitle("Pulp Fiction");
         MovieWebParser parser = new MovieWebParser();
-        MovieWebInfoFetcher fetcher = new MovieWebInfoFetcher(parser, new HttpSourceLoader());
+        MovieWebInfoFetcher fetcher = new MovieWebInfoFetcher(parser, new HttpSourceLoader(null));
         MoviePage site = fetcher.fetch(movie, null);
         assertNotNull("MovieWebStars is null", site.getScore());
     }

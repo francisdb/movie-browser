@@ -28,7 +28,7 @@ public class ImdbSearchTest {
     @Test
     //@Ignore
     public void testGetResults_String() throws Exception {
-        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser());
+        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(null), new ImdbParser());
         List<MoviePage> result = instance.getResults("Pulp Fiction");
         assertTrue(result.size() > 0);
         assertEquals("Pulp Fiction", result.get(0).getMovie().getTitle());
@@ -49,7 +49,7 @@ public class ImdbSearchTest {
     @Test
     public void testGenerateImdbTitleSearchUrl() {
         String title = "Pulp Fiction";
-        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(), new ImdbParser());
+        ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(null), new ImdbParser());
         String expResult = "http://www.imdb.com/find?q=Pulp+Fiction;s=tt";
         String result = instance.generateImdbTitleSearchUrl(title);
         assertEquals(expResult, result);

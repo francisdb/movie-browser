@@ -27,7 +27,7 @@ public class OpenSubtitlesLoaderTest {
     @Test
     @Ignore
     public void testSearch() throws Exception {
-        SubtitlesLoader loader = new OpenSubtitlesLoader(new HttpSourceLoader());
+        SubtitlesLoader loader = new OpenSubtitlesLoader(new HttpSourceLoader(null));
         Set<Subtitle> result = loader.search("The Science of Sleep", null);
         assertTrue(result.size() > 0);
         for(Subtitle sub:result){
