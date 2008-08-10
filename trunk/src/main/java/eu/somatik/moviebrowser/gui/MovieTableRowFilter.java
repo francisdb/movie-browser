@@ -35,9 +35,6 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
             include = true;
         } else {
             for (Genre genre : info.getMovieFile().getMovie().getGenres()) {
-                    if (genre.getName().toLowerCase().contains(filterText)) {
-                        include = true;
-                    }
                     String[] split = filterText.split(" ");
                     for(int i=0; i<split.length; i++) {
                         if(genre.getName().toLowerCase().equals(split[i])) {
