@@ -91,9 +91,7 @@ public class JPAMovieCache implements MovieCache {
                 em = emf.createEntityManager();
                 found = em.find(StorableMovie.class, path);
             } finally {
-                if (em != null) {
-                    em.close();
-                }
+                closeAndCleanup(em);
             }
         }
         return found;
@@ -110,12 +108,10 @@ public class JPAMovieCache implements MovieCache {
             em.remove(found);
             transaction.commit();
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
     }
-    
+
     @Override
     public void remove(StorableMovieSite site) {
         EntityManager em = null;
@@ -127,12 +123,10 @@ public class JPAMovieCache implements MovieCache {
             em.remove(found);
             transaction.commit();
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
     }
-    
+
     @Override
     public void remove(StorableMovieFile file) {
         EntityManager em = null;
@@ -144,9 +138,7 @@ public class JPAMovieCache implements MovieCache {
             em.remove(found);
             transaction.commit();
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
     }
 
@@ -167,9 +159,7 @@ public class JPAMovieCache implements MovieCache {
             em.persist(movieFile);
             em.getTransaction().commit();
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
     }
 
@@ -205,9 +195,7 @@ public class JPAMovieCache implements MovieCache {
             em.merge(movieFile);
             em.getTransaction().commit();
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
     }
 
@@ -236,9 +224,7 @@ public class JPAMovieCache implements MovieCache {
             }
             transaction.commit();
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
     }
 
@@ -259,9 +245,7 @@ public class JPAMovieCache implements MovieCache {
                 transaction.commit();
             }
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
         return found;
     }
@@ -316,9 +300,7 @@ public class JPAMovieCache implements MovieCache {
                 em.persist(site);
                 em.getTransaction().commit();
             } finally {
-                if (em != null) {
-                    em.close();
-                }
+                closeAndCleanup(em);
             }
         }
     }
@@ -336,12 +318,22 @@ public class JPAMovieCache implements MovieCache {
                 sites.add((StorableMovieSite) result);
             }
         } finally {
-            if (em != null) {
-                em.close();
-            }
+            closeAndCleanup(em);
         }
         return sites;
-    }    //    private void printList() {
+    }
+
+    private void closeAndCleanup(final EntityManager em) {
+        if (em != null) {
+            if (em.getTransaction().isActive()) {
+                LOGGER.warn("Rolling back transaction!!!");
+                em.getTransaction().rollback();
+            }
+            em.close();
+        }
+    }    
+    
+    //    private void printList() {
 //        LOGGER.info("Printing movie list");
 //        for (StorableMovie movie : movieDAO.loadMovies()) {
 //            LOGGER.info(movie.getPath() + "" + movie);
