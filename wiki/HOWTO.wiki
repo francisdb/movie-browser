@@ -1,13 +1,16 @@
 #labels Featured,Phase-Deploy
-#How to use the application
-
 = Introduction =
 
-The program only works if your _movies are in subdirectories_ like this:
+The program only works if your _movies are in subdirectories_ or just _files in the root folders_ like this:
 
 movies (dir)
    * forest gump  (subdir)
    * pulp fiction (subdir)
+
+movies2 (dir)
+   * dumbo (subdir)
+   * free.willy.avi
+   * dumb.and.dumber.avi
 
 after choosing movie - import folder in the menu the folder will be scanned and all info will be fetched from imdb / rotten tomatoes / ...
 
