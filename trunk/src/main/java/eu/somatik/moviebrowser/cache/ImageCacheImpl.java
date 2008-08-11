@@ -61,11 +61,11 @@ public class ImageCacheImpl implements ImageCache {
      * @param info
      */
     @Override
-    public void loadImg(MovieInfo info) {
+    public Image loadImg(MovieInfo info) {
+        Image image = null;
         // TODO might accept images form other services
         String imgUrl = imageUrl(info);
         if (imgUrl != null) {
-            Image image = null;
             try {
                 File file = getCacheFile(imgUrl);
                 if (file.exists()) {
@@ -73,12 +73,12 @@ public class ImageCacheImpl implements ImageCache {
                 } else {
                     LOGGER.debug("Image not available in local cache: " + imgUrl);
                 }
-                info.setImage(image);
             } catch (IOException ex) {
                 LOGGER.error("Could not load image", ex);
             }
             info.setStatus(MovieStatus.LOADED);
         }
+        return image;
     }
 
     /**

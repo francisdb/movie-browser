@@ -96,7 +96,6 @@ public class MovieFinder {
 
         List<MovieInfo> list = new ArrayList<MovieInfo>();
         list.add(movieInfo);
-        movieInfo.setImage(null);
 
         // TODO put this all in the cache?
         List<StorableMovieSite> sites = movieCache.loadSites(movieInfo.getMovieFile().getMovie());

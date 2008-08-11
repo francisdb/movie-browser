@@ -14,6 +14,7 @@ import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -86,22 +87,19 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
         // TODO need better image cache, if loading takes a lot of time the
         // image might be shown after a new movie was selected
-        if (info.getImage() == null) {
-            imageCache.loadImg(info);
-            if (info.getImage() == null) {
-                new ImageLoadingWorker().execute();
-            } else {
-                updateImage(info);
-            }
+        Image image = imageCache.loadImg(info);
+        if (image == null) {
+            new ImageLoadingWorker().execute();
         } else {
-            updateImage(info);
+            updateImage(image);
         }
+
 
         StorableMovie movie = info.getMovieFile().getMovie();
         if (movie == null) {
             movieHeader.setTitle("");
             movieHeader.setDescription("");
-            infoTextPane.setText("");            
+            infoTextPane.setText("");
             updateButton(imdbButton, null);
             updateButton(tomatoesButton, null);
             updateButton(moviewebButton, null);
@@ -163,7 +161,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             builder.append("</html>");
             infoTextPane.setText(builder.toString());
         }
-        
+
         infoTextPane.setCaretPosition(0);
     }
 
@@ -187,11 +185,11 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         return builder;
     }
 
-    private void updateImage(MovieInfo info) {
-        if (info.getImage() == null) {
+    private void updateImage(Image image) {
+        if (image == null) {
             movieHeader.setIcon(null);
         } else {
-            movieHeader.setIcon(new ImageIcon(info.getImage()));
+            movieHeader.setIcon(new ImageIcon(image));
         }
     }
 
@@ -281,20 +279,19 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
     }
 
-    private class ImageLoadingWorker extends SwingWorker<Void, Void> {
+    private class ImageLoadingWorker extends SwingWorker<Image, Void> {
 
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Image doInBackground() throws Exception {
             imageCache.saveImgToCache(info);
-            imageCache.loadImg(info);
-            return null;
+            Image image = imageCache.loadImg(info);
+            return image;
         }
 
         @Override
         protected void done() {
             try {
-                get();
-                updateImage(info);
+                updateImage(get());
             } catch (InterruptedException ex) {
                 LOGGER.error("Worker interrupted", ex);
             } catch (ExecutionException ex) {
