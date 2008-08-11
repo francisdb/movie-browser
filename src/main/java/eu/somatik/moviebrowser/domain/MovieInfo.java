@@ -9,7 +9,6 @@ package eu.somatik.moviebrowser.domain;
 
 
 import com.flicklib.domain.MovieService;
-import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -25,8 +24,6 @@ public class MovieInfo {
     
     private StorableMovieFile movieFile;
     private Map<MovieService, StorableMovieSite> sites;
-    
-    private Image image;
 
     private File directory;
     private MovieStatus status;
@@ -62,22 +59,6 @@ public class MovieInfo {
     
     public Integer getScore(MovieService service){
         return scores.get(service);
-    }
-
-    /**
-     * 
-     * @return the Image
-     */
-    public Image getImage() {
-        return image;
-    }
-
-    /**
-     * 
-     * @param image 
-     */
-    public void setImage(Image image) {
-        this.image = image;
     }
 
     /**
