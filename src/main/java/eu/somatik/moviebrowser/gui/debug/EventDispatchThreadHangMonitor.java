@@ -18,13 +18,28 @@ package eu.somatik.moviebrowser.gui.debug;
 
 
 
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.management.*;
-import java.util.*;
-import java.util.Timer;
 
-import javax.swing.*;
+import java.awt.AWTEvent;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+
+
 
 /**
  * SEE: http://weblogs.java.net/blog/alexfromsun/archive/2006/02/debugging_swing.html
@@ -348,6 +363,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
                     locker.toString();
                 }
 
+                @Override
                 public synchronized String toString() {
                     try {
                         Thread.sleep(50);
@@ -365,6 +381,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
             //Deadlock expected here:
             for (int i = 0; i < 100; i++) {
                 SwingUtilities.invokeLater(new Runnable() {
+                    @Override
                     public void run() {
                         one.tryToDeadlock();
                     }
@@ -378,6 +395,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
         private static void runExceptionTest(final JFrame frame) {
             JButton button = new JButton("Throw Exception");
             button.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     // This shouldn't cause us to report a hang.
                     throw new RuntimeException("Nobody expects the Spanish Inquisition!");
@@ -393,6 +411,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
             dialog.pack();
             dialog.setLocationRelativeTo(frame);
             dialog.addWindowFocusListener(new WindowAdapter() {
+                @Override
                 public void windowGainedFocus(WindowEvent e) {
                     System.out.println("FocusTest.windowGainedFocus");
                     // If you don't cope with nested calls to dispatchEvent, you won't detect this.
@@ -402,6 +421,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
             });
             JButton button = new JButton("Show Non-Modal Dialog");
             button.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     dialog.setVisible(true);
                 }
@@ -414,6 +434,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
             System.out.println(shouldSleep ? "Expect hangs!" : "There should be no hangs...");
             JButton button = new JButton("Show Modal Dialog");
             button.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (shouldSleep) {
                         sleep(2500); // This is easy.
@@ -428,10 +449,12 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
 
                     // Make sure the new event pump has some work to do, each unit of which is insufficient to cause a hang.
                     new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             for (int i = 0; i <= 100000; ++i) {
                                 final int value = i;
                                 EventQueue.invokeLater(new Runnable() {
+                                    @Override
                                     public void run() {
                                         label.setText(Integer.toString(value));
                                     }

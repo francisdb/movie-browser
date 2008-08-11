@@ -17,9 +17,14 @@ package eu.somatik.moviebrowser.gui.debug;
  */
 
 
-import javax.swing.*;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.RepaintManager;
+import javax.swing.SwingUtilities;
+
 
 /**
  * SEE http://weblogs.java.net/blog/alexfromsun/archive/2006/02/debugging_swing.html
