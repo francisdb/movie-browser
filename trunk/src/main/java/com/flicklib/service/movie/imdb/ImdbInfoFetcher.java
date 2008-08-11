@@ -51,7 +51,7 @@ public class ImdbInfoFetcher implements MovieInfoFetcher {
             if (site.getUrl() == null) {
                 List<MoviePage> movies = imdbSearch.getResults(movie.getTitle());
                 if (movies.size() == 0) {
-                    throw new IOException("No movies found");
+                    throw new IOException("No movies found for: "+movie.getTitle());
                 }
                 if (movies.size() == 1) {
                     // TODO copy all data instead of reload
