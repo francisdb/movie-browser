@@ -64,8 +64,8 @@ public class JPAMovieCache implements MovieCache {
         props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + databaseLocation + ";shutdown=true");
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
     }
-    
-    private String getDatabaseUrl(){
+
+    private String getDatabaseUrl() {
         return settings.getSettingsDir() + File.separator + "database";
     }
 
@@ -341,26 +341,35 @@ public class JPAMovieCache implements MovieCache {
     @Override
     public void clear() {
         shutdown();
-        try{
-            Thread.sleep(2000);
-        }catch(InterruptedException ex){
-            LOGGER.error("Sleep interrupted", ex);
-
-        }
         File databaseDir = new File(getDatabaseUrl());
-        if(databaseDir.exists()){
-            boolean deleted = FileTools.deleteDirectory(databaseDir);
-            if(deleted){
-                LOGGER.info("Deleted "+databaseDir.getAbsolutePath());
-            }else{
-                LOGGER.error("Could not delete "+databaseDir.getAbsolutePath());
+        if (databaseDir.exists()) {
+            boolean deleted = false;
+            int count = 0;
+            // try three times with 1 sec waiting
+            while (deleted == false && count < 3) {
+                if (count != 0) {
+                    LOGGER.debug("Sleeping 1 sec before retry...");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        count = Integer.MAX_VALUE;
+                        LOGGER.error("Sleep interrupted", ex);
+                    }
+                }
+                deleted = FileTools.deleteDirectory(databaseDir);
+                count++;
             }
-        }else{
-            LOGGER.warn("Database folder does not exist "+databaseDir.getAbsolutePath());
+
+            if (deleted) {
+                LOGGER.info("Deleted " + databaseDir.getAbsolutePath());
+            } else {
+                LOGGER.error("Could not delete " + databaseDir.getAbsolutePath());
+            }
+        } else {
+            LOGGER.warn("Database folder does not exist " + databaseDir.getAbsolutePath());
         }
         startup();
     }
-    
     //    private void printList() {
 //        LOGGER.info("Printing movie list");
 //        for (StorableMovie movie : movieDAO.loadMovies()) {

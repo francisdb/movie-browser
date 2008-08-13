@@ -45,6 +45,7 @@ import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -68,7 +69,11 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 import javax.swing.Timer;
+
 /**
  *
  * @author  francisdb
@@ -115,20 +120,22 @@ public class MainFrame extends javax.swing.JFrame {
         setColumnWidths();
 
         loadLookAndFeels();
-        
-        
-        
+
+
+
         Timer timer = new Timer(500, new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int tasks = browser.getMovieFinder().getRunningTasks();
-                if(tasks == 0){
+                if (tasks == 0) {
                     loadProgressBar.setIndeterminate(false);
                     loadProgressBar.setString("ready");
                     loadProgressBar.setValue(loadProgressBar.getMaximum());
-                }else{
+                } else {
                     loadProgressBar.setIndeterminate(true);
-                    loadProgressBar.setString(tasks+" task(s) remaining");
+                    loadProgressBar.setString(tasks + " task(s) remaining");
+                    loadProgressBar.setToolTipText("The task indicator might fluctuate while data is loaded from imdb because other serverices are only activated after imdb is loaded!");
                 }
             }
         });
@@ -425,18 +432,60 @@ public class MainFrame extends javax.swing.JFrame {
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
+    final BusyDialog busyDialog = new BusyDialog(this, "test", true);
+    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-    //Clear the image folder
-    File imagesDir = settings.getImageCacheDir();
-    if(imagesDir.exists()){
-        FileTools.deleteDirectory(imagesDir);
-    }
-    //clear the table values
-    clearTableList();
-    browser.getMovieCache().clear();
-    load();
-    
+        @Override
+        protected Void doInBackground() throws Exception {
+            //Clear the image folder
+            File imagesDir = settings.getImageCacheDir();
+            if (imagesDir.exists()) {
+                FileTools.deleteDirectory(imagesDir);
+            }
+            //clear the table values
+            clearTableList();
+            browser.getMovieCache().clear();
+
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                load();
+            } catch (InterruptedException ex) {
+                LOGGER.error("Delete worker execution interrupted", ex);
+            } catch (ExecutionException ex) {
+                LOGGER.error("Delete worker execution failed", ex.getCause());
+            } finally {
+                busyDialog.dispose();
+            }
+        }
+    };
+    worker.execute();
+    busyDialog.setVisible(true);
+
 }//GEN-LAST:event_clearCacheMenuItemActionPerformed
+
+    private class BusyDialog extends JDialog {
+
+        private JProgressBar progressB;
+
+        public BusyDialog(JFrame relativeTo, String title, boolean modal) {
+            super(relativeTo, title, modal);
+            setModalityType(ModalityType.APPLICATION_MODAL);
+            setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+            setResizable(false);
+            setUndecorated(true);
+            setLayout(new BorderLayout());
+            progressB = new JProgressBar();
+            progressB.setIndeterminate(true);
+            add(progressB, BorderLayout.CENTER);
+            pack();
+            this.setLocationRelativeTo(relativeTo);
+        }
+    }
 
     /**
      * This method is the movie tables right click mouse event action listner. 
@@ -478,84 +527,83 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpdatesMenuItemActionPerformed
     //TODO: Dupliacte code from AboutPanel
-        String version = "";
-        InputStream is = null;
-        try {
-            String pom = "META-INF/maven/org.somatik/moviebrowser/pom.properties";
-            URL resource = AboutPanel.class.getClassLoader().getResource(pom);
-            if (resource == null) {
-                throw new IOException("Could not load pom properties: " + pom);
-            }
-            is = resource.openStream();
-            Properties props = new Properties();
-            props.load(is);
-            version = props.getProperty("version");
-        } catch (IOException ex) {
-            LOGGER.error("Could not read pom.properties", ex);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close InputStream", ex);
-                }
+    String version = "";
+    InputStream is = null;
+    try {
+        String pom = "META-INF/maven/org.somatik/moviebrowser/pom.properties";
+        URL resource = AboutPanel.class.getClassLoader().getResource(pom);
+        if (resource == null) {
+            throw new IOException("Could not load pom properties: " + pom);
+        }
+        is = resource.openStream();
+        Properties props = new Properties();
+        props.load(is);
+        version = props.getProperty("version");
+    } catch (IOException ex) {
+        LOGGER.error("Could not read pom.properties", ex);
+    } finally {
+        if (is != null) {
+            try {
+                is.close();
+            } catch (IOException ex) {
+                LOGGER.error("Could not close InputStream", ex);
             }
         }
-        //End of duplicate code from AboutPanel
-        
-        //Retrieve Version from web
-        String latestVersionInfoURL = "http://movie-browser.googlecode.com/svn/site/latest";
-        LOGGER.info("Checking latest version info from: " + latestVersionInfoURL);
-        InputStream in = null;   
-        OutputStream out = new ByteArrayOutputStream();
-        
+    }
+    //End of duplicate code from AboutPanel
+
+    //Retrieve Version from web
+    String latestVersionInfoURL = "http://movie-browser.googlecode.com/svn/site/latest";
+    LOGGER.info("Checking latest version info from: " + latestVersionInfoURL);
+    InputStream in = null;
+    OutputStream out = new ByteArrayOutputStream();
+
+    try {
+        // Set up the streams
+        LOGGER.info("Fetcing latest version info from: " + latestVersionInfoURL);
+        URL url = new URL(latestVersionInfoURL);   // Create the URL
+        URLConnection uc = url.openConnection();
+        uc.setDefaultUseCaches(false);
+        uc.setUseCaches(false);
+        uc.setRequestProperty("Cache-Control", "max-age=0,no-cache");
+        uc.setRequestProperty("Pragma", "no-cache");
+
         try {
-            // Set up the streams
-            LOGGER.info("Fetcing latest version info from: " + latestVersionInfoURL);
-            URL url = new URL(latestVersionInfoURL);   // Create the URL
-            URLConnection uc = url.openConnection();
-            uc.setDefaultUseCaches(false);
-            uc.setUseCaches(false);
-            uc.setRequestProperty("Cache-Control","max-age=0,no-cache");
-            uc.setRequestProperty("Pragma","no-cache");
-            
-            try {
-                in = uc.getInputStream();
-            }
-            catch (FileNotFoundException ex) {
-                LOGGER.error("Could not find file: " + latestVersionInfoURL, ex);
+            in = uc.getInputStream();
+        } catch (FileNotFoundException ex) {
+            LOGGER.error("Could not find file: " + latestVersionInfoURL, ex);
+        }
+
+        // Read bytes into string
+        byte[] buffer = new byte[4096];
+        while (true) {
+            int read = in.read(buffer);
+
+            if (read == -1) {
+                break;
             }
 
-            // Read bytes into string
-            byte[] buffer = new byte[4096];
-            while(true) {
-                int read = in.read(buffer);
-                
-                if(read==-1) {
-                    break;
-                }
-                
-                out.write(buffer, 0, read);
-            }
-            
-            String latestVersion = out.toString();
-            if(latestVersion.equals(version)) {
-                JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else if(version.contains("SNAPSHOT") || version.isEmpty()) {
-                JOptionPane.showMessageDialog(MainFrame.this, "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \n The latest release can be downloaded from http://movie-browser.googlecode.com", "Updates", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else {
-                JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\n You are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
-            }
+            out.write(buffer, 0, read);
         }
-        // On exceptions, print error message and usage message.
-        catch (Exception ex) {
-            LOGGER.error("Error fetching latest version info from: " + latestVersionInfoURL, ex);
+
+        String latestVersion = out.toString();
+        if (latestVersion.equals(version)) {
+            JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
+        } else if (version.contains("SNAPSHOT") || version.isEmpty()) {
+            JOptionPane.showMessageDialog(MainFrame.this, "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \n The latest release can be downloaded from http://movie-browser.googlecode.com", "Updates", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\n You are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
         }
-        finally {  // Always close the streams
-            try { in.close();  out.close(); } catch (Exception e) {}
+    } // On exceptions, print error message and usage message.
+    catch (Exception ex) {
+        LOGGER.error("Error fetching latest version info from: " + latestVersionInfoURL, ex);
+    } finally {  // Always close the streams
+        try {
+            in.close();
+            out.close();
+        } catch (Exception e) {
         }
+    }
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
     private void showPopup(MouseEvent evt) {
@@ -566,19 +614,19 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             source.changeSelection(row, column, false, false);
 
             JPopupMenu popup = new JPopupMenu();
-            
+
             JMenu trailerMenu = new JMenu("Trailer");
             trailerMenu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
             trailerMenu.add(new AppleTrailerAction());
             trailerMenu.add(new ImdbTrailerAction());
             popup.add(trailerMenu);
-            
+
             JMenu watchMenu = new JMenu("Watch");
             watchMenu.setIcon(iconLoader.loadIcon("images/16/video-display.png"));
             watchMenu.add(new WatchMovieFileAction());
             watchMenu.add(new WatchSampleAction());
             popup.add(watchMenu);
-            
+
             popup.add(new CrawlSubtitleAction());
             popup.add(new EditAction());
             LOGGER.info("Showing popup");
@@ -586,12 +634,12 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         }
     }
 
-    
     private void fillTable() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
         final Set<String> folders = settings.loadFolders();
         new SwingWorker<List<MovieInfo>, Void>() {
+
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
                 return browser.getFolderScanner().scan(folders);
@@ -646,12 +694,11 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         }.execute();
 
     }
-           
-    
-    private MovieInfo getSelectedMovie(){
+
+    private MovieInfo getSelectedMovie() {
         return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
     }
-    
+
     /**
      * This action lets you edit a record
      * @param evt
@@ -664,18 +711,17 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(browser.getMovieFinder().getRunningTasks()==0) {
+            if (browser.getMovieFinder().getRunningTasks() == 0) {
                 EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
                 editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
                 editMovieFrame.setVisible(true);
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "Editing cannot be done while movie info is being loaded. \nPlease wait till all movie info is loaded and try again.", "Loading Info", JOptionPane.WARNING_MESSAGE);
             }
-            
+
         }
     }
-    
+
     private void openUrl(String url) {
         try {
             Desktop.getDesktop().browse(new URI(url));
@@ -685,18 +731,17 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             LOGGER.error("Failed launching default browser for " + url, ex);
         }
     }
-    
+
     private void openFile(File file) {
-        LOGGER.info("Trying to open "+file.getAbsolutePath());
+        LOGGER.info("Trying to open " + file.getAbsolutePath());
         try {
             Desktop.getDesktop().open(file);
         } catch (IOException ex) {
             LOGGER.error("Failed launching default browser for " + file.getAbsolutePath(), ex);
         }
     }
-    
-    
-     /**
+
+    /**
      * This action  tries to show the trailer
      * @param evt
      */
@@ -712,15 +757,15 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             TrailerFinder finder = new ImdbTrailerFinder();
             LOGGER.error("Not implemented");
             String url = finder.findTrailerUrl(info.getMovieFile().getMovie().getTitle(), info.siteFor(MovieService.IMDB).getIdForSite());
-            if(url == null){
+            if (url == null) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.imdb.com");
-            }else{
+            } else {
                 openUrl(url);
             }
         }
     }
-    
-     /**
+
+    /**
      * This action tries to show the apple trailer site
      * @param evt
      */
@@ -736,9 +781,9 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             TrailerFinder finder = new AppleTrailerFinder();
             LOGGER.error("Not implemented");
             String url = finder.findTrailerUrl(info.getMovieFile().getMovie().getTitle(), null);
-            if(url == null){
+            if (url == null) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.apple.com");
-            }else{
+            } else {
                 openUrl(url);
             }
         }
@@ -748,7 +793,8 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
      * This action opens the sample if a sample is found
      * @param evt
      */
-    private class  WatchSampleAction extends AbstractAction{
+    private class WatchSampleAction extends AbstractAction {
+
         public WatchSampleAction() {
             super("Sample", iconLoader.loadIcon("images/16/video-display.png"));
         }
@@ -764,12 +810,13 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             }
         }
     }
-    
+
     /**
      * This action opens the sample if a sample is found
      * @param evt
      */
-    private class WatchMovieFileAction extends AbstractAction{
+    private class WatchMovieFileAction extends AbstractAction {
+
         public WatchMovieFileAction() {
             super("Video", iconLoader.loadIcon("images/16/video-display.png"));
         }
@@ -780,56 +827,56 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             File file = info.getDirectory();
             if (file.isDirectory()) {
                 File[] movieFiles = file.listFiles(movieFileFilter);
-                if(movieFiles.length > 0){
-                    for(File movieFile:movieFiles){
+                if (movieFiles.length > 0) {
+                    for (File movieFile : movieFiles) {
                         openFile(movieFile);
                     }
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(MainFrame.this, "No video found");
                 }
-            } else if(movieFileFilter.accept(file)){
+            } else if (movieFileFilter.accept(file)) {
                 openFile(file);
             } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "No video found");
             }
         }
     }
-    
+
     /**
      * This action opens the SubtitleCrawlerFrame if a video file is found in the directory. 
      */
     private class CrawlSubtitleAction extends AbstractAction {
+
         public CrawlSubtitleAction() {
             super("Subtitle Crawler", iconLoader.loadIcon("images/16/subtitles.png"));
         }
-        
-        @Override 
+
+        @Override
         public void actionPerformed(ActionEvent e) {
             //TODO get this out of here, this sould be somewhere in a logic class and not in the gui
-            if(browser.getMovieFinder().getRunningTasks()==0) {
+            if (browser.getMovieFinder().getRunningTasks() == 0) {
                 List<String> files = new ArrayList<String>();
-                MovieInfo info = getSelectedMovie(); 
+                MovieInfo info = getSelectedMovie();
                 File dir = info.getDirectory();
                 String alternateSearchKey = getSelectedMovie().getMovieFile().getMovie().getTitle();
                 File child;
-                if(!dir.isFile()) {
-                    for(File file:dir.listFiles()) {
-                        if(file.isDirectory()) {
+                if (!dir.isFile()) {
+                    for (File file : dir.listFiles()) {
+                        if (file.isDirectory()) {
                             child = file;
-                            for(File file2:child.listFiles()) {
-                                if(file2.isFile()) {
-                                    if(!file2.getName().contains("sample")) {
-                                        if(movieFileFilter.accept(file2)) {
+                            for (File file2 : child.listFiles()) {
+                                if (file2.isFile()) {
+                                    if (!file2.getName().contains("sample")) {
+                                        if (movieFileFilter.accept(file2)) {
                                             files.add(file2.getName());
                                         }
                                     }
                                 }
                             }
-                        }
-                        else {
-                            if(file.isFile()) {
-                                if(!file.getName().contains("sample")) {
-                                    if(movieFileFilter.accept(file)) {
+                        } else {
+                            if (file.isFile()) {
+                                if (!file.getName().contains("sample")) {
+                                    if (movieFileFilter.accept(file)) {
                                         files.add(file.getName());
                                     }
                                 }
@@ -840,15 +887,12 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
                 files.add(alternateSearchKey);
                 openSubCrawler(files, info.getMovieFile().getMovie());
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "Subtitle crawling cannot be done while movie info is being loaded. \nPlease try again after all movie info is loaded.", "Loading Info", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
-    
 
-    
     /**
      * Loads SubtitleCrawlerFrame
      * @param fileName
@@ -858,9 +902,6 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }
-
-
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem checkUpdatesMenuItem;
@@ -878,5 +919,4 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     private javax.swing.JScrollPane movieTableScrollPane;
     private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables
-    
 }
