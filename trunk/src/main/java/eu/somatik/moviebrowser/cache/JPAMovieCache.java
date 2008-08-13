@@ -345,7 +345,7 @@ public class JPAMovieCache implements MovieCache {
         if (databaseDir.exists()) {
             boolean deleted = false;
             int count = 0;
-            // try three times with 1 sec waiting
+            // try 5 times with 1 sec waiting
             while (deleted == false && count < 5) {
                 if (count != 0) {
                     int sleep = 1000 * count;
