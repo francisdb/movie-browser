@@ -68,6 +68,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
+import javax.swing.Timer;
 /**
  *
  * @author  francisdb
@@ -114,6 +115,24 @@ public class MainFrame extends javax.swing.JFrame {
         setColumnWidths();
 
         loadLookAndFeels();
+        
+        
+        
+        Timer timer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int tasks = browser.getMovieFinder().getRunningTasks();
+                if(tasks == 0){
+                    loadProgressBar.setIndeterminate(false);
+                    loadProgressBar.setString("ready");
+                    loadProgressBar.setValue(loadProgressBar.getMaximum());
+                }else{
+                    loadProgressBar.setIndeterminate(true);
+                    loadProgressBar.setString(tasks+" task(s) remaining");
+                }
+            }
+        });
+        timer.start();
     }
 
     private void setColumnWidths() {

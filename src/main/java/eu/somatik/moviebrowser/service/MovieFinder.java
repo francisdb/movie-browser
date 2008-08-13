@@ -51,6 +51,11 @@ public class MovieFinder {
     private final Converter converter = new Converter();
 
     /**
+     * Kepps track of how many tasks are running
+     */
+    private int runningTasks;
+
+    /**
      * Creates a new instance of MovieFinder
      * @param movieCache
      * @param fileSystemScanner
@@ -74,6 +79,8 @@ public class MovieFinder {
 
         this.service = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
         this.secondaryService = Executors.newFixedThreadPool(OTHERS_POOL_SIZE);
+
+        runningTasks = 0;
     }
 
     /**
@@ -142,6 +149,7 @@ public class MovieFinder {
          */
         public MovieCaller(MovieInfo info) {
             this.info = info;
+            runningTasks++;
         }
 
         @Override
@@ -176,6 +184,8 @@ public class MovieFinder {
             } catch (Exception ex) {
                 LOGGER.error("Exception while loading/saving movie", ex);
                 info.setStatus(MovieStatus.ERROR);
+            } finally {
+                runningTasks--;
             }
 
 
@@ -198,25 +208,30 @@ public class MovieFinder {
             this.service = service;
             this.fetcher = fetcherFactory.get(service);
             this.info = info;
+            runningTasks++;
         }
 
         @Override
         public MovieInfo call() throws Exception {
-            LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
-            info.setStatus(MovieStatus.LOADING);
-            Movie movie = new Movie();
-            converter.convert(info.getMovieFile().getMovie(), movie);
-            String id = null;
-            if (service == MovieService.TOMATOES) {
-                id = infoHandler.id(info, MovieService.IMDB);
+            try{
+                LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
+                info.setStatus(MovieStatus.LOADING);
+                Movie movie = new Movie();
+                converter.convert(info.getMovieFile().getMovie(), movie);
+                String id = null;
+                if (service == MovieService.TOMATOES) {
+                    id = infoHandler.id(info, MovieService.IMDB);
+                }
+                MoviePage site = fetcher.fetch(movie, id);
+                StorableMovieSite storableMovieSite = new StorableMovieSite();
+                converter.convert(site, storableMovieSite);
+                storableMovieSite.setMovie(info.getMovieFile().getMovie());
+                movieCache.insert(storableMovieSite);
+                info.addSite(storableMovieSite);
+                info.setStatus(MovieStatus.LOADED);
+            }finally{
+                runningTasks--;
             }
-            MoviePage site = fetcher.fetch(movie, id);
-            StorableMovieSite storableMovieSite = new StorableMovieSite();
-            converter.convert(site, storableMovieSite);
-            storableMovieSite.setMovie(info.getMovieFile().getMovie());
-            movieCache.insert(storableMovieSite);
-            info.addSite(storableMovieSite);
-            info.setStatus(MovieStatus.LOADED);
             return info;
         }
     }
@@ -253,5 +268,11 @@ public class MovieFinder {
         storableMovieSite.setMovie(movieInfo.getMovieFile().getMovie());
         movieInfo.addSite(storableMovieSite);
     // todo insert the site?
-    }    
+    }
+
+    public int getRunningTasks() {
+        return runningTasks;
+    }
+
+
 }
