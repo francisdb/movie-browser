@@ -29,7 +29,10 @@ public class FileTools {
                 if (files[i].isDirectory()) {
                     deleteDirectory(files[i]);
                 } else {
-                    files[i].delete();
+                    boolean deleted = files[i].delete();
+                    if(!deleted){
+                        LOGGER.error("Could not delete: "+files[i].getAbsolutePath());
+                    }
                 }
             }
         }
