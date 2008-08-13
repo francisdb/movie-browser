@@ -14,7 +14,7 @@
         </shortcut>
     </information>
     <resources locale="" os="">
-        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="32m" max-heap-size="128m" />
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="32m" max-heap-size="512m" />
         $dependencies
     </resources>
     <security>
