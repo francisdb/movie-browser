@@ -26,6 +26,7 @@ import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import com.flicklib.service.movie.imdb.ImdbSearch;
+import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.gui.debug.CheckThreadViolationRepaintManager;
 import eu.somatik.moviebrowser.gui.debug.EventDispatchThreadHangMonitor;
 import eu.somatik.moviebrowser.service.InfoHandler;
@@ -53,6 +54,7 @@ public class MovieBrowser {
     private final Settings settings;
     private final SubtitlesLoader subtitlesLoader;
     private final InfoHandler infoHandler;
+    private final MovieCache movieCache;
 
     /** 
      * Creates a new instance of MovieBrowser
@@ -76,7 +78,8 @@ public class MovieBrowser {
             final IconLoader iconLoader,
             final Settings settings,
             final SubtitlesLoader subtitlesLoader,
-            final InfoHandler infoHandler) {
+            final InfoHandler infoHandler,
+            final MovieCache movieCache) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
@@ -86,6 +89,7 @@ public class MovieBrowser {
         this.settings = settings;
         this.subtitlesLoader = subtitlesLoader;
         this.infoHandler = infoHandler;
+        this.movieCache = movieCache;
     }
 
     private void configureLogging() {
@@ -173,6 +177,10 @@ public class MovieBrowser {
 
     public SubtitlesLoader getSubtitlesLoader() {
         return subtitlesLoader;
+    }
+
+    public MovieCache getMovieCache() {
+        return movieCache;
     }
 
     private static class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler {
