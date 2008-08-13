@@ -664,7 +664,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(loadProgressBar.getString().contains("All movie info loaded.")) {
+            if(browser.getMovieFinder().getRunningTasks()==0) {
                 EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
                 editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
                 editMovieFrame.setVisible(true);
@@ -806,7 +806,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         @Override 
         public void actionPerformed(ActionEvent e) {
             //TODO get this out of here, this sould be somewhere in a logic class and not in the gui
-            if(loadProgressBar.getString().contains("All movie info loaded.")) {
+            if(browser.getMovieFinder().getRunningTasks()==0) {
                 List<String> files = new ArrayList<String>();
                 MovieInfo info = getSelectedMovie(); 
                 File dir = info.getDirectory();
