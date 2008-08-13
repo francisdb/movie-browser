@@ -341,6 +341,12 @@ public class JPAMovieCache implements MovieCache {
     @Override
     public void clear() {
         shutdown();
+        try{
+            Thread.sleep(2000);
+        }catch(InterruptedException ex){
+            LOGGER.error("Sleep interrupted", ex);
+
+        }
         File databaseDir = new File(getDatabaseUrl());
         if(databaseDir.exists()){
             boolean deleted = FileTools.deleteDirectory(databaseDir);
