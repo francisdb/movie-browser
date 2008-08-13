@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO implement paging loading
  * 
  * http://www.opensubtitles.org
  * @author francisdb
