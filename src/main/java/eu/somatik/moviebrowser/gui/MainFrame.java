@@ -443,7 +443,6 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
                 FileTools.deleteDirectory(imagesDir);
             }
             //clear the table values
-            clearTableList();
             browser.getMovieCache().clear();
 
             return null;
@@ -453,7 +452,6 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         protected void done() {
             try {
                 get();
-                load();
             } catch (InterruptedException ex) {
                 LOGGER.error("Delete worker execution interrupted", ex);
             } catch (ExecutionException ex) {
@@ -461,6 +459,8 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             } finally {
                 busyDialog.dispose();
             }
+            clearTableList();
+            load();
         }
     };
     worker.execute();
