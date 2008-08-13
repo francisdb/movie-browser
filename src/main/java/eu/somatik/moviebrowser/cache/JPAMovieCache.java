@@ -346,11 +346,12 @@ public class JPAMovieCache implements MovieCache {
             boolean deleted = false;
             int count = 0;
             // try three times with 1 sec waiting
-            while (deleted == false && count < 3) {
+            while (deleted == false && count < 5) {
                 if (count != 0) {
-                    LOGGER.debug("Sleeping 1 sec before retry...");
+                    int sleep = 1000 * count;
+                    LOGGER.debug("Sleeping "+sleep+" sec before retry...");
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(sleep);
                     } catch (InterruptedException ex) {
                         count = Integer.MAX_VALUE;
                         LOGGER.error("Sleep interrupted", ex);
