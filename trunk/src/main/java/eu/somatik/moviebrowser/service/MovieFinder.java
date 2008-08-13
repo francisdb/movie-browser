@@ -26,6 +26,7 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import java.util.ArrayList;
+import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,28 +127,34 @@ public class MovieFinder {
      */
     public void loadMovies(List<MovieInfo> movies) {
         LOGGER.info("Loading " + movies.size() + " movies");
-        List<MovieCaller> callers = new LinkedList<MovieCaller>();
+        List<ImdbCaller> callers = new LinkedList<ImdbCaller>();
         for (MovieInfo info : movies) {
-            callers.add(new MovieCaller(info));
+            callers.add(new ImdbCaller(info));
         }
-
+        
+        //List<Future<MovieInfo>> futures = new LinkedList<Future<MovieInfo>>();
         try {
+            // futures = 
             service.invokeAll(callers);
+            // TODO check all futures for succes.
+//            for( Future<MovieInfo> future:futures){
+//                future.
+//            }
         } catch (InterruptedException ex) {
             LOGGER.error("Movie loader interrupted", ex);
         }
     }
 
-    private class MovieCaller implements Callable<MovieInfo> {
+    private class ImdbCaller implements Callable<MovieInfo> {
 
         private final MovieInfo info;
 
         /**
-         * Constructs a new MovieCaller object
+         * Constructs a new ImdbCaller object
          *
          * @param info
          */
-        public MovieCaller(MovieInfo info) {
+        public ImdbCaller(MovieInfo info) {
             this.info = info;
             runningTasks++;
         }
