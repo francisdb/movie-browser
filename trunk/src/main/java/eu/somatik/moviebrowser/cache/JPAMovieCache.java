@@ -371,25 +371,4 @@ public class JPAMovieCache implements MovieCache {
         }
         startup();
     }
-    //    private void printList() {
-//        LOGGER.info("Printing movie list");
-//        for (StorableMovie movie : movieDAO.loadMovies()) {
-//            LOGGER.info(movie.getPath() + "" + movie);
-//        }
-//    }
-    /**
-     * Clear the movies list from DB. Simillar to deleteMovie() in MovieDAO, but doesn't work, 
-     * as it throws an exception saying: Removing a detached instance.
-     */
-//    public void removeFromList(StorableMovie movie) {
-//        //System.out.println(list.getPath());
-//        EntityManager em = emf.createEntityManager();
-//        EntityTransaction transaction = em.getTransaction();
-//        eu.somatik.moviebrowser.cache.MovieDAO movies = new eu.somatik.moviebrowser.cache.MovieDAO(emf);
-//        movies.deleteMovie(movie);
-//        //em.remove(movie);
-//        //transaction.commit();
-//        //em.remove(movie);
-//        //em.close();
-//    }
 }
