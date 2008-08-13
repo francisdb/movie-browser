@@ -72,5 +72,13 @@ public interface MovieCache {
      */
     void shutdown();
 
+    /**
+     * Start the cache, the cache should not be used before it is started
+     */
     void startup();
+
+    /**
+     * Clears the cache
+     */
+    void clear();
 }

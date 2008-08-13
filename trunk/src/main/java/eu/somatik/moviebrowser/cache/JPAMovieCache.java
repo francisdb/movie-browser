@@ -15,6 +15,7 @@ import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,9 +60,13 @@ public class JPAMovieCache implements MovieCache {
     public void startup() {
         LOGGER.info("Starting up the cache.");
         Map<String, String> props = new HashMap<String, String>();
-        String databaseLocation = settings.getSettingsDir() + File.separator + "database/moviecache";
+        String databaseLocation = getDatabaseUrl() + File.separator + "moviecache";
         props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + databaseLocation + ";shutdown=true");
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
+    }
+    
+    private String getDatabaseUrl(){
+        return settings.getSettingsDir() + File.separator + "database";
     }
 
     /**
@@ -331,7 +336,24 @@ public class JPAMovieCache implements MovieCache {
             }
             em.close();
         }
-    }    
+    }
+
+    @Override
+    public void clear() {
+        shutdown();
+        File databaseDir = new File(getDatabaseUrl());
+        if(databaseDir.exists()){
+            boolean deleted = FileTools.deleteDirectory(databaseDir);
+            if(deleted){
+                LOGGER.info("Deleted "+databaseDir.getAbsolutePath());
+            }else{
+                LOGGER.error("Could not delete "+databaseDir.getAbsolutePath());
+            }
+        }else{
+            LOGGER.warn("Database folder does not exist "+databaseDir.getAbsolutePath());
+        }
+        startup();
+    }
     
     //    private void printList() {
 //        LOGGER.info("Printing movie list");

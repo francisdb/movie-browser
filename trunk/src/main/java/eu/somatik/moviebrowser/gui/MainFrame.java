@@ -43,6 +43,7 @@ import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
+import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -229,7 +230,6 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
-        clearListMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         clearCacheMenuItem = new javax.swing.JMenuItem();
         extraMenu = new javax.swing.JMenu();
@@ -309,15 +309,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         movieMenu.add(importMenuItem);
 
-        clearListMenuItem.setMnemonic('C');
-        clearListMenuItem.setText("Clear List");
-        clearListMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearListMenuItemActionPerformed(evt);
-            }
-        });
-        movieMenu.add(clearListMenuItem);
-
         jMenuBar1.add(movieMenu);
 
         toolsMenu.setText("Tools");
@@ -364,7 +355,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                    .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 861, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(filterLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -402,10 +393,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
 }//GEN-LAST:event_importMenuItemActionPerformed
 
-private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearListMenuItemActionPerformed
-    clearTableList();
-}//GEN-LAST:event_clearListMenuItemActionPerformed
-
     /**
      * Clear the table list, this does not clear the cache.
      */
@@ -419,22 +406,17 @@ private void clearListMenuItemActionPerformed(java.awt.event.ActionEvent evt) {/
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-    JOptionPane.showMessageDialog(this, "Not implemented");
-//    //Clear the image folder
-//    File imagesDir = new File(SettingsImpl.getImageCacheDir().getName());
-//    System.out.println(imagesDir.getAbsolutePath());
-//    imagesDir.delete();
-//       
-//    //Clear the persistence db. For testing I tried to pass the selected row but
-//    //still get detached error - for more info see commented code in MovieCache class.
-//    MovieInfoTableModel model = (MovieInfoTableModel)movieTable.getModel();
-//    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-//    //System.out.println(info.getDirectory());
-//    MovieCache movies = new MovieCache();
-//    movies.removeFromList(info.getMovie());
-//    
-//    //clear the table values
-//    clearTableList();
+
+    //Clear the image folder
+    File imagesDir = settings.getImageCacheDir();
+    if(imagesDir.exists()){
+        FileTools.deleteDirectory(imagesDir);
+    }
+    //clear the table values
+    clearTableList();
+    browser.getMovieCache().clear();
+    load();
+    
 }//GEN-LAST:event_clearCacheMenuItemActionPerformed
 
     /**
@@ -864,7 +846,6 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem checkUpdatesMenuItem;
     private javax.swing.JMenuItem clearCacheMenuItem;
-    private javax.swing.JMenuItem clearListMenuItem;
     private javax.swing.JMenu extraMenu;
     private javax.swing.JLabel filterLabel;
     private javax.swing.JTextField filterText;
