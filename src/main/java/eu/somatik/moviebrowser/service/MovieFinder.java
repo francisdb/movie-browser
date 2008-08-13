@@ -178,28 +178,7 @@ public class MovieFinder {
                 info.setStatus(MovieStatus.ERROR);
             }
 
-//            StorableMovie movie = movieCache.find(info.getMovieFile().getMovie().getPath());
-//            MovieInfo loaded = null;
-//            if (movie == null || movie.getImdbId() == null) {
-//                try{
-//                    LOGGER.info("Fetching data for "+info.getMovieFile().getMovie().getPath());
-//                    
-//                    loaded = getMovieInfoImdb(info);
-//                    movieCache.inserOrUpdate(loaded.getMovieFile().getMovie());
-//                    // TODO FOR EACH SELECTED SERVICE
-//                    secondaryService.submit(new MovieServiceCaller(MovieService.TOMATOES, loaded));
-//                    secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, loaded));
-//                    secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, loaded));
-//                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXSTER, loaded));
-//                }catch(Exception ex){
-//                    LOGGER.error("Exception while loading/saving movie", ex);
-//                }
-//            } else {
-//                LOGGER.info("Loading cached data for "+info.getMovieFile().getMovie().getPath());
-//                info.setStatus(MovieStatus.CACHED);
-//                info.getMovieFile().setMovie(movie);
-//                loaded = info;
-//            }
+
             return info;
         }
     }
@@ -235,7 +214,6 @@ public class MovieFinder {
             StorableMovieSite storableMovieSite = new StorableMovieSite();
             converter.convert(site, storableMovieSite);
             storableMovieSite.setMovie(info.getMovieFile().getMovie());
-            // TODO insert site?
             movieCache.insert(storableMovieSite);
             info.addSite(storableMovieSite);
             info.setStatus(MovieStatus.LOADED);

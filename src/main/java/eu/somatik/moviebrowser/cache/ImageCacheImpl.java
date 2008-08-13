@@ -48,7 +48,6 @@ public class ImageCacheImpl implements ImageCache {
     public ImageCacheImpl(final Settings settings, final InfoHandler infoHandler) {
         this.settings = settings;
         this.infoHandler = infoHandler;
-        // TODO refactor to be a real image cache, cached images should be saved inhere and not in the MovieInfo 
     }
 
     

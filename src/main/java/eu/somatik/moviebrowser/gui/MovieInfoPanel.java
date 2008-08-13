@@ -85,8 +85,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
     private void update() {
 
-        // TODO need better image cache, if loading takes a lot of time the
-        // image might be shown after a new movie was selected
+        // TODO if loading takes a lot of time the, image might be shown after a new movie was selected
         Image image = imageCache.loadImg(info);
         if (image == null) {
             new ImageLoadingWorker().execute();
