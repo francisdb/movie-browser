@@ -444,7 +444,6 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             }
             //clear the table values
             browser.getMovieCache().clear();
-
             return null;
         }
 
