@@ -230,7 +230,7 @@ public class MovieFinder {
             // TODO this should update all records with this movie linked to it
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
-                LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
+                LOGGER.trace("Calling fetch on {} for '{}'", fetcher.getClass().getSimpleName(), info.getMovieFile().getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 Movie movie = new Movie();
                 converter.convert(info.getMovieFile().getMovie(), movie);

@@ -123,7 +123,7 @@ public class FileSystemImageCache implements ImageCache {
                 is = new BufferedInputStream(imgUrl.openStream());
                 // Print info about resource
                 Date date = new Date(urlC.getLastModified());
-                LOGGER.info("Saving resource (type: " + urlC.getContentType() + ", modified on: " + date + ")...");
+                LOGGER.trace("Saving resource type: {}, modified on: {}", urlC.getContentType(), date );
                 cached = getCacheFile(url);
                 writeFile(is, cached);
                 is.close();
