@@ -132,6 +132,7 @@ public class MainFrame extends javax.swing.JFrame {
                     loadProgressBar.setIndeterminate(false);
                     loadProgressBar.setString("ready");
                     loadProgressBar.setValue(loadProgressBar.getMaximum());
+                    loadProgressBar.setToolTipText("All tasks finished");
                 } else {
                     loadProgressBar.setIndeterminate(true);
                     loadProgressBar.setString(tasks + " task(s) remaining");
