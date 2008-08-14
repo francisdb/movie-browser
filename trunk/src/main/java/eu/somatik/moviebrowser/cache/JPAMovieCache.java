@@ -82,8 +82,6 @@ public class JPAMovieCache implements MovieCache {
     }
 
     private void checkComatibility() {
-        boolean compatible = true;
-        int version = 0;
         if (loadVersion() != DATABASE_VERSION) {
             // not sure this is a good place to lounch a gui dialog...
             try {
