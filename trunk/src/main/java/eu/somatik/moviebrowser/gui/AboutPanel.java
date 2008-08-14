@@ -8,10 +8,7 @@ package eu.somatik.moviebrowser.gui;
 import eu.somatik.moviebrowser.config.Settings;
 import java.awt.Desktop;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Properties;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import org.slf4j.Logger;
@@ -33,7 +30,11 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
 
         StringBuilder builder = new StringBuilder("<html>");
         builder.append("<h2>Movie Browser</h2>");
-        builder.append("<strong>Version</strong> ").append(getVersion()).append("<br/>");
+        String version = settings.getApplicationVersion();
+        if(version == null){
+            version = "[DEV VERSION]";
+        }
+        builder.append("<strong>Version</strong> ").append(version).append("<br/>");
         builder.append("<strong>Settings</strong> ").append(settings.getSettingsDir()).append("<br/>");
         builder.append("<strong>Site</strong> <a href=\"http://code.google.com/p/movie-browser/\">http://code.google.com/p/movie-browser/</a>");
         builder.append("<p>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE CREATORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>");
@@ -56,32 +57,6 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
         }
     }
 
-    private String getVersion() {
-        String version = "";
-        InputStream is = null;
-        try {
-            String pom = "META-INF/maven/org.somatik/moviebrowser/pom.properties";
-            URL resource = AboutPanel.class.getClassLoader().getResource(pom);
-            if (resource == null) {
-                throw new IOException("Could not load pom properties: " + pom);
-            }
-            is = resource.openStream();
-            Properties props = new Properties();
-            props.load(is);
-            version = props.getProperty("version");
-        } catch (IOException ex) {
-            LOGGER.error("Could not read pom.properties", ex);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close InputStream", ex);
-                }
-            }
-        }
-        return version;
-    }
 
     /** This method is called from within the constructor to
      * initialize the form.

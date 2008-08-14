@@ -57,5 +57,17 @@ public interface Settings {
      * @return true if in debug mode
      */
     boolean isDebugMode();
+
+    /**
+     * Returns the curen version
+     * @return the version as string
+     */
+    String getApplicationVersion();
+    
+    /**
+     * Fetches the latest version info from the net
+     * @return the version as string
+     */
+    String getLatestApplicationVersion();
     
 }
