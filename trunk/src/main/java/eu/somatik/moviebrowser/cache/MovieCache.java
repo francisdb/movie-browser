@@ -12,6 +12,13 @@ import java.util.List;
 public interface MovieCache {
 
     /**
+     * Selects a movie using its title
+     * @param title
+     * @return
+     */
+    public StorableMovie findMovieByTitle(String title);
+
+    /**
      *
      * @param path the movie path
      * @return the movie of null if not found in cache

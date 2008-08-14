@@ -36,11 +36,9 @@ import org.slf4j.LoggerFactory;
 public class MovieFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
-    
     // TODO make this available in settings somewhere
     private static final int IMDB_POOL_SIZE = 5;
     private static final int OTHERS_POOL_SIZE = 5;
-    
     private final ExecutorService service;
     private final ExecutorService secondaryService;
     private final FileSystemScanner fileSystemScanner;
@@ -49,7 +47,6 @@ public class MovieFinder {
     private final InfoFetcherFactory fetcherFactory;
     private final InfoHandler infoHandler;
     private final Converter converter = new Converter();
-
     /**
      * Kepps track of how many tasks are running
      */
@@ -130,12 +127,12 @@ public class MovieFinder {
         for (MovieInfo info : movies) {
             callers.add(new ImdbCaller(info));
         }
-        
+
         //List<Future<MovieInfo>> futures = new LinkedList<Future<MovieInfo>>();
         try {
             // futures = 
             service.invokeAll(callers);
-            // TODO check all futures for succes.
+        // TODO check all futures for succes.
 //            for( Future<MovieInfo> future:futures){
 //                future.
 //            }
@@ -167,24 +164,28 @@ public class MovieFinder {
                     // TODO load movie
 
                     getMovieInfoImdb(info);
-                    movieCache.inserOrUpdate(info.getMovieFile().getMovie());
-                    movieCache.update(info.getMovieFile());
-                    
-                    // TODO only do if not available
-                    movieCache.insert(info.siteFor(MovieService.IMDB));
+                    StorableMovie movie = movieCache.findMovieByTitle(info.getMovieFile().getMovie().getTitle());
+                    if (movie == null) {
+                        movieCache.inserOrUpdate(info.getMovieFile().getMovie());
+                        movieCache.update(info.getMovieFile());
 
-                    // TODO FOR EACH SELECTED SERVICE
-                    // TODO only do if not available
-                    secondaryService.submit(new MovieServiceCaller(MovieService.TOMATOES, info));
-                    secondaryService.submit(new MovieServiceCaller(MovieService.MOVIEWEB, info));
-                    secondaryService.submit(new MovieServiceCaller(MovieService.GOOGLE, info));
-                    secondaryService.submit(new MovieServiceCaller(MovieService.FLIXSTER, info));
-                    info.setStatus(MovieStatus.LOADED);
-                } else {
-                    List<StorableMovieSite> sites = movieCache.loadSites(info.getMovieFile().getMovie());
-                    for (StorableMovieSite site : sites) {
-                        info.addSite(site);
+                        // TODO only do if not available
+                        movieCache.insert(info.siteFor(MovieService.IMDB));
+
+
+                        MovieService[] services = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
+                        // TODO only do if not available
+                        for (MovieService service : services) {
+                            secondaryService.submit(new MovieServiceCaller(service, info));
+                        }
+                    } else {
+                        info.getMovieFile().setMovie(movie);
+                        movieCache.update(info.getMovieFile());
+                        loadSites(info);
+                        info.setStatus(MovieStatus.LOADED);
                     }
+                } else {
+                    loadSites(info);
                     info.setStatus(MovieStatus.CACHED);
                 }
             } catch (Exception ex) {
@@ -196,6 +197,13 @@ public class MovieFinder {
 
 
             return info;
+        }
+    }
+
+    private void loadSites(MovieInfo info) {
+        List<StorableMovieSite> sites = movieCache.loadSites(info.getMovieFile().getMovie());
+        for (StorableMovieSite site : sites) {
+            info.addSite(site);
         }
     }
 
@@ -219,7 +227,8 @@ public class MovieFinder {
 
         @Override
         public MovieInfo call() throws Exception {
-            try{
+            // TODO this should update all records with this movie linked to it
+            try {
                 LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
                 info.setStatus(MovieStatus.LOADING);
                 Movie movie = new Movie();
@@ -235,7 +244,7 @@ public class MovieFinder {
                 movieCache.insert(storableMovieSite);
                 info.addSite(storableMovieSite);
                 info.setStatus(MovieStatus.LOADED);
-            }finally{
+            } finally {
                 runningTasks--;
             }
             return info;
@@ -254,7 +263,7 @@ public class MovieFinder {
         if (movieInfo.getMovieFile().getMovie() == null) {
             movieInfo.getMovieFile().setMovie(new StorableMovie());
         }
-        if(movieInfo.getMovieFile().getMovie().getTitle() == null){
+        if (movieInfo.getMovieFile().getMovie().getTitle() == null) {
             movieInfo.getMovieFile().getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
         }
 
@@ -279,6 +288,4 @@ public class MovieFinder {
     public int getRunningTasks() {
         return runningTasks;
     }
-
-
 }

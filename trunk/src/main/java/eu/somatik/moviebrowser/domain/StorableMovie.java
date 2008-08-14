@@ -10,11 +10,13 @@ package eu.somatik.moviebrowser.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 /**
@@ -23,15 +25,17 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Movie")
+@NamedQuery(name="StorableMovie.findByTitle", query="SELECT m FROM StorableMovie m WHERE m.title = :title")
 public class StorableMovie {
     
     @Id
     @GeneratedValue
     private long id;
 
-    private String plot;
-    
+    @Column(unique=true, nullable=false)
     private String title;
+    
+    private String plot;
     private Integer year;
     
     private String director;

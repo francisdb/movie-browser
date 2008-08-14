@@ -10,13 +10,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  * 
  * @author francisdb
  */
 @Entity
-@Table(name = "Site")
+@Table(name = "Site",uniqueConstraints={@UniqueConstraint(columnNames={"movie_id","service"})})
+
 @NamedQueries(@NamedQuery(name = "StorableMovieSite.findByMovie", query = "SELECT s FROM StorableMovieSite s WHERE s.movie = :movie"))
 public class StorableMovieSite {
 	@Id
