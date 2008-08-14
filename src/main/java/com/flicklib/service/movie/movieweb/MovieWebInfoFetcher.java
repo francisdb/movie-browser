@@ -74,7 +74,7 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
                 }
             }
             if (movieUrl == null) {
-                throw new IOException("Movie not found on MovieWeb: "+movie.getTitle());
+                LOGGER.warn("Movie not found on MovieWeb: "+movie.getTitle());
             }
             site.setUrl(movieUrl);
             source = httpLoader.load(movieUrl);
