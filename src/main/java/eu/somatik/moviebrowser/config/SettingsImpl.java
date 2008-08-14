@@ -9,13 +9,19 @@ package eu.somatik.moviebrowser.config;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,7 +39,6 @@ import org.slf4j.LoggerFactory;
 public class SettingsImpl implements Settings {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsImpl.class);
-    
     private static final String SETTINGS_DIR = ".moviebrowser";
     private static final String IMG_CACHE = "images";
     private static final String PREFERENCES = "preferences.properties";
@@ -147,9 +152,8 @@ public class SettingsImpl implements Settings {
         }
         return cache;
     }
-    
-    
-    private Properties defaultPreferences(){
+
+    private Properties defaultPreferences() {
         Properties properties = new Properties();
         properties.put("lookandfeel", UIManager.getSystemLookAndFeelClassName());
         return properties;
@@ -160,27 +164,27 @@ public class SettingsImpl implements Settings {
         Properties props = defaultPreferences();
         File prefsFile = new File(getSettingsDir(), PREFERENCES);
         InputStream is = null;
-        try{
-            if(prefsFile.exists()){
+        try {
+            if (prefsFile.exists()) {
                 is = new FileInputStream(prefsFile);
                 props.load(is);
             }
-         }catch(IOException ex){
-            LOGGER.error("Could not load preferences to "+prefsFile.getAbsolutePath(), ex);
-        }catch(SecurityException ex){
-            LOGGER.error("Could not load preferences to "+prefsFile.getAbsolutePath(), ex);
-        }finally{
-            if(is!=null){
-                try{
+        } catch (IOException ex) {
+            LOGGER.error("Could not load preferences to " + prefsFile.getAbsolutePath(), ex);
+        } catch (SecurityException ex) {
+            LOGGER.error("Could not load preferences to " + prefsFile.getAbsolutePath(), ex);
+        } finally {
+            if (is != null) {
+                try {
                     is.close();
-                }catch(IOException ex){
-                    LOGGER.error("Could not load outputstream for"+prefsFile.getAbsolutePath(), ex);
+                } catch (IOException ex) {
+                    LOGGER.error("Could not load outputstream for" + prefsFile.getAbsolutePath(), ex);
                 }
             }
         }
         Map<String, String> preferences = new HashMap<String, String>();
-        for(Map.Entry<Object,Object> entry:props.entrySet()){
-            preferences.put((String)entry.getKey(), (String)entry.getValue());
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            preferences.put((String) entry.getKey(), (String) entry.getValue());
         }
         return preferences;
     }
@@ -188,7 +192,7 @@ public class SettingsImpl implements Settings {
     @Override
     public void savePreferences(Map<String, String> preferences) {
         Properties props = new Properties();
-        for(Map.Entry<String,String> entry:preferences.entrySet()){
+        for (Map.Entry<String, String> entry : preferences.entrySet()) {
             props.put(entry.getKey(), entry.getValue());
         }
         File prefsFile = new File(getSettingsDir(), PREFERENCES);
@@ -199,10 +203,67 @@ public class SettingsImpl implements Settings {
     public boolean isDebugMode() {
         boolean debug = false;
         Map<String, String> prefs = loadPreferences();
-        if(prefs.containsKey("debug") && "true".equals(prefs.get("debug"))){
+        if (prefs.containsKey("debug") && "true".equals(prefs.get("debug"))) {
             LOGGER.info("Starting in DEBUG mode!");
             debug = true;
         }
-        return debug;    
+        return debug;
+    }
+
+    @Override
+    public String getApplicationVersion() {
+        String version = null;
+        InputStream is = null;
+        try {
+            String pom = "META-INF/maven/org.somatik/moviebrowser/pom.properties";
+            URL resource = SettingsImpl.class.getClassLoader().getResource(pom);
+            if (resource == null) {
+                throw new IOException("Could not load pom properties: " + pom);
+            }
+            is = resource.openStream();
+            Properties props = new Properties();
+            props.load(is);
+            version = props.getProperty("version");
+        } catch (IOException ex) {
+            LOGGER.error("Could not read pom.properties", ex);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    LOGGER.error("Could not close InputStream", ex);
+                }
+            }
+        }
+        return version;
+    }
+
+    @Override
+    public String getLatestApplicationVersion() {
+        String latestVersion = null;
+        String latestVersionInfoURL = "http://movie-browser.googlecode.com/svn/site/latest";
+        LOGGER.info("Checking latest version info from: " + latestVersionInfoURL);
+        BufferedReader in = null;
+        try {
+            // Set up the streams
+            LOGGER.info("Fetcing latest version info from: " + latestVersionInfoURL);
+             URL url = new URL(latestVersionInfoURL); 
+            
+            // Read all the text returned by the server
+            in = new BufferedReader(new InputStreamReader(url.openStream()));
+            String str;
+            while ((str = in.readLine()) != null) {
+                latestVersion = str;
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error fetching latest version info from: " + latestVersionInfoURL, ex);
+        } finally {
+            try {
+                in.close();
+            } catch (Exception ex) {
+                LOGGER.error("Could not close inputstream", ex);
+            }
+        }
+        return latestVersion;
     }
 }

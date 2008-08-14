@@ -528,84 +528,20 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 }//GEN-LAST:event_filterTextActionPerformed
 
 private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpdatesMenuItemActionPerformed
-    //TODO: Dupliacte code from AboutPanel
-    String version = "";
-    InputStream is = null;
-    try {
-        String pom = "META-INF/maven/org.somatik/moviebrowser/pom.properties";
-        URL resource = AboutPanel.class.getClassLoader().getResource(pom);
-        if (resource == null) {
-            throw new IOException("Could not load pom properties: " + pom);
-        }
-        is = resource.openStream();
-        Properties props = new Properties();
-        props.load(is);
-        version = props.getProperty("version");
-    } catch (IOException ex) {
-        LOGGER.error("Could not read pom.properties", ex);
-    } finally {
-        if (is != null) {
-            try {
-                is.close();
-            } catch (IOException ex) {
-                LOGGER.error("Could not close InputStream", ex);
-            }
-        }
-    }
-    //End of duplicate code from AboutPanel
-
-    //Retrieve Version from web
-    String latestVersionInfoURL = "http://movie-browser.googlecode.com/svn/site/latest";
-    LOGGER.info("Checking latest version info from: " + latestVersionInfoURL);
-    InputStream in = null;
-    OutputStream out = new ByteArrayOutputStream();
-
-    try {
-        // Set up the streams
-        LOGGER.info("Fetcing latest version info from: " + latestVersionInfoURL);
-        URL url = new URL(latestVersionInfoURL);   // Create the URL
-        URLConnection uc = url.openConnection();
-        uc.setDefaultUseCaches(false);
-        uc.setUseCaches(false);
-        uc.setRequestProperty("Cache-Control", "max-age=0,no-cache");
-        uc.setRequestProperty("Pragma", "no-cache");
-
-        try {
-            in = uc.getInputStream();
-        } catch (FileNotFoundException ex) {
-            LOGGER.error("Could not find file: " + latestVersionInfoURL, ex);
-        }
-
-        // Read bytes into string
-        byte[] buffer = new byte[4096];
-        while (true) {
-            int read = in.read(buffer);
-
-            if (read == -1) {
-                break;
-            }
-
-            out.write(buffer, 0, read);
-        }
-
-        String latestVersion = out.toString();
+    String latestVersion = settings.getLatestApplicationVersion();
+    if(latestVersion == null){
+        JOptionPane.showMessageDialog(MainFrame.this, "Could not contact the update server!", "Update check failed", JOptionPane.WARNING_MESSAGE);
+    }else{
+        String version = settings.getApplicationVersion();
         if (latestVersion.equals(version)) {
             JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
-        } else if (version.contains("SNAPSHOT") || version.isEmpty()) {
-            JOptionPane.showMessageDialog(MainFrame.this, "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \n The latest release can be downloaded from http://movie-browser.googlecode.com", "Updates", JOptionPane.INFORMATION_MESSAGE);
+        } else if (version == null || version.contains("SNAPSHOT")) {
+            JOptionPane.showMessageDialog(MainFrame.this, "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \nThe latest release can be downloaded from http://movie-browser.googlecode.com", "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\n You are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
-        }
-    } // On exceptions, print error message and usage message.
-    catch (Exception ex) {
-        LOGGER.error("Error fetching latest version info from: " + latestVersionInfoURL, ex);
-    } finally {  // Always close the streams
-        try {
-            in.close();
-            out.close();
-        } catch (Exception e) {
+            JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\nYou are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
         }
     }
+
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
     private void showPopup(MouseEvent evt) {
