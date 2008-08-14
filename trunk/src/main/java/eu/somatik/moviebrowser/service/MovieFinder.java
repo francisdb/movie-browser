@@ -228,6 +228,7 @@ public class MovieFinder {
         @Override
         public MovieInfo call() throws Exception {
             // TODO this should update all records with this movie linked to it
+            // TODO make a null entry if movie not found? so we can do better reloading
             try {
                 LOGGER.info("Calling fetch on " + fetcher.getClass().getSimpleName());
                 info.setStatus(MovieStatus.LOADING);

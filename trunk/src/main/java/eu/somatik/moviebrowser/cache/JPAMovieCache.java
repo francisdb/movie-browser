@@ -17,11 +17,13 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -29,6 +31,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +43,11 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class JPAMovieCache implements MovieCache {
 
+    /**
+     * Augment this value whenever the data model changes (jpa domain classes)
+     */
+    private static final int DATABASE_VERSION = 1;
+    private static final String VERSION_FILE = "version";
     private static final Logger LOGGER = LoggerFactory.getLogger(JPAMovieCache.class);
     private final Settings settings;
     private EntityManagerFactory emf;
@@ -60,10 +69,59 @@ public class JPAMovieCache implements MovieCache {
     @Override
     public void startup() {
         LOGGER.info("Starting up the cache.");
+        File databaseDir = new File(getDatabaseUrl());
+        if (databaseDir.exists()) {
+            checkComatibility();
+        }else{
+            setVersion(DATABASE_VERSION);
+        }
         Map<String, String> props = new HashMap<String, String>();
         String databaseLocation = getDatabaseUrl() + File.separator + "moviecache";
         props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + databaseLocation + ";shutdown=true");
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
+    }
+
+    private void checkComatibility() {
+        boolean compatible = true;
+        int version = 0;
+        if (loadVersion() != DATABASE_VERSION) {
+            // not sure this is a good place to lounch a gui dialog...
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        JOptionPane.showMessageDialog(null, "Movie cache not compatible with new version.\nCache will be cleared!", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
+                });
+            } catch (InvocationTargetException ex) {
+                LOGGER.error("Showing message failed", ex.getCause());
+            } catch (InterruptedException ex) {
+                LOGGER.warn("Showing message interrupted");
+            }
+            clear();
+        }
+
+    }
+
+    private int loadVersion() {
+        File prefsFile = new File(getDatabaseUrl(), VERSION_FILE);
+        Properties props = FileTools.loadProperties(prefsFile);
+        int version = 0;
+        String storedVersion = (String) props.get("version");
+        if(storedVersion == null){
+            LOGGER.warn("Could not determine database version");
+        }else{
+            version = Integer.valueOf(storedVersion);
+        }
+        return version;
+    }
+
+    private void setVersion(int version) {
+        Properties props = new Properties();
+        props.put("version", Integer.toString(version));
+        File propsFile = new File(getDatabaseUrl(), VERSION_FILE);
+        FileTools.storePropeties(props, propsFile);
     }
 
     private String getDatabaseUrl() {
@@ -77,10 +135,10 @@ public class JPAMovieCache implements MovieCache {
     public void shutdown() {
         if (emf != null) {
             emf.close();
+            LOGGER.info("Cache shutdown complete.");
         } else {
-            LOGGER.warn("Cache shutdown failed, cache was not started.");
+            LOGGER.warn("Cache shutdown skipped, cache was not started.");
         }
-        LOGGER.info("Cache shutdown complete.");
     }
 
     /**
@@ -329,9 +387,8 @@ public class JPAMovieCache implements MovieCache {
         return sites;
     }
 
-
     @Override
-    public void clear() {
+    public void clear(){
         shutdown();
         File databaseDir = new File(getDatabaseUrl());
         if (databaseDir.exists()) {
@@ -341,7 +398,7 @@ public class JPAMovieCache implements MovieCache {
             while (deleted == false && count < 5) {
                 if (count != 0) {
                     int sleep = 1000 * count;
-                    LOGGER.debug("Sleeping "+sleep+" sec before retry...");
+                    LOGGER.debug("Sleeping " + sleep + " sec before retry...");
                     try {
                         Thread.sleep(sleep);
                     } catch (InterruptedException ex) {
@@ -355,11 +412,14 @@ public class JPAMovieCache implements MovieCache {
 
             if (deleted) {
                 LOGGER.info("Deleted " + databaseDir.getAbsolutePath());
+                setVersion(DATABASE_VERSION);
             } else {
+                // TODO throw exception?
                 LOGGER.error("Could not delete " + databaseDir.getAbsolutePath());
             }
         } else {
             LOGGER.warn("Database folder does not exist " + databaseDir.getAbsolutePath());
+            setVersion(DATABASE_VERSION);
         }
         startup();
     }
@@ -372,17 +432,17 @@ public class JPAMovieCache implements MovieCache {
             em = emf.createEntityManager();
             Query query = em.createNamedQuery("StorableMovie.findByTitle");
             query.setParameter("title", title);
-            try{
+            try {
                 movie = (StorableMovie) query.getSingleResult();
-            }catch(NoResultException ex){
-                LOGGER.debug("No movie found with title: "+title);
+            } catch (NoResultException ex) {
+                LOGGER.debug("No movie found with title: " + title);
             }
         } finally {
             closeAndCleanup(em);
         }
         return movie;
     }
-    
+
     private void closeAndCleanup(final EntityManager em) {
         if (em != null) {
             if (em.getTransaction().isActive()) {
