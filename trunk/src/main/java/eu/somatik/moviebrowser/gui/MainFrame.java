@@ -47,6 +47,7 @@ import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -65,6 +66,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JTextPane;
 import javax.swing.Timer;
 import org.jdesktop.swingx.JXHyperlink;
 
@@ -524,36 +526,34 @@ private void filterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUpdatesMenuItemActionPerformed
     String latestVersion = settings.getLatestApplicationVersion();
-    if(latestVersion == null){
+    if (latestVersion == null) {
         JOptionPane.showMessageDialog(MainFrame.this, "Could not contact the update server!", "Update check failed", JOptionPane.WARNING_MESSAGE);
-    }else{
+    } else {
         String version = settings.getApplicationVersion();
         if (latestVersion.equals(version)) {
             JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else if (version == null || version.contains("SNAPSHOT")) {
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            JXHyperlink hyperlink = new JXHyperlink();
-            hyperlink.setText("http://movie-browser.googlecode.com");
-            JLabel label = new JLabel();
-            label.setText("You have a development version of Movie Browser. The latest stable release available is " + latestVersion + " which can be downloaded from our website:");
-            panel.add(label, BorderLayout.CENTER);
-            panel.add(hyperlink, BorderLayout.SOUTH);
-            JOptionPane.showMessageDialog(MainFrame.this, panel, "Updates", JOptionPane.INFORMATION_MESSAGE);
+            String msg = "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ".\nOpening our website where you can download the new version...";
+            loadUrl("http://code.google.com/p/movie-browser/downloads/list");
+            JOptionPane.showMessageDialog(MainFrame.this, msg, "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            JXHyperlink hyperlink = new JXHyperlink();
-            hyperlink.setText("http://movie-browser.googlecode.com");
-            JLabel label = new JLabel();
-            label.setText("The latest version available is " + latestVersion + "\nYou are running the older version " + version + ". Please visit our website to get the latest version:");
-            panel.add(label, BorderLayout.CENTER);
-            panel.add(hyperlink, BorderLayout.SOUTH);
-            JOptionPane.showMessageDialog(MainFrame.this, panel, "Updates", JOptionPane.INFORMATION_MESSAGE);
+            String msg = "The latest version available is " + latestVersion + "\nYou are running the older version " + version + ".\nOpening our website where you can download the new version...";
+            loadUrl("http://code.google.com/p/movie-browser/downloads/list");
+            JOptionPane.showMessageDialog(MainFrame.this, msg, "Updates", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
+    
+    private void loadUrl(String url) {
+        try {
+            Desktop.getDesktop().browse(new URL(url).toURI());
+        } catch (IOException ex) {
+            LOGGER.error("Could not open hyperlink", ex);
+        } catch (URISyntaxException ex) {
+            LOGGER.error("Could not open hyperlink", ex);
+        }
+    }
 
     private void showPopup(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
