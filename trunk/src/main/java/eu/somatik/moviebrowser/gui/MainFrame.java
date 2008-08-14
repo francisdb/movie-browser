@@ -40,7 +40,6 @@ import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
