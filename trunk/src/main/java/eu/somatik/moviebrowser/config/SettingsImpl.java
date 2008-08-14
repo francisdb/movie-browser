@@ -7,15 +7,14 @@
 package eu.somatik.moviebrowser.config;
 
 import com.google.inject.Singleton;
+import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -193,23 +192,7 @@ public class SettingsImpl implements Settings {
             props.put(entry.getKey(), entry.getValue());
         }
         File prefsFile = new File(getSettingsDir(), PREFERENCES);
-        OutputStream os = null;
-        try{
-            os = new FileOutputStream(prefsFile);
-            props.store(os, "Movie browser configuration file");
-        }catch(IOException ex){
-            LOGGER.error("Could not save preferences to "+prefsFile.getAbsolutePath(), ex);
-        }catch(SecurityException ex){
-            LOGGER.error("Could not save preferences to "+prefsFile.getAbsolutePath(), ex);
-        }finally{
-            if(os!=null){
-                try{
-                    os.close();
-                }catch(IOException ex){
-                    LOGGER.error("Could not close outputstream for"+prefsFile.getAbsolutePath(), ex);
-                }
-            }
-        }
+        FileTools.storePropeties(props, prefsFile);
     }
 
     @Override
