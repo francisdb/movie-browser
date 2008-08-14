@@ -536,7 +536,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             JXHyperlink hyperlink = new JXHyperlink();
             hyperlink.setText("http://movie-browser.googlecode.com");
             JLabel label = new JLabel();
-            label.setText("You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \nand can be downloaded from our website:");
+            label.setText("You have a development version of Movie Browser. The latest stable release available is " + latestVersion + " which can be downloaded from our website:");
             panel.add(label, BorderLayout.CENTER);
             panel.add(hyperlink, BorderLayout.SOUTH);
             JOptionPane.showMessageDialog(MainFrame.this, panel, "Updates", JOptionPane.INFORMATION_MESSAGE);
