@@ -629,7 +629,6 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
             popup.add(new CrawlSubtitleAction());
             popup.add(new EditAction());
-            LOGGER.info("Showing popup");
             popup.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }
@@ -685,7 +684,9 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
                     LOGGER.error("Movie loader worker interrupted", ex);
                 } catch (ExecutionException ex) {
                     LOGGER.error("Loading movies failed", ex);
-                    JOptionPane.showMessageDialog(MainFrame.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    String message = ex.getMessage();
+                    message += "\nTry tools - clear cache in the menu to fix this problem!";
+                    JOptionPane.showMessageDialog(MainFrame.this, message, ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                 } finally {
                     loadProgressBar.setIndeterminate(false);
                     loadProgressBar.setString("All movie info loaded.");

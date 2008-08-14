@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import org.slf4j.Logger;
@@ -328,15 +329,6 @@ public class JPAMovieCache implements MovieCache {
         return sites;
     }
 
-    private void closeAndCleanup(final EntityManager em) {
-        if (em != null) {
-            if (em.getTransaction().isActive()) {
-                LOGGER.warn("Rolling back transaction!!!");
-                em.getTransaction().rollback();
-            }
-            em.close();
-        }
-    }
 
     @Override
     public void clear() {
@@ -370,5 +362,34 @@ public class JPAMovieCache implements MovieCache {
             LOGGER.warn("Database folder does not exist " + databaseDir.getAbsolutePath());
         }
         startup();
+    }
+
+    @Override
+    public StorableMovie findMovieByTitle(String title) {
+        StorableMovie movie = null;
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            Query query = em.createNamedQuery("StorableMovie.findByTitle");
+            query.setParameter("title", title);
+            try{
+                movie = (StorableMovie) query.getSingleResult();
+            }catch(NoResultException ex){
+                LOGGER.debug("No movie found with title: "+title);
+            }
+        } finally {
+            closeAndCleanup(em);
+        }
+        return movie;
+    }
+    
+    private void closeAndCleanup(final EntityManager em) {
+        if (em != null) {
+            if (em.getTransaction().isActive()) {
+                LOGGER.warn("Rolling back transaction!!!");
+                em.getTransaction().rollback();
+            }
+            em.close();
+        }
     }
 }
