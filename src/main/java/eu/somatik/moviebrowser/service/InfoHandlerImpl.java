@@ -37,18 +37,6 @@ public class InfoHandlerImpl implements InfoHandler {
     }
     
     @Override
-    public String imgUrl(MovieInfo info, MovieService service) {
-        String val;
-        StorableMovieSite site = info.siteFor(service);
-        if (site == null) {
-            val = null;
-        } else {
-            val = info.siteFor(service).getImgUrl();
-        }
-        return val;
-    }
-    
-    @Override
     public Integer votes(MovieInfo info, MovieService service) {
         Integer val;
         StorableMovieSite site = info.siteFor(service);

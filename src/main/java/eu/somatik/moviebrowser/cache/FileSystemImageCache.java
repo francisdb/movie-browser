@@ -31,6 +31,7 @@ import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.service.InfoHandler;
 
 /**
@@ -52,7 +53,18 @@ public class FileSystemImageCache implements ImageCache {
 
     
     private String imageUrl(MovieInfo info){
-        return infoHandler.imgUrl(info, MovieService.IMDB);
+        return imgUrl(info, MovieService.IMDB);
+    }
+    
+    private  String imgUrl(MovieInfo info, MovieService service) {
+        String val;
+        StorableMovieSite site = info.siteFor(service);
+        if (site == null) {
+            val = null;
+        } else {
+            val = info.siteFor(service).getImgUrl();
+        }
+        return val;
     }
     
     /**
