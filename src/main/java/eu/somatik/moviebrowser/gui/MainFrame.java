@@ -63,12 +63,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JTextPane;
 import javax.swing.Timer;
-import org.jdesktop.swingx.JXHyperlink;
 
 /**
  *
