@@ -62,8 +62,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.Timer;
+import org.jdesktop.swingx.JXHyperlink;
 
 /**
  *
@@ -528,9 +531,25 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         if (latestVersion.equals(version)) {
             JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else if (version == null || version.contains("SNAPSHOT")) {
-            JOptionPane.showMessageDialog(MainFrame.this, "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \nThe latest release can be downloaded from http://movie-browser.googlecode.com", "Updates", JOptionPane.INFORMATION_MESSAGE);
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            JXHyperlink hyperlink = new JXHyperlink();
+            hyperlink.setText("http://movie-browser.googlecode.com");
+            JLabel label = new JLabel();
+            label.setText("You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ". \nand can be downloaded from our website:");
+            panel.add(label, BorderLayout.CENTER);
+            panel.add(hyperlink, BorderLayout.SOUTH);
+            JOptionPane.showMessageDialog(MainFrame.this, panel, "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(MainFrame.this, "The latest version available is " + latestVersion + "\nYou are running the older version " + version + ". Please visit http://movie-browser.googlecode.com to get the latest version.", "Updates", JOptionPane.INFORMATION_MESSAGE);
+            JPanel panel = new JPanel();
+            panel.setLayout(new BorderLayout());
+            JXHyperlink hyperlink = new JXHyperlink();
+            hyperlink.setText("http://movie-browser.googlecode.com");
+            JLabel label = new JLabel();
+            label.setText("The latest version available is " + latestVersion + "\nYou are running the older version " + version + ". Please visit our website to get the latest version:");
+            panel.add(label, BorderLayout.CENTER);
+            panel.add(hyperlink, BorderLayout.SOUTH);
+            JOptionPane.showMessageDialog(MainFrame.this, panel, "Updates", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
