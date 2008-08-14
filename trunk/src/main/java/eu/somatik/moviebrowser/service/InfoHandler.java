@@ -25,13 +25,6 @@ public interface InfoHandler {
      */
     String url(MovieInfo info, MovieService service);
     
-    /**
-     * Gets the imgUrl for a service
-     * @param info
-     * @param service
-     * @return
-     */
-    String imgUrl(MovieInfo info, MovieService service);
     
     /**
      * Gets the votes for a service
