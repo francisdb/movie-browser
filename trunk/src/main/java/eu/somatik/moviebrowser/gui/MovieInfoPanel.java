@@ -20,6 +20,10 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,17 +42,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final IconLoader iconLoader;
     private final ImageCache imageCache;
     private final InfoHandler infoHandler;
-    /**
-     * Make generic version for all buttons
-     * @deprecated
-     */
-    @Deprecated
-    private JButton imdbButton;
-    private JButton tomatoesButton;
-    private JButton moviewebButton;
-    private JButton omdbButton;
-    private JButton googleButton;
-    private JButton flixterButton;
+    private final List<MovieService> services;
+    private final Map<MovieService, JButton> siteButtons;
     private MovieInfo info;
 
     /** Creates new form MovieInfoPanel
@@ -60,6 +55,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.infoHandler = infoHandler;
+        // TODO get the services from the settings
+        this.services = Arrays.asList(MovieService.values());
+        this.siteButtons = new HashMap<MovieService, JButton>();
         initComponents();
         addIcons();
         infoTextPane.setContentType("text/html");
@@ -99,12 +97,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             movieHeader.setTitle("");
             movieHeader.setDescription("");
             infoTextPane.setText("");
-            updateButton(imdbButton, null);
-            updateButton(tomatoesButton, null);
-            updateButton(moviewebButton, null);
-            updateButton(omdbButton, null);
-            updateButton(googleButton, null);
-            updateButton(flixterButton, null);
+            for (MovieService service : services) {
+                updateButton(siteButtons.get(service), null);
+            }
         } else {
             if (movie.getTitle() == null) {
                 movieHeader.setTitle(info.getDirectory().getName());
@@ -113,13 +108,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             }
             movieHeader.setDescription(movie.getPlot());
 
-            // TODO make generified button bar
-            updateButton(imdbButton, infoHandler.url(info, MovieService.IMDB));
-            updateButton(tomatoesButton, infoHandler.url(info, MovieService.TOMATOES));
-            updateButton(moviewebButton, infoHandler.url(info, MovieService.MOVIEWEB));
-            updateButton(omdbButton, infoHandler.url(info, MovieService.OMDB));
-            updateButton(googleButton, infoHandler.url(info, MovieService.GOOGLE));
-            updateButton(flixterButton, infoHandler.url(info, MovieService.FLIXSTER));
+            for (MovieService service:services) {
+                updateButton(siteButtons.get(service), infoHandler.url(info, service));
+            }
 
             StringBuilder builder = new StringBuilder("<html>");
 
@@ -192,75 +183,28 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
     }
 
+    private JButton createSiteButton(MovieService service) {
+        final JButton serviceButton = new JButton(iconLoader.iconFor(service));
+        serviceButton.setEnabled(false);
+        serviceButton.setToolTipText("Open " + service.getName() + " page for this movie");
+        serviceButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLinkFor(serviceButton);
+            }
+        });
+        return serviceButton;
+    }
+
     private void addIcons() {
         buttonPanel.setLayout(new FlowLayout());
-
-        imdbButton = new JButton(iconLoader.loadIcon("images/16/imdb.png"));
-        imdbButton.setEnabled(false);
-        imdbButton.setToolTipText("Open on imdb website");
-        imdbButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(imdbButton);
-            }
-        });
-        buttonPanel.add(imdbButton);
-        tomatoesButton = new JButton(iconLoader.loadIcon("images/16/rottentomatoes.png"));
-        tomatoesButton.setToolTipText("Open on rottentomatoes website");
-        tomatoesButton.setEnabled(false);
-        tomatoesButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(tomatoesButton);
-            }
-        });
-        buttonPanel.add(tomatoesButton);
-        moviewebButton = new JButton(iconLoader.loadIcon("images/16/movieweb.png"));
-        moviewebButton.setToolTipText("Open on movieweb website");
-        moviewebButton.setEnabled(false);
-        moviewebButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(moviewebButton);
-            }
-        });
-        buttonPanel.add(moviewebButton);
-        omdbButton = new JButton(iconLoader.loadIcon("images/16/omdb.png"));
-        omdbButton.setToolTipText("Open on omdb website");
-        omdbButton.setEnabled(false);
-        omdbButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(omdbButton);
-            }
-        });
-        buttonPanel.add(omdbButton);
-        googleButton = new JButton(iconLoader.loadIcon("images/16/google.png"));
-        googleButton.setToolTipText("Open on google movie website");
-        googleButton.setEnabled(false);
-        googleButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(googleButton);
-            }
-        });
-        buttonPanel.add(googleButton);
-        flixterButton = new JButton(iconLoader.loadIcon("images/16/flixter.png"));
-        flixterButton.setToolTipText("Open on flixter website");
-        flixterButton.setEnabled(false);
-        flixterButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLinkFor(flixterButton);
-            }
-        });
-        buttonPanel.add(flixterButton);
+        JButton button;
+        for (MovieService service : services) {
+            button = createSiteButton(service);
+            siteButtons.put(service, button);
+            buttonPanel.add(button);
+        }
     }
 
     private void openLinkFor(JButton button) {
