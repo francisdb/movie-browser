@@ -38,14 +38,14 @@ import eu.somatik.moviebrowser.service.InfoHandler;
  * @author francisdb
  */
 @Singleton
-public class ImageCacheImpl implements ImageCache {
+public class FileSystemImageCache implements ImageCache {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageCacheImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemImageCache.class);
     private final Settings settings;
     private final InfoHandler infoHandler;
 
     @Inject
-    public ImageCacheImpl(final Settings settings, final InfoHandler infoHandler) {
+    public FileSystemImageCache(final Settings settings, final InfoHandler infoHandler) {
         this.settings = settings;
         this.infoHandler = infoHandler;
     }

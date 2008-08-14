@@ -6,7 +6,7 @@
 package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.api.SubtitlesLoader;
-import eu.somatik.moviebrowser.domain.StorableMovie;
+import com.flicklib.domain.MovieService;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.flicklib.domain.Subtitle;
 import com.flicklib.service.sub.SubtitleSourceLoader;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
     private final SubtitleTableModel model;
     private final SubtitlesLoader subtitlesLoader;
     private final SubtitlesLoader subtitlesLoader2;
-    private final StorableMovie movie;
+    private final MovieInfo movie;
 
     /** Creates new form SubtitleCrawlerFrame
      * @param files
@@ -52,7 +53,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
      * @param subtitlesLoader
      * @param iconLoader 
      */
-    public SubtitleCrawlerFrame(List<String> files, StorableMovie movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
+    public SubtitleCrawlerFrame(List<String> files, MovieInfo movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.subtitlesLoader2 = new SubtitleSourceLoader();
         this.model = new SubtitleTableModel();
@@ -178,7 +179,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
     }
 }//GEN-LAST:event_subtitlesTableMousePressed
 
-    public void crawl(final List<String> files, final StorableMovie movie) {
+    public void crawl(final List<String> files, final MovieInfo movie) {
         statusProgressBar.setIndeterminate(true);
         statusProgressBar.setString("Crawling sites for subtitles. This may take a while...");
         new SwingWorker<List<Subtitle>,Void>() {
@@ -187,7 +188,8 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
             protected List<Subtitle> doInBackground() throws Exception {
                 String fileName;
                 List<Subtitle> results = new ArrayList<Subtitle>();
-                results.addAll(subtitlesLoader2.search(movie.getTitle(), movie.getImdbId()));
+                String imdbId = movie.siteFor(MovieService.IMDB).getIdForSite();
+                results.addAll(subtitlesLoader2.search(movie.getMovieFile().getMovie().getTitle(), imdbId));
                 
                 Iterator<String> i = files.iterator();
                 while (i.hasNext()) {
@@ -201,7 +203,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
                     LOGGER.info("fileName = " + fileName);
                     try {
                         //Add other methods to get subs from other sources.
-                        results.addAll(subtitlesLoader.search(fileName, movie.getImdbId()));
+                        results.addAll(subtitlesLoader.search(fileName, imdbId));
                     } catch (IOException ex) {
                         LOGGER.error("Exception while fetching subtitles", ex);
                     }

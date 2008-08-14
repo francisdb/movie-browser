@@ -886,7 +886,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
                 }
 
                 files.add(alternateSearchKey);
-                openSubCrawler(files, info.getMovieFile().getMovie());
+                openSubCrawler(files, info);
             } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "Subtitle crawling cannot be done while movie info is being loaded. \nPlease try again after all movie info is loaded.", "Loading Info", JOptionPane.WARNING_MESSAGE);
             }
@@ -897,7 +897,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
      * Loads SubtitleCrawlerFrame
      * @param fileName
      */
-    private void openSubCrawler(List<String> file, StorableMovie movie) {
+    private void openSubCrawler(List<String> file, MovieInfo movie) {
         SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);

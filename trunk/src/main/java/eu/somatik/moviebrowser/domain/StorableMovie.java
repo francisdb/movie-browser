@@ -28,9 +28,6 @@ public class StorableMovie {
     @Id
     @GeneratedValue
     private long id;
-    
-    @Deprecated
-    private String imdbId;
 
     private String plot;
     
@@ -99,21 +96,7 @@ public class StorableMovie {
         this.title = title;
     }
     
-        /**
-     * 
-     * @return the imdbId
-     */
-    public String getImdbId() {
-        return imdbId;
-    }
 
-    /**
-     * 
-     * @param imdbId 
-     */
-    public void setImdbId(String imdbId) {
-        this.imdbId = imdbId;
-    }
     
     
     /**
@@ -184,10 +167,7 @@ public class StorableMovie {
     
     @Override
     public String toString() {
-        return "Movie "+getTitle()+" -> "+getImdbId();
+        return "Movie "+getId()+": "+getTitle();
     }
-
-
-    
 
 }
