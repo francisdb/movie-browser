@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.domain;
 
+import com.flicklib.domain.MovieType;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,6 +51,8 @@ public class StorableMovie {
     private Integer year;
     
     private String director;
+
+    private MovieType type;
     
     /**
      * Runtime in minutes 
@@ -177,6 +180,16 @@ public class StorableMovie {
     public void setDirector(String director) {
         this.director = director;
     }
+
+    public MovieType getType() {
+        return type;
+    }
+
+    public void setType(MovieType type) {
+        this.type = type;
+    }
+
+
 
     
     

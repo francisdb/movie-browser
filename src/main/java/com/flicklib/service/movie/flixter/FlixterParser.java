@@ -23,7 +23,7 @@ public class FlixterParser extends AbstractJerichoParser{
     private static final Logger LOGGER = LoggerFactory.getLogger(FlixterParser.class);
     
     @Override
-    public void parse(Source source, MoviePage movieSite) {
+    public void parse(String html, Source source, MoviePage movieSite) {
         // <a  title=" The X-Files: I Want to Believe (The X Files 2)" href="/movie/the-x-files-i-want-to-believe-the-x-files-2"  class="headerLink" >
         List<?> aElements = source.findAllElements(HTMLElementName.A);
         for (Iterator<?> i = aElements.iterator(); i.hasNext();) {

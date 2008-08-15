@@ -97,6 +97,12 @@ public class EditMovieFrame extends javax.swing.JFrame {
         setTitle("Edit Movie");
         setIconImage(new ImageIcon(EditMovieFrame.getFrames().getClass().getResource("/images/movie.png")).getImage());
 
+        searchTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchTextFieldActionPerformed(evt);
+            }
+        });
+
         searchLabel.setText("Look for:");
 
         searchButton.setText("Find");
@@ -238,6 +244,10 @@ private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {
     }
 }//GEN-LAST:event_resultsListValueChanged
 
+private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
+    searchButtonActionPerformed(evt);
+}//GEN-LAST:event_searchTextFieldActionPerformed
+
 private void resultsListDoubleClick() {
     MoviePage moviePage = (MoviePage) resultsList.getSelectedValue();
     String url = moviePage.getUrl();
@@ -273,7 +283,7 @@ private void resultsListDoubleClick() {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             MoviePage movieSite = (MoviePage) value;
-            setText(movieSite.getMovie().getTitle()+" ("+movieSite.getMovie().getYear()+")");
+            setText(movieSite.getMovie().getTitle()+" ("+movieSite.getMovie().getYear()+" / "+movieSite.getMovie().getType().getName()+")");
             return this;
         }
     }

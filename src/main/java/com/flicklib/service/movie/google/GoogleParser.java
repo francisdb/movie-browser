@@ -20,7 +20,7 @@ public class GoogleParser extends AbstractJerichoParser{
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleParser.class);
 
     @Override
-    public void parse(final Source source, final MoviePage movieSite) {
+    public void parse(final String html, final Source source, final MoviePage movieSite) {
         List<?> nobrElements = source.findAllElements("nobr");
         for (Iterator<?> i = nobrElements.iterator(); i.hasNext();) {
             Element nobrElement = (Element) i.next();

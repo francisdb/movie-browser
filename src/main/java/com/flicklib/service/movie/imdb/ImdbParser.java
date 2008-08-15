@@ -32,16 +32,15 @@ public class ImdbParser extends AbstractJerichoParser {
     }
 
     @Override
-    public void parse(Source source, MoviePage movieSite) {
+    public void parse(final String html, Source source, MoviePage movieSite) {
+
+        ImdbParserRegex regexParser = new ImdbParserRegex(html);
+
         Movie movie = movieSite.getMovie();
+        movie.setType(regexParser.getType());
         Element titleHeader = (Element) source.findAllElements(HTMLElementName.H1).get(0);
         String title = new ElementOnlyTextExtractor(titleHeader.getContent()).toString();
-
-        //Remove quote at beginning and end of title for TV-series
-        if (title.startsWith("\"") && title.endsWith("\"")) {
-            title = title.substring(1, title.length() - 1);
-        }
-
+        title = ImdbParserRegex.cleanTitle(title);
         movie.setTitle(title);
 
         List<?> yearLinks = titleHeader.findAllElements(HTMLElementName.A);

@@ -19,6 +19,7 @@ public class Converter {
         movie.setTitle(storableMovie.getTitle());
         movie.setYear(storableMovie.getYear());
         movie.setDirector(storableMovie.getDirector());
+        movie.setType(storableMovie.getType());
         for (Language lang : storableMovie.getLanguages()) {
             movie.addLanguage(lang.getName());
         }
@@ -33,6 +34,7 @@ public class Converter {
         storableMovie.setRuntime(movie.getRuntime());
         storableMovie.setYear(movie.getYear());
         storableMovie.setDirector(movie.getDirector());
+        storableMovie.setType(movie.getType());
         for (String lang : movie.getLanguages()) {
             storableMovie.addLanguage(new Language(lang));
         }
