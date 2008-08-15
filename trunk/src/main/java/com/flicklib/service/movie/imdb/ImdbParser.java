@@ -36,10 +36,16 @@ public class ImdbParser extends AbstractJerichoParser {
         Movie movie = movieSite.getMovie();
         Element titleHeader = (Element) source.findAllElements(HTMLElementName.H1).get(0);
         String title = new ElementOnlyTextExtractor(titleHeader.getContent()).toString();
+
+        //Remove quote at beginning and end of title for TV-series
+        if (title.startsWith("\"") && title.endsWith("\"")) {
+            title = title.substring(1, title.length() - 1);
+        }
+
         movie.setTitle(title);
-        
+
         List<?> yearLinks = titleHeader.findAllElements(HTMLElementName.A);
-        if(yearLinks.size() > 0){
+        if (yearLinks.size() > 0) {
             Element yearLink = (Element) yearLinks.get(0);
             String year = yearLink.getContent().getTextExtractor().toString();
             try {
@@ -63,7 +69,7 @@ public class ImdbParser extends AbstractJerichoParser {
             if (href != null && href.contains("/Sections/Genres/")) {
                 String genre = linkElement.getContent().getTextExtractor().toString();
                 // TODO find a better way to parse these out, make sure it are only the movie genres
-                if(!genre.toLowerCase().contains("imdb")){
+                if (!genre.toLowerCase().contains("imdb")) {
                     movie.addGenre(linkElement.getContent().getTextExtractor().toString());
                 }
             }
@@ -80,7 +86,7 @@ public class ImdbParser extends AbstractJerichoParser {
                 Element next = source.findNextElement(bElement.getEndTag().getEnd());
                 String rating = next.getContent().getTextExtractor().toString();
                 // skip (awaiting 5 votes)
-                if(!rating.contains("awaiting")){
+                if (!rating.contains("awaiting")) {
                     // to percentage
                     rating = rating.replace("/10", "");
                     try {
@@ -96,10 +102,10 @@ public class ImdbParser extends AbstractJerichoParser {
                     votes = votes.replaceAll("votes\\)", "");
                     votes = votes.replaceAll(",", "");
                     votes = votes.trim();
-                    try{
+                    try {
                         movieSite.setVotes(Integer.valueOf(votes));
-                    }catch(NumberFormatException ex){
-                        LOGGER.error("Could not parse the votes '"+votes+"' to Integer", ex);
+                    } catch (NumberFormatException ex) {
+                        LOGGER.error("Could not parse the votes '" + votes + "' to Integer", ex);
                     }
                 }
             }
