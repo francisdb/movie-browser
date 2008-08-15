@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 	<!--
+ 	        This configuration file was written by the eclipse-cs plugin configuration editor
+ 	-->
+ 	<!--
+ 	Checkstyle-Configuration: Nuxeo Coding Rules
+ 	Description:
+ 	
+ 	-->
+ 	<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <module name="PackageHtml"/>
+    <module name="TreeWalker">
+ 	        <module name="LocalFinalVariableName"/>
+ 	        <module name="LocalVariableName"/>
+ 	        <module name="MemberName"/>
+ 	        <module name="MethodName"/>
+ 	        <module name="PackageName"/>
+	        <module name="ParameterName"/>
+ 	        <module name="StaticVariableName"/>
+ 	        <module name="TypeName"/>
+ 	        <module name="IllegalImport"/>
+ 	        <module name="RedundantImport"/>
+ 	        <module name="UnusedImports"/>
+        <module name="AvoidStarImport"/>
+        <module name="ConstantName"/>
+        <module name="EmptyBlock"/>
+
+
+<module name="Header">
+    <property name="headerFile" value="java.header"/>
+<!--    <property name="ignoreLines" value="2, 3, 4"/>-->
+</module>
+    </module>
+</module>
