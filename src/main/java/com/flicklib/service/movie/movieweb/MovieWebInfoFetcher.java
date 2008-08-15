@@ -75,10 +75,11 @@ public class MovieWebInfoFetcher implements MovieInfoFetcher {
             }
             if (movieUrl == null) {
                 LOGGER.warn("Movie not found on MovieWeb: "+movie.getTitle());
+            }else{
+                site.setUrl(movieUrl);
+                source = httpLoader.load(movieUrl);
+                movieWebInfoParser.parse(source, site);
             }
-            site.setUrl(movieUrl);
-            source = httpLoader.load(movieUrl);
-            movieWebInfoParser.parse(source, site);
         } catch (IOException ex) {
             LOGGER.error("Loading from MovieWeb failed: "+urlToLoad, ex);
         }
