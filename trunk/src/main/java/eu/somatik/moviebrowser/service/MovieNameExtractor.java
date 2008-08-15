@@ -117,8 +117,8 @@ public class MovieNameExtractor {
      * @param str
      */
     private void getYear(final String str) {
-        String REGEX = "(18|19|20|21)\\d\\d";
-        Pattern p = Pattern.compile(REGEX);
+        final String regex = "(18|19|20|21)\\d\\d";
+        Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(str);
         int count = 0;
         while (m.find()) {
