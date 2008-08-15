@@ -50,10 +50,8 @@ public class ImdbSearch {
             Iterator<?> j = tableElements.iterator();
             while(j.hasNext()) {
                 tableElement = (Element) j.next();
-                //System.out.println(tableElement.getTextExtractor().toString());
-                String newList = tableElement.getChildElements().toString();
-                Source newSource = new Source(newList);
-                List<?> linkElements = newSource.findAllElements(HTMLElementName.A);
+                String tdContents = tableElement.getTextExtractor().toString();
+                List<?> linkElements = tableElement.findAllElements(HTMLElementName.A);
                 Element linkElement;
                 MoviePage movieSite;
                 Movie movie;
@@ -73,6 +71,9 @@ public class ImdbSearch {
                         }
                         movieSite.setUrl("http://www.imdb.com" + href);
                         movieSite.setIdForSite(href.replaceAll("[a-zA-Z:/.+=?]", "").trim());
+                        movie.setType(ImdbParserRegex.getType(tdContents, false));
+                        title = linkElement.getTextExtractor().toString();
+                        title = ImdbParserRegex.cleanTitle(title);
                         movie.setTitle(linkElement.getTextExtractor().toString());
                         ElementOnlyTextExtractor extractor = new ElementOnlyTextExtractor(tableElement.getContent());
                         String titleYear = extractor.toString().trim();

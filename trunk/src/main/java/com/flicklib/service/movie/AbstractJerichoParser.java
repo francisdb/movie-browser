@@ -11,17 +11,18 @@ import com.flicklib.domain.MoviePage;
 public abstract class AbstractJerichoParser implements Parser{
 
     @Override
-    public void parse(String pageSource, MoviePage movieSite) {
-        Source source = new Source(pageSource);
+    public final void parse(String html, MoviePage movieSite) {
+        Source source = new Source(html);
         //source.setLogWriter(new OutputStreamWriter(System.err)); // send log messages to stderr
         source.fullSequentialParse();
-        parse(source, movieSite);
+        parse(html, source, movieSite);
     }
 
     /**
      * Parses jericho source to MovieSite
+     * @param html
      * @param source
      * @param movieSite
      */
-    public abstract void parse(Source source, MoviePage movieSite);
+    public abstract void parse(String html, Source source, MoviePage movieSite);
 }

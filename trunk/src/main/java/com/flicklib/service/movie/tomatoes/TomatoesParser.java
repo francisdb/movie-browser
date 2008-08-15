@@ -21,7 +21,7 @@ public class TomatoesParser extends AbstractJerichoParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(TomatoesParser.class);
 
     @Override
-    public void parse(Source source, MoviePage movieSite) {
+    public void parse(final String html, Source source, MoviePage movieSite) {
         List<?> divElements = source.findAllElements(HTMLElementName.DIV);
         for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
             Element divElement = (Element) i.next();

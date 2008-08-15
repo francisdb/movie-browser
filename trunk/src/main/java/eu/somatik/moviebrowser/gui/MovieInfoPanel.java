@@ -108,7 +108,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             }
             movieHeader.setDescription(movie.getPlot());
 
-            for (MovieService service:services) {
+            for (MovieService service : services) {
                 updateButton(siteButtons.get(service), infoHandler.url(info, service));
             }
 
@@ -116,6 +116,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
             builder.append("<h2>").append(movie.getTitle()).append("</h2>");
             boolean first = true;
+            String type = movie.getType() == null ? "" : movie.getType().getName();
+            builder.append("<strong>Type</strong> ").append(type).append("<br/>");
             builder.append("<strong>Director</strong> ").append(movie.getDirector()).append("<br/>");
             builder.append("<strong>Genres</strong> ");
             for (Genre genre : movie.getGenres()) {
