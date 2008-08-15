@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * Copy of jmoviedb functionality!
  * @author francisdb
  */
-public class ImdbParserRegex {
+class ImdbParserRegex {
 
     private String html;
 
@@ -19,7 +19,7 @@ public class ImdbParserRegex {
      * The default constructor
      * @param html - a HTML document
      */
-    protected ImdbParserRegex(String html) {
+    ImdbParserRegex(String html) {
         this.html = html;
     }
 
@@ -60,7 +60,7 @@ public class ImdbParserRegex {
      * @param header
      * @return
      */
-    public static MovieType getType(final String header, final boolean html) {
+    static MovieType getType(final String header, final boolean html) {
         MovieType type = MovieType.MOVIE;
         if (header.contains("(TV)")) {
             type = MovieType.TV_MOVIE;
@@ -83,7 +83,7 @@ public class ImdbParserRegex {
      * @param title
      * @return
      */
-    public static String cleanTitle(String title){
+    static String cleanTitle(String title){
         if (title.startsWith("\"") && title.endsWith("\"")) {
             title = title.substring(1, title.length() - 1);
         }
@@ -94,7 +94,7 @@ public class ImdbParserRegex {
      * Returns the movie's production year, if the open document is a movie page.
      * @return a year
      */
-    protected int getYear() {
+    int getYear() {
         Pattern patternYear = Pattern.compile("<a href=\"/Sections/Years/\\d{4}\">(\\d{4})</a>");
         Matcher matcherYear = patternYear.matcher(html);
         if (matcherYear.find()) {
