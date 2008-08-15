@@ -157,6 +157,7 @@ public class MovieFinder {
 
         @Override
         public MovieInfo call() throws Exception {
+            MovieService[] extraServices = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
             try {
                 info.setStatus(MovieStatus.LOADING);
                 info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
@@ -171,22 +172,20 @@ public class MovieFinder {
 
                         // TODO only do if not available
                         movieCache.insert(info.siteFor(MovieService.IMDB));
-
-
-                        MovieService[] services = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
-                        // TODO only do if not available
-                        for (MovieService service : services) {
-                            secondaryService.submit(new MovieServiceCaller(service, info));
-                        }
                     } else {
                         info.getMovieFile().setMovie(movie);
                         movieCache.update(info.getMovieFile());
-                        loadSites(info);
-                        info.setStatus(MovieStatus.LOADED);
                     }
+                    info.setStatus(MovieStatus.LOADED);
                 } else {
                     loadSites(info);
                     info.setStatus(MovieStatus.CACHED);
+                }
+                loadSites(info);
+                for (MovieService service : extraServices) {
+                    if (info.siteFor(service) == null) {
+                        secondaryService.submit(new MovieServiceCaller(service, info));
+                    }
                 }
             } catch (Exception ex) {
                 LOGGER.error("Exception while loading/saving movie", ex);
@@ -242,9 +241,13 @@ public class MovieFinder {
                 StorableMovieSite storableMovieSite = new StorableMovieSite();
                 converter.convert(site, storableMovieSite);
                 storableMovieSite.setMovie(info.getMovieFile().getMovie());
+                // TODO check if not fetched by some other duplicate before inserting
                 movieCache.insert(storableMovieSite);
                 info.addSite(storableMovieSite);
                 info.setStatus(MovieStatus.LOADED);
+            } catch (Exception ex){
+                LOGGER.error("Loading '"+info.getMovieFile().getMovie().getTitle()+"' on "+service.getName()+" failed", ex);
+                info.setStatus(MovieStatus.ERROR);
             } finally {
                 runningTasks--;
             }
