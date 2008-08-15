@@ -36,7 +36,7 @@ public class SubtitleTableModel extends AbstractTableModel{
     
     public static final String LANG_COL = "Language";
     
-    private static final String[] COl_NAMES = {LANG_COL, "File Name", "#CD", "Type", "Source"};
+    private static final String[] COL_NAMES = {LANG_COL, "File Name", "#CD", "Type", "Source"};
     
     private List<Subtitle> subs;
 
@@ -51,7 +51,7 @@ public class SubtitleTableModel extends AbstractTableModel{
 
     @Override
     public int getColumnCount() {
-        return COl_NAMES.length;
+        return COL_NAMES.length;
     }
     
     public Subtitle getSubtitle(int rowIndex){
@@ -79,7 +79,7 @@ public class SubtitleTableModel extends AbstractTableModel{
 
     @Override
     public String getColumnName(int column) {
-        return COl_NAMES[column];
+        return COL_NAMES[column];
     }
     
     public void add(Subtitle sub){
