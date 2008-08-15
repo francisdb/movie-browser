@@ -18,7 +18,7 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import eu.somatik.moviebrowser.*;
+
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
@@ -53,6 +53,7 @@ import com.flicklib.service.movie.apple.AppleTrailerFinder;
 import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
