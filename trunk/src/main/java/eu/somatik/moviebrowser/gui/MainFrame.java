@@ -427,7 +427,7 @@ public class MainFrame extends javax.swing.JFrame {
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-    final BusyDialog busyDialog = new BusyDialog(this, "test", true);
+    final BusyDialog busyDialog = new BusyDialog(this, true);
     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
         @Override
@@ -466,8 +466,8 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 
         private JProgressBar progressB;
 
-        public BusyDialog(JFrame relativeTo, String title, boolean modal) {
-            super(relativeTo, title, modal);
+        public BusyDialog(JFrame relativeTo, boolean modal) {
+            super(relativeTo, "Working...", modal);
             setModalityType(ModalityType.APPLICATION_MODAL);
             setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
             setResizable(false);
