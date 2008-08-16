@@ -99,7 +99,7 @@
                       <Component id="filterLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="filterText" min="-2" pref="256" max="-2" attributes="0"/>
-                      <EmptySpace pref="231" max="32767" attributes="0"/>
+                      <EmptySpace pref="243" max="32767" attributes="0"/>
                       <Component id="loadProgressBar" min="-2" pref="330" max="-2" attributes="1"/>
                   </Group>
               </Group>

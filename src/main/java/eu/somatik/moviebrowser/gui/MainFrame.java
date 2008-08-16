@@ -588,6 +588,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 
             popup.add(new CrawlSubtitleAction());
             popup.add(new EditAction());
+            popup.add(new RenameAction());
             popup.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }
@@ -861,6 +862,37 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
+    }
+    
+    /**
+     * This action renames a movie folder. 
+     */
+    private class RenameAction extends AbstractAction {
+        public RenameAction() {
+            super("Rename", iconLoader.loadIcon("images/16/film_edit.png"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            File oldFile = getSelectedMovie().getDirectory();            
+            String newName = JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE);
+            
+            if(!newName.isEmpty()) {
+                File newFile = new File(oldFile.getParent() + "/" + newName);
+                
+                boolean success = oldFile.renameTo(newFile);
+                if (!success) {
+                    LOGGER.error("Error renaming movie directory " + oldFile + " to " + newName);
+                    JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie " + oldFile.getName() + ". \\ / : * ? \" < > | not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    //Update the DB.
+                    getSelectedMovie().setDirectory(newFile);
+                    browser.getMovieCache().update(getSelectedMovie().getMovieFile());
+                }
+            }
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
