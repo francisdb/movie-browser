@@ -179,7 +179,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
                 return false;
             }
             for (int i = 0; i < a.length; ++i) {
-                if (a[i].equals(b[i]) == false) {
+                if (!a[i].equals(b[i])) {
                     return false;
                 }
             }
@@ -190,7 +190,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
          * Returns how long this dispatch has been going on (in milliseconds).
          */
         private long timeSoFar() {
-            return (System.currentTimeMillis() - lastDispatchTimeMillis);
+            return System.currentTimeMillis() - lastDispatchTimeMillis;
         }
 
         public void dispose() {

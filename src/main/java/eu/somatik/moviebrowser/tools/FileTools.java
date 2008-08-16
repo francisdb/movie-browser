@@ -60,7 +60,7 @@ public class FileTools {
                 }
             }
         }
-        return (path.delete());
+        return path.delete();
     }
     
     /**
