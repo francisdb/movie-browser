@@ -884,7 +884,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
                 boolean success = oldFile.renameTo(newFile);
                 if (!success) {
                     LOGGER.error("Error renaming movie directory " + oldFile + " to " + newName);
-                    JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie " + oldFile.getName() + ". \\ / : * ? \" < > | not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie folder " + oldFile.getName() + ". \\ / : * ? \" < > | not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
                 }
                 else {
                     //Update the DB.
