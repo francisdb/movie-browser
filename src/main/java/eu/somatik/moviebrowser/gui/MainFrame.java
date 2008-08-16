@@ -878,7 +878,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             File oldFile = getSelectedMovie().getDirectory();            
             String newName = JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE);
             
-            if(!newName.isEmpty()) {
+            if(newName != null && !newName.isEmpty()) {
                 File newFile = new File(oldFile.getParent() + "/" + newName);
                 
                 boolean success = oldFile.renameTo(newFile);
