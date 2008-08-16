@@ -17,9 +17,6 @@
         <module name="AvoidStarImport"/>
 	
 
-
-
-        <module name="ArrayTrailingComma"/>
         <module name="DoubleCheckedLocking"/>
         <module name="EqualsHashCode"/>
 	<module name="IllegalInstantiation"/>
