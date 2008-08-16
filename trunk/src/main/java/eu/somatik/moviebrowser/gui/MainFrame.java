@@ -18,7 +18,6 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-
 import com.google.inject.Inject;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
@@ -93,7 +92,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
     private final MovieFileFilter movieFileFilter;
-    
+
     /** 
      * Creates new form MainFrame
      * @param browser
@@ -219,26 +218,12 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
                     MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
-                    if (SwingUtilities.isLeftMouseButton(e)) {
-                        try {
-                            Desktop.getDesktop().open(info.getDirectory());
-                        } catch (IOException ex) {
-                            LOGGER.error("Could not open dir " + info.getDirectory(), ex);
-                        }
-                    } else {
-                        File sample = browser.getFileSystemScanner().findSample(info.getDirectory());
-                        if (sample != null) {
-                            try {
-                                LOGGER.info("OPENING: " + sample);
-                                Desktop.getDesktop().open(sample);
-                            } catch (IOException ex) {
-                                LOGGER.error("Could not launch default app for " + sample, ex);
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
-                        }
+                    try {
+                        Desktop.getDesktop().open(info.getDirectory());
+                    } catch (IOException ex) {
+                        LOGGER.error("Could not open dir " + info.getDirectory(), ex);
                     }
                 }
             }
@@ -554,7 +539,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     }
 
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
-    
+
     private void loadUrl(String url) {
         try {
             Desktop.getDesktop().browse(new URL(url).toURI());
@@ -863,11 +848,12 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
         subtitleCrawler.setVisible(true);
     }
-    
+
     /**
      * This action renames a movie folder. 
      */
     private class RenameAction extends AbstractAction {
+
         public RenameAction() {
             super("Rename", iconLoader.loadIcon("images/16/film_edit.png"));
         }
@@ -875,35 +861,34 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            File oldFile = getSelectedMovie().getDirectory();            
+            File oldFile = getSelectedMovie().getDirectory();
             String newName = JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE);
-            
-            if(newName != null && !newName.isEmpty()) {
+
+            if (newName != null && !newName.isEmpty()) {
                 File newFile = new File(oldFile.getParent() + "/" + newName);
-                
+
                 boolean success = oldFile.renameTo(newFile);
                 if (!success) {
                     LOGGER.error("Error renaming movie directory " + oldFile + " to " + newName);
                     JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie folder " + oldFile.getName() + ". You cannot have two movie folders with the same name and \\ / : * ? \" < > | characters are not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                } else {
                     //Update the DB.
                     getSelectedMovie().setDirectory(newFile);
-                    
+
                     JOptionPane dialog = new JOptionPane("Would you like Movie Browser to search and cahce movie information to match the new movie name?\nSay No if the information in cache is correct for " + newName + ".", JOptionPane.QUESTION_MESSAGE);
-                    Object[] options = new String[] { "Yes, please :)", "No thanks" };
+                    Object[] options = new String[]{"Yes, please :)", "No thanks"};
                     dialog.setOptions(options);
                     JDialog dialogWindow = dialog.createDialog(new JFrame(), "Find Information");
                     dialogWindow.setVisible(true);
-                    Object obj = dialog.getValue(); 
+                    Object obj = dialog.getValue();
                     int result = -1;
-                    for (int i=0; i<options.length;i++) {
+                    for (int i = 0; i < options.length; i++) {
                         if (options[i].equals(obj)) {
-                            result = i;     
+                            result = i;
                         }
                     }
                     System.out.println(result);
-                    if(result==0) {
+                    if (result == 0) {
                         //Note to francis: Is there a better way of making it re-parse and re-cache the movie than below?
                         getSelectedMovie().siteFor(MovieService.IMDB).setIdForSite(null);
                         browser.getMovieFinder().reloadMovie(getSelectedMovie());
