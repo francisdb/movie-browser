@@ -51,6 +51,7 @@ public class SettingsImpl implements Settings {
     private static final String IMG_CACHE = "images";
     private static final String PREFERENCES = "preferences.properties";
     private static final String FOLDER_SETTINGS = "folders.lst";
+    private boolean renameTitles;
 
     /**
      *
@@ -273,5 +274,15 @@ public class SettingsImpl implements Settings {
             }
         }
         return latestVersion;
+    }
+    
+    @Override
+    public void setRenameTitles(boolean value) {
+        renameTitles = value;
+    }
+    
+    @Override
+    public boolean getRenameTitles() {
+        return renameTitles;
     }
 }

@@ -38,15 +38,19 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
+import eu.somatik.moviebrowser.config.Settings;
 
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 /**
  *
  * @author francisdb
  */
+@Singleton
 public class MovieFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
@@ -60,6 +64,7 @@ public class MovieFinder {
     private final MovieCache movieCache;
     private final InfoFetcherFactory fetcherFactory;
     private final InfoHandler infoHandler;
+    private final Settings settings;
     private final Converter converter = new Converter();
 
     /**
@@ -75,18 +80,20 @@ public class MovieFinder {
      * @param fetcherFactory
      * @param infoHandler 
      */
-    
+    @Inject
     public MovieFinder(
             final MovieCache movieCache,
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor,
             final InfoFetcherFactory fetcherFactory,
-            final InfoHandler infoHandler) {
+            final InfoHandler infoHandler,
+            final Settings settings) {
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
         this.fetcherFactory = fetcherFactory;
         this.infoHandler = infoHandler;
+        this.settings = settings;
 
         this.service = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
         this.secondaryService = Executors.newFixedThreadPool(OTHERS_POOL_SIZE);
@@ -140,9 +147,6 @@ public class MovieFinder {
         List<ImdbCaller> callers = new LinkedList<ImdbCaller>();
         for (MovieInfo info : movies) {
             callers.add(new ImdbCaller(info));
-//            if(settingsFrame.getRenameTitles()) {
-//                renameMovieTitle(info.getDirectory().toString(),info.getMovieFile().getMovie().getTitle());
-//            }
         }
 
         //List<Future<MovieInfo>> futures = new LinkedList<Future<MovieInfo>>();
@@ -303,6 +307,11 @@ public class MovieFinder {
         converter.convert(site, storableMovieSite);
         storableMovieSite.setMovie(movieInfo.getMovieFile().getMovie());
         movieInfo.addSite(storableMovieSite);
+        
+        //rename titles
+        if(settings.getRenameTitles()) {
+            renameMovieTitle(movieInfo.getDirectory().toString(), movieInfo.getMovieFile().getMovie().getTitle());
+        }
     // todo insert the site?
     }
 

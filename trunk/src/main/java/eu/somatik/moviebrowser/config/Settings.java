@@ -88,4 +88,15 @@ public interface Settings {
      */
     String getLatestApplicationVersion();
     
+    /**
+     * Sets whether or not to rename titles to IMDB titles.
+     * @param true or false as boolean.
+     */
+    void setRenameTitles(boolean value);
+    
+    /**
+     * Returns the value set in setRenameTitles() method
+     * @return boolean value
+     */
+    boolean getRenameTitles();
 }
