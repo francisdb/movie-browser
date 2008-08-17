@@ -84,6 +84,7 @@ public interface MovieCache {
      * @param site
      */
     void insert(StorableMovieSite site);
+    
 
     /**
      * Load stored movies

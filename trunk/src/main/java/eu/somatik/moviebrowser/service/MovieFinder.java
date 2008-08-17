@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 /**
  *
  * @author francisdb
@@ -66,7 +67,6 @@ public class MovieFinder {
     private final InfoHandler infoHandler;
     private final Settings settings;
     private final Converter converter = new Converter();
-
     /**
      * Kepps track of how many tasks are running
      */
@@ -266,8 +266,8 @@ public class MovieFinder {
                 movieCache.insert(storableMovieSite);
                 info.addSite(storableMovieSite);
                 info.setStatus(MovieStatus.LOADED);
-            } catch (Exception ex){
-                LOGGER.error("Loading '"+info.getMovieFile().getMovie().getTitle()+"' on "+service.getName()+" failed", ex);
+            } catch (Exception ex) {
+                LOGGER.error("Loading '" + info.getMovieFile().getMovie().getTitle() + "' on " + service.getName() + " failed", ex);
                 info.setStatus(MovieStatus.ERROR);
             } finally {
                 runningTasks--;
@@ -307,10 +307,10 @@ public class MovieFinder {
         converter.convert(site, storableMovieSite);
         storableMovieSite.setMovie(movieInfo.getMovieFile().getMovie());
         movieInfo.addSite(storableMovieSite);
-        
+
         //rename titles
-        if(settings.getRenameTitles()) {
-            renameMovieTitle(movieInfo.getDirectory().toString(), movieInfo.getMovieFile().getMovie().getTitle());
+        if (settings.getRenameTitles()) {
+            renameFolderToTitle(movieInfo);
         }
     // todo insert the site?
     }
@@ -318,17 +318,22 @@ public class MovieFinder {
     public int getRunningTasks() {
         return runningTasks;
     }
-    
-    public void renameMovieTitle(String path, String title) {
+
+    public void renameFolderToTitle(MovieInfo info) {
         boolean success;
-        
-        File oldFile = new File(path);
-        success = FileTools.renameDir(oldFile, oldFile.getParent() + "/" + title);
-        if(success) {
-            LOGGER.info(oldFile.getPath() + " auto renamed to " + oldFile.getParent() + "/" + title);
-        }
-        else {
-            LOGGER.info("Error auto renaming " + oldFile.getPath() + " to " + oldFile.getParent() + "/" + title);
+
+        File oldFile = info.getDirectory();
+        File newFile = new File(oldFile.getParent(), info.getMovieFile().getMovie().getTitle());
+        success = FileTools.renameDir(oldFile, newFile);
+        if (success) {
+            LOGGER.info(oldFile.getAbsolutePath() + " auto renamed to " + newFile.getAbsolutePath());
+            // update the path in the db
+            info.setDirectory(newFile);
+            info.getMovieFile().setPath(newFile.getAbsolutePath());
+            movieCache.update(info.getMovieFile());
+            info.triggerUpdate();
+        } else {
+            LOGGER.error("Error auto renaming " + oldFile.getAbsolutePath() + " to " + newFile.getAbsolutePath());
         }
     }
 }
