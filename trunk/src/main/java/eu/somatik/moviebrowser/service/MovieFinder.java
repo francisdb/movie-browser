@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.File;
 
-import com.google.inject.Inject;
 import com.flicklib.api.InfoFetcherFactory;
 import com.flicklib.domain.Movie;
 import eu.somatik.moviebrowser.domain.StorableMovie;
@@ -39,7 +38,7 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
-import eu.somatik.moviebrowser.gui.SettingsFrame;
+
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class MovieFinder {
     private final InfoFetcherFactory fetcherFactory;
     private final InfoHandler infoHandler;
     private final Converter converter = new Converter();
-    private final SettingsFrame settings;
+
     /**
      * Kepps track of how many tasks are running
      */
@@ -76,16 +75,13 @@ public class MovieFinder {
      * @param fetcherFactory
      * @param infoHandler 
      */
-    @Inject
+    
     public MovieFinder(
             final MovieCache movieCache,
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor,
             final InfoFetcherFactory fetcherFactory,
-            final InfoHandler infoHandler,
-            final SettingsFrame settings) {
-
-        this.settings = settings;
+            final InfoHandler infoHandler) {
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
@@ -144,9 +140,9 @@ public class MovieFinder {
         List<ImdbCaller> callers = new LinkedList<ImdbCaller>();
         for (MovieInfo info : movies) {
             callers.add(new ImdbCaller(info));
-            if(settings.getRenameTitles()) {
-                renameMovieTitle(info.getDirectory().toString(),info.getMovieFile().getMovie().getTitle());
-            }
+//            if(settingsFrame.getRenameTitles()) {
+//                renameMovieTitle(info.getDirectory().toString(),info.getMovieFile().getMovie().getTitle());
+//            }
         }
 
         //List<Future<MovieInfo>> futures = new LinkedList<Future<MovieInfo>>();
