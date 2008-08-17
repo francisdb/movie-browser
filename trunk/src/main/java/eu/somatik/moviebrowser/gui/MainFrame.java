@@ -135,7 +135,7 @@ public class MainFrame extends javax.swing.JFrame {
                 int tasks = browser.getMovieFinder().getRunningTasks();
                 if (tasks == 0) {
                     loadProgressBar.setIndeterminate(false);
-                    loadProgressBar.setString("ready");
+                    loadProgressBar.setString("Ready");
                     loadProgressBar.setValue(loadProgressBar.getMaximum());
                     loadProgressBar.setToolTipText("All tasks finished");
                 } else {

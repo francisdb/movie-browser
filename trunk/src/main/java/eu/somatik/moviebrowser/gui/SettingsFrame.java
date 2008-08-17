@@ -337,9 +337,9 @@ public class SettingsFrame extends javax.swing.JFrame {
     }
     
     private void getSettingsValues() {
-        renameTitlesCheckBox.setSelected(settings.getRenameTitles());
-        
+        renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
     }
+    
     private void setSettingsValues() {
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
     }
