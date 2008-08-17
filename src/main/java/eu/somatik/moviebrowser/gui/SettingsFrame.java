@@ -6,15 +6,21 @@
 
 package eu.somatik.moviebrowser.gui;
 
+import eu.somatik.moviebrowser.config.Settings;
+
 /**
  *
  * @author  rug
  */
 public class SettingsFrame extends javax.swing.JFrame {
     
+    private final Settings settings;
+    
     /** Creates new form SettingsFrame */
-    public SettingsFrame() {
+    public SettingsFrame(final Settings settings) {
+        this.settings = settings;
         initComponents();
+        getMovieLocations();
     }
     
     /** This method is called from within the constructor to
@@ -238,16 +244,12 @@ public class SettingsFrame extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_okayButtonActionPerformed
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SettingsFrame().setVisible(true);
-            }
-        });
+    private void getMovieLocations() {
+        
+        locationsList.setListData(settings.loadFolders().toArray());
+        
     }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addLocationButton;
