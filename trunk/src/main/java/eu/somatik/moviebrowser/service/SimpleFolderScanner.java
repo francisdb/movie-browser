@@ -24,7 +24,6 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Scans a folder for movies
@@ -39,7 +38,7 @@ public class SimpleFolderScanner implements FolderScanner {
      * @return a List of MovieInfo
      */
     @Override
-    public List<MovieInfo> scan(final Set<String> folders) {
+    public List<MovieInfo> scan(final List<String> folders) {
         File folder;
         List<MovieInfo> movies = new ArrayList<MovieInfo>();
         for (String path : folders) {
@@ -54,4 +53,5 @@ public class SimpleFolderScanner implements FolderScanner {
         }
         return movies;
     }
+
 }

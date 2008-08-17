@@ -33,7 +33,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 
@@ -61,7 +60,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -172,9 +170,7 @@ public class MainFrame extends javax.swing.JFrame {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         UIManager.setLookAndFeel(className);
-                        Map<String, String> prefs = settings.loadPreferences();
-                        prefs.put("lookandfeel", className);
-                        settings.savePreferences(prefs);
+                        settings.setLookAndFeelClassName(className);
                         SwingUtilities.updateComponentTreeUI(MainFrame.this);
                         item.setSelected(true);
                     } catch (ClassNotFoundException ex) {
@@ -596,7 +592,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     public void fillTable() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
-        final Set<String> folders = settings.loadFolders();
+        final List<String> folders = settings.loadFolders();
         new SwingWorker<List<MovieInfo>, Void>() {
 
             @Override

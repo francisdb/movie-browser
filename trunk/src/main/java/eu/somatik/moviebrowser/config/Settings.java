@@ -19,6 +19,7 @@
 package eu.somatik.moviebrowser.config;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,13 +63,13 @@ public interface Settings {
      * Loads all movie folders
      * @return the folders as Set of String
      */
-    Set<String> loadFolders();
+    List<String> loadFolders();
 
     /**
      * Saves all movie folders
      * @param folders as Set of String
      */
-    void saveFolders(Set<String> folders);
+    void saveFolders(List<String> folders);
     
     /**
      * Should return true if running in debug mode
@@ -99,4 +100,15 @@ public interface Settings {
      * @return boolean value
      */
     boolean getRenameTitles();
+
+    /**
+     * Gets the look and feel
+     * @return
+     */
+    String getLookAndFeelClassName();
+
+    /**
+     * Sets the look and feel
+     */
+    void setLookAndFeelClassName(String className);
 }
