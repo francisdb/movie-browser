@@ -862,7 +862,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
         public void actionPerformed(ActionEvent e) {
 
             File oldFile = getSelectedMovie().getDirectory();
-            String newName = JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE);
+            String newName = (String)JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE, null , null, oldFile.getName());
 
             if (newName != null && !newName.isEmpty()) {
                 File newFile = new File(oldFile.getParent() + "/" + newName);
