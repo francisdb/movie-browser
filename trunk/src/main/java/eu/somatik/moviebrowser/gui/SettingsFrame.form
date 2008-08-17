@@ -200,6 +200,7 @@
     <Component class="javax.swing.JButton" name="addLocationButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Add"/>
+        <Property name="toolTipText" type="java.lang.String" value="Click here to add a folder. "/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addLocationButtonActionPerformed"/>
@@ -207,7 +208,8 @@
     </Component>
     <Component class="javax.swing.JButton" name="deleteLocationButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Delete"/>
+        <Property name="text" type="java.lang.String" value="Remove"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select a folder from the list on the left and click here to delete that folder."/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteLocationButtonActionPerformed"/>
@@ -227,29 +229,34 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Rotten Tomatoes"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.rottentomatoes.com"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="omdbCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="OMDB"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.omdb.org"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="googleCheckBox">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Google"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.google.com"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="moviewebCheckBox">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Movie Web"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.movieweb.com"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="flixsterCheckBox">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Flixster"/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.flixster.com"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator2">
@@ -299,6 +306,7 @@
     <Component class="javax.swing.JCheckBox" name="renameTitlesCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Automatically rename movie folder to IMDB title."/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing."/>
       </Properties>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator4">
