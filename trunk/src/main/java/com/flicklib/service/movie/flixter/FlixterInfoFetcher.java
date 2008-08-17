@@ -89,11 +89,12 @@ public class FlixterInfoFetcher implements MovieInfoFetcher {
                 }
             }
             if (movieUrl == null) {
-                throw new IOException("Movie not found on Flixter: " + movie.getTitle());
+               LOGGER.warn("Movie not found on Flixter: " + movie.getTitle());
+            }else{
+                site.setUrl(movieUrl);
+                source = sourceLoader.load(movieUrl);
+                parser.parse(source, site);
             }
-            site.setUrl(movieUrl);
-            source = sourceLoader.load(movieUrl);
-            parser.parse(source, site);
         } catch (IOException ex) {
             LOGGER.error("Loading from Flixter failed", ex);
         }
