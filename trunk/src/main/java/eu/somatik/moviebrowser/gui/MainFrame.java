@@ -550,7 +550,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-        SettingsFrame settingsFrame = new SettingsFrame();
+        SettingsFrame settingsFrame = new SettingsFrame(settings);
         settingsFrame.setLocationRelativeTo(movieTableScrollPane);
         settingsFrame.setVisible(true);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
