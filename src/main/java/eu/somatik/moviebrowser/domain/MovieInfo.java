@@ -55,6 +55,13 @@ public class MovieInfo {
         this.movieFile = new StorableMovieFile();
         this.sites = new HashMap<MovieService, StorableMovieSite>();
     }
+
+    /**
+     * This should trigger an update in the table
+     */
+    public void triggerUpdate(){
+        propertyChangeSupport.firePropertyChange("triggerUpdate", System.nanoTime(), System.nanoTime());
+    }
     
     /**
      * 
@@ -107,9 +114,9 @@ public class MovieInfo {
      * @param status 
      */
     public void setStatus(MovieStatus status) {
-        MovieStatus oldValue = this.status;
+        //MovieStatus oldValue = this.status;
         this.status = status;
-        propertyChangeSupport.firePropertyChange("loading", oldValue, this.status);
+        propertyChangeSupport.firePropertyChange("status", null, this.status);
     }
 
     public StorableMovieFile getMovieFile() {

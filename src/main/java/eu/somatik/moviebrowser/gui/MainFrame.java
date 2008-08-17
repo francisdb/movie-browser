@@ -875,21 +875,23 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            
-            File oldFile = getSelectedMovie().getDirectory();
+            MovieInfo info = getSelectedMovie();
+            File oldFile = info.getDirectory();
             String newName = (String)JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE, null , null, oldFile.getName());
-            boolean success = FileTools.renameDir(oldFile, oldFile.getParent() + "/" + newName);
+            File newFile = new File(oldFile.getParent(), newName);
+            boolean success = FileTools.renameDir(oldFile, newFile);
             
             if (!success) {
                 LOGGER.error("Error renaming movie directory " + oldFile + " to " + newName);
                 JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie folder " + oldFile.getName() + ". You cannot have two movie folders with the same name and \\ / : * ? \" < > | characters are not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
             } else {
-                
-                File newFile = new File(oldFile.getParent() + "/" + newName);
-                //Update the DB.
-                getSelectedMovie().setDirectory(newFile);
+                // TODO this code is dupliacted in MovieFinder
+                info.setDirectory(newFile);
+                info.getMovieFile().setPath(newFile.getAbsolutePath());
+                browser.getMovieCache().update(info.getMovieFile());
+                info.triggerUpdate();
 
-                JOptionPane dialog = new JOptionPane("Would you like Movie Browser to search and cahce movie information to match the new movie name?\nSay No if the information in cache is correct for " + newName + ".", JOptionPane.QUESTION_MESSAGE);
+                JOptionPane dialog = new JOptionPane("Would you like Movie Browser to search and cache movie information to match the new movie name?\nSay No if the information in cache is correct for " + newName + ".", JOptionPane.QUESTION_MESSAGE);
                 Object[] options = new String[]{"Yes, please :)", "No thanks"};
                 dialog.setOptions(options);
                 JDialog dialogWindow = dialog.createDialog(new JFrame(), "Find Information");
@@ -901,11 +903,10 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
                         result = i;
                     }
                 }
-                System.out.println(result);
+                LOGGER.debug(String.valueOf(result));
                 if (result == 0) {
                     //Note to francis: Is there a better way of making it re-parse and re-cache the movie than below?
-                    getSelectedMovie().siteFor(MovieService.IMDB).setIdForSite(null);
-                    browser.getMovieFinder().reloadMovie(getSelectedMovie());
+                    browser.getMovieFinder().reloadMovie(info);
                 }
             }
         }
