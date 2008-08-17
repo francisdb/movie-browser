@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.io.File;
 
 import com.google.inject.Inject;
 import com.flicklib.api.InfoFetcherFactory;
@@ -37,6 +38,8 @@ import com.flicklib.domain.MoviePage;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.tools.FileTools;
+import eu.somatik.moviebrowser.gui.SettingsFrame;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +62,7 @@ public class MovieFinder {
     private final InfoFetcherFactory fetcherFactory;
     private final InfoHandler infoHandler;
     private final Converter converter = new Converter();
+    private final SettingsFrame settings;
     /**
      * Kepps track of how many tasks are running
      */
@@ -78,8 +82,10 @@ public class MovieFinder {
             final FileSystemScanner fileSystemScanner,
             final MovieNameExtractor movieNameExtractor,
             final InfoFetcherFactory fetcherFactory,
-            final InfoHandler infoHandler) {
+            final InfoHandler infoHandler,
+            final SettingsFrame settings) {
 
+        this.settings = settings;
         this.movieCache = movieCache;
         this.fileSystemScanner = fileSystemScanner;
         this.movieNameExtractor = movieNameExtractor;
@@ -138,6 +144,9 @@ public class MovieFinder {
         List<ImdbCaller> callers = new LinkedList<ImdbCaller>();
         for (MovieInfo info : movies) {
             callers.add(new ImdbCaller(info));
+            if(settings.getRenameTitles()) {
+                renameMovieTitle(info.getDirectory().toString(),info.getMovieFile().getMovie().getTitle());
+            }
         }
 
         //List<Future<MovieInfo>> futures = new LinkedList<Future<MovieInfo>>();
@@ -303,5 +312,18 @@ public class MovieFinder {
 
     public int getRunningTasks() {
         return runningTasks;
+    }
+    
+    public void renameMovieTitle(String path, String title) {
+        boolean success;
+        
+        File oldFile = new File(path);
+        success = FileTools.renameDir(oldFile, oldFile.getParent() + "/" + title);
+        if(success) {
+            LOGGER.info(oldFile.getPath() + " auto renamed to " + oldFile.getParent() + "/" + title);
+        }
+        else {
+            LOGGER.info("Error auto renaming " + oldFile.getPath() + " to " + oldFile.getParent() + "/" + title);
+        }
     }
 }
