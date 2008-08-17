@@ -30,9 +30,9 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="270" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -40,26 +40,21 @@
                           <Component id="deleteLocationButton" alignment="0" pref="88" max="32767" attributes="1"/>
                       </Group>
                   </Group>
+                  <Component id="websitesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="websitesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="rottenTomatoesCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="moviewebCheckBox" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="rottenTomatoesCheckBox" min="-2" max="-2" attributes="0"/>
-                                  <Component id="moviewebCheckBox" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="omdbCheckBox" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                      <Component id="flixsterCheckBox" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="googleCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="omdbCheckBox" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                              <Component id="flixsterCheckBox" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="googleCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -308,6 +303,9 @@
         <Property name="text" type="java.lang.String" value="Automatically rename movie folder to IMDB title."/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing."/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="renameTitlesCheckBoxActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator4">
     </Component>
