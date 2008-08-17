@@ -321,6 +321,9 @@ public class SettingsFrame extends javax.swing.JFrame {
         locationsList.setModel(model);
     }
     
+    public boolean getRenameTitles() {
+        return renameTitlesCheckBox.isSelected();
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addLocationButton;
