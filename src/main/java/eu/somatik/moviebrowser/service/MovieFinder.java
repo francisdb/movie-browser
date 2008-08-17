@@ -129,7 +129,10 @@ public class MovieFinder {
         }
         movieCache.remove(movieInfo.getMovieFile());
         // TODO make sure the movie is not linked to an other file
-        movieCache.remove(movieInfo.getMovieFile().getMovie());
+        StorableMovie movie = movieInfo.getMovieFile().getMovie();
+        if(movie != null){
+            movieCache.remove(movieInfo.getMovieFile().getMovie());
+        }
 
         StorableMovieSite site = new StorableMovieSite();
         site.setService(MovieService.IMDB);
