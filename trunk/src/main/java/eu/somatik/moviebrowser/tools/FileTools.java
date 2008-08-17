@@ -64,6 +64,20 @@ public class FileTools {
     }
     
     /**
+     * Renames a directory.
+     * @param oldFile, newFile
+     * @return boolean success
+     */
+    public static boolean renameDir(File oldFile,String newFile) {
+        boolean success=false;
+        if (newFile != null && !newFile.isEmpty()) {
+            File createFile = new File(newFile);
+            success = oldFile.renameTo(createFile);
+        }
+        return success;
+    }
+    
+    /**
      * Loads a properties file
      * @param propsFile
      * @return the properties (empty if the propsFile does not exist)
