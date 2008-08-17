@@ -250,6 +250,7 @@ public class MainFrame extends javax.swing.JFrame {
         importMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         clearCacheMenuItem = new javax.swing.JMenuItem();
+        settingsMenuItem = new javax.swing.JMenuItem();
         extraMenu = new javax.swing.JMenu();
         lookAndFeelMenu = new javax.swing.JMenu();
         checkUpdatesMenuItem = new javax.swing.JMenuItem();
@@ -297,9 +298,6 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(movieTableScrollPane);
 
-        loadProgressBar.setMaximumSize(new java.awt.Dimension(32767, 20));
-        loadProgressBar.setMinimumSize(new java.awt.Dimension(10, 20));
-        loadProgressBar.setPreferredSize(new java.awt.Dimension(150, 20));
         loadProgressBar.setString("");
         loadProgressBar.setStringPainted(true);
 
@@ -332,6 +330,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(movieMenu);
 
+        toolsMenu.setMnemonic('T');
         toolsMenu.setText("Tools");
 
         clearCacheMenuItem.setText("Clear Cache");
@@ -342,8 +341,18 @@ public class MainFrame extends javax.swing.JFrame {
         });
         toolsMenu.add(clearCacheMenuItem);
 
+        settingsMenuItem.setMnemonic('S');
+        settingsMenuItem.setText("Settings");
+        settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsMenuItemActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(settingsMenuItem);
+
         jMenuBar1.add(toolsMenu);
 
+        extraMenu.setMnemonic('E');
         extraMenu.setText("Extra");
 
         lookAndFeelMenu.setText("Look and feel");
@@ -381,7 +390,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(filterLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filterText, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 243, Short.MAX_VALUE)
                         .addComponent(loadProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -539,6 +548,12 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     }
 
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
+
+private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
+        SettingsFrame settingsFrame = new SettingsFrame();
+        settingsFrame.setLocationRelativeTo(movieTableScrollPane);
+        settingsFrame.setVisible(true);
+}//GEN-LAST:event_settingsMenuItemActionPerformed
 
     private void loadUrl(String url) {
         try {
@@ -912,6 +927,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
     private javax.swing.JScrollPane movieTableScrollPane;
+    private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables
 }
