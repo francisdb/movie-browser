@@ -84,13 +84,15 @@ public class SettingsFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(locationsList);
 
         addLocationButton.setText("Add");
+        addLocationButton.setToolTipText("Click here to add a folder. ");
         addLocationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addLocationButtonActionPerformed(evt);
             }
         });
 
-        deleteLocationButton.setText("Delete");
+        deleteLocationButton.setText("Remove");
+        deleteLocationButton.setToolTipText("Select a folder from the list on the left and click here to delete that folder.");
         deleteLocationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteLocationButtonActionPerformed(evt);
@@ -103,17 +105,22 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         rottenTomatoesCheckBox.setSelected(true);
         rottenTomatoesCheckBox.setText("Rotten Tomatoes");
+        rottenTomatoesCheckBox.setToolTipText("Select this to get information from www.rottentomatoes.com");
 
         omdbCheckBox.setText("OMDB");
+        omdbCheckBox.setToolTipText("Select this to get information from www.omdb.org");
 
         googleCheckBox.setSelected(true);
         googleCheckBox.setText("Google");
+        googleCheckBox.setToolTipText("Select this to get information from www.google.com");
 
         moviewebCheckBox.setSelected(true);
         moviewebCheckBox.setText("Movie Web");
+        moviewebCheckBox.setToolTipText("Select this to get information from www.movieweb.com");
 
         flixsterCheckBox.setSelected(true);
         flixsterCheckBox.setText("Flixster");
+        flixsterCheckBox.setToolTipText("Select this to get information from www.flixster.com");
 
         subtitlesLabel.setText("Websites to use when crawling for subtitles.");
 
@@ -135,6 +142,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         miscLabel.setText("Miscellaneous settings.");
 
         renameTitlesCheckBox.setText("Automatically rename movie folder to IMDB title.");
+        renameTitlesCheckBox.setToolTipText("Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing.");
 
         okayButton.setText("Okay");
         okayButton.addActionListener(new java.awt.event.ActionListener() {
