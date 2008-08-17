@@ -57,7 +57,7 @@ public interface Settings {
      * @return the settings folder File
      */
     File getSettingsDir();
-
+    
     /**
      * Loads all movie folders
      * @return the folders as Set of String

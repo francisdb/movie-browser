@@ -7,6 +7,17 @@
 package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.gui.MainFrame;
+
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import java.io.File;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -14,10 +25,16 @@ import eu.somatik.moviebrowser.config.Settings;
  */
 public class SettingsFrame extends javax.swing.JFrame {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private final Settings settings;
+    private final MainFrame mainFrame;
+    private File selectedFile;
+    private DefaultListModel model;
     
     /** Creates new form SettingsFrame */
-    public SettingsFrame(final Settings settings) {
+    public SettingsFrame(final Settings settings,
+                         final MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
         this.settings = settings;
         initComponents();
         getMovieLocations();
@@ -62,12 +79,23 @@ public class SettingsFrame extends javax.swing.JFrame {
         setTitle("Settings");
         setResizable(false);
 
+        locationsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         locationsList.setToolTipText("Your Movie library locations.");
         jScrollPane1.setViewportView(locationsList);
 
         addLocationButton.setText("Add");
+        addLocationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addLocationButtonActionPerformed(evt);
+            }
+        });
 
         deleteLocationButton.setText("Delete");
+        deleteLocationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteLocationButtonActionPerformed(evt);
+            }
+        });
 
         movieLocationsLabel.setText("Locations Movie Browser will look for your movie files.");
 
@@ -243,11 +271,46 @@ public class SettingsFrame extends javax.swing.JFrame {
     private void okayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okayButtonActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_okayButtonActionPerformed
+
+    private void addLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLocationButtonActionPerformed
+        JFileChooser chooser = new JFileChooser(selectedFile);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File newFolder = chooser.getSelectedFile();
+            settings.addFolder(newFolder);
+            selectedFile = newFolder;
+            mainFrame.fillTable();
+            getMovieLocations();
+        } else {
+            LOGGER.debug("No Selection ");
+        }
+    }//GEN-LAST:event_addLocationButtonActionPerformed
+
+    private void deleteLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLocationButtonActionPerformed
+
+        model.removeElementAt(locationsList.getSelectedIndex());
+        
+        Set<String> folders = new HashSet<String>();
+        for(int i=0; i<locationsList.getModel().getSize(); i++) {
+            folders.add(locationsList.getModel().getElementAt(i).toString());
+        }
+        settings.saveFolders(folders);
+        mainFrame.fillTable();
+    }//GEN-LAST:event_deleteLocationButtonActionPerformed
     
     private void getMovieLocations() {
+        model = new DefaultListModel();
+        locationsList.removeAll();
+        Iterator x;
+        x = settings.loadFolders().iterator();
         
-        locationsList.setListData(settings.loadFolders().toArray());
+        int i=1;
+        while(x.hasNext()) {
+            String value = (String) x.next();
+            model.addElement(value);
+        }
         
+        locationsList.setModel(model);
     }
     
     

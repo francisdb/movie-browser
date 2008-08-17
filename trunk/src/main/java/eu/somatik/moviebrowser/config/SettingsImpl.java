@@ -139,7 +139,7 @@ public class SettingsImpl implements Settings {
 
         return folderSettings;
     }
-
+    
     @Override
     public File getSettingsDir() {
         File settingsDir = new File(System.getProperty("user.home"), SETTINGS_DIR);

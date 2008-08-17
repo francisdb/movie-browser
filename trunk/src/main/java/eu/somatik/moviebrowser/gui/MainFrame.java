@@ -550,7 +550,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-        SettingsFrame settingsFrame = new SettingsFrame(settings);
+        SettingsFrame settingsFrame = new SettingsFrame(settings, this);
         settingsFrame.setLocationRelativeTo(movieTableScrollPane);
         settingsFrame.setVisible(true);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
@@ -593,7 +593,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         }
     }
 
-    private void fillTable() {
+    public void fillTable() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
         final Set<String> folders = settings.loadFolders();
