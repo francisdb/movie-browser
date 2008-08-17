@@ -20,13 +20,13 @@ package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.config.Settings;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Iterator;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import java.io.File;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -314,7 +314,7 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         model.removeElementAt(locationsList.getSelectedIndex());
         
-        Set<String> folders = new HashSet<String>();
+        List<String> folders = new ArrayList<String>();
         for(int i=0; i<locationsList.getModel().getSize(); i++) {
             folders.add(locationsList.getModel().getElementAt(i).toString());
         }

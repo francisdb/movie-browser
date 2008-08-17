@@ -23,18 +23,15 @@ import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import javax.swing.UIManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +48,9 @@ public class SettingsImpl implements Settings {
     private static final String IMG_CACHE = "images";
     private static final String PREFERENCES = "preferences.properties";
     private static final String FOLDER_SETTINGS = "folders.lst";
+    
+    private static final String FOLDERS_PROPERTY = "folders";
+    private static final String LOOK_AND_FEEL_PROPERTY = "lookandfeel";
     private boolean renameTitles;
 
     /**
@@ -58,43 +58,29 @@ public class SettingsImpl implements Settings {
      * @return the folders
      */
     @Override
-    public final Set<String> loadFolders() {
-        Set<String> folders = new HashSet<String>();
-        File folderSettings = openFolderSettings();
-        BufferedReader bufferedReader = null;
-        try {
-            FileReader fileReader = new FileReader(folderSettings);
-
-            bufferedReader =
-                    new BufferedReader(fileReader);
-
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                if (line.trim().length() != 0) {
-                    folders.add(line);
-                    LOGGER.info("Search folder: " + line);
-                }
-                line = bufferedReader.readLine();
-            }
-        } catch (IOException e) {
-            LOGGER.error("File input error: ", e);
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close reader: ", ex);
-                }
-            }
+    public final List<String> loadFolders() {
+        Map<String, String> prefs = loadPreferences();
+        String folderString = prefs.get(FOLDERS_PROPERTY);
+        if(folderString == null){
+            folderString = "";
+        }
+        String[] folderStrings = folderString.split(File.pathSeparator);
+        List<String> folders = new ArrayList<String>();
+        for (String folder : folderStrings) {
+            folders.add(folder);
         }
         return folders;
     }
 
     @Override
     public void addFolder(File newFolder) {
-        final Set<String> folders = loadFolders();
-        folders.add(newFolder.getAbsolutePath());
-        saveFolders(folders);
+        final List<String> folders = loadFolders();
+        if (!folders.contains(newFolder)) {
+            folders.add(newFolder.getAbsolutePath());
+            saveFolders(folders);
+        } else {
+            LOGGER.warn("Trying to add folder that is allready in the list: " + newFolder);
+        }
     }
 
     /**
@@ -102,23 +88,20 @@ public class SettingsImpl implements Settings {
      * @param folders
      */
     @Override
-    public final void saveFolders(Set<String> folders) {
-        File folderSettings = openFolderSettings();
-        FileWriter writer; // declare a file output object
-        PrintWriter printWriter; // declare a print stream object
-
-        try {
-            writer = new FileWriter(folderSettings, false);
-            printWriter = new PrintWriter(writer);
-            for (String folder : folders) {
-                if (folder.trim().length() != 0) {
-                    printWriter.println(folder);
+    public final void saveFolders(List<String> folders) {
+        StringBuilder folderString = new StringBuilder();
+        for (String folder : folders) {
+            if (folder.trim().length() != 0) {
+                if(folderString.length() > 0){
+                    folderString.append(File.pathSeparator);
                 }
+                folderString.append(folder);
             }
-            printWriter.close();
-        } catch (IOException ex) {
-            LOGGER.error("Error writing to file: ", ex);
         }
+
+        Map<String, String> prefs = loadPreferences();
+        prefs.put(FOLDERS_PROPERTY, folderString.toString());
+        savePreferences(prefs);
     }
 
     private File openFolderSettings() {
@@ -140,7 +123,7 @@ public class SettingsImpl implements Settings {
 
         return folderSettings;
     }
-    
+
     @Override
     public File getSettingsDir() {
         File settingsDir = new File(System.getProperty("user.home"), SETTINGS_DIR);
@@ -202,7 +185,7 @@ public class SettingsImpl implements Settings {
     public void savePreferences(Map<String, String> preferences) {
         Properties props = new Properties();
         for (Map.Entry<String, String> entry : preferences.entrySet()) {
-            props.put(entry.getKey(), entry.getValue());
+            props.setProperty(entry.getKey(), entry.getValue());
         }
         File prefsFile = new File(getSettingsDir(), PREFERENCES);
         FileTools.storePropeties(props, prefsFile);
@@ -256,8 +239,8 @@ public class SettingsImpl implements Settings {
         try {
             // Set up the streams
             LOGGER.info("Fetcing latest version info from: " + latestVersionInfoURL);
-             URL url = new URL(latestVersionInfoURL); 
-            
+            URL url = new URL(latestVersionInfoURL);
+
             // Read all the text returned by the server
             in = new BufferedReader(new InputStreamReader(url.openStream()));
             String str;
@@ -275,14 +258,27 @@ public class SettingsImpl implements Settings {
         }
         return latestVersion;
     }
-    
+
     @Override
     public void setRenameTitles(boolean value) {
         renameTitles = value;
     }
-    
+
     @Override
     public boolean getRenameTitles() {
         return renameTitles;
+    }
+
+    @Override
+    public String getLookAndFeelClassName() {
+        Map<String, String> prefs = loadPreferences();
+        return prefs.get(LOOK_AND_FEEL_PROPERTY);
+    }
+
+    @Override
+    public void setLookAndFeelClassName(String className) {
+        Map<String, String> prefs = loadPreferences();
+        prefs.put(LOOK_AND_FEEL_PROPERTY, className);
+        savePreferences(prefs);
     }
 }
