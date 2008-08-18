@@ -25,8 +25,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import java.io.File;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -314,7 +314,7 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         model.removeElementAt(locationsList.getSelectedIndex());
         
-        List<String> folders = new ArrayList<String>();
+        Set<String> folders = new LinkedHashSet<String>();
         for(int i=0; i<locationsList.getModel().getSize(); i++) {
             folders.add(locationsList.getModel().getElementAt(i).toString());
         }
@@ -334,16 +334,9 @@ public class SettingsFrame extends javax.swing.JFrame {
     
     private void getMovieLocations() {
         model = new DefaultListModel();
-        locationsList.removeAll();
-        Iterator x;
-        x = settings.loadFolders().iterator();
-        
-        int i=1;
-        while(x.hasNext()) {
-            String value = (String) x.next();
-            model.addElement(value);
+        for(String folder:settings.loadFolders()){
+            model.addElement(folder);
         }
-        
         locationsList.setModel(model);
     }
     
