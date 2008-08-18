@@ -20,7 +20,6 @@ package eu.somatik.moviebrowser.gui;
 
 import eu.somatik.moviebrowser.config.Settings;
 
-import java.util.Iterator;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import java.io.File;
