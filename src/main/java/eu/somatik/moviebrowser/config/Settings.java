@@ -19,7 +19,6 @@
 package eu.somatik.moviebrowser.config;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,13 +62,13 @@ public interface Settings {
      * Loads all movie folders
      * @return the folders as Set of String
      */
-    List<String> loadFolders();
+    Set<String> loadFolders();
 
     /**
      * Saves all movie folders
      * @param folders as Set of String
      */
-    void saveFolders(List<String> folders);
+    void saveFolders(Set<String> folders);
     
     /**
      * Should return true if running in debug mode

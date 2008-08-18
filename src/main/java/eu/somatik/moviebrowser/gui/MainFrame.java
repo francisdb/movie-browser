@@ -60,6 +60,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -592,7 +593,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     public void fillTable() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
-        final List<String> folders = settings.loadFolders();
+        final Set<String> folders = settings.loadFolders();
         new SwingWorker<List<MovieInfo>, Void>() {
 
             @Override

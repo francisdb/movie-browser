@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import javax.swing.UIManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +58,14 @@ public class SettingsImpl implements Settings {
      * @return the folders
      */
     @Override
-    public final List<String> loadFolders() {
+    public final Set<String> loadFolders() {
         Map<String, String> prefs = loadPreferences();
         String folderString = prefs.get(FOLDERS_PROPERTY);
         if(folderString == null){
             folderString = "";
         }
         String[] folderStrings = folderString.split(File.pathSeparator);
-        List<String> folders = new ArrayList<String>();
+        Set<String> folders = new LinkedHashSet<String>();
         for (String folder : folderStrings) {
             folders.add(folder);
         }
@@ -74,7 +74,7 @@ public class SettingsImpl implements Settings {
 
     @Override
     public void addFolder(File newFolder) {
-        final List<String> folders = loadFolders();
+        final Set<String> folders = loadFolders();
         if (!folders.contains(newFolder)) {
             folders.add(newFolder.getAbsolutePath());
             saveFolders(folders);
@@ -88,7 +88,7 @@ public class SettingsImpl implements Settings {
      * @param folders
      */
     @Override
-    public final void saveFolders(List<String> folders) {
+    public final void saveFolders(Set<String> folders) {
         StringBuilder folderString = new StringBuilder();
         for (String folder : folders) {
             if (folder.trim().length() != 0) {

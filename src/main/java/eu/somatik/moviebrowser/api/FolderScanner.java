@@ -20,6 +20,7 @@ package eu.somatik.moviebrowser.api;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -32,6 +33,6 @@ public interface FolderScanner {
      * @param folders
      * @return a List of MovieInfo
      */
-    List<MovieInfo> scan(final List<String> folders);
+    List<MovieInfo> scan(final Set<String> folders);
 
 }
