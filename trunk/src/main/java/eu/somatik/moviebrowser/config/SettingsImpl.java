@@ -75,7 +75,7 @@ public class SettingsImpl implements Settings {
     @Override
     public void addFolder(File newFolder) {
         final Set<String> folders = loadFolders();
-        if (!folders.contains(newFolder)) {
+        if (!folders.contains(newFolder.getAbsolutePath())) {
             folders.add(newFolder.getAbsolutePath());
             saveFolders(folders);
         } else {
