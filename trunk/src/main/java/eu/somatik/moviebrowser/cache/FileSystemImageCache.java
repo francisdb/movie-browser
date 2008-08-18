@@ -44,7 +44,6 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import eu.somatik.moviebrowser.service.InfoHandler;
 
 /**
  *
@@ -55,12 +54,10 @@ public class FileSystemImageCache implements ImageCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemImageCache.class);
     private final Settings settings;
-    private final InfoHandler infoHandler;
 
     @Inject
-    public FileSystemImageCache(final Settings settings, final InfoHandler infoHandler) {
+    public FileSystemImageCache(final Settings settings) {
         this.settings = settings;
-        this.infoHandler = infoHandler;
     }
 
     
