@@ -46,9 +46,7 @@ public class SimpleFolderScanner implements FolderScanner {
             folder = new File(path);
             if (folder.exists()) {
                 for (File file : folder.listFiles(new MovieFileFilter(true))) {
-                    //if (file.isDirectory()) {
                     movies.add(new MovieInfo(file));
-                    //}
                 }
             }
         }
