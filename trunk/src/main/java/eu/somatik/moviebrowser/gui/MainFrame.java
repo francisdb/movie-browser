@@ -433,40 +433,48 @@ public class MainFrame extends javax.swing.JFrame {
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-    final BusyDialog busyDialog = new BusyDialog(this, true);
-    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            //Clear the image folder
-            File imagesDir = settings.getImageCacheDir();
-            if (imagesDir.exists()) {
-                FileTools.deleteDirectory(imagesDir);
-            }
-            //clear the table values
-            browser.getMovieCache().clear();
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            try {
-                get();
-            } catch (InterruptedException ex) {
-                LOGGER.error("Delete worker execution interrupted", ex);
-            } catch (ExecutionException ex) {
-                LOGGER.error("Delete worker execution failed", ex.getCause());
-            } finally {
-                busyDialog.dispose();
-            }
-            clearTableList();
-            load();
-        }
-    };
-    worker.execute();
-    busyDialog.setVisible(true);
-
+    int val = JOptionPane.showConfirmDialog(this, "Are you sure you wish to remova all cached movie data?", "Confirm", JOptionPane.YES_NO_OPTION);
+    if (val == JOptionPane.YES_OPTION) {
+        clearCache();
+    }
 }//GEN-LAST:event_clearCacheMenuItemActionPerformed
+
+    private void clearCache() {
+        //final BusyDialog busyDialog = new BusyDialog(this, true);
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                //Clear the image folder
+                File imagesDir = settings.getImageCacheDir();
+                if (imagesDir.exists()) {
+                    FileTools.deleteDirectory(imagesDir);
+                }
+                //clear the table values
+                browser.getMovieCache().clear();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (InterruptedException ex) {
+                    LOGGER.error("Delete worker execution interrupted", ex);
+                } catch (ExecutionException ex) {
+                    LOGGER.error("Delete worker execution failed", ex.getCause());
+                }
+                //finally {
+                //    busyDialog.dispose();
+                //}
+                clearTableList();
+                load();
+            }
+        };
+        worker.execute();
+        // This causes threading problems !
+        // busyDialog.setVisible(true);
+    }
 
     private class BusyDialog extends JDialog {
 
