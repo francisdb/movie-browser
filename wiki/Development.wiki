@@ -1,0 +1,21 @@
+This should get you going on the project
+
+= Introduction =
+
+The project is maven based so everybody should be able to just check out the code and get going. The user interfaces are edited using Netbeans, so don't mess with the marked parts that are netbeans-generated.
+
+= What you need =
+ * Maven 2
+ * Subversion
+ * Netbeans (or some other IDE if you won't be working on the gui)
+
+
+= Used frameworks =
+ * Guice (dependency injection)
+ * HSQLDB (database)
+ * Commons Httpclient (http connections)
+ * Jericho (html parsing)
+ * SwingX (gui components)
+ * Hibernate (Entity Manager)
+ * C3P0 (database connection pooling)
+ * SLF4J/Logback (logging)
