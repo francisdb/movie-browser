@@ -5,7 +5,7 @@ This should get you going on the project
 The project is maven based so everybody should be able to just check out the code and get going. The user interfaces are edited using Netbeans, so don't mess with the marked parts that are netbeans-generated.
 
 = What you need =
- * Java SE 6+
+ * Java JDK 6+
  * Maven 2
  * Subversion
  * Netbeans (or some other IDE if you won't be working on the gui)
