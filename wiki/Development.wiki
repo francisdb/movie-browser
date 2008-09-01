@@ -12,6 +12,9 @@ The project is maven based so everybody should be able to just check out the cod
 
 
 = Used frameworks =
+
+These will be downloaded by maven during your first build.
+
  * Guice (dependency injection)
  * HSQLDB (database)
  * Commons Httpclient (http connections)
