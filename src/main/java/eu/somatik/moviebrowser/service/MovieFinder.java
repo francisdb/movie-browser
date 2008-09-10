@@ -30,8 +30,13 @@ import java.io.File;
 
 import com.flicklib.api.InfoFetcherFactory;
 import com.flicklib.domain.Movie;
+
+import eu.somatik.moviebrowser.domain.FileType;
+import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovieFile;
+
 import com.flicklib.domain.MovieService;
 import com.flicklib.domain.MoviePage;
 import eu.somatik.moviebrowser.cache.MovieCache;
@@ -123,15 +128,15 @@ public class MovieFinder {
         list.add(movieInfo);
 
         // TODO put this all in the cache?
-        List<StorableMovieSite> sites = movieCache.loadSites(movieInfo.getMovieFile().getMovie());
+        List<StorableMovieSite> sites = movieCache.loadSites(movieInfo.getMovie());
         for (StorableMovieSite site : sites) {
             movieCache.remove(site);
         }
         movieCache.remove(movieInfo.getMovieFile());
         // TODO make sure the movie is not linked to an other file
-        StorableMovie movie = movieInfo.getMovieFile().getMovie();
+        StorableMovie movie = movieInfo.getMovie();
         if(movie != null){
-            movieCache.remove(movieInfo.getMovieFile().getMovie());
+            movieCache.remove(movieInfo.getMovie());
         }
 
         StorableMovieSite site = new StorableMovieSite();
@@ -184,21 +189,23 @@ public class MovieFinder {
             MovieService[] extraServices = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
             try {
                 info.setStatus(MovieStatus.LOADING);
-                info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
-                if (info.getMovieFile().getMovie() == null || info.getMovieFile().getMovie().getId() == 0) {
+                if (info.getMovie().getId() == null) {
+                	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
                     // TODO load movie
 
                     getMovieInfoImdb(info);
-                    StorableMovie movie = movieCache.findMovieByTitle(info.getMovieFile().getMovie().getTitle());
+                    StorableMovie movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
                     if (movie == null) {
-                        movieCache.inserOrUpdate(info.getMovieFile().getMovie());
-                        movieCache.update(info.getMovieFile());
+                        movieCache.insertOrUpdate(info.getMovie());
+                        //movieCache.update(info.getMovieFile());
 
                         // TODO only do if not available
                         movieCache.insert(info.siteFor(MovieService.IMDB));
                     } else {
-                        info.getMovieFile().setMovie(movie);
-                        movieCache.update(info.getMovieFile());
+                        MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
+                		//directory.setName(info.getDirectory().getName());
+                    	movieCache.insertOrUpdate(movie);
+                    	info.setMovie(movie);
                     }
                     info.setStatus(MovieStatus.LOADED);
                 } else {
@@ -224,7 +231,7 @@ public class MovieFinder {
     }
 
     private void loadSites(MovieInfo info) {
-        List<StorableMovieSite> sites = movieCache.loadSites(info.getMovieFile().getMovie());
+        List<StorableMovieSite> sites = movieCache.loadSites(info.getMovie());
         for (StorableMovieSite site : sites) {
             info.addSite(site);
         }
@@ -253,10 +260,10 @@ public class MovieFinder {
             // TODO this should update all records with this movie linked to it
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
-                LOGGER.trace("Calling fetch on {} for '{}'", fetcher.getClass().getSimpleName(), info.getMovieFile().getMovie().getTitle());
+                LOGGER.trace("Calling fetch on {} for '{}'", fetcher.getClass().getSimpleName(), info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 Movie movie = new Movie();
-                converter.convert(info.getMovieFile().getMovie(), movie);
+                converter.convert(info.getMovie(), movie);
                 String id = null;
                 if (service == MovieService.TOMATOES) {
                     id = infoHandler.id(info, MovieService.IMDB);
@@ -264,13 +271,13 @@ public class MovieFinder {
                 MoviePage site = fetcher.fetch(movie, id);
                 StorableMovieSite storableMovieSite = new StorableMovieSite();
                 converter.convert(site, storableMovieSite);
-                storableMovieSite.setMovie(info.getMovieFile().getMovie());
+                storableMovieSite.setMovie(info.getMovie());
                 // TODO check if not fetched by some other duplicate before inserting
                 movieCache.insert(storableMovieSite);
                 info.addSite(storableMovieSite);
                 info.setStatus(MovieStatus.LOADED);
             } catch (Exception ex) {
-                LOGGER.error("Loading '" + info.getMovieFile().getMovie().getTitle() + "' on " + service.getName() + " failed", ex);
+                LOGGER.error("Loading '" + info.getMovie().getTitle() + "' on " + service.getName() + " failed", ex);
                 info.setStatus(MovieStatus.ERROR);
             } finally {
                 runningTasks--;
@@ -288,12 +295,15 @@ public class MovieFinder {
      */
     private void getMovieInfoImdb(MovieInfo movieInfo) throws UnknownHostException, Exception {
         String url = infoHandler.url(movieInfo, MovieService.IMDB);
-        if (movieInfo.getMovieFile().getMovie() == null) {
-            movieInfo.getMovieFile().setMovie(new StorableMovie());
+        StorableMovie newMovie = movieInfo.getMovie();
+        newMovie.setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
+        
+/*        if (movieInfo.getMovie() == null) {
+            movieInfo.setMovie(new StorableMovie());
         }
-        if (movieInfo.getMovieFile().getMovie().getTitle() == null) {
-            movieInfo.getMovieFile().getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
-        }
+        if (movieInfo.getMovie().getTitle() == null) {
+            movieInfo.getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
+        }*/
 
         if (url == null) {
             LOGGER.info("Finding NFO for " + movieInfo.getDirectory());
@@ -303,12 +313,12 @@ public class MovieFinder {
         // TODO find a way to pass the imdb url
         // movieInfo.getMovieFile().getMovie().setImdbUrl(url);
         Movie movie = new Movie();
-        converter.convert(movieInfo.getMovieFile().getMovie(), movie);
+        converter.convert(newMovie, movie);
         MoviePage site = fetcherFactory.get(MovieService.IMDB).fetch(movie, infoHandler.id(movieInfo, MovieService.IMDB));
-        converter.convert(movie, movieInfo.getMovieFile().getMovie());
+        converter.convert(movie, newMovie);
         StorableMovieSite storableMovieSite = new StorableMovieSite();
         converter.convert(site, storableMovieSite);
-        storableMovieSite.setMovie(movieInfo.getMovieFile().getMovie());
+        storableMovieSite.setMovie(newMovie);
         movieInfo.addSite(storableMovieSite);
 
         //rename titles
@@ -323,20 +333,28 @@ public class MovieFinder {
     }
 
     public void renameFolderToTitle(MovieInfo info) {
+		renameFolder(info, info.getMovie().getTitle());
+	}
+
+	public boolean renameFolder(MovieInfo info, String newName) {
         boolean success;
 
         File oldFile = info.getDirectory();
-        File newFile = new File(oldFile.getParent(), info.getMovieFile().getMovie().getTitle());
+        File newFile = new File(oldFile.getParent(), newName);
         success = FileTools.renameDir(oldFile, newFile);
         if (success) {
             LOGGER.info(oldFile.getAbsolutePath() + " auto renamed to " + newFile.getAbsolutePath());
             // update the path in the db
             info.setDirectory(newFile);
-            info.getMovieFile().setPath(newFile.getAbsolutePath());
-            movieCache.update(info.getMovieFile());
+            MovieLocation directory = info.getMovie().getDirectory(oldFile.getAbsolutePath());
+            directory.setPath(newFile.getAbsolutePath());
+            //info.getMovieFile().setPath(newFile.getAbsolutePath());
+            movieCache.update(directory);
             info.triggerUpdate();
+            return true;
         } else {
             LOGGER.error("Error auto renaming " + oldFile.getAbsolutePath() + " to " + newFile.getAbsolutePath());
+            return false;
         }
     }
 }

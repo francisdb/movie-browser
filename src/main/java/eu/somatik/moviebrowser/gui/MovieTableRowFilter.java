@@ -37,30 +37,31 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
 
     @Override
     public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-        boolean include = false;
         MovieInfoTableModel model = (MovieInfoTableModel) entry.getModel();
         MovieInfo info = model.getMovie(entry.getIdentifier());
-        StorableMovie movie = info.getMovieFile().getMovie();
-        if (info.getMovieFile().getPath().toLowerCase().contains(filterText)) {
-            include = true;
-        } else if (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(filterText)) {
-            include = true;
+        StorableMovie movie = info.getMovie();
+        if (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(filterText)) {
+            return true;
         } else if (movie.getDirector() != null && movie.getDirector().toLowerCase().contains(filterText)) {
-            include = true;
+            return true;
         } else if (movie.getPlot() != null && movie.getPlot().toLowerCase().contains(filterText)) {
-            include = true;
+            return true;
         } else if (movie.getYear() != null && movie.getYear().toString().contains(filterText)) {
-            include = true;
+            return true;
         } else {
-            for (Genre genre : info.getMovieFile().getMovie().getGenres()) {
-                    String[] split = filterText.split(" ");
-                    for(int i=0; i<split.length; i++) {
-                        if(genre.getName().toLowerCase().equals(split[i])) {
-                            include = true;
-                        }
-                    }   
+        	String path = info.getMovie().getDirectoryPath();
+            if (path!=null && path.toLowerCase().contains(filterText)) {
+                return true;
+            }
+            for (Genre genre : info.getMovie().getGenres()) {
+                String[] split = filterText.split(" ");
+				for (int i = 0; i < split.length; i++) {
+					if (genre.getName().toLowerCase().equals(split[i])) {
+						return true;
+					}
+				}   
             }
         }
-        return include;
+        return false;
     }
 }

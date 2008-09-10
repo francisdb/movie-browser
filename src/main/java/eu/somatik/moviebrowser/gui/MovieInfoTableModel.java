@@ -112,7 +112,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         MovieInfo info = movies.get(rowIndex);
-        StorableMovie movie = info.getMovieFile().getMovie();
+        StorableMovie movie = info.getMovie();
         switch (columnIndex) {
             case 0:
                 return info.getStatus();
