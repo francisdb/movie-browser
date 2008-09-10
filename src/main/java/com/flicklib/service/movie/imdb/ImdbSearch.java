@@ -197,6 +197,6 @@ public class ImdbSearch {
             LOGGER.error("Could not cencode UTF-8", ex);
         }
         // global search is without s=tt
-        return "http://www.imdb.com/find?q="+encoded+";s=tt";
+        return "http://www.imdb.com/find?q="+encoded+";s=tt;site=aka";
     }
 }
