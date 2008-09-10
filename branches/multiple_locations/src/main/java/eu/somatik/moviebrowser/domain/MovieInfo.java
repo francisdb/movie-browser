@@ -34,6 +34,7 @@ import java.util.Map;
 public class MovieInfo {
     
     private StorableMovieFile movieFile;
+    private StorableMovie movie;
     private Map<MovieService, StorableMovieSite> sites;
 
     private File directory;
@@ -53,6 +54,8 @@ public class MovieInfo {
         this.directory = directory;
         this.status = MovieStatus.NEW;
         this.movieFile = new StorableMovieFile();
+        this.movie = new StorableMovie();
+        this.movie.addFile(movieFile);
         this.sites = new HashMap<MovieService, StorableMovieSite>();
     }
 
@@ -119,13 +122,24 @@ public class MovieInfo {
         propertyChangeSupport.firePropertyChange("status", null, this.status);
     }
 
+    @Deprecated
     public StorableMovieFile getMovieFile() {
         return movieFile;
     }
 
+    @Deprecated
     public void setMovieFile(StorableMovieFile movieFile) {
         this.movieFile = movieFile;
     }
+    
+    public StorableMovie getMovie() {
+		return movie;
+	}
+    
+    public void setMovie(StorableMovie movie) {
+		this.movie = movie;
+	}
+    
 
     public PropertyChangeSupport getPropertyChangeSupport() {
         return propertyChangeSupport;

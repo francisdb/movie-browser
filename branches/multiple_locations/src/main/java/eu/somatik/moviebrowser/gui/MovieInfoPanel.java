@@ -105,7 +105,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
 
 
-        StorableMovie movie = info.getMovieFile().getMovie();
+        StorableMovie movie = info.getMovie();
         if (movie == null) {
             movieHeader.setTitle("");
             movieHeader.setDescription("");

@@ -202,7 +202,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
                 String fileName;
                 List<Subtitle> results = new ArrayList<Subtitle>();
                 String imdbId = movie.siteFor(MovieService.IMDB).getIdForSite();
-                results.addAll(subtitlesLoader2.search(movie.getMovieFile().getMovie().getTitle(), imdbId));
+                results.addAll(subtitlesLoader2.search(movie.getMovie().getTitle(), imdbId));
                 
                 Iterator<String> i = files.iterator();
                 while (i.hasNext()) {

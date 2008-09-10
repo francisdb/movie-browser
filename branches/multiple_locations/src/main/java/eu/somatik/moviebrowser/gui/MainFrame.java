@@ -193,7 +193,7 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * Makes the frame ready for use
      */
-    public void load() {
+    public void setupListeners() {
         this.addWindowListener(new WindowAdapter() {
 
             @Override
@@ -225,7 +225,6 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-        fillTable();
     }
 
     /** This method is called from within the constructor to
@@ -414,7 +413,7 @@ public class MainFrame extends javax.swing.JFrame {
             File newFolder = chooser.getSelectedFile();
             settings.addFolder(newFolder);
             this.selectedFile = newFolder;
-            fillTable();
+            scanFolders();
         } else {
             LOGGER.debug("No Selection ");
         }
@@ -468,7 +467,7 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
                 //    busyDialog.dispose();
                 //}
                 clearTableList();
-                load();
+                scanFolders();
             }
         };
         worker.execute();
@@ -598,7 +597,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         }
     }
 
-    public void fillTable() {
+    public void scanFolders() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
         final Set<String> folders = settings.loadFolders();
@@ -722,7 +721,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             MovieInfo info = getSelectedMovie();
             TrailerFinder finder = new ImdbTrailerFinder();
             LOGGER.error("Not implemented");
-            String url = finder.findTrailerUrl(info.getMovieFile().getMovie().getTitle(), info.siteFor(MovieService.IMDB).getIdForSite());
+            String url = finder.findTrailerUrl(info.getMovie().getTitle(), info.siteFor(MovieService.IMDB).getIdForSite());
             if (url == null) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.imdb.com");
             } else {
@@ -746,7 +745,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             MovieInfo info = getSelectedMovie();
             TrailerFinder finder = new AppleTrailerFinder();
             LOGGER.error("Not implemented");
-            String url = finder.findTrailerUrl(info.getMovieFile().getMovie().getTitle(), null);
+            String url = finder.findTrailerUrl(info.getMovie().getTitle(), null);
             if (url == null) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.apple.com");
             } else {
@@ -824,7 +823,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
                 List<String> files = new ArrayList<String>();
                 MovieInfo info = getSelectedMovie();
                 File dir = info.getDirectory();
-                String alternateSearchKey = getSelectedMovie().getMovieFile().getMovie().getTitle();
+                String alternateSearchKey = info.getMovie().getTitle();
                 File child;
                 if (!dir.isFile()) {
                     for (File file : dir.listFiles()) {
@@ -884,19 +883,12 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             File oldFile = info.getDirectory();
             String newName = (String) JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE, null, null, oldFile.getName());
             if (newName != null) {
-                File newFile = new File(oldFile.getParent(), newName);
-                boolean success = FileTools.renameDir(oldFile, newFile);
+            	boolean success = browser.getMovieFinder().renameFolder(info, newName);
 
                 if (!success) {
                     LOGGER.error("Error renaming movie directory " + oldFile + " to " + newName);
                     JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie folder " + oldFile.getName() + ". You cannot have two movie folders with the same name and \\ / : * ? \" < > | characters are not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    // TODO this code is dupliacted in MovieFinder
-                    info.setDirectory(newFile);
-                    info.getMovieFile().setPath(newFile.getAbsolutePath());
-                    browser.getMovieCache().update(info.getMovieFile());
-                    info.triggerUpdate();
-
                     JOptionPane dialog = new JOptionPane("Would you like Movie Browser to search and cache movie information to match the new movie name?\nSay No if the information in cache is correct for " + newName + ".", JOptionPane.QUESTION_MESSAGE);
                     Object[] options = new String[]{"Yes, please :)", "No thanks"};
                     dialog.setOptions(options);
@@ -912,8 +904,8 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
                     LOGGER.debug(String.valueOf(result));
                     if (result == 0) {
                         // unlink the file from the movie
-                        info.getMovieFile().setMovie(null);
-                        browser.getMovieCache().update(info.getMovieFile());
+                        //info.getMovieFile().setMovie(null);
+                        //browser.getMovieCache().update(info.getMovieFile());
                         // request reload
                         browser.getMovieFinder().reloadMovie(info);
                     }

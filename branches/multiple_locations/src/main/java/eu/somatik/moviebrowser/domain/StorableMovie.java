@@ -22,14 +22,18 @@ import com.flicklib.domain.MovieType;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  *
@@ -37,12 +41,14 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Movie")
-@NamedQuery(name="StorableMovie.findByTitle", query="SELECT m FROM StorableMovie m WHERE m.title = :title")
+@NamedQueries( {
+		@NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
+		@NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s") })
 public class StorableMovie {
     
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     @Column(unique=true, nullable=false)
     private String title;
@@ -65,20 +71,26 @@ public class StorableMovie {
     @ManyToMany(fetch=FetchType.EAGER)
     private Set<Language> languages;
 
+    @OneToMany(mappedBy="movie", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<StorableMovieFile> files;
     
+    @OneToMany(mappedBy="movie", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<MovieLocation> locations;
     
     
     /** Creates a new instance of StorableMovie */
     public StorableMovie() {
         this.genres = new HashSet<Genre>();
         this.languages = new HashSet<Language>();
+        this.files = new HashSet<StorableMovieFile>();
+        this.locations = new HashSet<MovieLocation>();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -190,7 +202,80 @@ public class StorableMovie {
     }
 
 
+    public Set<StorableMovieFile> getFiles() {
+		return files;
+	}
 
+    public void addFile(StorableMovieFile file) {
+    	if (file.getMovie()!=null) {
+    		file.getMovie().getFiles().remove(file);
+    	}
+    	file.setMovie(this);
+    	this.files.add(file);
+    }
+    
+    /**
+     * Return a file based on the file type.
+     *     
+     * @param type
+     * @return
+     */
+    @Transient
+    public StorableMovieFile getFileByType(FileType type) {
+    	for (StorableMovieFile f : files) {
+    		if (f.getType()==type) {
+    			return f;
+    		}
+    	}
+    	return null;
+    }
+    
+    public MovieLocation getDirectory(String path) {
+    	for (MovieLocation f : locations) {
+			if (f.getPath().equals(path)) {
+				return f;
+			}
+    	}
+    	MovieLocation f = new MovieLocation ();
+    	f.setPath(path);
+    	addLocation(f);
+    	return f;
+    }
+    
+    public void addLocation(MovieLocation f) {
+    	if (f.getMovie()!=null) {
+    		f.getMovie().getLocations().remove(f);
+    	}
+    	f.setMovie(this);
+    	this.locations.add(f);
+	}
+    
+    public Set<MovieLocation> getLocations() {
+		return locations;
+	}
+
+	@Transient
+    public MovieLocation getDirectory() {
+		for (MovieLocation f : locations) {
+			return f;
+		}
+		return null;
+    }
+    
+    @Transient
+	public String getDirectoryPath() {
+    	MovieLocation smf = getDirectory();
+		return smf != null ? smf.getPath() : null;
+	}
+    
+    @Transient
+    public long getSize() {
+    	long size = 0;
+    	for (StorableMovieFile f : files) {
+    		size += f.getSize();
+    	}
+    	return size;
+    }
     
     
     @Override

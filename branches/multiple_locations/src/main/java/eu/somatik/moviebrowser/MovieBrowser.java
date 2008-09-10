@@ -154,8 +154,8 @@ public class MovieBrowser {
             public void run() {
 
                 MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler);
+                mainFrame.setupListeners();
                 mainFrame.setVisible(true);
-                mainFrame.load();
             }
         });
     }
