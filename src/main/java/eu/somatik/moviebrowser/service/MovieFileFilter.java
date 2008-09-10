@@ -30,7 +30,7 @@ import java.util.List;
 public class MovieFileFilter implements FileFilter {
 
     private static final List<String> VIDEO_EXTENSIONS = Arrays.asList(new String[]{
-                "avi", "mpg", "mpeg", "divx", "mkv", "xvid", "m4v", "mov", "flv"
+                "avi", "mpg", "mpeg", "divx", "mkv", "xvid", "m4v", "mov", "flv", "iso"
             });
     private boolean acceptFolders;
 
@@ -40,21 +40,20 @@ public class MovieFileFilter implements FileFilter {
 
     @Override
     public boolean accept(File file) {
-        boolean isVideo = false;
         if (file.isDirectory()) {
-            isVideo = acceptFolders;
+            return acceptFolders;
         } else {
             String name = file.getName();
             int lastDotPos = name.lastIndexOf('.');
             if (lastDotPos != -1 && lastDotPos != 0 && lastDotPos < name.length() - 1) {
                 String ext = name.substring(lastDotPos + 1).toLowerCase();
                 if (VIDEO_EXTENSIONS.contains(ext)) {
-                    isVideo = true;
+                    return true;
                 }
             }
 
         }
-        return isVideo;
+        return false;
     }
 
     public String clearMovieExtension(File file) {
