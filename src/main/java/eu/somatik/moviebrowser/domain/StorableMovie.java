@@ -36,48 +36,46 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- *
+ * 
  * @author francisdb
  */
 @Entity
-@Table(name="Movie")
-@NamedQueries( {
-		@NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
-		@NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s") })
+@Table(name = "Movie")
+@NamedQueries( { @NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
+        @NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s") })
 public class StorableMovie {
-    
+
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String title;
-    
+
     private String plot;
     private Integer year;
-    
+
     private String director;
 
     private MovieType type;
-    
+
     /**
-     * Runtime in minutes 
+     * Runtime in minutes
      */
     private Integer runtime;
-    
-    @ManyToMany(fetch=FetchType.EAGER)
+
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Genre> genres;
-    
-    @ManyToMany(fetch=FetchType.EAGER)
+
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Language> languages;
 
-    @OneToMany(mappedBy="movie", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StorableMovieFile> files;
-    
-    @OneToMany(mappedBy="movie", fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<MovieLocation> locations;
-    
-    
+
     /** Creates a new instance of StorableMovie */
     public StorableMovie() {
         this.genres = new HashSet<Genre>();
@@ -104,7 +102,7 @@ public class StorableMovie {
 
     /**
      * 
-     * @param plot 
+     * @param plot
      */
     public void setPlot(String plot) {
         this.plot = plot;
@@ -120,15 +118,12 @@ public class StorableMovie {
 
     /**
      * 
-     * @param title 
+     * @param title
      */
     public void setTitle(String title) {
         this.title = title;
     }
-    
 
-    
-    
     /**
      * 
      * @return the genres
@@ -139,7 +134,7 @@ public class StorableMovie {
 
     /**
      * 
-     * @param genre 
+     * @param genre
      */
     public void addGenre(Genre genre) {
         this.genres.add(genre);
@@ -152,12 +147,12 @@ public class StorableMovie {
     public Set<Language> getLanguages() {
         return languages;
     }
-       
+
     /**
      * 
-     * @param language 
+     * @param language
      */
-    public void addLanguage(Language language){
+    public void addLanguage(Language language) {
         this.languages.add(language);
     }
 
@@ -171,7 +166,7 @@ public class StorableMovie {
 
     /**
      * 
-     * @param runtime 
+     * @param runtime
      */
     public void setRuntime(Integer runtime) {
         this.runtime = runtime;
@@ -201,86 +196,102 @@ public class StorableMovie {
         this.type = type;
     }
 
-
     public Set<StorableMovieFile> getFiles() {
-		return files;
-	}
+        return files;
+    }
 
     public void addFile(StorableMovieFile file) {
-    	if (file.getMovie()!=null) {
-    		file.getMovie().getFiles().remove(file);
-    	}
-    	file.setMovie(this);
-    	this.files.add(file);
+        if (file.getMovie() != null) {
+            file.getMovie().getFiles().remove(file);
+        }
+        file.setMovie(this);
+        this.files.add(file);
     }
+
+    /**
+     * valid means, have at least one MovieLocation and one or more VIDEO_CONTENT
+     * @return
+     */
+    @Transient
+    public boolean isValid() {
+        if (getLocations().isEmpty()) {
+            return false;
+        }
+        for (StorableMovieFile sm: files) {
+            if (sm.getType()==FileType.VIDEO_CONTENT) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     
     /**
      * Return a file based on the file type.
-     *     
+     * 
      * @param type
      * @return
      */
     @Transient
     public StorableMovieFile getFileByType(FileType type) {
-    	for (StorableMovieFile f : files) {
-    		if (f.getType()==type) {
-    			return f;
-    		}
-    	}
-    	return null;
+        for (StorableMovieFile f : files) {
+            if (f.getType() == type) {
+                return f;
+            }
+        }
+        return null;
     }
-    
-    public MovieLocation getDirectory(String path) {
-    	for (MovieLocation f : locations) {
-			if (f.getPath().equals(path)) {
-				return f;
-			}
-    	}
-    	MovieLocation f = new MovieLocation ();
-    	f.setPath(path);
-    	addLocation(f);
-    	return f;
-    }
-    
-    public void addLocation(MovieLocation f) {
-    	if (f.getMovie()!=null) {
-    		f.getMovie().getLocations().remove(f);
-    	}
-    	f.setMovie(this);
-    	this.locations.add(f);
-	}
-    
-    public Set<MovieLocation> getLocations() {
-		return locations;
-	}
 
-	@Transient
-    public MovieLocation getDirectory() {
-		for (MovieLocation f : locations) {
-			return f;
-		}
-		return null;
+    public MovieLocation getDirectory(String path) {
+        for (MovieLocation f : locations) {
+            if (f.getPath().equals(path)) {
+                return f;
+            }
+        }
+        MovieLocation f = new MovieLocation();
+        f.setPath(path);
+        addLocation(f);
+        return f;
     }
-    
+
+    public void addLocation(MovieLocation f) {
+        if (f.getMovie() != null) {
+            f.getMovie().getLocations().remove(f);
+        }
+        f.setMovie(this);
+        this.locations.add(f);
+    }
+
+    public Set<MovieLocation> getLocations() {
+        return locations;
+    }
+
     @Transient
-	public String getDirectoryPath() {
-    	MovieLocation smf = getDirectory();
-		return smf != null ? smf.getPath() : null;
-	}
-    
+    public MovieLocation getDirectory() {
+        for (MovieLocation f : locations) {
+            return f;
+        }
+        return null;
+    }
+
+    @Transient
+    public String getDirectoryPath() {
+        MovieLocation smf = getDirectory();
+        return smf != null ? smf.getPath() : null;
+    }
+
     @Transient
     public long getSize() {
-    	long size = 0;
-    	for (StorableMovieFile f : files) {
-    		size += f.getSize();
-    	}
-    	return size;
+        long size = 0;
+        for (StorableMovieFile f : files) {
+            size += f.getSize();
+        }
+        return size;
     }
-    
-    
+
     @Override
     public String toString() {
-        return "Movie "+getId()+": "+getTitle();
+        return "Movie " + getId() + ": " + getTitle();
     }
 
 }

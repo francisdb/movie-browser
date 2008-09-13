@@ -132,7 +132,7 @@ public class MovieFinder {
         for (StorableMovieSite site : sites) {
             movieCache.remove(site);
         }
-        movieCache.remove(movieInfo.getMovieFile());
+        //movieCache.remove(movieInfo.getMovieFile());
         // TODO make sure the movie is not linked to an other file
         StorableMovie movie = movieInfo.getMovie();
         if(movie != null){
@@ -296,7 +296,7 @@ public class MovieFinder {
     private void getMovieInfoImdb(MovieInfo movieInfo) throws UnknownHostException, Exception {
         String url = infoHandler.url(movieInfo, MovieService.IMDB);
         StorableMovie newMovie = movieInfo.getMovie();
-        newMovie.setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
+        //newMovie.setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
         
 /*        if (movieInfo.getMovie() == null) {
             movieInfo.setMovie(new StorableMovie());

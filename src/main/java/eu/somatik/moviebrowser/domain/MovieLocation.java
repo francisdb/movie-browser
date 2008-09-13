@@ -8,48 +8,60 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Location")
+@Table(name = "Location")
 public class MovieLocation {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	Integer id;
-	
-	String path;
-	
-	String label;
-	
-	@ManyToOne
-	StorableMovie movie;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Integer id;
 
-	public String getPath() {
-		return path;
-	}
+    String path;
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+    String label;
 
-	public String getLabel() {
-		return label;
-	}
+    @ManyToOne
+    StorableMovie movie;
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public MovieLocation() {
 
-	public StorableMovie getMovie() {
-		return movie;
-	}
+    }
 
-	public void setMovie(StorableMovie movie) {
-		this.movie = movie;
-	}
+    public MovieLocation(String path, String label) {
+        this.path = path;
+        this.label = label;
+    }
 
-	public Integer getId() {
-		return id;
-	}
-	
-	
-	
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public StorableMovie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(StorableMovie movie) {
+        this.movie = movie;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "MovieLocation[id:"+id+",label:"+label+",path:"+path+"]";
+    }
+
 }
