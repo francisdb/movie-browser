@@ -77,6 +77,14 @@ public class JPAMovieCache implements MovieCache {
         this.settings = settings;
     }
 
+    
+    protected EntityManager getEntityManager() {
+    	if (emf==null) {
+    		startup();
+    	}
+    	return emf.createEntityManager();
+    }
+    
     @Override
     public boolean isStarted() {
         return emf != null;
@@ -175,10 +183,11 @@ public class JPAMovieCache implements MovieCache {
         return found;
     }*/
     
+    @Override
     public List<StorableMovie> list() {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             Query query = em.createNamedQuery("StorableMovie.findAll");
             return (List<StorableMovie>) query.getResultList();
         } finally {
@@ -191,7 +200,7 @@ public class JPAMovieCache implements MovieCache {
     public void remove(StorableMovie movie) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             StorableMovie found = em.find(StorableMovie.class, movie.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
@@ -206,7 +215,7 @@ public class JPAMovieCache implements MovieCache {
     public void remove(StorableMovieSite site) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             StorableMovieSite found = em.find(StorableMovieSite.class, site.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
@@ -221,7 +230,7 @@ public class JPAMovieCache implements MovieCache {
     public void remove(StorableMovieFile file) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             StorableMovieFile found = em.find(StorableMovieFile.class, file.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
@@ -236,7 +245,7 @@ public class JPAMovieCache implements MovieCache {
         LOGGER.info("saving path " + movieFile.getName());
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             em.getTransaction().begin();
             if (movieFile.getMovie() != null) {
                 replaceLanguageGenre(movieFile.getMovie(), em);
@@ -273,7 +282,7 @@ public class JPAMovieCache implements MovieCache {
     public void update(StorableMovieFile movieFile) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             em.getTransaction().begin();
             if (movieFile.getMovie() != null) {
                 if (movieFile.getMovie().getId() == null) {
@@ -293,7 +302,7 @@ public class JPAMovieCache implements MovieCache {
     public void update(MovieLocation location) {
         EntityManager em = null;
         try {
-        	em = emf.createEntityManager();
+        	em = getEntityManager();
         	em.getTransaction().begin();
         	if (location.getId()==null) {
         		em.persist(location);
@@ -314,7 +323,7 @@ public class JPAMovieCache implements MovieCache {
     public void insertOrUpdate(StorableMovie movie) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
 
             replaceLanguageGenre(movie, em);
 
@@ -384,7 +393,7 @@ public class JPAMovieCache implements MovieCache {
         } else {
             EntityManager em = null;
             try {
-                em = emf.createEntityManager();
+                em = getEntityManager();
                 em.getTransaction().begin();
                 em.persist(site);
                 em.getTransaction().commit();
@@ -399,7 +408,7 @@ public class JPAMovieCache implements MovieCache {
         List<StorableMovieSite> sites = new ArrayList<StorableMovieSite>();
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             Query query = em.createNamedQuery("StorableMovieSite.findByMovie");
             query.setParameter("movie", movie);
             List<?> results = query.getResultList();
@@ -454,7 +463,7 @@ public class JPAMovieCache implements MovieCache {
         StorableMovie movie = null;
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             Query query = em.createNamedQuery("StorableMovie.findByTitle");
             query.setParameter("title", title);
             try {

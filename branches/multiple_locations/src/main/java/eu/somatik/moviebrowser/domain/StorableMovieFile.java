@@ -30,47 +30,44 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * 
  * @author francisdb
  */
 @Entity
-@Table(name="File")
+@Table(name = "File")
 public class StorableMovieFile {
-    
+
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    
+
     @ManyToOne
     private StorableMovie movie;
-    
-    
+
     private String name;
-    
-    @Enumerated(value=EnumType.STRING)
+
+    @Enumerated(value = EnumType.STRING)
     private FileType type;
-    
+
     private long size;
-    
 
     public StorableMovieFile() {
     }
 
     public StorableMovieFile(File file, FileType contentType) {
-		setType(contentType);
-		setSize(file.length());
-    	setName(file.getName());
+        setType(contentType);
+        setSize(file.length());
+        setName(file.getName());
     }
 
-    
     public Long getId() {
-		return id;
-	}
-    
+        return id;
+    }
+
     public void setId(Long id) {
-		this.id = id;
-	}
-    
+        this.id = id;
+    }
+
     public StorableMovie getMovie() {
         return movie;
     }
@@ -79,31 +76,33 @@ public class StorableMovieFile {
         this.movie = movie;
     }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public FileType getType() {
-		return type;
-	}
+    public FileType getType() {
+        return type;
+    }
 
-	public void setType(FileType type) {
-		this.type = type;
-	}
+    public void setType(FileType type) {
+        this.type = type;
+    }
 
-	public long getSize() {
-		return size;
-	}
+    public long getSize() {
+        return size;
+    }
 
-	public void setSize(long size) {
-		this.size = size;
-	}
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "file[id:"+id+",name:"+name+",size:"+size+",type:"+type+']';
+    }
     
-    
-   
-
 }

@@ -18,11 +18,11 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.google.inject.Inject;
-import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.config.Settings;
+import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -31,52 +31,53 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.JTable;
-import javax.swing.JPopupMenu;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import com.flicklib.service.movie.apple.AppleTrailerFinder;
-import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
+import com.flicklib.service.movie.apple.AppleTrailerFinder;
+import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
+import com.google.inject.Inject;
+
 import eu.somatik.moviebrowser.MovieBrowser;
+import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.net.URL;
-import java.util.Set;
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.JMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.TableRowSorter;
-import javax.swing.table.TableModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-import javax.swing.Timer;
 
 /**
  *
@@ -246,6 +247,7 @@ public class MainFrame extends javax.swing.JFrame {
         importMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         clearCacheMenuItem = new javax.swing.JMenuItem();
+        rescanMenuItem = new javax.swing.JMenuItem();
         settingsMenuItem = new javax.swing.JMenuItem();
         extraMenu = new javax.swing.JMenu();
         lookAndFeelMenu = new javax.swing.JMenu();
@@ -336,6 +338,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         toolsMenu.add(clearCacheMenuItem);
+        
+        rescanMenuItem.setText("Rescan");
+        rescanMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scanFolders();
+            }
+        });
+        toolsMenu.add(rescanMenuItem);
 
         settingsMenuItem.setMnemonic('S');
         settingsMenuItem.setText("Settings");
@@ -597,6 +607,37 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         }
     }
 
+    public void loadMoviesFromDatabase() {
+    	new SwingWorker<List<StorableMovie>, Void>() { 
+    		@Override
+    		protected List<StorableMovie> doInBackground() throws Exception {
+    			return browser.getMovieCache().list();
+    		}
+    		
+    		
+    		@Override
+    		protected void done() {
+    			List<StorableMovie> list;
+				try {
+					list = get();
+					List<MovieInfo> infos = new ArrayList<MovieInfo>(list.size());
+					
+					MovieInfoTableModel model = (MovieInfoTableModel) movieTable.getModel();
+					model.clear();
+					for (StorableMovie s : list) {
+						infos.add(new MovieInfo(s));
+					}
+					model.addAll(infos);
+					SwingTools.packColumns(movieTable, 3);
+				} catch (InterruptedException e) {
+                    LOGGER.error("Loading interrupted", e);
+                } catch (ExecutionException ex) {
+                    LOGGER.error("Loading failed", ex.getCause());
+				}
+    		}
+    	}.execute();
+    }
+    
     public void scanFolders() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
@@ -917,6 +958,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem checkUpdatesMenuItem;
     private javax.swing.JMenuItem clearCacheMenuItem;
+    private javax.swing.JMenuItem rescanMenuItem;
     private javax.swing.JMenu extraMenu;
     private javax.swing.JLabel filterLabel;
     private javax.swing.JTextField filterText;

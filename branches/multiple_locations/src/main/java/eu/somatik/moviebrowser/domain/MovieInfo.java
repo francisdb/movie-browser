@@ -33,31 +33,37 @@ import java.util.Map;
  */
 public class MovieInfo {
     
-    private StorableMovieFile movieFile;
     private StorableMovie movie;
-    private Map<MovieService, StorableMovieSite> sites;
+    private Map<MovieService, StorableMovieSite> sites= new HashMap<MovieService, StorableMovieSite>();
 
     private File directory;
     private MovieStatus status;
     
-    private Map<MovieService,Integer> scores;
+    private Map<MovieService,Integer> scores = new HashMap<MovieService, Integer>();;
     
-    private PropertyChangeSupport propertyChangeSupport;
+    private PropertyChangeSupport propertyChangeSupport= new PropertyChangeSupport(this);
     
     
     /** Creates a new instance of MovieInfo 
      * @param directory 
      */
     public MovieInfo(File directory) {
-        this.scores = new HashMap<MovieService, Integer>();
-        this.propertyChangeSupport = new PropertyChangeSupport(this);
         this.directory = directory;
         this.status = MovieStatus.NEW;
-        this.movieFile = new StorableMovieFile();
         this.movie = new StorableMovie();
-        this.movie.addFile(movieFile);
-        this.sites = new HashMap<MovieService, StorableMovieSite>();
     }
+    
+    public MovieInfo(StorableMovie movieFile) {
+        this.status = MovieStatus.LOADED;
+        this.movie =movieFile;
+        String dirPath = this.movie.getDirectoryPath();
+        if (dirPath!=null) {
+        	// this shouldn't happen ...
+        	this.directory = new File(dirPath);
+        }
+    }
+    
+    
 
     /**
      * This should trigger an update in the table
@@ -122,15 +128,6 @@ public class MovieInfo {
         propertyChangeSupport.firePropertyChange("status", null, this.status);
     }
 
-    @Deprecated
-    public StorableMovieFile getMovieFile() {
-        return movieFile;
-    }
-
-    @Deprecated
-    public void setMovieFile(StorableMovieFile movieFile) {
-        this.movieFile = movieFile;
-    }
     
     public StorableMovie getMovie() {
 		return movie;
@@ -171,6 +168,14 @@ public class MovieInfo {
     
     public StorableMovieSite siteFor(MovieService service){
         return sites.get(service);
+    }
+    
+    public String siteForUrl(MovieService service) {
+    	StorableMovieSite sms = siteFor(service);
+    	if (sms!=null) {
+    		return sms.getUrl();
+    	}
+    	return null;
     }
     
 }
