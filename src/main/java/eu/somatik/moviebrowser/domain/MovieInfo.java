@@ -18,12 +18,11 @@
  */
 package eu.somatik.moviebrowser.domain;
 
-import com.flicklib.domain.MovieService;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+
+import com.flicklib.domain.MovieService;
 
 /**
  * 
@@ -35,8 +34,6 @@ public class MovieInfo {
 
     private File directory;
     private MovieStatus status;
-
-    private Map<MovieService, Integer> scores = new HashMap<MovieService, Integer>();;
 
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -56,7 +53,6 @@ public class MovieInfo {
         this.movie = movieFile;
         String dirPath = this.movie.getDirectoryPath();
         if (dirPath != null) {
-            // this shouldn't happen ...
             this.directory = new File(dirPath);
         }
     }
@@ -74,14 +70,6 @@ public class MovieInfo {
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void addScore(MovieService service, Integer score) {
-        scores.put(service, score);
-    }
-
-    public Integer getScore(MovieService service) {
-        return scores.get(service);
     }
 
     /**
@@ -137,14 +125,6 @@ public class MovieInfo {
 
     public void setPropertyChangeSupport(PropertyChangeSupport propertyChangeSupport) {
         this.propertyChangeSupport = propertyChangeSupport;
-    }
-
-    public Map<MovieService, Integer> getScores() {
-        return scores;
-    }
-
-    public void setScores(Map<MovieService, Integer> scores) {
-        this.scores = scores;
     }
 
     public void addSite(StorableMovieSite storableMovieSite) {
