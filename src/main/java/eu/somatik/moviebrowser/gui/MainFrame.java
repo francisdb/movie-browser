@@ -217,7 +217,8 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-                    MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                    //MovieInfo info = (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+                    MovieInfo info = getSelectedMovie();
                     try {
                         Desktop.getDesktop().open(info.getDirectory());
                     } catch (IOException ex) {
@@ -702,7 +703,9 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     }
 
     private MovieInfo getSelectedMovie() {
-        return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+        int selected = movieTable.getRowSorter().convertRowIndexToModel(movieTable.getSelectedRow());
+        return ((MovieInfoTableModel)movieTable.getModel()).getMovie(selected);
+        //return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
     }
 
     /**

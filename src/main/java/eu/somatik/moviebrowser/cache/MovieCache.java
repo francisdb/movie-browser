@@ -102,6 +102,15 @@ public interface MovieCache {
      */
     List<StorableMovieSite> loadSites(StorableMovie movie);
     
+    
+    /**
+     * load a movie which associated with a given filename and size.
+     * @param filename
+     * @param size
+     * @return
+     */
+    public StorableMovie findByFile(String filename, long size);
+    
     /**
      * Shuts down the cache
      */

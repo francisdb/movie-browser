@@ -192,20 +192,28 @@ public class MovieFinder {
                 if (info.getMovie().getId() == null) {
                 	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
                     // TODO load movie
-
-                    getMovieInfoImdb(info);
-                    StorableMovie movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
-                    if (movie == null) {
-                        movieCache.insertOrUpdate(info.getMovie());
-                        //movieCache.update(info.getMovieFile());
-
-                        // TODO only do if not available
-                        movieCache.insert(info.siteFor(MovieService.IMDB));
-                    } else {
+                    StorableMovie movie = findMovie();
+                    if (movie!=null) {
                         MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
-                		//directory.setName(info.getDirectory().getName());
-                    	movieCache.insertOrUpdate(movie);
-                    	info.setMovie(movie);
+                        //directory.setName(info.getDirectory().getName());
+                        movieCache.insertOrUpdate(movie);
+                        info.setMovie(movie);
+                    } else {
+                    
+                        getMovieInfoImdb(info);
+                        movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
+                        if (movie == null) {
+                            movieCache.insertOrUpdate(info.getMovie());
+                            //movieCache.update(info.getMovieFile());
+    
+                            // TODO only do if not available
+                            movieCache.insert(info.siteFor(MovieService.IMDB));
+                        } else {
+                            MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
+                    		//directory.setName(info.getDirectory().getName());
+                        	movieCache.insertOrUpdate(movie);
+                        	info.setMovie(movie);
+                        }
                     }
                     info.setStatus(MovieStatus.LOADED);
                 } else {
@@ -227,6 +235,18 @@ public class MovieFinder {
 
 
             return info;
+        }
+
+        private StorableMovie findMovie() {
+            for (StorableMovieFile file : info.getMovie().getFiles()) {
+                if (file.getType()==FileType.VIDEO_CONTENT) {
+                    StorableMovie movie = movieCache.findByFile(file.getName(), file.getSize());
+                    if (movie!=null) {
+                        return movie;
+                    }
+                }
+            }
+            return null;
         }
     }
 
