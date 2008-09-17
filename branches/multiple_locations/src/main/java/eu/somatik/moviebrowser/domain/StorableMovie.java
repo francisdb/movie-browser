@@ -18,7 +18,6 @@
  */
 package eu.somatik.moviebrowser.domain;
 
-import com.flicklib.domain.MovieType;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,14 +34,21 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.flicklib.domain.MovieService;
+import com.flicklib.domain.MovieType;
+
 /**
  * 
  * @author francisdb
  */
 @Entity
 @Table(name = "Movie")
-@NamedQueries( { @NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
-        @NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s") })
+@NamedQueries( { 
+    @NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
+    @NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s"), 
+    @NamedQuery(name = "StorableMovie.findByFile", query = "SELECT f.movie FROM StorableMovieFile f WHERE f.name = :filename AND f.size = :size"),
+    
+})
 public class StorableMovie {
 
     @Id
@@ -75,6 +81,9 @@ public class StorableMovie {
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<MovieLocation> locations;
+    
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<StorableMovieSite> siteInfo;
 
     /** Creates a new instance of StorableMovie */
     public StorableMovie() {
@@ -82,6 +91,7 @@ public class StorableMovie {
         this.languages = new HashSet<Language>();
         this.files = new HashSet<StorableMovieFile>();
         this.locations = new HashSet<MovieLocation>();
+        this.siteInfo = new HashSet<StorableMovieSite>();
     }
 
     public Long getId() {
@@ -265,6 +275,32 @@ public class StorableMovie {
     public Set<MovieLocation> getLocations() {
         return locations;
     }
+    
+    public Set<StorableMovieSite> getSiteInfo() {
+        return siteInfo;
+    }
+    
+    @Transient
+    public StorableMovieSite getMovieSiteInfo(MovieService service) {
+        for (StorableMovieSite s : siteInfo) {
+            if (s.getService()==service) {
+                return s;
+            }
+        }
+        return null;
+    }
+    
+    @Transient
+    public void addSiteInfo(StorableMovieSite sms) {
+        if (sms.getMovie()!=this) {
+            if (sms.getMovie()!=null) {
+                sms.getMovie().getSiteInfo().remove(sms);
+            }
+            getSiteInfo().add(sms);
+            sms.setMovie(this);
+        }
+    }
+    
 
     @Transient
     public MovieLocation getDirectory() {

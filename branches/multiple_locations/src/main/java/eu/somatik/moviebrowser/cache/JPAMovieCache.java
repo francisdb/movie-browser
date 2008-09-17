@@ -477,6 +477,28 @@ public class JPAMovieCache implements MovieCache {
         return movie;
     }
 
+    @Override
+    public StorableMovie findByFile(String filename, long size) {
+        StorableMovie movie = null;
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            Query query = em.createNamedQuery("StorableMovie.findByFile");
+            query.setParameter("filename", filename);
+            query.setParameter("size", size);
+            
+            try {
+                movie = (StorableMovie) query.getSingleResult();
+            } catch (NoResultException ex) {
+                LOGGER.debug("No movie found with filename: " + filename + ", size:" + size);
+            }
+        } finally {
+            closeAndCleanup(em);
+        }
+        return movie;
+        
+    }
+    
     private void closeAndCleanup(final EntityManager em) {
         if (em != null) {
             if (em.getTransaction().isActive()) {
