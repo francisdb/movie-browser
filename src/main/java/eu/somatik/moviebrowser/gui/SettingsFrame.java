@@ -173,6 +173,12 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         saveCoverArtCheckBox.setSelected(true);
         saveCoverArtCheckBox.setText("Save Cover Art in movie folder.");
+        saveCoverArtCheckBox.setToolTipText("Select this option to automatically save cover art to the movie directory.");
+        saveCoverArtCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveCoverArtCheckBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -339,6 +345,16 @@ public class SettingsFrame extends javax.swing.JFrame {
         }
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
     }//GEN-LAST:event_renameTitlesCheckBoxActionPerformed
+
+private void saveCoverArtCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCoverArtCheckBoxActionPerformed
+        if(saveCoverArtCheckBox.isSelected()) {
+            saveCoverArtCheckBox.setSelected(true);
+        }
+        else {
+            saveCoverArtCheckBox.setSelected(false);
+        }
+        settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
+}//GEN-LAST:event_saveCoverArtCheckBoxActionPerformed
     
     private void getMovieLocations() {
         model = new DefaultListModel();
@@ -350,10 +366,12 @@ public class SettingsFrame extends javax.swing.JFrame {
     
     private void getSettingsValues() {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
+        saveCoverArtCheckBox.setSelected(settings.getSaveAlbumArt());
     }
     
     private void setSettingsValues() {
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
+        settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
