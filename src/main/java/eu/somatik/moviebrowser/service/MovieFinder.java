@@ -18,39 +18,37 @@
  */
 package eu.somatik.moviebrowser.service;
 
-import eu.somatik.moviebrowser.api.FileSystemScanner;
-import com.flicklib.api.MovieInfoFetcher;
+import java.io.File;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.io.File;
 
-import com.flicklib.api.InfoFetcherFactory;
-import com.flicklib.domain.Movie;
-
-import eu.somatik.moviebrowser.domain.FileType;
-import eu.somatik.moviebrowser.domain.MovieLocation;
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.StorableMovieFile;
-
-import com.flicklib.domain.MovieService;
-import com.flicklib.domain.MoviePage;
-import eu.somatik.moviebrowser.cache.MovieCache;
-import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import eu.somatik.moviebrowser.tools.FileTools;
-import eu.somatik.moviebrowser.config.Settings;
-
-import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.flicklib.api.InfoFetcherFactory;
+import com.flicklib.api.MovieInfoFetcher;
+import com.flicklib.domain.Movie;
+import com.flicklib.domain.MoviePage;
+import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import eu.somatik.moviebrowser.api.FileSystemScanner;
+import eu.somatik.moviebrowser.cache.MovieCache;
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.FileType;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.StorableMovieFile;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.tools.FileTools;
 
 /**
  *
@@ -128,21 +126,23 @@ public class MovieFinder {
         list.add(movieInfo);
 
         // TODO put this all in the cache?
-        List<StorableMovieSite> sites = movieCache.loadSites(movieInfo.getMovie());
-        for (StorableMovieSite site : sites) {
-            movieCache.remove(site);
-        }
+        
         //movieCache.remove(movieInfo.getMovieFile());
         // TODO make sure the movie is not linked to an other file
         StorableMovie movie = movieInfo.getMovie();
-        if(movie != null){
+        /*if(movie != null){
             movieCache.remove(movieInfo.getMovie());
-        }
+        }*/
 
-        StorableMovieSite site = new StorableMovieSite();
-        site.setService(MovieService.IMDB);
-        site.setIdForSite(imdbId);
-        movieInfo.addSite(site);
+        for (StorableMovieSite sms : movie.getSiteInfo()) {
+            sms.setScore(null);
+            sms.setVotes(null);
+            sms.setIdForSite(null);
+        }
+        
+        movie.getMovieSiteInfoOrCreate(MovieService.IMDB).setIdForSite(imdbId);
+
+        movieCache.insertOrUpdate(movie);
         loadMovies(list);
     }
 
@@ -200,27 +200,17 @@ public class MovieFinder {
                         info.setMovie(movie);
                     } else {
                     
-                        getMovieInfoImdb(info);
-                        movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
-                        if (movie == null) {
-                            movieCache.insertOrUpdate(info.getMovie());
-                            //movieCache.update(info.getMovieFile());
-    
-                            // TODO only do if not available
-                            movieCache.insert(info.siteFor(MovieService.IMDB));
-                        } else {
-                            MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
-                    		//directory.setName(info.getDirectory().getName());
-                        	movieCache.insertOrUpdate(movie);
-                        	info.setMovie(movie);
-                        }
+                        fetchInformations();
                     }
                     info.setStatus(MovieStatus.LOADED);
                 } else {
-                    loadSites(info);
+                    if (info.isNeedRefetch()) {
+                        getMovieInfoImdb(info);
+                        
+                        movieCache.insertOrUpdate(info.getMovie());
+                    }
                     info.setStatus(MovieStatus.CACHED);
                 }
-                loadSites(info);
                 for (MovieService service : extraServices) {
                     if (info.siteFor(service) == null) {
                         secondaryService.submit(new MovieServiceCaller(service, info));
@@ -237,6 +227,25 @@ public class MovieFinder {
             return info;
         }
 
+        private void fetchInformations() throws UnknownHostException, Exception {
+            StorableMovie movie;
+            getMovieInfoImdb(info);
+            movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
+            if (movie == null) {
+                movieCache.insertOrUpdate(info.getMovie());
+                //movieCache.update(info.getMovieFile());
+   
+                // TODO only do if not available
+                movieCache.insert(info.siteFor(MovieService.IMDB));
+            } else {
+                MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
+            	//directory.setName(info.getDirectory().getName());
+            	movieCache.insertOrUpdate(movie);
+            	info.setMovie(movie);
+            }
+            info.setNeedRefetch(false);
+        }
+
         private StorableMovie findMovie() {
             for (StorableMovieFile file : info.getMovie().getFiles()) {
                 if (file.getType()==FileType.VIDEO_CONTENT) {
@@ -247,13 +256,6 @@ public class MovieFinder {
                 }
             }
             return null;
-        }
-    }
-
-    private void loadSites(MovieInfo info) {
-        List<StorableMovieSite> sites = movieCache.loadSites(info.getMovie());
-        for (StorableMovieSite site : sites) {
-            info.addSite(site);
         }
     }
 
@@ -289,12 +291,11 @@ public class MovieFinder {
                     id = infoHandler.id(info, MovieService.IMDB);
                 }
                 MoviePage site = fetcher.fetch(movie, id);
-                StorableMovieSite storableMovieSite = new StorableMovieSite();
+                StorableMovieSite storableMovieSite = info.getMovie().getMovieSiteInfoOrCreate(service);
                 converter.convert(site, storableMovieSite);
-                storableMovieSite.setMovie(info.getMovie());
                 // TODO check if not fetched by some other duplicate before inserting
-                movieCache.insert(storableMovieSite);
-                info.addSite(storableMovieSite);
+                
+                movieCache.insertOrUpdate(info.getMovie());
                 info.setStatus(MovieStatus.LOADED);
             } catch (Exception ex) {
                 LOGGER.error("Loading '" + info.getMovie().getTitle() + "' on " + service.getName() + " failed", ex);
@@ -316,14 +317,6 @@ public class MovieFinder {
     private void getMovieInfoImdb(MovieInfo movieInfo) throws UnknownHostException, Exception {
         String url = infoHandler.url(movieInfo, MovieService.IMDB);
         StorableMovie newMovie = movieInfo.getMovie();
-        //newMovie.setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
-        
-/*        if (movieInfo.getMovie() == null) {
-            movieInfo.setMovie(new StorableMovie());
-        }
-        if (movieInfo.getMovie().getTitle() == null) {
-            movieInfo.getMovie().setTitle(movieNameExtractor.removeCrap(movieInfo.getDirectory()));
-        }*/
 
         if (url == null) {
             LOGGER.info("Finding NFO for " + movieInfo.getDirectory());
@@ -336,10 +329,8 @@ public class MovieFinder {
         converter.convert(newMovie, movie);
         MoviePage site = fetcherFactory.get(MovieService.IMDB).fetch(movie, infoHandler.id(movieInfo, MovieService.IMDB));
         converter.convert(movie, newMovie);
-        StorableMovieSite storableMovieSite = new StorableMovieSite();
+        StorableMovieSite storableMovieSite = newMovie.getMovieSiteInfoOrCreate(site.getService());
         converter.convert(site, storableMovieSite);
-        storableMovieSite.setMovie(newMovie);
-        movieInfo.addSite(storableMovieSite);
 
         //rename titles
         if (settings.getRenameTitles()) {

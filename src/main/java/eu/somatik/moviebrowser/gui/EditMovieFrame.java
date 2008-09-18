@@ -44,6 +44,7 @@ import com.flicklib.domain.MovieService;
 import com.flicklib.service.movie.imdb.ImdbSearch;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.MovieFinder;
 
 /**
@@ -68,13 +69,11 @@ public class EditMovieFrame extends javax.swing.JFrame {
         this.imdbSearch = imdbSearch;
         this.movieFinder = movieFinder;
         this.movieInfo = movieInfo;
-        File file = movieInfo.getDirectory();
-        String searchkey = file.getName();
 
 
         this.listModel = new DefaultListModel();
         initComponents();
-        searchTextField.setText(searchkey);
+        searchTextField.setText(movieInfo.getMovie().getTitle());
         resultsList.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -235,7 +234,9 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     if (imdbPage == null) {
         JOptionPane.showMessageDialog(EditMovieFrame.this, "No movie selected");
     } else {
-        movieInfo.siteFor(MovieService.IMDB).setIdForSite(imdbPage.getIdForSite());
+        movieInfo.getMovie().setTitle(imdbPage.getMovie().getTitle());
+        movieInfo.getMovie().getMovieSiteInfoOrCreate(MovieService.IMDB).setIdForSite(imdbPage.getIdForSite());
+        movieInfo.setNeedRefetch(true);
         movieFinder.reloadMovie(movieInfo);
         this.dispose();
     }

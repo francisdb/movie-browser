@@ -37,7 +37,7 @@ public class InfoHandlerImpl implements InfoHandler {
         if (site == null) {
             val = null;
         } else {
-            val = info.siteFor(movieService).getScore();
+            val = site.getScore();
         }
         return val;
     }
@@ -49,7 +49,7 @@ public class InfoHandlerImpl implements InfoHandler {
         if (site == null) {
             val = null;
         } else {
-            val = info.siteFor(service).getUrl();
+            val = site.getUrl();
         }
         return val;
     }
@@ -61,7 +61,7 @@ public class InfoHandlerImpl implements InfoHandler {
         if (site == null) {
             val = null;
         } else {
-            val = info.siteFor(service).getVotes();
+            val = site.getVotes();
         }
         return val;
     }
@@ -73,7 +73,7 @@ public class InfoHandlerImpl implements InfoHandler {
         if (site == null) {
             val = null;
         } else {
-            val = info.siteFor(service).getIdForSite();
+            val = site.getIdForSite();
         }
         return val;
     }
