@@ -22,6 +22,7 @@ import eu.somatik.moviebrowser.config.Settings;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.ImageIcon;
 import java.io.File;
 
 import java.util.LinkedHashSet;
@@ -85,10 +86,12 @@ public class SettingsFrame extends javax.swing.JFrame {
         renameTitlesCheckBox = new javax.swing.JCheckBox();
         jSeparator4 = new javax.swing.JSeparator();
         okayButton = new javax.swing.JButton();
+        saveCoverArtCheckBox = new javax.swing.JCheckBox();
 
         jTextField1.setText("jTextField1");
 
         setTitle("Settings");
+        setIconImage(new ImageIcon(SettingsFrame.getFrames().getClass().getResource("/images/movie.png")).getImage());
         setResizable(false);
 
         locationsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -151,7 +154,7 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         secondsLabel.setText("Seconds.");
 
-        miscLabel.setText("Miscellaneous settings.");
+        miscLabel.setText("Miscellaneous settings to use when parsing movie sites.");
 
         renameTitlesCheckBox.setText("Automatically rename movie folder to IMDB title.");
         renameTitlesCheckBox.setToolTipText("Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing.");
@@ -168,6 +171,15 @@ public class SettingsFrame extends javax.swing.JFrame {
             }
         });
 
+        saveCoverArtCheckBox.setSelected(true);
+        saveCoverArtCheckBox.setText("Save Cover Art in movie folder.");
+        saveCoverArtCheckBox.setToolTipText("Select this option to automatically save cover art to the movie directory.");
+        saveCoverArtCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveCoverArtCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,8 +191,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)))
+                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)))
                     .addComponent(websitesLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -206,19 +218,25 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(openSubsCheckBox))
                     .addComponent(subtitlesLabel))
-                .addContainerGap(98, Short.MAX_VALUE))
+                .addContainerGap(156, Short.MAX_VALUE))
             .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(miscLabel)
-                .addContainerGap(219, Short.MAX_VALUE))
+                .addContainerGap(101, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(294, Short.MAX_VALUE)
+                .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(saveCoverArtCheckBox)
                     .addComponent(renameTitlesCheckBox)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(timeoutLabel)
@@ -226,12 +244,7 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(timeoutText, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(secondsLabel)))
-                .addContainerGap(26, Short.MAX_VALUE))
-            .addComponent(jSeparator4, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(292, Short.MAX_VALUE)
-                .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(102, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,11 +293,13 @@ public class SettingsFrame extends javax.swing.JFrame {
                     .addComponent(timeoutLabel)
                     .addComponent(timeoutText, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(secondsLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(saveCoverArtCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(okayButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -330,6 +345,16 @@ public class SettingsFrame extends javax.swing.JFrame {
         }
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
     }//GEN-LAST:event_renameTitlesCheckBoxActionPerformed
+
+private void saveCoverArtCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCoverArtCheckBoxActionPerformed
+        if(saveCoverArtCheckBox.isSelected()) {
+            saveCoverArtCheckBox.setSelected(true);
+        }
+        else {
+            saveCoverArtCheckBox.setSelected(false);
+        }
+        settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
+}//GEN-LAST:event_saveCoverArtCheckBoxActionPerformed
     
     private void getMovieLocations() {
         model = new DefaultListModel();
@@ -341,10 +366,12 @@ public class SettingsFrame extends javax.swing.JFrame {
     
     private void getSettingsValues() {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
+        saveCoverArtCheckBox.setSelected(settings.getSaveAlbumArt());
     }
     
     private void setSettingsValues() {
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
+        settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -367,6 +394,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox openSubsCheckBox;
     private javax.swing.JCheckBox renameTitlesCheckBox;
     private javax.swing.JCheckBox rottenTomatoesCheckBox;
+    private javax.swing.JCheckBox saveCoverArtCheckBox;
     private javax.swing.JLabel secondsLabel;
     private javax.swing.JCheckBox subSourceCheckBox;
     private javax.swing.JLabel subtitlesLabel;
