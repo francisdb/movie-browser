@@ -37,8 +37,8 @@
                       <Component id="jScrollPane1" min="-2" pref="270" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="addLocationButton" pref="88" max="32767" attributes="1"/>
-                          <Component id="deleteLocationButton" alignment="0" pref="88" max="32767" attributes="1"/>
+                          <Component id="addLocationButton" pref="92" max="32767" attributes="1"/>
+                          <Component id="deleteLocationButton" alignment="0" pref="92" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Component id="websitesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -74,22 +74,29 @@
                   </Group>
                   <Component id="subtitlesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="123" max="32767" attributes="0"/>
+              <EmptySpace pref="156" max="32767" attributes="0"/>
           </Group>
           <Component id="jSeparator3" alignment="0" pref="388" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="movieLocationsLabel" pref="364" max="32767" attributes="0"/>
+              <Component id="movieLocationsLabel" pref="368" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               <Component id="miscLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="233" max="32767" attributes="0"/>
+              <EmptySpace pref="257" max="32767" attributes="0"/>
           </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace pref="294" max="32767" attributes="0"/>
+              <Component id="okayButton" min="-2" pref="84" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+          <Component id="jSeparator4" alignment="1" pref="388" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="saveCoverArtCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="renameTitlesCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="timeoutLabel" min="-2" max="-2" attributes="0"/>
@@ -99,13 +106,7 @@
                       <Component id="secondsLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="61" max="32767" attributes="0"/>
-          </Group>
-          <Component id="jSeparator4" alignment="0" pref="388" max="32767" attributes="0"/>
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="292" max="32767" attributes="0"/>
-              <Component id="okayButton" min="-2" pref="84" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace pref="102" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -163,11 +164,13 @@
                   <Component id="timeoutText" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                   <Component id="secondsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="saveCoverArtCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Component id="jSeparator4" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="okayButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -317,6 +320,12 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okayButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="saveCoverArtCheckBox">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Save Cover Art in movie folder."/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>
