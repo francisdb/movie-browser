@@ -290,6 +290,17 @@ public class StorableMovie {
         return null;
     }
     
+    public StorableMovieSite getMovieSiteInfoOrCreate(MovieService service) {
+        StorableMovieSite sms = getMovieSiteInfo(service);
+        if (sms==null) {
+            sms = new StorableMovieSite();
+            sms.setService(service);
+            addSiteInfo(sms);
+        }
+        return sms;
+    }
+    
+    
     @Transient
     public void addSiteInfo(StorableMovieSite sms) {
         if (sms.getMovie()!=this) {

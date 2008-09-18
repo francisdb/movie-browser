@@ -22,34 +22,32 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- *
+ * 
  * @author francisdb
  */
 @Entity
 public class Language {
-    
+
     @Id
     private String name;
-    
+
     /** Creates a new instance of Language */
     public Language() {
-    	// empty
+        // empty
     }
 
     /**
      * Constructs a new Language object
-     *
+     * 
      * @param name
      */
     public Language(String name) {
         this.name = name;
     }
-    
-    
-    
+
     /**
      * 
-     * @param name 
+     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -68,6 +66,19 @@ public class Language {
         return name;
     }
 
-    
-    
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Language) {
+            if (name != null) {
+                return name.equals(((Language) obj).name);
+            }
+        }
+        return false;
+    }
+
 }
