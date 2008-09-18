@@ -328,7 +328,11 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Save Cover Art in movie folder."/>
+        <Property name="toolTipText" type="java.lang.String" value="Select this option to automatically save cover art to the movie directory."/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveCoverArtCheckBoxActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -47,7 +47,6 @@ import javax.swing.JTable;
 import javax.swing.JPopupMenu;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
-import javax.swing.JDialog;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import com.flicklib.service.movie.apple.AppleTrailerFinder;

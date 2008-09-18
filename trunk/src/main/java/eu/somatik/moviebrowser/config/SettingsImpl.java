@@ -52,6 +52,7 @@ public class SettingsImpl implements Settings {
     private static final String FOLDERS_PROPERTY = "folders";
     private static final String LOOK_AND_FEEL_PROPERTY = "lookandfeel";
     private boolean renameTitles;
+    private boolean saveAlbumArt;
 
     /**
      *
@@ -267,6 +268,16 @@ public class SettingsImpl implements Settings {
     @Override
     public boolean getRenameTitles() {
         return renameTitles;
+    }
+    
+    @Override
+    public void setSaveAlbumArt(boolean value) {
+        saveAlbumArt = value;
+    }
+
+    @Override
+    public boolean getSaveAlbumArt() {
+        return saveAlbumArt;
     }
 
     @Override
