@@ -88,7 +88,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               <Component id="miscLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="157" max="32767" attributes="0"/>
+              <EmptySpace pref="101" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace pref="294" max="32767" attributes="0"/>
@@ -302,7 +302,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="miscLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Miscellaneous settings to use when parsing."/>
+        <Property name="text" type="java.lang.String" value="Miscellaneous settings to use when parsing movie sites."/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="renameTitlesCheckBox">
