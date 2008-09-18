@@ -895,8 +895,15 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             JOptionPane userInput = new JOptionPane(msg, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options);
             JDialog userInputDialog = userInput.createDialog(MainFrame.this, "Renaming " + oldFile.getName());
             userInputDialog.setVisible(true);
+            Object selected = userInput.getValue();
+            int selectedValue = 1;
+            for(int counter = 0, maxCounter = options.length;
+                counter < maxCounter; counter++) {
+                if(options[counter].equals(selected))
+                    selectedValue = counter;
+            }
             
-            if (newName.getText() != null) {
+            if (newName.getText() != null && selectedValue == 0) {
                 File newFile = new File(oldFile.getParent(), newName.getText());
                 boolean success = FileTools.renameDir(oldFile, newFile);
 
