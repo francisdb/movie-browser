@@ -35,6 +35,7 @@ public class MovieInfo {
     private File directory;
     private MovieStatus status;
 
+    private boolean needRefetch = false;
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
@@ -90,7 +91,7 @@ public class MovieInfo {
 
     @Override
     public String toString() {
-        return directory.getName();
+        return movie.getTitle();
     }
 
     /**
@@ -141,6 +142,14 @@ public class MovieInfo {
             return sms.getUrl();
         }
         return null;
+    }
+    
+    public void setNeedRefetch(boolean needRefetch) {
+        this.needRefetch = needRefetch;
+    }
+    
+    public boolean isNeedRefetch() {
+        return needRefetch;
     }
 
 }

@@ -219,6 +219,8 @@ public class JPAMovieCache implements MovieCache {
             StorableMovieSite found = em.find(StorableMovieSite.class, site.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
+            //StorableMovieSite found = em.merge(site);
+            found.setMovie(null);
             em.remove(found);
             transaction.commit();
         } finally {
@@ -403,7 +405,6 @@ public class JPAMovieCache implements MovieCache {
         }
     }
 
-    @Override
     public List<StorableMovieSite> loadSites(StorableMovie movie) {
         List<StorableMovieSite> sites = new ArrayList<StorableMovieSite>();
         EntityManager em = null;
