@@ -58,6 +58,8 @@ import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
+import eu.somatik.moviebrowser.service.HTMLGenerator;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -332,8 +334,18 @@ public class MainFrame extends javax.swing.JFrame {
 
         toolsMenu.setMnemonic('T');
         toolsMenu.setText("Tools");
+        toolsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toolsMenuActionPerformed(evt);
+            }
+        });
 
         jMenuItem1.setText("Generate HTML Movie Catalog");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         toolsMenu.add(jMenuItem1);
 
         clearCacheMenuItem.setText("Clear Cache");
@@ -565,6 +577,22 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     settingsFrame.setLocationRelativeTo(movieTableScrollPane);
     settingsFrame.setVisible(true);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
+
+private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        JFileChooser chooser = new JFileChooser(selectedFile);
+        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File saveFile = chooser.getSelectedFile();
+            HTMLGenerator createCatalog = new HTMLGenerator((MovieInfoTableModel) movieTable.getModel());
+            createCatalog.GenerateHTMLFile("Test", saveFile);
+        } else {
+            LOGGER.debug("Location to create HTML catalog not selected.");
+        }    
+}//GEN-LAST:event_jMenuItem1ActionPerformed
+
+private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toolsMenuActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_toolsMenuActionPerformed
 
     private void loadUrl(String url) {
         try {
