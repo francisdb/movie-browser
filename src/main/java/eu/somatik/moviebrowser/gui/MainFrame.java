@@ -897,8 +897,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
             userInputDialog.setVisible(true);
             Object selected = userInput.getValue();
             int selectedValue = 1;
-            for(int counter = 0, maxCounter = options.length;
-                counter < maxCounter; counter++) {
+            for(int counter = 0, maxCounter = options.length; counter < maxCounter; counter++) {
                 if(options[counter].equals(selected))
                     selectedValue = counter;
             }
