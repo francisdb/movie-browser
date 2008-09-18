@@ -27,6 +27,11 @@
             <Property name="text" type="java.lang.String" value="Tools"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Generate HTML Movie Catalog"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="clearCacheMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Clear Cache"/>

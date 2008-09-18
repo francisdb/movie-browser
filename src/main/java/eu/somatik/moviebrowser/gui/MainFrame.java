@@ -249,6 +249,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         clearCacheMenuItem = new javax.swing.JMenuItem();
         settingsMenuItem = new javax.swing.JMenuItem();
         extraMenu = new javax.swing.JMenu();
@@ -332,6 +333,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         toolsMenu.setMnemonic('T');
         toolsMenu.setText("Tools");
+
+        jMenuItem1.setText("Generate HTML Movie Catalog");
+        toolsMenu.add(jMenuItem1);
 
         clearCacheMenuItem.setText("Clear Cache");
         clearCacheMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -927,6 +931,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JTextField filterText;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
     private javax.swing.JMenu lookAndFeelMenu;
