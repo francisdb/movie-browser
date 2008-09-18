@@ -345,11 +345,13 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         toolsMenu.add(clearCacheMenuItem);
-        
-        rescanMenuItem.setText("Rescan");
+
+        rescanMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        rescanMenuItem.setText("Rescan Folders");
+        rescanMenuItem.setToolTipText("Rescan the file system for movies");
         rescanMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scanFolders();
+                scanFolders(evt);
             }
         });
         toolsMenu.add(rescanMenuItem);
@@ -575,6 +577,10 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     settingsFrame.setLocationRelativeTo(movieTableScrollPane);
     settingsFrame.setVisible(true);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
+
+private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFolders
+    scanFolders();
+}//GEN-LAST:event_scanFolders
 
     private void loadUrl(String url) {
         try {
@@ -967,7 +973,6 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem checkUpdatesMenuItem;
     private javax.swing.JMenuItem clearCacheMenuItem;
-    private javax.swing.JMenuItem rescanMenuItem;
     private javax.swing.JMenu extraMenu;
     private javax.swing.JLabel filterLabel;
     private javax.swing.JTextField filterText;
@@ -980,6 +985,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JMenu movieMenu;
     private javax.swing.JTable movieTable;
     private javax.swing.JScrollPane movieTableScrollPane;
+    private javax.swing.JMenuItem rescanMenuItem;
     private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JMenu toolsMenu;
     // End of variables declaration//GEN-END:variables
