@@ -46,7 +46,7 @@ import com.flicklib.domain.MovieType;
 @NamedQueries( { 
     @NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
     @NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s"), 
-    @NamedQuery(name = "StorableMovie.findByFile", query = "SELECT f.movie FROM StorableMovieFile f WHERE f.name = :filename AND f.size = :size"),
+    @NamedQuery(name = "StorableMovie.findByFile", query = "SELECT f.movie FROM StorableMovieFile f WHERE f.name = :filename AND f.size = :size")
     
 })
 public class StorableMovie {
