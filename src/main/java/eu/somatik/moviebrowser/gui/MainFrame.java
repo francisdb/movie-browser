@@ -45,6 +45,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JCheckBox;
+import javax.swing.JTextField;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
@@ -247,6 +249,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         clearCacheMenuItem = new javax.swing.JMenuItem();
         rescanMenuItem = new javax.swing.JMenuItem();
         settingsMenuItem = new javax.swing.JMenuItem();
@@ -331,6 +334,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         toolsMenu.setMnemonic('T');
         toolsMenu.setText("Tools");
+
+        jMenuItem1.setText("Generate HTML Movie Catalog");
+        toolsMenu.add(jMenuItem1);
 
         clearCacheMenuItem.setText("Clear Cache");
         clearCacheMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -443,7 +449,7 @@ public class MainFrame extends javax.swing.JFrame {
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-    int val = JOptionPane.showConfirmDialog(this, "Are you sure you wish to remova all cached movie data?", "Confirm", JOptionPane.YES_NO_OPTION);
+    int val = JOptionPane.showConfirmDialog(this, "Are you sure you wish to remove all cached movie data?", "Confirm", JOptionPane.YES_NO_OPTION);
     if (val == JOptionPane.YES_OPTION) {
         clearCache();
     }
@@ -967,6 +973,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JTextField filterText;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
     private javax.swing.JMenu lookAndFeelMenu;
