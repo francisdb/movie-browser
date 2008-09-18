@@ -99,6 +99,18 @@ public interface Settings {
      * @return boolean value
      */
     boolean getRenameTitles();
+    
+        /**
+     * Sets whether or not to rename titles to IMDB titles.
+     * @param true or false as boolean.
+     */
+    void setSaveAlbumArt(boolean value);
+    
+    /**
+     * Returns the value set in setRenameTitles() method
+     * @return boolean value
+     */
+    boolean getSaveAlbumArt();
 
     /**
      * Gets the look and feel

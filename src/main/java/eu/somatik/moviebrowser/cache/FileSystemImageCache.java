@@ -44,6 +44,7 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.tools.FileTools;
 
 /**
  *
@@ -148,6 +149,16 @@ public class FileSystemImageCache implements ImageCache {
                 cached = getCacheFile(url);
                 writeFile(is, cached);
                 is.close();
+                
+                //If users wants album art in movie folder, save there as well. 
+                if(settings.getSaveAlbumArt()) {
+                    String coverURL = imageUrl(info);
+                    System.out.println("COVER URL: " + coverURL);
+                    File cover = null;
+                    cover = getCacheFile(coverURL);
+                    File save = new File(info.getMovieFile().getPath() + "/" + info.getMovieFile().getMovie().getTitle() + "-cover-art.jpg");
+                    FileTools.copy(cover, save);
+                }
             } catch (MalformedURLException ex) {
                 LOGGER.error("Could not save image '" + url + "'", ex);
             } catch (IOException ex) {
