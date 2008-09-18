@@ -154,7 +154,7 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         secondsLabel.setText("Seconds.");
 
-        miscLabel.setText("Miscellaneous settings.");
+        miscLabel.setText("Miscellaneous settings to use when parsing.");
 
         renameTitlesCheckBox.setText("Automatically rename movie folder to IMDB title.");
         renameTitlesCheckBox.setToolTipText("Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing.");
@@ -221,7 +221,7 @@ public class SettingsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(miscLabel)
-                .addContainerGap(257, Short.MAX_VALUE))
+                .addContainerGap(157, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(294, Short.MAX_VALUE)
                 .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
