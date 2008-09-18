@@ -579,12 +579,18 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        
+        JOptionPane input = new JOptionPane();
+        String title = (String) input.showInputDialog(MainFrame.this, "Enter a title for this movie catalog (ex. John's Movie Library):", "Title", JOptionPane.QUESTION_MESSAGE);
+        if(title.isEmpty()) {
+            title = "My Movies";
+        }
         JFileChooser chooser = new JFileChooser(selectedFile);
         chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = chooser.getSelectedFile();
             HTMLGenerator createCatalog = new HTMLGenerator((MovieInfoTableModel) movieTable.getModel());
-            createCatalog.GenerateHTMLFile("Test", saveFile);
+            createCatalog.GenerateHTMLFile(title, saveFile);
         } else {
             LOGGER.debug("Location to create HTML catalog not selected.");
         }    
