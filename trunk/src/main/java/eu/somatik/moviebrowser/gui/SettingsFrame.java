@@ -22,6 +22,7 @@ import eu.somatik.moviebrowser.config.Settings;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.ImageIcon;
 import java.io.File;
 
 import java.util.LinkedHashSet;
@@ -90,6 +91,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         jTextField1.setText("jTextField1");
 
         setTitle("Settings");
+        setIconImage(new ImageIcon(SettingsFrame.getFrames().getClass().getResource("/images/movie.png")).getImage());
         setResizable(false);
 
         locationsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
