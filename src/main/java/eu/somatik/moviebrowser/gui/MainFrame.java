@@ -45,6 +45,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JTable;
 import javax.swing.JPopupMenu;
+import javax.swing.JCheckBox;
+import javax.swing.JTextField;
+import javax.swing.JDialog;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import com.flicklib.service.movie.apple.AppleTrailerFinder;
@@ -433,7 +436,7 @@ public class MainFrame extends javax.swing.JFrame {
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-    int val = JOptionPane.showConfirmDialog(this, "Are you sure you wish to remova all cached movie data?", "Confirm", JOptionPane.YES_NO_OPTION);
+    int val = JOptionPane.showConfirmDialog(this, "Are you sure you wish to remove all cached movie data?", "Confirm", JOptionPane.YES_NO_OPTION);
     if (val == JOptionPane.YES_OPTION) {
         clearCache();
     }
@@ -882,9 +885,16 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
             File oldFile = info.getDirectory();
-            String newName = (String) JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE, null, null, oldFile.getName());
-            if (newName != null) {
-                File newFile = new File(oldFile.getParent(), newName);
+            JTextField newName = new JTextField(oldFile.getName());
+            JCheckBox reparse = new JCheckBox("Check this to use the new name to re-cache movie details.");
+            Object[] msg = {"Enter the new title for " + oldFile.getName(), newName, reparse};
+            Object[] options = {"Ok", "Cancel"};
+            JOptionPane userInput = new JOptionPane(msg, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, options);
+            JDialog userInputDialog = userInput.createDialog(MainFrame.this, "Renaming " + oldFile.getName());
+            userInputDialog.setVisible(true);
+            
+            if (newName.getText() != null) {
+                File newFile = new File(oldFile.getParent(), newName.getText());
                 boolean success = FileTools.renameDir(oldFile, newFile);
 
                 if (!success) {
@@ -897,20 +907,7 @@ private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
                     browser.getMovieCache().update(info.getMovieFile());
                     info.triggerUpdate();
 
-                    JOptionPane dialog = new JOptionPane("Would you like Movie Browser to search and cache movie information to match the new movie name?\nSay No if the information in cache is correct for " + newName + ".", JOptionPane.QUESTION_MESSAGE);
-                    Object[] options = new String[]{"Yes, please :)", "No thanks"};
-                    dialog.setOptions(options);
-                    JDialog dialogWindow = dialog.createDialog(new JFrame(), "Find Information");
-                    dialogWindow.setVisible(true);
-                    Object obj = dialog.getValue();
-                    int result = -1;
-                    for (int i = 0; i < options.length; i++) {
-                        if (options[i].equals(obj)) {
-                            result = i;
-                        }
-                    }
-                    LOGGER.debug(String.valueOf(result));
-                    if (result == 0) {
+                    if (reparse.isSelected()) {
                         // unlink the file from the movie
                         info.getMovieFile().setMovie(null);
                         browser.getMovieCache().update(info.getMovieFile());
