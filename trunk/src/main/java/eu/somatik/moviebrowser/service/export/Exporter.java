@@ -33,10 +33,10 @@ public interface Exporter {
      * Performs an export to file
      * @param libName
      * @param movieIterator
-     * @param index
-     * @throws IOException 
+     * @param file 
+     * @throws IOException
      */
-    void exportToFile(String libName, Iterator<MovieInfo> movieIterator, File index) throws IOException;
+    void exportToFile(String libName, Iterator<MovieInfo> movieIterator, File file) throws IOException;
 
     /**
      * This should return a name to identify this export plugin
