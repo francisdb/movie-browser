@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JDialog;
@@ -78,7 +79,9 @@ import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
-import eu.somatik.moviebrowser.service.export.HTMLExporter;
+import eu.somatik.moviebrowser.service.export.Exporter;
+import eu.somatik.moviebrowser.service.export.ExporterLocator;
+import java.util.Iterator;
 
 /**
  *
@@ -93,6 +96,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
     private final MovieFileFilter movieFileFilter;
+    private final ExporterLocator exporterLocator;
 
     /** 
      * Creates new form MainFrame
@@ -100,7 +104,8 @@ public class MainFrame extends javax.swing.JFrame {
      * @param imageCache
      * @param iconLoader
      * @param settings
-     * @param infoHandler 
+     * @param infoHandler
+     * @param exporterLocator 
      */
     @Inject
     public MainFrame(
@@ -108,10 +113,12 @@ public class MainFrame extends javax.swing.JFrame {
             final ImageCache imageCache,
             final IconLoader iconLoader,
             final Settings settings,
-            final InfoHandler infoHandler) {
+            final InfoHandler infoHandler,
+            final ExporterLocator exporterLocator) {
         this.browser = browser;
         this.iconLoader = iconLoader;
         this.settings = settings;
+        this.exporterLocator = exporterLocator;
         this.movieFileFilter = new MovieFileFilter(false);
         this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
@@ -601,8 +608,22 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = chooser.getSelectedFile();
-            HTMLExporter createCatalog = new HTMLExporter((MovieInfoTableModel) movieTable.getModel());
-            createCatalog.exportToFile(title, saveFile);
+            if(saveFile != null){
+
+                // TODO what if the file exists
+                // TODO what if the file is a folder
+
+                // TODO show list to user to choose from or add items to menu dynamically
+                // see exporterLocator.list()
+                Exporter exporter = exporterLocator.get("html");
+
+                try {
+                    exporter.exportToFile(title, ((MovieInfoTableModel) movieTable.getModel()).iterator(), saveFile);
+                } catch (IOException ex) {
+                    LOGGER.error("Chould not export to "+saveFile, ex);
+                    JOptionPane.showMessageDialog(this, "Error exporting to "+saveFile.getAbsolutePath(),"Error exporting", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         } else {
             LOGGER.debug("Location to create HTML catalog not selected.");
         }    
@@ -746,7 +767,7 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
     private MovieInfo getSelectedMovie() {
         int selected = movieTable.getRowSorter().convertRowIndexToModel(movieTable.getSelectedRow());
-        return ((MovieInfoTableModel)movieTable.getModel()).getMovie(selected);
+        return ((MovieInfoTableModel)movieTable.getModel()).getMovieInfo(selected);
         //return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
     }
 

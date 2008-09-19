@@ -38,7 +38,7 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
     @Override
     public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
         MovieInfoTableModel model = (MovieInfoTableModel) entry.getModel();
-        MovieInfo info = model.getMovie(entry.getIdentifier());
+        MovieInfo info = model.getMovieInfo(entry.getIdentifier());
         StorableMovie movie = info.getMovie();
         if (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(filterText)) {
             return true;
