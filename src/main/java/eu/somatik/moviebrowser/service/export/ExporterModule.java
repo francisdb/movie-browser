@@ -18,30 +18,17 @@
  */
 package eu.somatik.moviebrowser.service.export;
 
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
+import com.google.inject.AbstractModule;
 
 /**
  *
  * @author francisdb
  */
-public interface Exporter {
+public class ExporterModule extends AbstractModule{
 
-    /**
-     * Performs an export to file
-     * @param libName
-     * @param movieIterator
-     * @param index
-     * @throws IOException 
-     */
-    void exportToFile(String libName, Iterator<MovieInfo> movieIterator, File index) throws IOException;
-
-    /**
-     * This should return a name to identify this export plugin
-     * @return
-     */
-    String getName();
+    @Override
+    protected void configure() {
+        bind(ExporterLocator.class).to(ExporterLocatorImpl.class);
+    }
 
 }

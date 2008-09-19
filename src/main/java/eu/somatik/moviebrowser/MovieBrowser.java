@@ -40,6 +40,8 @@ import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.gui.debug.CheckThreadViolationRepaintManager;
 import eu.somatik.moviebrowser.gui.debug.EventDispatchThreadHangMonitor;
 import eu.somatik.moviebrowser.service.InfoHandler;
+import eu.somatik.moviebrowser.service.export.ExporterLocator;
+import eu.somatik.moviebrowser.service.export.ExporterModule;
 import java.lang.Thread.UncaughtExceptionHandler;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
@@ -65,6 +67,7 @@ public class MovieBrowser {
     private final SubtitlesLoader subtitlesLoader;
     private final InfoHandler infoHandler;
     private final MovieCache movieCache;
+    private final ExporterLocator exporterLocator;
 
     /** 
      * Creates a new instance of MovieBrowser
@@ -76,7 +79,9 @@ public class MovieBrowser {
      * @param iconLoader
      * @param settings
      * @param subtitlesLoader
-     * @param infoHandler 
+     * @param infoHandler
+     * @param movieCache
+     * @param exporterLocator 
      */
     @Inject
     public MovieBrowser(
@@ -89,7 +94,8 @@ public class MovieBrowser {
             final Settings settings,
             final SubtitlesLoader subtitlesLoader,
             final InfoHandler infoHandler,
-            final MovieCache movieCache) {
+            final MovieCache movieCache,
+            final ExporterLocator exporterLocator) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
@@ -100,6 +106,7 @@ public class MovieBrowser {
         this.subtitlesLoader = subtitlesLoader;
         this.infoHandler = infoHandler;
         this.movieCache = movieCache;
+        this.exporterLocator = exporterLocator;
     }
 
     private void configureLogging() {
@@ -153,7 +160,7 @@ public class MovieBrowser {
             @Override
             public void run() {
 
-                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler);
+                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler, exporterLocator);
                 mainFrame.setupListeners();
                 mainFrame.setVisible(true);
                 mainFrame.loadMoviesFromDatabase();
@@ -165,7 +172,7 @@ public class MovieBrowser {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule());
+        Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule(), new ExporterModule());
         MovieBrowser browser = injector.getInstance(MovieBrowser.class);
         browser.start();
     }

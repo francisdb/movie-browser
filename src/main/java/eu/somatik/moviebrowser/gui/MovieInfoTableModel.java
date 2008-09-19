@@ -30,6 +30,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -38,8 +39,10 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author francisdb
  */
-public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener {
+public class MovieInfoTableModel extends AbstractTableModel implements PropertyChangeListener, Iterable<MovieInfo> {
 
+    private static final long serialVersionUID = 1L;
+    
     public static final String MOVIE_COLUMN_NAME = "Movie";
     public static final String STATUS_COLUMN_NAME = "?";
     public static final String SCORE_COLUMN_NAME = "Score";
@@ -73,6 +76,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class,
         Integer.class
     };
+
     
     private final InfoHandler infoHandler;
     private final ScoreCalculator calculator;
@@ -188,7 +192,12 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         this.fireTableDataChanged();
     }
     
-    public MovieInfo getMovie(int rowIndex){
+    public MovieInfo getMovieInfo(int rowIndex){
         return movies.get(rowIndex);
+    }
+
+    @Override
+    public Iterator<MovieInfo> iterator() {
+        return movies.iterator();
     }
 }
