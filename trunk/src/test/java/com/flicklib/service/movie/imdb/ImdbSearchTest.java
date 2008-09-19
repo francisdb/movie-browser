@@ -50,7 +50,7 @@ public class ImdbSearchTest {
     public void testGenerateImdbTitleSearchUrl() {
         String title = "Pulp Fiction";
         ImdbSearch instance = new ImdbSearch(new HttpSourceLoader(null), new ImdbParser());
-        String expResult = "http://www.imdb.com/find?q=Pulp+Fiction;s=tt";
+        String expResult = "http://www.imdb.com/find?q=Pulp+Fiction;s=tt;site=aka";
         String result = instance.generateImdbTitleSearchUrl(title);
         assertEquals(expResult, result);
         
