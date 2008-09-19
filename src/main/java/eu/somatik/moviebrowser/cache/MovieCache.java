@@ -47,11 +47,11 @@ public interface MovieCache {
 
     /**
      * Return the list of all movies, found in the database  
+     * @return
      */
     public List<StorableMovie> list();
     
     /**
-     * @param path
      * @return the StorableMovieFile
      */
     //StorableMovieFile getOrCreateFile(String path);

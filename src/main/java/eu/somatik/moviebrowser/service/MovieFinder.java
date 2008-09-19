@@ -81,7 +81,8 @@ public class MovieFinder {
      * @param fileSystemScanner
      * @param movieNameExtractor
      * @param fetcherFactory
-     * @param infoHandler 
+     * @param infoHandler
+     * @param settings 
      */
     @Inject
     public MovieFinder(
@@ -192,14 +193,13 @@ public class MovieFinder {
                 if (info.getMovie().getId() == null) {
                 	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
                     // TODO load movie
-                    StorableMovie movie = findMovie();
+                    StorableMovie movie = findMovie(info);
                     if (movie!=null) {
                         MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
                         //directory.setName(info.getDirectory().getName());
                         movieCache.insertOrUpdate(movie);
                         info.setMovie(movie);
                     } else {
-                    
                         fetchInformations();
                     }
                     info.setStatus(MovieStatus.LOADED);
@@ -236,7 +236,11 @@ public class MovieFinder {
                 //movieCache.update(info.getMovieFile());
    
                 // TODO only do if not available
-                movieCache.insert(info.siteFor(MovieService.IMDB));
+                // FIXME how come this is possible?
+                StorableMovieSite movieSite = info.siteFor(MovieService.IMDB);
+                if(movieSite.getId() == 0){
+                    movieCache.insert(movieSite);
+                }
             } else {
                 MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
             	//directory.setName(info.getDirectory().getName());
@@ -246,7 +250,7 @@ public class MovieFinder {
             info.setNeedRefetch(false);
         }
 
-        private StorableMovie findMovie() {
+        private StorableMovie findMovie(MovieInfo info) {
             for (StorableMovieFile file : info.getMovie().getFiles()) {
                 if (file.getType()==FileType.VIDEO_CONTENT) {
                     StorableMovie movie = movieCache.findByFile(file.getName(), file.getSize());
