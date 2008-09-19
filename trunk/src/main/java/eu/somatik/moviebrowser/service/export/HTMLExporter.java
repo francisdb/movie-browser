@@ -40,6 +40,7 @@ public class HTMLExporter implements Exporter {
         this.model = model;
     }
     
+    @Override
     public void exportToFile(String libName, File index) {
         
         try {
@@ -85,5 +86,10 @@ public class HTMLExporter implements Exporter {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public String getName() {
+        return "html";
     }
 }
