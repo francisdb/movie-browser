@@ -59,10 +59,10 @@ public class ScoreCalculatorTest {
         assertEquals(Integer.valueOf(32), calc.calculate(movie));
         
         site = new StorableMovieSite();
-        site.setService(MovieService.TOMATOES);
+        site.setService(MovieService.OMDB);
         site.setScore(80);
         movie.addSite(site);
-        assertEquals(Integer.valueOf((32*3+80)/4), calc.calculate(movie));
+        assertEquals(Integer.valueOf((32*4+80)/5), calc.calculate(movie));
         
     }
 
