@@ -1,3 +1,21 @@
+/*
+ * This file is part of Movie Browser.
+ * 
+ * Copyright (C) Francis De Brabandere
+ * 
+ * Movie Browser is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * Movie Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package eu.somatik.moviebrowser.service;
 
 public class LevenshteinDistance {
@@ -25,8 +43,8 @@ public class LevenshteinDistance {
 		int lengthT; // length of t
 		int i; // iterates through s
 		int j; // iterates through t
-		char s_i; // ith character of s
-		char t_j; // jth character of t
+		char si; // ith character of s
+		char tj; // jth character of t
 		int cost; // cost
 		// Step 1
 		lengthS = s.length();
@@ -49,12 +67,12 @@ public class LevenshteinDistance {
 		// Step 3
 
 		for (i = 1; i <= lengthS; i++) {
-			s_i = s.charAt(i - 1);
+			si = s.charAt(i - 1);
 			// Step 4
 			for (j = 1; j <= lengthT; j++) {
-				t_j = t.charAt(j - 1);
+				tj = t.charAt(j - 1);
 				// Step 5
-				if (s_i == t_j) {
+				if (si == tj) {
 					cost = 0;
 				} else {
 					cost = 1;

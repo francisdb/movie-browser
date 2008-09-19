@@ -22,7 +22,6 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,7 +43,6 @@ import com.flicklib.domain.MovieService;
 import com.flicklib.service.movie.imdb.ImdbSearch;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.service.MovieFinder;
 
 /**
