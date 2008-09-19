@@ -25,6 +25,14 @@
             </roles>
             <timezone>0</timezone>
         </developer>
+        <developer>
+            <id>gzsombor</id>
+            <name>Zsombor Gegesy</name>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
     </developers>
     <mailingLists>
         <mailingList>
