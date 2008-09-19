@@ -336,7 +336,7 @@ public class JPAMovieCache implements MovieCache {
 
 
             if (found == null) {
-                LOGGER.trace("Saving movie " + movie.getId());
+                LOGGER.trace("Saving movie " + movie.getTitle());
                 em.persist(movie);
             } else {
                 LOGGER.trace("Updating movie " + movie.getId());
@@ -358,13 +358,12 @@ public class JPAMovieCache implements MovieCache {
         Genre found = null;
         found = em.find(Genre.class, name);
         if (found == null) {
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
+            em.getTransaction().begin();
             LOGGER.trace("New genre " + name);
             found = new Genre();
             found.setName(name);
             em.persist(found);
-            transaction.commit();
+            em.getTransaction().commit();
         }
         return found;
     }
@@ -397,6 +396,7 @@ public class JPAMovieCache implements MovieCache {
             try {
                 em = getEntityManager();
                 em.getTransaction().begin();
+                LOGGER.trace("id = "+site.getId());
                 em.persist(site);
                 em.getTransaction().commit();
             } finally {
