@@ -197,4 +197,8 @@ public class StorableMovieSite {
 		this.imgUrl = imgUrl;
 	}
 
+	@Override
+	public String toString() {
+	    return "StorableMovieSite["+id+","+service+",id:"+idForSite+",score:"+score+",votes:"+votes+']';
+	}
 }

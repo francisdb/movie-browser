@@ -67,6 +67,21 @@ public class Genre {
     public String toString() {
         return name;
     }
+    
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Genre) {
+            if (name!=null) {
+                return name.equals(((Genre)obj).name);
+            }
+        }
+        return false;
+    }
 
     
 

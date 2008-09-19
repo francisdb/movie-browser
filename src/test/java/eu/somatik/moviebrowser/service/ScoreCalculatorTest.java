@@ -18,6 +18,8 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import java.io.File;
+
 import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
@@ -35,7 +37,7 @@ public class ScoreCalculatorTest {
      */
     @Test
     public void testCalculate() {
-        MovieInfo movie = new MovieInfo(null);
+        MovieInfo movie = new MovieInfo((File) null);
         InfoHandler handler = new InfoHandlerImpl();
         ScoreCalculator calc = new WeightedScoreCalculator(handler);
         assertNull("Result should be null when no data", calc.calculate(movie));

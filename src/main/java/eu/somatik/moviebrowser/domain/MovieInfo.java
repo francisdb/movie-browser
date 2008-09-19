@@ -18,65 +18,59 @@
  */
 package eu.somatik.moviebrowser.domain;
 
-
-import com.flicklib.domain.MovieService;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.flicklib.domain.MovieService;
 
 /**
- *
+ * 
  * @author francisdb
  */
 public class MovieInfo {
-    
-    private StorableMovieFile movieFile;
-    private Map<MovieService, StorableMovieSite> sites;
+
+    private StorableMovie movie;
 
     private File directory;
     private MovieStatus status;
-    
-    private Map<MovieService,Integer> scores;
-    
-    private PropertyChangeSupport propertyChangeSupport;
-    
-    
-    /** Creates a new instance of MovieInfo 
-     * @param directory 
+
+    private boolean needRefetch = false;
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    /**
+     * Creates a new instance of MovieInfo
+     * 
+     * @param directory
      */
     public MovieInfo(File directory) {
-        this.scores = new HashMap<MovieService, Integer>();
-        this.propertyChangeSupport = new PropertyChangeSupport(this);
         this.directory = directory;
         this.status = MovieStatus.NEW;
-        this.movieFile = new StorableMovieFile();
-        this.sites = new HashMap<MovieService, StorableMovieSite>();
+        this.movie = new StorableMovie();
+    }
+
+    public MovieInfo(StorableMovie movieFile) {
+        this.status = MovieStatus.LOADED;
+        this.movie = movieFile;
+        String dirPath = this.movie.getDirectoryPath();
+        if (dirPath != null) {
+            this.directory = new File(dirPath);
+        }
     }
 
     /**
      * This should trigger an update in the table
      */
-    public void triggerUpdate(){
+    public void triggerUpdate() {
         propertyChangeSupport.firePropertyChange("triggerUpdate", System.nanoTime(), System.nanoTime());
     }
-    
+
     /**
      * 
-     * @param listener 
+     * @param listener
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener){
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-    
-    public void addScore(MovieService service, Integer score){
-        scores.put(service, score);
-    }
-    
-    public Integer getScore(MovieService service){
-        return scores.get(service);
     }
 
     /**
@@ -89,15 +83,15 @@ public class MovieInfo {
 
     /**
      * 
-     * @param directory 
+     * @param directory
      */
     public void setDirectory(File directory) {
         this.directory = directory;
     }
 
     @Override
-	public String toString() {
-        return directory.getName();
+    public String toString() {
+        return movie.getTitle();
     }
 
     /**
@@ -108,23 +102,22 @@ public class MovieInfo {
         return status;
     }
 
-
     /**
      * 
-     * @param status 
+     * @param status
      */
     public void setStatus(MovieStatus status) {
-        //MovieStatus oldValue = this.status;
+        // MovieStatus oldValue = this.status;
         this.status = status;
         propertyChangeSupport.firePropertyChange("status", null, this.status);
     }
 
-    public StorableMovieFile getMovieFile() {
-        return movieFile;
+    public StorableMovie getMovie() {
+        return movie;
     }
 
-    public void setMovieFile(StorableMovieFile movieFile) {
-        this.movieFile = movieFile;
+    public void setMovie(StorableMovie movie) {
+        this.movie = movie;
     }
 
     public PropertyChangeSupport getPropertyChangeSupport() {
@@ -135,28 +128,28 @@ public class MovieInfo {
         this.propertyChangeSupport = propertyChangeSupport;
     }
 
-    public Map<MovieService, Integer> getScores() {
-        return scores;
+    public void addSite(StorableMovieSite storableMovieSite) {
+        this.movie.addSiteInfo(storableMovieSite);
     }
 
-    public void setScores(Map<MovieService, Integer> scores) {
-        this.scores = scores;
+    public StorableMovieSite siteFor(MovieService service) {
+        return movie.getMovieSiteInfo(service);
     }
 
-    public Map<MovieService, StorableMovieSite> getSites() {
-        return sites;
+    public String siteForUrl(MovieService service) {
+        StorableMovieSite sms = siteFor(service);
+        if (sms != null) {
+            return sms.getUrl();
+        }
+        return null;
+    }
+    
+    public void setNeedRefetch(boolean needRefetch) {
+        this.needRefetch = needRefetch;
+    }
+    
+    public boolean isNeedRefetch() {
+        return needRefetch;
     }
 
-    public void setSites(Map<MovieService, StorableMovieSite> sites) {
-        this.sites = sites;
-    }
-    
-    public void addSite(StorableMovieSite storableMovieSite){
-        this.sites.put(storableMovieSite.getService(), storableMovieSite);
-    }
-    
-    public StorableMovieSite siteFor(MovieService service){
-        return sites.get(service);
-    }
-    
 }

@@ -317,7 +317,7 @@ public class SettingsFrame extends javax.swing.JFrame {
             File newFolder = chooser.getSelectedFile();
             settings.addFolder(newFolder);
             selectedFile = newFolder;
-            mainFrame.fillTable();
+            mainFrame.scanFolders();
             getMovieLocations();
         } else {
             LOGGER.debug("No Selection ");
@@ -333,7 +333,7 @@ public class SettingsFrame extends javax.swing.JFrame {
             folders.add(locationsList.getModel().getElementAt(i).toString());
         }
         settings.saveFolders(folders);
-        mainFrame.fillTable();
+        mainFrame.scanFolders();
     }//GEN-LAST:event_deleteLocationButtonActionPerformed
 
     private void renameTitlesCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameTitlesCheckBoxActionPerformed
