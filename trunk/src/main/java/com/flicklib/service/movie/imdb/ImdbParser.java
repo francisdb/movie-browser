@@ -104,26 +104,9 @@ public class ImdbParser extends AbstractJerichoParser {
                 String rating = next.getContent().getTextExtractor().toString();
                 // skip (awaiting 5 votes)
                 if (!rating.contains("awaiting")) {
-                    // to percentage
-                    rating = rating.replace("/10", "");
-                    try {
-                        int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
-                        movieSite.setScore(theScore);
-                    } catch (NumberFormatException ex) {
-                        LOGGER.error("Could not parse rating '" + rating + "' to Float", ex);
-                    }
+                    parseRatingString(movieSite, rating);
                     next = source.findNextElement(next.getEndTag().getEnd());
-                    String votes = next.getContent().getTextExtractor().toString();
-
-                    votes = votes.replaceAll("\\(", "");
-                    votes = votes.replaceAll("votes\\)", "");
-                    votes = votes.replaceAll(",", "");
-                    votes = votes.trim();
-                    try {
-                        movieSite.setVotes(Integer.valueOf(votes));
-                    } catch (NumberFormatException ex) {
-                        LOGGER.error("Could not parse the votes '" + votes + "' to Integer", ex);
-                    }
+                    parseVotes(movieSite, next);
                 }
             }
         }
@@ -133,23 +116,35 @@ public class ImdbParser extends AbstractJerichoParser {
         for (Iterator<?> i = linkElements.iterator(); i.hasNext();) {
             Element hElement = (Element) i.next();
             hText = hElement.getContent().getTextExtractor().toString();
+            int end = hElement.getEnd();
             if (hText.contains("Plot Outline")) {
-                int end = hElement.getEnd();
                 movie.setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             } else if (hText.contains("Plot:")) {
-                int end = hElement.getEnd();
                 movie.setPlot(source.subSequence(end, source.findNextStartTag(end).getBegin()).toString().trim());
             } else if (hText.contains("Runtime")) {
-                int end = hElement.getEnd();
                 EndTag next = source.findNextEndTag(end);
                 //System.out.println(next);
                 String runtime = source.subSequence(end, next.getBegin()).toString().trim();
                 movie.setRuntime(parseRuntime(runtime));
             } else if (hText.contains("Director")) {
-                int end = hElement.getEnd();
                 Element aElement = source.findNextElement(end);
                 movie.setDirector(aElement.getContent().getTextExtractor().toString());
-            }
+            } else if (hText.contains("User Rating")) {
+                Element aElement = source.findNextElement(end);
+                List<Element> boldOnes = aElement.findAllElements(HTMLElementName.B);
+                if (boldOnes.size()>0) {
+                    Element element = boldOnes.get(0);
+                    String rating = element.getTextExtractor().toString();
+                    if (!rating.contains("awaiting")) {
+                        parseRatingString(movieSite, rating);
+                        Element next = source.findNextElement(element.getEndTag().getEnd());
+                        parseVotes(movieSite, next);
+                    }
+                }
+            } /*else if (hText.contains("Genre")) {
+                
+            }*/
+            		
         }
 
         if (movie.getTitle() == null) {
@@ -157,6 +152,31 @@ public class ImdbParser extends AbstractJerichoParser {
             movie.setPlot("Not found");
         }
 
+    }
+
+    private void parseVotes(MoviePage movieSite, Element element) {
+        String votes = element.getContent().getTextExtractor().toString();
+
+        votes = votes.replaceAll("\\(", "");
+        votes = votes.replaceAll("votes(\\))*", "");
+        votes = votes.replaceAll(",", "");
+        votes = votes.trim();
+        try {
+            movieSite.setVotes(Integer.valueOf(votes));
+        } catch (NumberFormatException ex) {
+            LOGGER.error("Could not parse the votes '" + votes + "' to Integer", ex);
+        }
+    }
+
+    private void parseRatingString(MoviePage movieSite, String rating) {
+        // to percentage
+        rating = rating.replace("/10", "");
+        try {
+            int theScore = Math.round(Float.valueOf(rating).floatValue() * 10);
+            movieSite.setScore(theScore);
+        } catch (NumberFormatException ex) {
+            LOGGER.error("Could not parse rating '" + rating + "' to Float", ex);
+        }
     }
 
     private Integer parseRuntime(String runtimeString) {

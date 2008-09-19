@@ -18,16 +18,6 @@
  */
 package eu.somatik.moviebrowser.cache;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
-import eu.somatik.moviebrowser.domain.StorableMovieFile;
-import eu.somatik.moviebrowser.domain.StorableMovie;
-
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -37,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -45,8 +36,21 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.Genre;
+import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.StorableMovieFile;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.tools.FileTools;
 
 /**
  *
@@ -58,7 +62,7 @@ public class JPAMovieCache implements MovieCache {
     /**
      * Augment this value whenever the data model changes (jpa domain classes)
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String VERSION_FILE = "version";
     private static final Logger LOGGER = LoggerFactory.getLogger(JPAMovieCache.class);
     private final Settings settings;
@@ -73,6 +77,14 @@ public class JPAMovieCache implements MovieCache {
         this.settings = settings;
     }
 
+    
+    protected EntityManager getEntityManager() {
+    	if (emf==null) {
+    		startup();
+    	}
+    	return emf.createEntityManager();
+    }
+    
     @Override
     public boolean isStarted() {
         return emf != null;
@@ -156,7 +168,7 @@ public class JPAMovieCache implements MovieCache {
      * @param path the movie path
      * @return the movie of null if not found in cache
      */
-    @Override
+/*    @Override
     public StorableMovie find(String path) {
         StorableMovie found = null;
         if (path != null) {
@@ -169,13 +181,26 @@ public class JPAMovieCache implements MovieCache {
             }
         }
         return found;
+    }*/
+    
+    @Override
+    public List<StorableMovie> list() {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            Query query = em.createNamedQuery("StorableMovie.findAll");
+            return (List<StorableMovie>) query.getResultList();
+        } finally {
+            closeAndCleanup(em);
+        }
     }
+    
 
     @Override
     public void remove(StorableMovie movie) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             StorableMovie found = em.find(StorableMovie.class, movie.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
@@ -190,10 +215,12 @@ public class JPAMovieCache implements MovieCache {
     public void remove(StorableMovieSite site) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             StorableMovieSite found = em.find(StorableMovieSite.class, site.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
+            //StorableMovieSite found = em.merge(site);
+            found.setMovie(null);
             em.remove(found);
             transaction.commit();
         } finally {
@@ -205,8 +232,8 @@ public class JPAMovieCache implements MovieCache {
     public void remove(StorableMovieFile file) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
-            StorableMovieFile found = em.find(StorableMovieFile.class, file.getPath());
+            em = getEntityManager();
+            StorableMovieFile found = em.find(StorableMovieFile.class, file.getId());
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
             em.remove(found);
@@ -217,14 +244,14 @@ public class JPAMovieCache implements MovieCache {
     }
 
     public void insert(StorableMovieFile movieFile) {
-        LOGGER.info("saving path " + movieFile.getPath());
+        LOGGER.info("saving path " + movieFile.getName());
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             em.getTransaction().begin();
             if (movieFile.getMovie() != null) {
                 replaceLanguageGenre(movieFile.getMovie(), em);
-                if (movieFile.getMovie().getId() == 0) {
+                if (movieFile.getMovie().getId() == null) {
                     em.persist(movieFile.getMovie());
                 } else {
                     movieFile.setMovie(em.merge(movieFile.getMovie()));
@@ -257,10 +284,10 @@ public class JPAMovieCache implements MovieCache {
     public void update(StorableMovieFile movieFile) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             em.getTransaction().begin();
             if (movieFile.getMovie() != null) {
-                if (movieFile.getMovie().getId() == 0) {
+                if (movieFile.getMovie().getId() == null) {
                     em.persist(movieFile.getMovie());
                 } else {
                     movieFile.setMovie(em.merge(movieFile.getMovie()));
@@ -273,18 +300,37 @@ public class JPAMovieCache implements MovieCache {
         }
     }
 
+    @Override
+    public void update(MovieLocation location) {
+        EntityManager em = null;
+        try {
+        	em = getEntityManager();
+        	em.getTransaction().begin();
+        	if (location.getId()==null) {
+        		em.persist(location);
+        	} else {
+        		em.merge(location);
+        	}
+            em.getTransaction().commit();
+        } finally {
+            closeAndCleanup(em);
+        }
+    	
+    }
+    
     /**
      * @param movie
      */
     @Override
-    public void inserOrUpdate(StorableMovie movie) {
+    public void insertOrUpdate(StorableMovie movie) {
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
 
             replaceLanguageGenre(movie, em);
 
-            StorableMovie found = em.find(StorableMovie.class, movie.getId());
+            StorableMovie found = movie.getId() != null ? em.find(
+					StorableMovie.class, movie.getId()) : null;
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
@@ -302,28 +348,8 @@ public class JPAMovieCache implements MovieCache {
         }
     }
 
-    @Override
-    public StorableMovieFile getOrCreateFile(String path) {
-        StorableMovieFile found = null;
-        EntityManager em = null;
-        try {
-            em = emf.createEntityManager();
-            found = em.find(StorableMovieFile.class, path);
-            if (found == null) {
-                EntityTransaction transaction = em.getTransaction();
-                transaction.begin();
-                LOGGER.trace("New file " + path);
-                found = new StorableMovieFile();
-                found.setPath(path);
-                em.persist(found);
-                transaction.commit();
-            }
-        } finally {
-            closeAndCleanup(em);
-        }
-        return found;
-    }
 
+    
     /**
      * @param name
      * @return the Genre
@@ -369,7 +395,7 @@ public class JPAMovieCache implements MovieCache {
         } else {
             EntityManager em = null;
             try {
-                em = emf.createEntityManager();
+                em = getEntityManager();
                 em.getTransaction().begin();
                 em.persist(site);
                 em.getTransaction().commit();
@@ -379,12 +405,11 @@ public class JPAMovieCache implements MovieCache {
         }
     }
 
-    @Override
     public List<StorableMovieSite> loadSites(StorableMovie movie) {
         List<StorableMovieSite> sites = new ArrayList<StorableMovieSite>();
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             Query query = em.createNamedQuery("StorableMovieSite.findByMovie");
             query.setParameter("movie", movie);
             List<?> results = query.getResultList();
@@ -439,7 +464,7 @@ public class JPAMovieCache implements MovieCache {
         StorableMovie movie = null;
         EntityManager em = null;
         try {
-            em = emf.createEntityManager();
+            em = getEntityManager();
             Query query = em.createNamedQuery("StorableMovie.findByTitle");
             query.setParameter("title", title);
             try {
@@ -453,6 +478,28 @@ public class JPAMovieCache implements MovieCache {
         return movie;
     }
 
+    @Override
+    public StorableMovie findByFile(String filename, long size) {
+        StorableMovie movie = null;
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            Query query = em.createNamedQuery("StorableMovie.findByFile");
+            query.setParameter("filename", filename);
+            query.setParameter("size", size);
+            
+            try {
+                movie = (StorableMovie) query.getSingleResult();
+            } catch (NoResultException ex) {
+                LOGGER.debug("No movie found with filename: " + filename + ", size:" + size);
+            }
+        } finally {
+            closeAndCleanup(em);
+        }
+        return movie;
+        
+    }
+    
     private void closeAndCleanup(final EntityManager em) {
         if (em != null) {
             if (em.getTransaction().isActive()) {

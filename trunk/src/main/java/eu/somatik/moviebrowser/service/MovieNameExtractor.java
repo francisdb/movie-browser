@@ -49,6 +49,7 @@ public class MovieNameExtractor {
         ".dvdivx",
         ".dvdivx4",
         ".dvdivx5",
+        ".dvdr",
         ".divx",
         ".xvid",
         ".limited",
@@ -61,6 +62,8 @@ public class MovieNameExtractor {
         ".uncut",
         ".stv",
         ".dutch", // keep this one?
+        ".hund",
+        ".hun",
         ".nfofix",
         ".subpack",
         ".subfix",
@@ -68,44 +71,44 @@ public class MovieNameExtractor {
         ".cd1",
         ".cd2",
         ".screener",
+        ".dvdr",
         ".dvd",
         ".pal",
-        ".dvdr",
         ".direcors.cut",
         ".extended.cut",
         ".repack",
+        ".disc",
         ".retail"//".ws"        
     };
-    private final MovieFileFilter filter;
 
     public MovieNameExtractor() {
-        this.filter = new MovieFileFilter(false);
     }
 
-    public String removeCrap(File file) {
-        String movieName;
-        if (file.isDirectory()) {
-            movieName = file.getName().toLowerCase();
-            getYear(movieName);
-            for (String bad : TO_REMOVE) {
-                movieName = movieName.replaceAll(bad, "");
-            }
-
-            Calendar calendar = new GregorianCalendar();
-            int thisYear = calendar.get(Calendar.YEAR);
-
-            //TODO recup the movie year!
-
-            for (int i = 1800; i < thisYear; i++) {
-                movieName = movieName.replaceAll(Integer.toString(i), "");
-            }
-            int dashPos = movieName.lastIndexOf('-');
-            if (dashPos != -1) {
-                movieName = movieName.substring(0, movieName.lastIndexOf('-'));
-            }
-        } else {
-            movieName = filter.clearMovieExtension(file);
+    public static String removeCrap(File file) {
+        String movieName = file.getName().toLowerCase().replace('_', '.').replace('-','.');
+        if (!file.isDirectory()) {
+            movieName = clearMovieExtension(movieName);
         }
+            //getYear(movieName);
+        for (String bad : TO_REMOVE) {
+            movieName = movieName.replaceAll(bad, "");
+        }
+        // should we remove year, also? I don't think so...
+        
+/*
+        Calendar calendar = new GregorianCalendar();
+        int thisYear = calendar.get(Calendar.YEAR);
+
+        // TODO recup the movie year!
+
+        for (int i = 1800; i < thisYear; i++) {
+            movieName = movieName.replaceAll(Integer.toString(i), "");
+        }
+        int dashPos = movieName.lastIndexOf('-');
+        if (dashPos != -1) {
+            movieName = movieName.substring(0, movieName.lastIndexOf('-'));
+        }
+*/            
         movieName = movieName.replaceAll("\\.", " ");
         movieName = movieName.trim();
         LOGGER.debug(movieName);
@@ -116,7 +119,7 @@ public class MovieNameExtractor {
      * TODO use this for the imdb search?
      * @param str
      */
-    private void getYear(final String str) {
+    private static void getYear(final String str) {
         final String regex = "(18|19|20|21)\\d\\d";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(str);
@@ -130,6 +133,17 @@ public class MovieNameExtractor {
                 LOGGER.info("Match number " + count +": possible year for '" + str + "' = " + m.group());
             }
         }
+    }
+
+    public static String clearMovieExtension(String name) {
+        int lastDotPos = name.lastIndexOf('.');
+        if (lastDotPos != -1 && lastDotPos != 0 && lastDotPos < name.length() - 1) {
+            String ext = name.substring(lastDotPos + 1).toLowerCase();
+            if (MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
+                return name.substring(0, lastDotPos);
+            }
+        }
+        return name;
     }
 
 

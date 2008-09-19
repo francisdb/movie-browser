@@ -18,26 +18,54 @@
  */
 package eu.somatik.moviebrowser.domain;
 
+import java.io.File;
+
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * 
  * @author francisdb
  */
 @Entity
-@Table(name="File")
+@Table(name = "File")
 public class StorableMovieFile {
-    
+
     @Id
-    private String path;
-    
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
+
     @ManyToOne
     private StorableMovie movie;
 
+    private String name;
+
+    @Enumerated(value = EnumType.STRING)
+    private FileType type;
+
+    private long size;
+
     public StorableMovieFile() {
+    }
+
+    public StorableMovieFile(File file, FileType contentType) {
+        setType(contentType);
+        setSize(file.length());
+        setName(file.getName());
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public StorableMovie getMovie() {
@@ -48,15 +76,33 @@ public class StorableMovieFile {
         this.movie = movie;
     }
 
-    public String getPath() {
-        return path;
+    public String getName() {
+        return name;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public FileType getType() {
+        return type;
+    }
+
+    public void setType(FileType type) {
+        this.type = type;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "file[id:"+id+",name:"+name+",size:"+size+",type:"+type+']';
     }
     
-    
-   
-
 }

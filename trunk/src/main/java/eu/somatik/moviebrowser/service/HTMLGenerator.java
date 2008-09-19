@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import eu.somatik.moviebrowser.gui.MovieInfoTableModel;
 import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 
 
 /**
@@ -41,12 +42,14 @@ public class HTMLGenerator {
             
             for(int x=0; x<model.getRowCount(); x++) {
                 try {
-                    url = "http://www.imdb.com/title/tt" + model.getMovie(x).siteFor(MovieService.IMDB).getIdForSite();
+                    final StorableMovie movie = model.getMovie(x).getMovie();
+                    url = "http://www.imdb.com/title/tt" + movie.getMovieSiteInfo(MovieService.IMDB).getIdForSite();
                     
-                    title = model.getMovie(x).getMovieFile().getMovie().getTitle();
-                    year = model.getMovie(x).getMovieFile().getMovie().getYear();
-                    runtime = model.getMovie(x).getMovieFile().getMovie().getRuntime();
-                    director = model.getMovie(x).getMovieFile().getMovie().getDirector();  
+                    title = movie.getTitle();
+                    year = movie.getYear();
+                    runtime = movie.getRuntime();
+                    director = movie.getDirector();  
+                    out.println("<tr><td>" + score + "</td><td><a href='" + url + "'>" + title + "</a></td><td>" + year + "</td><td>" + director + "</td><td>" + runtime + "</td></tr>");
                 }
                 catch (NullPointerException e) {
                     url = "";
@@ -56,7 +59,6 @@ public class HTMLGenerator {
                     director = "";
                 }
                                 
-                out.println("<tr><td>" + score + "</td><td><a href='" + url + "'>" + title + "</a></td><td>" + year + "</td><td>" + director + "</td><td>" + runtime + "</td></tr>");
             }
             
             out.println("</table><br /><p style='font-size:11' align=center>Generated using <a href='http://code.google.com/p/movie-browser/'>Movie Browser</a>. The Movie Browser Score has been calculated using combined IMDB, Google, Flixster, Rotten Tomatoes and Movie Web ratings.</p>");

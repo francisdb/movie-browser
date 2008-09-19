@@ -156,7 +156,9 @@ public class FileSystemImageCache implements ImageCache {
                     System.out.println("COVER URL: " + coverURL);
                     File cover = null;
                     cover = getCacheFile(coverURL);
-                    File save = new File(info.getMovieFile().getPath() + "/" + info.getMovieFile().getMovie().getTitle() + "-cover-art.jpg");
+                    File save = new File(
+                            new File(info.getMovie().getDirectoryPath()),
+                            info.getMovie().getTitle() + "-cover-art.jpg");
                     FileTools.copy(cover, save);
                 }
             } catch (MalformedURLException ex) {
