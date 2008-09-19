@@ -73,6 +73,8 @@ import com.google.inject.Inject;
 import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.FileSystem;
+import eu.somatik.moviebrowser.domain.FileSystemType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
@@ -81,7 +83,6 @@ import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import eu.somatik.moviebrowser.service.export.Exporter;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
-import java.util.Iterator;
 
 /**
  *
@@ -446,6 +447,13 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
+            FileSystem fileSystem = new FileSystem();
+            fileSystem.setPath(newFolder.getAbsolutePath());
+            // TODO ask this info
+            fileSystem.setScanOnStartup(true);
+            fileSystem.setName("fileSystemName");
+            fileSystem.setType(FileSystemType.SIMPLE);
+            browser.getMovieCache().insert(fileSystem);
             settings.addFolder(newFolder);
             this.selectedFile = newFolder;
             scanFolders();
@@ -537,12 +545,12 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
      * @param evt
      */
 private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMouseReleased
-    showPopup(evt);
+    showRightClickMenu(evt);
 }//GEN-LAST:event_movieTableMouseReleased
 
 private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMousePressed
     // needed for linux gtk look and feel
-    showPopup(evt);
+    showRightClickMenu(evt);
 }//GEN-LAST:event_movieTableMousePressed
 
 private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
@@ -643,7 +651,7 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
 
-    private void showPopup(MouseEvent evt) {
+    private void showRightClickMenu(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
             JTable source = (JTable) evt.getSource();
             int row = source.rowAtPoint(evt.getPoint());

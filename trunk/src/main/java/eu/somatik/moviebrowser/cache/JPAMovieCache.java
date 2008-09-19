@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.cache;
 
+import eu.somatik.moviebrowser.domain.FileSystem;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -404,6 +405,21 @@ public class JPAMovieCache implements MovieCache {
             }
         }
     }
+
+    @Override
+    public void insert(FileSystem fileSystem) {
+        EntityManager em = null;
+        try {
+            em = getEntityManager();
+            em.getTransaction().begin();
+            em.persist(fileSystem);
+            em.getTransaction().commit();
+        } finally {
+            closeAndCleanup(em);
+        }
+    }
+    
+    
 
     public List<StorableMovieSite> loadSites(StorableMovie movie) {
         List<StorableMovieSite> sites = new ArrayList<StorableMovieSite>();
