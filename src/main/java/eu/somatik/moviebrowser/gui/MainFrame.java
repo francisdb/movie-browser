@@ -593,8 +593,7 @@ private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scan
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         
-        JOptionPane input = new JOptionPane();
-        String title = (String) input.showInputDialog(MainFrame.this, "Enter a title for this movie catalog (ex. John's Movie Library):", "Title", JOptionPane.QUESTION_MESSAGE);
+        String title = JOptionPane.showInputDialog(MainFrame.this, "Enter a title for this movie catalog (ex. John's Movie Library):", "Title", JOptionPane.QUESTION_MESSAGE);
         if(title.isEmpty()) {
             title = "My Movies";
         }
@@ -603,7 +602,7 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = chooser.getSelectedFile();
             HTMLGenerator createCatalog = new HTMLGenerator((MovieInfoTableModel) movieTable.getModel());
-            createCatalog.GenerateHTMLFile(title, saveFile);
+            createCatalog.generateHTMLFile(title, saveFile);
         } else {
             LOGGER.debug("Location to create HTML catalog not selected.");
         }    
