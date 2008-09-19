@@ -18,9 +18,11 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import com.google.inject.Inject;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.StorableMovie;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,13 @@ import java.util.Set;
  */
 @Singleton
 public class SimpleFolderScanner implements FolderScanner {
+
+    private final MovieNameExtractor movieNameExtractor;
+
+    @Inject
+    public SimpleFolderScanner(final MovieNameExtractor movieNameExtractor) {
+        this.movieNameExtractor = movieNameExtractor;
+    }
 
     /**
      * Scans the folders
@@ -46,6 +55,13 @@ public class SimpleFolderScanner implements FolderScanner {
             folder = new File(path);
             if (folder.exists()) {
                 for (File file : folder.listFiles(new MovieFileFilter(true))) {
+                    StorableMovie sm = new StorableMovie();
+//                    sm.setTitle(movieNameExtractor.removeCrap(folder));
+//                    sm.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+//                    addFiles(sm, files, plainFileNames.iterator().next());
+//                    add(sm);
+                    
+                    
                     movies.add(new MovieInfo(file));
                 }
             }

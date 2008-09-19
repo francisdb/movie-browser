@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import com.google.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +49,15 @@ import eu.somatik.moviebrowser.domain.StorableMovieFile;
 public class AdvancedFolderScanner implements FolderScanner {
 
     final static Logger LOGGER = LoggerFactory.getLogger(AdvancedFolderScanner.class);
+
+    private final MovieNameExtractor movieNameExtractor;
+   
+    @Inject
+    public AdvancedFolderScanner(final MovieNameExtractor movieNameExtractor) {
+        this.movieNameExtractor = movieNameExtractor;
+    }
+
+
 
     List<MovieInfo> movies;
     String currentLabel;
@@ -112,7 +122,7 @@ public class AdvancedFolderScanner implements FolderScanner {
                     break;
                 case 1: {
                     StorableMovie sm = new StorableMovie();
-                    sm.setTitle(MovieNameExtractor.removeCrap(folder));
+                    sm.setTitle(movieNameExtractor.removeCrap(folder));
                     sm.addLocation(new MovieLocation(folder.getParent(), currentLabel));
                     addFiles(sm, files, plainFileNames.iterator().next());
                     add(sm);
@@ -125,7 +135,7 @@ public class AdvancedFolderScanner implements FolderScanner {
                     if (LevenshteinDistance.distance(name1, name2) < 3) {
                         // the difference is -cd1 / -cd2
                         StorableMovie sm = new StorableMovie();
-                        sm.setTitle(MovieNameExtractor.removeCrap(folder));
+                        sm.setTitle(movieNameExtractor.removeCrap(folder));
                         sm.addLocation(new MovieLocation(folder.getParent(), currentLabel));
                         addFiles(sm, files, name1);
                         add(sm);
@@ -147,7 +157,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             if (!f.isDirectory()) {
                 String extension = getExtension(f);
                 if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(extension)) {
-                    String baseName = MovieNameExtractor.removeCrap(f);
+                    String baseName = movieNameExtractor.removeCrap(f);
                     StorableMovie m = foundMovies.get(baseName);
                     if (m == null) {
                         m = new StorableMovie();
