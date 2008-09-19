@@ -78,7 +78,7 @@ import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
-import eu.somatik.moviebrowser.service.HTMLGenerator;
+import eu.somatik.moviebrowser.service.export.HTMLExporter;
 
 /**
  *
@@ -601,8 +601,8 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File saveFile = chooser.getSelectedFile();
-            HTMLGenerator createCatalog = new HTMLGenerator((MovieInfoTableModel) movieTable.getModel());
-            createCatalog.generateHTMLFile(title, saveFile);
+            HTMLExporter createCatalog = new HTMLExporter((MovieInfoTableModel) movieTable.getModel());
+            createCatalog.exportToFile(title, saveFile);
         } else {
             LOGGER.debug("Location to create HTML catalog not selected.");
         }    

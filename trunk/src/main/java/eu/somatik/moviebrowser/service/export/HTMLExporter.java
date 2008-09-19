@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.somatik.moviebrowser.service;
+package eu.somatik.moviebrowser.service.export;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,15 +32,15 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
  * Generates HTML List of Movies. 
  * @author Ravi Undupitiya
  */
-public class HTMLGenerator {
+public class HTMLExporter implements Exporter {
     
     private MovieInfoTableModel model; 
     
-    public HTMLGenerator(MovieInfoTableModel model) {
+    public HTMLExporter(MovieInfoTableModel model) {
         this.model = model;
     }
     
-    public void generateHTMLFile(String libName, File index) {
+    public void exportToFile(String libName, File index) {
         
         try {
             FileWriter outFile = new FileWriter(index.getPath());
