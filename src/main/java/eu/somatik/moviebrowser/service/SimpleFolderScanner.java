@@ -61,7 +61,7 @@ public class SimpleFolderScanner implements FolderScanner {
 //                    addFiles(sm, files, plainFileNames.iterator().next());
 //                    add(sm);
                     
-                    
+                    MovieInfo movieInfo = new MovieInfo(file);
                     movies.add(new MovieInfo(file));
                 }
             }
