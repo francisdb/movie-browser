@@ -82,7 +82,7 @@ public class MovieNameExtractor {
     public MovieNameExtractor() {
     }
 
-    public static String removeCrap(File file) {
+    public String removeCrap(File file) {
         String movieName = file.getName().toLowerCase().replace('_', '.').replace('-','.');
         if (!file.isDirectory()) {
             movieName = clearMovieExtension(movieName);
@@ -117,7 +117,7 @@ public class MovieNameExtractor {
      * TODO use this for the imdb search?
      * @param str
      */
-    private static void getYear(final String str) {
+    private void getYear(final String str) {
         final String regex = "(18|19|20|21)\\d\\d";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(str);
@@ -133,7 +133,7 @@ public class MovieNameExtractor {
         }
     }
 
-    public static String clearMovieExtension(String name) {
+    public String clearMovieExtension(String name) {
         int lastDotPos = name.lastIndexOf('.');
         if (lastDotPos != -1 && lastDotPos != 0 && lastDotPos < name.length() - 1) {
             String ext = name.substring(lastDotPos + 1).toLowerCase();
