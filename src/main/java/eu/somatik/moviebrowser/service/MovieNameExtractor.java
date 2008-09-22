@@ -34,6 +34,7 @@ import eu.somatik.moviebrowser.domain.Language;
 public class MovieNameExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieNameExtractor.class);
+
     private static final String TO_REMOVE[] = {
         ".ws.dvdrip",
         ".fs.dvdrip",
@@ -100,9 +101,10 @@ public class MovieNameExtractor {
     }
 
     
-    static final LanguageSuggestion[] suggestions = new  LanguageSuggestion[] {
+    private static final LanguageSuggestion[] SUGGESTIONS = new  LanguageSuggestion[] {
         new LanguageSuggestion("\\.hungarian", Language.HUNGARIAN),
         new LanguageSuggestion("\\.hun\\.", Language.HUNGARIAN),
+        new LanguageSuggestion("\\.dutch", Language.DUTCH),
     };
     
     
@@ -174,7 +176,7 @@ public class MovieNameExtractor {
 
     
     public Language getLanguageSuggestion(String filename) {
-        for (LanguageSuggestion s : suggestions) {
+        for (LanguageSuggestion s : SUGGESTIONS) {
             Language l = s.match(filename);
             if (l!=null) {
                 return l;

@@ -29,6 +29,7 @@ import javax.persistence.Id;
 public class Language {
 
     public final static Language ENGLISH = new Language("English");
+    public final static Language DUTCH = new Language("Dutch");
     public final static Language HUNGARIAN = new Language("Hungarian");
     
     
