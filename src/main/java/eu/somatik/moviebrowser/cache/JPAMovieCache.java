@@ -45,6 +45,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieLocation;
@@ -66,6 +67,7 @@ public class JPAMovieCache implements MovieCache {
     private static final int DATABASE_VERSION = 2;
     private static final String VERSION_FILE = "version";
     private static final Logger LOGGER = LoggerFactory.getLogger(JPAMovieCache.class);
+    private static final boolean DEBUG = true;
     private final Settings settings;
     private EntityManagerFactory emf;
 
@@ -103,6 +105,9 @@ public class JPAMovieCache implements MovieCache {
         Map<String, String> props = new HashMap<String, String>();
         String databaseLocation = getDatabaseUrl() + File.separator + "moviecache";
         props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + databaseLocation + ";shutdown=true");
+        if (DEBUG) {
+            props.put("hibernate.show_sql", "true");
+        }
         this.emf = Persistence.createEntityManagerFactory("movies-hibernate", props);
     }
 
@@ -217,13 +222,15 @@ public class JPAMovieCache implements MovieCache {
         EntityManager em = null;
         try {
             em = getEntityManager();
-            StorableMovieSite found = em.find(StorableMovieSite.class, site.getId());
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
-            //StorableMovieSite found = em.merge(site);
-            found.setMovie(null);
-            em.remove(found);
-            transaction.commit();
+            if (site.getId()!=null) {
+                StorableMovieSite found = em.find(StorableMovieSite.class, site.getId());
+                EntityTransaction transaction = em.getTransaction();
+                transaction.begin();
+                //StorableMovieSite found = em.merge(site);
+                found.setMovie(null);
+                em.remove(found);
+                transaction.commit();
+            }
         } finally {
             closeAndCleanup(em);
         }
@@ -323,27 +330,32 @@ public class JPAMovieCache implements MovieCache {
      * @param movie
      */
     @Override
-    public void insertOrUpdate(StorableMovie movie) {
+    public StorableMovie insertOrUpdate(StorableMovie movie) {
         EntityManager em = null;
+        StorableMovie stored = null;
         try {
             em = getEntityManager();
 
             replaceLanguageGenre(movie, em);
 
-            StorableMovie found = movie.getId() != null ? em.find(
-					StorableMovie.class, movie.getId()) : null;
+/*            StorableMovie found = movie.getId() != null ? em.find(
+					StorableMovie.class, movie.getId()) : null;*/
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
 
-            if (found == null) {
+            if (movie.getId() == null) {
                 LOGGER.trace("Saving movie " + movie.getTitle());
                 em.persist(movie);
+                stored = movie;
             } else {
                 LOGGER.trace("Updating movie " + movie.getId());
-                /*movie = */ em.merge(movie);
+                /*movie = */ 
+                stored = em.merge(movie);
+                LOGGER.info("updated to "+stored);
             }
             transaction.commit();
+            return stored;
         } finally {
             closeAndCleanup(em);
         }
@@ -495,17 +507,17 @@ public class JPAMovieCache implements MovieCache {
     }
 
     @Override
-    public StorableMovie findByFile(String filename, long size) {
-        StorableMovie movie = null;
+    public FileGroup findByFile(String filename, long size) {
+        FileGroup movie = null;
         EntityManager em = null;
         try {
             em = getEntityManager();
-            Query query = em.createNamedQuery("StorableMovie.findByFile");
+            Query query = em.createNamedQuery("FileGroup.findByFile");
             query.setParameter("filename", filename);
             query.setParameter("size", size);
             
             try {
-                movie = (StorableMovie) query.getSingleResult();
+                movie = (FileGroup) query.getSingleResult();
             } catch (NoResultException ex) {
                 LOGGER.debug("No movie found with filename: " + filename + ", size:" + size);
             }

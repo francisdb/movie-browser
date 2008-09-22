@@ -40,6 +40,9 @@ public class MovieLocation {
     @ManyToOne
     StorableMovie movie;
 
+    @ManyToOne
+    FileGroup group;
+    
     public MovieLocation() {
 
     }
@@ -71,6 +74,14 @@ public class MovieLocation {
 
     public void setMovie(StorableMovie movie) {
         this.movie = movie;
+    }
+    
+    public FileGroup getGroup() {
+        return group;
+    }
+    
+    public void setGroup(FileGroup group) {
+        this.group = group;
     }
 
     public Integer getId() {

@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -42,6 +43,7 @@ import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
@@ -156,10 +158,14 @@ public class FileSystemImageCache implements ImageCache {
                     System.out.println("COVER URL: " + coverURL);
                     File cover = null;
                     cover = getCacheFile(coverURL);
-                    File save = new File(
-                            new File(info.getMovie().getDirectoryPath()),
-                            info.getMovie().getTitle() + "-cover-art.jpg");
-                    FileTools.copy(cover, save);
+                    
+                    Set<MovieLocation> locations = info.getMovie().getLocations();
+                    for (MovieLocation l : locations) {
+                        File save = new File(
+                                new File(l.getPath()),
+                                info.getMovie().getTitle() + "-cover-art.jpg");
+                        FileTools.copy(cover, save);
+                    }
                 }
             } catch (MalformedURLException ex) {
                 LOGGER.error("Could not save image '" + url + "'", ex);

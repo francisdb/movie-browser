@@ -21,8 +21,11 @@ package eu.somatik.moviebrowser.service;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.somatik.moviebrowser.domain.Language;
 
 /**
  *
@@ -78,7 +81,32 @@ public class MovieNameExtractor {
         ".disc",
         ".retail"//".ws"        
     };
+    
+    static class LanguageSuggestion {
+        Pattern pattern;
+        Language language;
+        public LanguageSuggestion(String pattern, Language language) {
+            this.pattern = Pattern.compile(pattern);
+            this.language = language;
+        }
+        
+        public Language match(String name) {
+            if (pattern.matcher(name.toLowerCase()).find()) {
+                return language;
+            }
+            return null;
+        }
+        
+    }
 
+    
+    static final LanguageSuggestion[] suggestions = new  LanguageSuggestion[] {
+        new LanguageSuggestion("\\.hungarian", Language.HUNGARIAN),
+        new LanguageSuggestion("\\.hun\\.", Language.HUNGARIAN),
+    };
+    
+    
+    
     public MovieNameExtractor() {
     }
 
@@ -144,5 +172,15 @@ public class MovieNameExtractor {
         return name;
     }
 
+    
+    public Language getLanguageSuggestion(String filename) {
+        for (LanguageSuggestion s : suggestions) {
+            Language l = s.match(filename);
+            if (l!=null) {
+                return l;
+            }
+        }
+        return Language.ENGLISH;
+    }
 
 }

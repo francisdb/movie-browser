@@ -29,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hsqldb.SetFunction;
+
 /**
  * 
  * @author francisdb
@@ -50,6 +52,9 @@ public class StorableMovieFile {
     private FileType type;
 
     private long size;
+    
+    @ManyToOne
+    private FileGroup group;
 
     public StorableMovieFile() {
     }
@@ -59,6 +64,13 @@ public class StorableMovieFile {
         setSize(file.length());
         setName(file.getName());
     }
+
+    public StorableMovieFile(File file, FileType contentType, FileGroup fg) {
+        this(file,contentType);
+        setGroup(fg);
+    }
+    
+    
 
     public Long getId() {
         return id;
@@ -100,6 +112,14 @@ public class StorableMovieFile {
         this.size = size;
     }
 
+    public FileGroup getGroup() {
+        return group;
+    }
+    
+    public void setGroup(FileGroup group) {
+        this.group = group;
+    }
+    
     @Override
     public String toString() {
         return "file[id:"+id+",name:"+name+",size:"+size+",type:"+type+']';

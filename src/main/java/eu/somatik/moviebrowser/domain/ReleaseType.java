@@ -1,7 +1,7 @@
 /*
  * This file is part of Movie Browser.
  * 
- * Copyright (C) Francis De Brabandere
+ * Copyright (C) Zsombor Gegesy
  * 
  * Movie Browser is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,29 +18,11 @@
  */
 package eu.somatik.moviebrowser.domain;
 
-import java.util.regex.Pattern;
-
-import eu.somatik.moviebrowser.service.MovieFileFilter;
-
-public enum FileType {
-	VIDEO_CONTENT, SUBTITLE, NFO, COMPRESSED;
-	
-	
-	public static FileType getTypeByExtension(String ext) {
-		if ("nfo".equals(ext)) {
-			return NFO;
-		} else {
-			if ("sub".equals(ext) || "srt".equals(ext) || "idx".equals(ext)) {
-				return SUBTITLE;
-			} else {
-				if (MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
-				    return VIDEO_CONTENT;
-				}
-				if ("rar".equals(ext) || Pattern.matches("r\\d\\d", ext)) {
-				    return COMPRESSED; 
-				}
-			}
-		}
-		return null;
-	}
+/**
+ * 
+ * @author zsombor
+ *
+ */
+public enum ReleaseType {
+    ONE_CD, TWO_CD, DVD
 }

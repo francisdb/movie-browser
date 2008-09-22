@@ -21,6 +21,7 @@ package eu.somatik.moviebrowser.cache;
 import eu.somatik.moviebrowser.domain.FileSystem;
 import java.util.List;
 
+import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
@@ -62,7 +63,7 @@ public interface MovieCache {
     /**
      * @param movie
      */
-    void insertOrUpdate(StorableMovie movie);
+    StorableMovie insertOrUpdate(StorableMovie movie);
 
     /**
      * @param movie
@@ -116,7 +117,7 @@ public interface MovieCache {
      * @param size
      * @return
      */
-    public StorableMovie findByFile(String filename, long size);
+    public FileGroup findByFile(String filename, long size);
     
     /**
      * Shuts down the cache
