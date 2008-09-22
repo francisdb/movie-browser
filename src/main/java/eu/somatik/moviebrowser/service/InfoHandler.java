@@ -22,7 +22,7 @@ import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 
 /**
- *
+ * Gets the info per site
  * @author francisdb
  */
 public interface InfoHandler {
@@ -30,10 +30,10 @@ public interface InfoHandler {
     /**
      * Gets the score for a service
      * @param info
-     * @param movieService
+     * @param service 
      * @return
      */
-    Integer score(MovieInfo info, MovieService movieService);
+    Integer score(MovieInfo info, MovieService service);
     
     /**
      * Gets the url for a service

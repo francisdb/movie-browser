@@ -53,10 +53,14 @@ public class WeightedScoreCalculator implements ScoreCalculator {
             serviceScore = handler.score(movie, movieService);
 
             if (serviceScore != null) {
-                weight = 1;
+                weight = 2;
                 // double weight
                 if (movieService == movieService.IMDB) {
-                    weight = 2;
+                    weight = 4;
+                }
+                // half weight
+                if (movieService == movieService.MOVIEWEB) {
+                    weight = 1;
                 }
                 score += serviceScore * weight;
                 count += weight;

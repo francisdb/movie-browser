@@ -21,7 +21,6 @@ package eu.somatik.moviebrowser.service.export;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  *
@@ -36,7 +35,7 @@ public interface Exporter {
      * @param file 
      * @throws IOException
      */
-    void exportToFile(String libName, Iterator<MovieInfo> movieIterator, File file) throws IOException;
+    void exportToFile(String libName, Iterable<MovieInfo> movieIterator, File file) throws IOException;
 
     /**
      * This should return a name to identify this export plugin
