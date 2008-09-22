@@ -125,7 +125,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 2:
                 return movie == null?null:movie.getYear();
             case 3:
-                return new Date(info.getDirectory().lastModified());
+                return info.getMovie().getLastModified();
             case 4:
                 return movie == null?null:movie.getRuntime();
             case 5:

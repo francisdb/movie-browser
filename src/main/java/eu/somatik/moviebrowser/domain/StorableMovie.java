@@ -36,6 +36,9 @@ import javax.persistence.Transient;
 
 import com.flicklib.domain.MovieService;
 import com.flicklib.domain.MovieType;
+import java.util.Date;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * 
@@ -75,6 +78,9 @@ public class StorableMovie {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Language> languages;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModified;
 
     /*    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StorableMovieFile> files;
@@ -316,7 +322,14 @@ public class StorableMovie {
         }
         return null;
     }
-    
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
     
     @Transient
     public long getSize() {
