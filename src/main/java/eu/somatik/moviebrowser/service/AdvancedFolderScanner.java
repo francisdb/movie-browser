@@ -98,11 +98,15 @@ public class AdvancedFolderScanner implements FolderScanner {
                 directoryNames.add(f.getName().toLowerCase());
             } else {
                 String ext = getExtension(f);
-                if (FileType.getTypeByExtension(ext)==FileType.COMPRESSED) {
-                    compressedFiles ++;
-                }
-                if (ext != null && MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
-                    plainFileNames.add(getNameWithoutExt(f));
+                if(ext == null){
+                    LOGGER.warn("Ignoring file wothout extension: "+f.getAbsolutePath());
+                }else{
+                    if (FileType.getTypeByExtension(ext)==FileType.COMPRESSED) {
+                        compressedFiles ++;
+                    }
+                    if (ext != null && MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
+                        plainFileNames.add(getNameWithoutExt(f));
+                    }
                 }
             }
         }
@@ -283,9 +287,13 @@ public class AdvancedFolderScanner implements FolderScanner {
         for (File f : files) {
             if (!f.isDirectory()) {
                 String ext = getExtension(f);
-                FileType type = FileType.getTypeByExtension(ext);
-                if (type==FileType.COMPRESSED || type==FileType.NFO || type==FileType.SUBTITLE) {
-                    fg.addFile(new StorableMovieFile(f, type, fg));
+                if(ext == null){
+                    LOGGER.warn("Ignoring file wothout extension: "+f.getAbsolutePath());
+                }else{
+                    FileType type = FileType.getTypeByExtension(ext);
+                    if (type==FileType.COMPRESSED || type==FileType.NFO || type==FileType.SUBTITLE) {
+                        fg.addFile(new StorableMovieFile(f, type, fg));
+                    }
                 }
             }
         }
