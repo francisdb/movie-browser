@@ -73,8 +73,6 @@ import com.google.inject.Inject;
 import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.domain.FileSystem;
-import eu.somatik.moviebrowser.domain.FileSystemType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
@@ -447,13 +445,6 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
-            FileSystem fileSystem = new FileSystem();
-            fileSystem.setPath(newFolder.getAbsolutePath());
-            // TODO ask this info
-            fileSystem.setScanOnStartup(true);
-            fileSystem.setName("fileSystemName");
-            fileSystem.setType(FileSystemType.SIMPLE);
-            browser.getMovieCache().insert(fileSystem);
             settings.addFolder(newFolder);
             this.selectedFile = newFolder;
             scanFolders();
