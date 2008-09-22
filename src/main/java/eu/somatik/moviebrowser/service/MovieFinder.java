@@ -62,6 +62,14 @@ public class MovieFinder {
     // TODO make this available in settings somewhere
     private static final int IMDB_POOL_SIZE = 5;
     private static final int OTHERS_POOL_SIZE = 5;
+
+    
+    private final static MovieService[] EXTRA_SERVICES = new MovieService[]{
+        MovieService.TOMATOES,
+        MovieService.MOVIEWEB,
+        MovieService.GOOGLE,
+        MovieService.FLIXSTER};
+    
     private final ExecutorService service;
     private final ExecutorService secondaryService;
     private final FileSystemScanner fileSystemScanner;
@@ -191,7 +199,6 @@ public class MovieFinder {
     }
     
 
-    private final static MovieService[] extraServices = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
 
     private class ImdbCaller implements Callable<MovieInfo> {
 
@@ -239,7 +246,7 @@ public class MovieFinder {
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
-                for (MovieService service : extraServices) {
+                for (MovieService service : EXTRA_SERVICES) {
                     if (info.siteFor(service) == null) {
                         secondaryService.submit(new MovieServiceCaller(service, info));
                     }
