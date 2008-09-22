@@ -616,13 +616,14 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 Exporter exporter = exporterLocator.get("html");
 
                 try {
-                    exporter.exportToFile(title, ((MovieInfoTableModel) movieTable.getModel()).iterator(), saveFile);
+                    exporter.exportToFile(title, (MovieInfoTableModel) movieTable.getModel(), saveFile);
                 } catch (IOException ex) {
                     LOGGER.error("Chould not export to "+saveFile, ex);
                     JOptionPane.showMessageDialog(this, "Error exporting to "+saveFile.getAbsolutePath(),"Error exporting", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } else {
+            //FIXME we arrive here if the file exists
             LOGGER.debug("Location to create HTML catalog not selected.");
         }    
 }//GEN-LAST:event_jMenuItem1ActionPerformed

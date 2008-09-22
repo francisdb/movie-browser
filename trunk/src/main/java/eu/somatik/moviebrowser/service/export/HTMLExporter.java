@@ -27,7 +27,9 @@ import eu.somatik.moviebrowser.gui.MovieInfoTableModel;
 import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
-import java.util.Iterator;
+import eu.somatik.moviebrowser.service.InfoHandlerImpl;
+import eu.somatik.moviebrowser.service.ScoreCalculator;
+import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 
 /**
  * Generates HTML List of Movies. 
@@ -36,10 +38,20 @@ import java.util.Iterator;
 class HTMLExporter implements Exporter {
 
     public static final String NAME = "html";
+    
+    private final ScoreCalculator scoreCalculator;
+    
     private MovieInfoTableModel model;
 
+    public HTMLExporter() {
+        // TODO use guice?
+        scoreCalculator = new WeightedScoreCalculator(new InfoHandlerImpl());
+    }
+    
+    
+
     @Override
-    public void exportToFile(String libName, Iterator<MovieInfo> movieIterator, File file) throws IOException {
+    public void exportToFile(String libName, Iterable<MovieInfo> movieIterator, File file) throws IOException {
 
         FileWriter outFile = new FileWriter(file.getPath());
         PrintWriter out = new PrintWriter(outFile);
@@ -55,17 +67,19 @@ class HTMLExporter implements Exporter {
         int runtime;
         int score = 0;
 
-        for (int x = 0; x < model.getRowCount(); x++) {
+        for (MovieInfo movieInfo:movieIterator) {
             try {
-                final StorableMovie movie = model.getMovieInfo(x).getMovie();
+                final StorableMovie movie = movieInfo.getMovie();
                 url = "http://www.imdb.com/title/tt" + movie.getMovieSiteInfo(MovieService.IMDB).getIdForSite();
 
                 title = movie.getTitle();
                 year = movie.getYear();
                 runtime = movie.getRuntime();
                 director = movie.getDirector();
+                score = scoreCalculator.calculate(movieInfo);
                 out.println("<tr><td>" + score + "</td><td><a href='" + url + "'>" + title + "</a></td><td>" + year + "</td><td>" + director + "</td><td>" + runtime + "</td></tr>");
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ex) {
+                // FIXME never catch nullpointers! check for null instead
                 url = "";
                 title = "";
                 year = 0;

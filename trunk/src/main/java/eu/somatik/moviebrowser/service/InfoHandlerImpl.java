@@ -24,7 +24,6 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 
 /**
- * Calculates the average score for all services
  * @author francisdb
  */
 @Singleton
