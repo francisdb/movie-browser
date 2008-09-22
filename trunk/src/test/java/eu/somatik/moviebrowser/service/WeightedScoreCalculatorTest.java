@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @author francisdb
  */
-public class ScoreCalculatorTest {
+public class WeightedScoreCalculatorTest {
 
     /**
      * Test of calculate method, of class InfoHandlerImpl.
@@ -62,7 +62,7 @@ public class ScoreCalculatorTest {
         site.setService(MovieService.OMDB);
         site.setScore(80);
         movie.addSite(site);
-        assertEquals(Integer.valueOf((32*4+80)/5), calc.calculate(movie));
+        assertEquals(Integer.valueOf((32*7+80*2)/9), calc.calculate(movie));
         
     }
 
