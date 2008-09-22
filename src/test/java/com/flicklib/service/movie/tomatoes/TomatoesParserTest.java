@@ -17,7 +17,7 @@ public class TomatoesParserTest {
      * @throws Exception 
      */
     @Test
-    public void testParse() throws Exception {
+    public void testOfflineParse() throws Exception {
         String source = new FileSourceLoader().load("tomatoes/Pulp Fiction Movie Reviews, Pictures - Rotten Tomatoes.html");
         MoviePage site = new MoviePage();
         site.setMovie(new Movie());
@@ -27,7 +27,7 @@ public class TomatoesParserTest {
     }
     
     @Test
-    public void testParse2() throws Exception {
+    public void testOfflineParse2() throws Exception {
         String source = new FileSourceLoader().load("tomatoes/Waist Deep Movie Reviews, Pictures - Rotten Tomatoes.html");
         MoviePage site = new MoviePage();
         site.setMovie(new Movie());
