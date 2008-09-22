@@ -35,7 +35,6 @@ import eu.somatik.moviebrowser.service.AdvancedFolderScanner;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.InfoHandlerImpl;
 import eu.somatik.moviebrowser.service.ScoreCalculator;
-import eu.somatik.moviebrowser.service.SimpleFolderScanner;
 import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 /**
  * Guice configuration module
