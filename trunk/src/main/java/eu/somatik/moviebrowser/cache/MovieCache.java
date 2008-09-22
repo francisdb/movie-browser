@@ -18,7 +18,6 @@
  */
 package eu.somatik.moviebrowser.cache;
 
-import eu.somatik.moviebrowser.domain.FileSystem;
 import java.util.List;
 
 import eu.somatik.moviebrowser.domain.FileGroup;
@@ -96,12 +95,6 @@ public interface MovieCache {
      */
     void insert(StorableMovieSite site);
 
-
-    /**
-     * Inserts a filesystem in to the database
-     * @param fileSystem
-     */
-    void insert(FileSystem fileSystem);
 
     /**
      * Load stored movies
