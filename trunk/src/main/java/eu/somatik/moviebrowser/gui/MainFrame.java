@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JDialog;

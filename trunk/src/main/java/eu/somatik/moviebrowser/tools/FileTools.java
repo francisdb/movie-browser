@@ -67,7 +67,8 @@ public class FileTools {
     
     /**
      * Renames a directory.
-     * @param oldFile, newFile
+     * @param oldFile
+     * @param newFile 
      * @return boolean success
      */
     public static boolean renameDir(File oldFile, File newFile) {
@@ -79,12 +80,14 @@ public class FileTools {
     }
     
     /**
-     * Copies a file.
-     * @param source, dest
-     * @return null; 
+     * Copies a file using NIO.
+     * @param source
+     * @param dest
+     * @throws IOException
      */
     public static void copy(File source, File dest) throws IOException {
-         FileChannel in = null, out = null;
+         FileChannel in = null;
+         FileChannel out = null;
          try {          
               in = new FileInputStream(source).getChannel();
               out = new FileOutputStream(dest).getChannel();
@@ -135,8 +138,8 @@ public class FileTools {
     
     /**
      * Stores a properties file, will create the path if needed
+     * @param properties
      * @param propsFile
-     * @param the properties
      */
     public static void storePropeties(Properties properties, File propsFile) {
         File parent = propsFile.getParentFile();
