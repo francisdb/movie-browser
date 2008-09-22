@@ -99,7 +99,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             } else {
                 String ext = getExtension(f);
                 if(ext == null){
-                    LOGGER.warn("Ignoring file wothout extension: "+f.getAbsolutePath());
+                    LOGGER.warn("Ignoring file without extension: "+f.getAbsolutePath());
                 }else{
                     if (FileType.getTypeByExtension(ext)==FileType.COMPRESSED) {
                         compressedFiles ++;
@@ -288,7 +288,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             if (!f.isDirectory()) {
                 String ext = getExtension(f);
                 if(ext == null){
-                    LOGGER.warn("Ignoring file wothout extension: "+f.getAbsolutePath());
+                    LOGGER.warn("Ignoring file without extension: "+f.getAbsolutePath());
                 }else{
                     FileType type = FileType.getTypeByExtension(ext);
                     if (type==FileType.COMPRESSED || type==FileType.NFO || type==FileType.SUBTITLE) {
