@@ -25,5 +25,15 @@ public class TomatoesParserTest {
         instance.parse(source, site);
         assertEquals(Integer.valueOf(96), site.getScore());
     }
+    
+    @Test
+    public void testParse2() throws Exception {
+        String source = new FileSourceLoader().load("tomatoes/Waist Deep Movie Reviews, Pictures - Rotten Tomatoes.html");
+        MoviePage site = new MoviePage();
+        site.setMovie(new Movie());
+        TomatoesParser instance = new TomatoesParser();
+        instance.parse(source, site);
+        assertEquals(Integer.valueOf(26), site.getScore());
+    }
 
 }
