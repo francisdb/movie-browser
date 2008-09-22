@@ -53,6 +53,7 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
+import java.util.Date;
 
 /**
  *
@@ -343,6 +344,7 @@ public class JPAMovieCache implements MovieCache {
             EntityTransaction transaction = em.getTransaction();
             transaction.begin();
 
+            movie.setLastModified(new Date());
 
             if (movie.getId() == null) {
                 LOGGER.trace("Saving movie " + movie.getTitle());
