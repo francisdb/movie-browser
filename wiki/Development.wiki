@@ -23,3 +23,32 @@ These will be downloaded by maven during your first build.
  * Hibernate (Entity Manager)
  * C3P0 (database connection pooling)
  * SLF4J/Logback (logging)
+
+= Domain Model =
+
+  * StorableMovie, it contains:
+    * simple properties like title, director, plot, etc
+    * multiple languages
+    * multiple genres
+    * multiple group of files (FileGroup)
+  * every FileGroup objects correspond to one type of materialization of the movie. I mean it contains a set of files, which collectively represents the movie. For example, it can be :
+    # one ISO file
+    # one AVI and one SRT file
+    # multiple AVI and SRT files
+    # multiple rar files in one directory
+    # multiple rar files in two directory (which are named cd1 and cd2 currently)
+    so it contains:
+    * info about the language of the audio (currently it's just one field)
+    * language of the subtitle, if exists
+    * release type: 1 CD, 2 CD, or DVD (of course we can extend it)
+    * list of files (type: Set<StorableMovieFile>)
+    * list of locations, where this particular group can be found (type: Set<MovieLocation>)
+
+  * MovieLocation object contains the information where the files are stored.
+    * path : a full filesystem path, for example /mnt/external_drive/films/SuperFilm
+    * label : user defined label, to label the file system, where it's resides, for example it can be 'My big, white external drive'. Currently there are no possibilty to customize this value on the ui.
+
+  * every StorableMovieFile describes one file, so it contains:
+    * it's name, without path, for example : 'MySuperFilm.ISO'
+    * it's size
+    * it's type: VIDEO_CONTENT, SUBTITLE, NFO, COMPRESSED
