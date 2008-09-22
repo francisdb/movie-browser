@@ -28,6 +28,10 @@ import javax.persistence.Id;
 @Entity
 public class Language {
 
+    public final static Language ENGLISH = new Language("English");
+    public final static Language HUNGARIAN = new Language("Hungarian");
+    
+    
     @Id
     private String name;
 

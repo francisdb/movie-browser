@@ -21,6 +21,7 @@ package eu.somatik.moviebrowser.domain;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.util.Set;
 
 import com.flicklib.domain.MovieService;
 
@@ -52,9 +53,12 @@ public class MovieInfo {
     public MovieInfo(StorableMovie movieFile) {
         this.status = MovieStatus.LOADED;
         this.movie = movieFile;
-        String dirPath = this.movie.getDirectoryPath();
-        if (dirPath != null) {
-            this.directory = new File(dirPath);
+        FileGroup fg = this.movie.getUniqueFileGroup();
+        if (fg != null) {
+            String path = fg.getDirectoryPath();
+            if (path!=null) {
+                this.directory = new File(path);
+            }
         }
     }
 
@@ -73,7 +77,12 @@ public class MovieInfo {
         this.propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
+    public Set<MovieLocation> getLocations() {
+        return movie.getLocations();
+    }
+    
     /**
+     * This is not the nicest thing, there can be multiple directories, it is wiser to use getLocations().
      * 
      * @return the Directory
      */
@@ -84,7 +93,9 @@ public class MovieInfo {
     /**
      * 
      * @param directory
+     * 
      */
+    @Deprecated
     public void setDirectory(File directory) {
         this.directory = directory;
     }

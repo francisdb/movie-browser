@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.api.FolderScanner;
+import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
@@ -88,18 +89,60 @@ public class AdvancedFolderScanner implements FolderScanner {
         File[] files = folder.listFiles();
 
         Set<String> plainFileNames = new HashSet<String>();
-        boolean hasSubDirectory = false;
+        int subDirectory = 0;
+        int compressedFiles = 0;
+        Set<String> directoryNames = new HashSet<String>();
         for (File f : files) {
             if (f.isDirectory()) {
-                hasSubDirectory = true;
-                browse(f);
+                subDirectory ++;
+                directoryNames.add(f.getName().toLowerCase());
             } else {
                 String ext = getExtension(f);
+                if (FileType.getTypeByExtension(ext)==FileType.COMPRESSED) {
+                    compressedFiles ++;
+                }
                 if (ext != null && MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
                     plainFileNames.add(getNameWithoutExt(f));
                 }
             }
         }
+        // check for multiple compressed files, the case of:
+        // Title_of_the_film/abc.rar
+        // Title_of_the_film/abc.r01
+        // Title_of_the_film/abc.r02
+        if (compressedFiles>0) {
+            StorableMovie sm = new StorableMovie();
+            FileGroup fg = initStorableMovie(folder, sm);
+            fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+            addCompressedFiles(sm, fg, files );
+            add(sm);
+            return;
+        }
+        if (subDirectory>=2 && subDirectory<=3) {
+            // the case of :
+            // Title_of_the_film/cd1/...
+            // Title_of_the_film/cd2/...
+            // with an optional sample directory
+            // Title_of_the_film/sample/ 
+            if (directoryNames.contains("cd1") && directoryNames.contains("cd2")) {
+                StorableMovie sm = new StorableMovie();
+                FileGroup fg = initStorableMovie(folder, sm);
+                fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+                
+                addCompressedFiles(sm, fg, files, "cd1");
+                addCompressedFiles(sm, fg, files, "cd2");
+
+                add(sm);
+                return;
+            }
+        }
+        for (File f : files) {
+            if (f.isDirectory()) {
+                browse(f);
+            }
+        }
+        
+        
         // We want to handle the following cases:
         // 1,
         // Title_of_the_film/abc.avi
@@ -113,18 +156,21 @@ public class AdvancedFolderScanner implements FolderScanner {
         // Title_of_the_film/abc-cd2.srt
         // Title_of_the_film/abc-cd2.srt
         //
-        if (hasSubDirectory) {
+
+        if (subDirectory>0) {
             genericMovieFindProcess(files);
         } else {
+            
             int foundFiles = plainFileNames.size();
             switch (foundFiles) {
                 case 0:
                     break;
                 case 1: {
                     StorableMovie sm = new StorableMovie();
-                    sm.setTitle(movieNameExtractor.removeCrap(folder));
-                    sm.addLocation(new MovieLocation(folder.getParent(), currentLabel));
-                    addFiles(sm, files, plainFileNames.iterator().next());
+                    FileGroup fg = initStorableMovie(folder, sm);
+
+                    fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+                    addFiles(sm, fg, files,  plainFileNames.iterator().next());
                     add(sm);
                     break;
                 }
@@ -135,9 +181,10 @@ public class AdvancedFolderScanner implements FolderScanner {
                     if (LevenshteinDistance.distance(name1, name2) < 3) {
                         // the difference is -cd1 / -cd2
                         StorableMovie sm = new StorableMovie();
-                        sm.setTitle(movieNameExtractor.removeCrap(folder));
-                        sm.addLocation(new MovieLocation(folder.getParent(), currentLabel));
-                        addFiles(sm, files, name1);
+                        FileGroup fg = initStorableMovie(folder, sm);
+
+                        fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+                        addFiles(sm, fg, files, name1);
                         add(sm);
                         break;
                     }
@@ -151,6 +198,35 @@ public class AdvancedFolderScanner implements FolderScanner {
         }
     }
 
+    /**
+     * add the compressed files to the file group, which are in the specified directory.
+     * @param sm
+     * @param fg
+     * @param fileList
+     * @param folderName
+     */
+    private void addCompressedFiles(StorableMovie sm, FileGroup fg, File[] fileList, String folderName) {
+        for (File f : fileList) {
+            if (f.isDirectory() && folderName.equals(f.getName().toLowerCase())) {
+                addCompressedFiles(sm, fg, f.listFiles());
+            }
+        }
+    }
+
+    /**
+     * initialize a FileGroup 
+     * @param folder
+     * @param sm
+     * @return
+     */
+    private FileGroup initStorableMovie(File folder, StorableMovie sm) {
+        FileGroup fg = new FileGroup();
+        fg.setAudio(movieNameExtractor.getLanguageSuggestion(folder.getName()));
+        sm.addFileGroup(fg);
+        sm.setTitle(movieNameExtractor.removeCrap(folder));
+        return fg;
+    }
+
     private void genericMovieFindProcess(File[] files) {
         Map<String, StorableMovie> foundMovies = new HashMap<String, StorableMovie>();
         for (File f : files) {
@@ -159,13 +235,19 @@ public class AdvancedFolderScanner implements FolderScanner {
                 if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(extension)) {
                     String baseName = movieNameExtractor.removeCrap(f);
                     StorableMovie m = foundMovies.get(baseName);
+                    FileGroup fg;
                     if (m == null) {
                         m = new StorableMovie();
                         m.setTitle(baseName);
-                        m.addLocation(new MovieLocation(f.getParent(), currentLabel));
+                        fg = new FileGroup();
+                        fg.setAudio(movieNameExtractor.getLanguageSuggestion(f.getName()));
+                        m.addFileGroup(fg);
+                        fg.addLocation(new MovieLocation(f.getParent(), currentLabel));
                         foundMovies.put(baseName, m);
+                    } else {
+                        fg = m.getUniqueFileGroup();
                     }
-                    m.addFile(new StorableMovieFile(f, FileType.getTypeByExtension(extension)));
+                    fg.addFile(new StorableMovieFile(f, FileType.getTypeByExtension(extension)));
                 }
             }
         }
@@ -183,22 +265,38 @@ public class AdvancedFolderScanner implements FolderScanner {
      * @param files
      * @param next
      */
-    private void addFiles(StorableMovie sm, File[] files, String plainFileName) {
+    private void addFiles(StorableMovie sm, FileGroup fg, File[] files, String plainFileName) {
         for (File f : files) {
             if (!f.isDirectory()) {
                 String baseName = getNameWithoutExt(f);
                 String ext = getExtension(f);
                 if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(ext)) {
                     if (LevenshteinDistance.distance(plainFileName, baseName) < 3) {
-                        sm.addFile(new StorableMovieFile(f, FileType.getTypeByExtension(ext)));
+                        fg.addFile(new StorableMovieFile(f, FileType.getTypeByExtension(ext), fg));
                     }
+                }
+            }
+        }
+    }
+    
+    private void addCompressedFiles(StorableMovie sm, FileGroup fg, File[] files) {
+        for (File f : files) {
+            if (!f.isDirectory()) {
+                String ext = getExtension(f);
+                FileType type = FileType.getTypeByExtension(ext);
+                if (type==FileType.COMPRESSED || type==FileType.NFO || type==FileType.SUBTITLE) {
+                    fg.addFile(new StorableMovieFile(f, type, fg));
                 }
             }
         }
     }
 
     private void add(StorableMovie movie) {
-        LOGGER.info("film:"+movie.getTitle()+" found at: "+movie.getDirectoryPath()+" {"+movie.getFiles()+'}');
+        FileGroup uniqueFileGroup = movie.getUniqueFileGroup();
+        LOGGER.info("film:"+movie.getTitle()+" found at: "+uniqueFileGroup.getDirectoryPath()+" {"+uniqueFileGroup.getFiles()+'}');
+        for (FileGroup g : movie.getGroups()) {
+            g.guessReleaseType();
+        }
         movies.add(new MovieInfo(movie));
     }
 

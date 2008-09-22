@@ -18,8 +18,11 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import java.util.Set;
+
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
@@ -49,9 +52,12 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
         } else if (movie.getYear() != null && movie.getYear().toString().contains(filterText)) {
             return true;
         } else {
-        	String path = info.getMovie().getDirectoryPath();
-            if (path!=null && path.toLowerCase().contains(filterText)) {
-                return true;
+            Set<MovieLocation> locations = info.getMovie().getLocations();
+            for (MovieLocation l : locations) {
+                String path = l.getPath();
+                if (path!=null && path.toLowerCase().contains(filterText)) {
+                    return true;
+                }
             }
             for (Genre genre : info.getMovie().getGenres()) {
                 String[] split = filterText.split(" ");

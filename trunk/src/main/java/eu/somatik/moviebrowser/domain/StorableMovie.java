@@ -76,22 +76,25 @@ public class StorableMovie {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Language> languages;
 
-    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    /*    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StorableMovieFile> files;
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<MovieLocation> locations;
+    private Set<MovieLocation> locations;*/
     
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StorableMovieSite> siteInfo;
+    
+    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<FileGroup> groups;
+    
 
     /** Creates a new instance of StorableMovie */
     public StorableMovie() {
         this.genres = new HashSet<Genre>();
         this.languages = new HashSet<Language>();
-        this.files = new HashSet<StorableMovieFile>();
-        this.locations = new HashSet<MovieLocation>();
         this.siteInfo = new HashSet<StorableMovieSite>();
+        this.groups = new HashSet<FileGroup> ();
     }
 
     public Long getId() {
@@ -206,17 +209,6 @@ public class StorableMovie {
         this.type = type;
     }
 
-    public Set<StorableMovieFile> getFiles() {
-        return files;
-    }
-
-    public void addFile(StorableMovieFile file) {
-        if (file.getMovie() != null) {
-            file.getMovie().getFiles().remove(file);
-        }
-        file.setMovie(this);
-        this.files.add(file);
-    }
 
     /**
      * valid means, have at least one MovieLocation and one or more VIDEO_CONTENT
@@ -224,61 +216,39 @@ public class StorableMovie {
      */
     @Transient
     public boolean isValid() {
-        if (getLocations().isEmpty()) {
+        if (getGroups().isEmpty()) {
             return false;
         }
-        for (StorableMovieFile sm: files) {
-            if (sm.getType()==FileType.VIDEO_CONTENT) {
-                return true;
+        boolean hasLocation = false;
+        for (FileGroup g : getGroups()) {
+            if (!g.getLocations().isEmpty()) {
+                hasLocation = true;
+            }
+        }
+        if (!hasLocation) {
+            return false;
+        }
+        for (FileGroup g : getGroups()) {
+            for (StorableMovieFile sm : g.getFiles()) {
+                if (sm.getType() == FileType.VIDEO_CONTENT) {
+                    return true;
+                }
             }
         }
         return false;
     }
     
     
-    /**
-     * Return a file based on the file type.
-     * 
-     * @param type
-     * @return
-     */
-    @Transient
-    public StorableMovieFile getFileByType(FileType type) {
-        for (StorableMovieFile f : files) {
-            if (f.getType() == type) {
-                return f;
-            }
-        }
-        return null;
-    }
 
-    public MovieLocation getDirectory(String path) {
-        for (MovieLocation f : locations) {
-            if (f.getPath().equals(path)) {
-                return f;
-            }
-        }
-        MovieLocation f = new MovieLocation();
-        f.setPath(path);
-        addLocation(f);
-        return f;
-    }
-
-    public void addLocation(MovieLocation f) {
-        if (f.getMovie() != null) {
-            f.getMovie().getLocations().remove(f);
-        }
-        f.setMovie(this);
-        this.locations.add(f);
-    }
-
-    public Set<MovieLocation> getLocations() {
-        return locations;
-    }
     
     public Set<StorableMovieSite> getSiteInfo() {
         return siteInfo;
     }
+    
+    public Set<FileGroup> getGroups() {
+        return groups;
+    }
+    
     
     @Transient
     public StorableMovieSite getMovieSiteInfo(MovieService service) {
@@ -312,26 +282,47 @@ public class StorableMovie {
         }
     }
     
-
     @Transient
-    public MovieLocation getDirectory() {
-        for (MovieLocation f : locations) {
-            return f;
+    public void addFileGroup(FileGroup fg) {
+        if (fg.getMovie()!=null) {
+            fg.getMovie().getGroups().remove(fg);
+        }
+        fg.setMovie(this);
+        getGroups().add(fg);
+        for (StorableMovieFile f : fg.getFiles()) {
+            if (f.getMovie()!=this) {
+                f.setMovie(this);
+            }
+        }
+        for (MovieLocation l : fg.getLocations()) {
+            l.setMovie(this);
+        }
+    }
+
+
+    @Transient 
+    public Set<MovieLocation> getLocations() {
+        Set<MovieLocation> s = new HashSet<MovieLocation>();
+        for (FileGroup f : getGroups()) {
+            s.addAll(f.getLocations());
+        }
+        return s;
+    }
+    
+    @Transient
+    public FileGroup getUniqueFileGroup() {
+        if (getGroups().size()==1) {
+            return getGroups().iterator().next();
         }
         return null;
     }
-
-    @Transient
-    public String getDirectoryPath() {
-        MovieLocation smf = getDirectory();
-        return smf != null ? smf.getPath() : null;
-    }
-
+    
+    
     @Transient
     public long getSize() {
         long size = 0;
-        for (StorableMovieFile f : files) {
-            size += f.getSize();
+        for (FileGroup g : getGroups()) {
+            size += g.getSize();
         }
         return size;
     }

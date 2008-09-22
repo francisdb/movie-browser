@@ -41,6 +41,7 @@ import com.google.inject.Singleton;
 import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
@@ -71,9 +72,16 @@ public class MovieFinder {
     private final Settings settings;
     private final Converter converter = new Converter();
     /**
-     * Kepps track of how many tasks are running
+     * Keeps track of how many tasks are running
      */
     private int runningTasks;
+    
+    /**
+     * as the running tasks property is updated from several threads, it is possible to some concurrent modification get lost, to avoid
+     * we need a lock ... 
+     */
+    private Object runningTaskLock = new Object();
+    
 
     /**
      * Creates a new instance of MovieFinder
@@ -143,7 +151,7 @@ public class MovieFinder {
         
         movie.getMovieSiteInfoOrCreate(MovieService.IMDB).setIdForSite(imdbId);
 
-        movieCache.insertOrUpdate(movie);
+        movieInfo.setMovie(movieCache.insertOrUpdate(movie));
         loadMovies(list);
     }
 
@@ -170,6 +178,20 @@ public class MovieFinder {
             LOGGER.error("Movie loader interrupted", ex);
         }
     }
+    
+    public void incRunningTasks() {
+        synchronized (runningTaskLock) {
+            runningTasks++;
+        }
+    }
+    public void decRunningTasks() {
+        synchronized (runningTaskLock) {
+            runningTasks--;
+        }
+    }
+    
+
+    private final static MovieService[] extraServices = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
 
     private class ImdbCaller implements Callable<MovieInfo> {
 
@@ -182,23 +204,29 @@ public class MovieFinder {
          */
         public ImdbCaller(MovieInfo info) {
             this.info = info;
-            runningTasks++;
+            incRunningTasks();
         }
 
         @Override
         public MovieInfo call() throws Exception {
-            MovieService[] extraServices = new MovieService[]{MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.GOOGLE, MovieService.FLIXSTER};
+            synchronized(info) {
+                doCall();
+            }
+            decRunningTasks();
+            return info;
+        }
+        
+        private void doCall() throws Exception {
             try {
                 info.setStatus(MovieStatus.LOADING);
                 if (info.getMovie().getId() == null) {
                 	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
                     // TODO load movie
-                    StorableMovie movie = findMovie(info);
-                    if (movie!=null) {
-                        MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
+                    FileGroup group = findMovie(info);
+                    if (group!=null) {
+                        MovieLocation directory = group.getDirectory(info.getDirectory().getAbsolutePath());
                         //directory.setName(info.getDirectory().getName());
-                        movieCache.insertOrUpdate(movie);
-                        info.setMovie(movie);
+                        info.setMovie(movieCache.insertOrUpdate(group.getMovie()));
                     } else {
                         fetchInformations();
                     }
@@ -207,7 +235,7 @@ public class MovieFinder {
                     if (info.isNeedRefetch()) {
                         getMovieInfoImdb(info);
                         
-                        movieCache.insertOrUpdate(info.getMovie());
+                        info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
@@ -219,12 +247,7 @@ public class MovieFinder {
             } catch (Exception ex) {
                 LOGGER.error("Exception while loading/saving movie", ex);
                 info.setStatus(MovieStatus.ERROR);
-            } finally {
-                runningTasks--;
             }
-
-
-            return info;
         }
 
         private void fetchInformations() throws UnknownHostException, Exception {
@@ -232,30 +255,32 @@ public class MovieFinder {
             getMovieInfoImdb(info);
             movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
             if (movie == null) {
-                movieCache.insertOrUpdate(info.getMovie());
+                info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
                 //movieCache.update(info.getMovieFile());
    
-                // TODO only do if not available
-                // FIXME how come this is possible?
                 StorableMovieSite movieSite = info.siteFor(MovieService.IMDB);
-                if(movieSite.getId() == 0){
+                if(movieSite.getId() == null){
                     movieCache.insert(movieSite);
                 }
             } else {
-                MovieLocation directory = movie.getDirectory(info.getDirectory().getAbsolutePath());
+                // the movie is already in the database, but we haven't find this movie by 
+                // it's files, so it must be a different version, so we add as a new file
+                // group.
+                FileGroup newFileGroup = info.getMovie().getUniqueFileGroup();
+                MovieLocation directory = newFileGroup.getDirectory(info.getDirectory().getAbsolutePath());
+                movie.addFileGroup(newFileGroup);
             	//directory.setName(info.getDirectory().getName());
-            	movieCache.insertOrUpdate(movie);
-            	info.setMovie(movie);
+            	info.setMovie(movieCache.insertOrUpdate(movie));
             }
             info.setNeedRefetch(false);
         }
 
-        private StorableMovie findMovie(MovieInfo info) {
-            for (StorableMovieFile file : info.getMovie().getFiles()) {
+        private FileGroup findMovie(MovieInfo info) {
+            for (StorableMovieFile file : info.getMovie().getUniqueFileGroup().getFiles()) {
                 if (file.getType()==FileType.VIDEO_CONTENT) {
-                    StorableMovie movie = movieCache.findByFile(file.getName(), file.getSize());
-                    if (movie!=null) {
-                        return movie;
+                    FileGroup fileGroup = movieCache.findByFile(file.getName(), file.getSize());
+                    if (fileGroup!=null) {
+                        return fileGroup;
                     }
                 }
             }
@@ -278,11 +303,18 @@ public class MovieFinder {
             this.service = service;
             this.fetcher = fetcherFactory.get(service);
             this.info = info;
-            runningTasks++;
+            incRunningTasks();
         }
-
         @Override
         public MovieInfo call() throws Exception {
+            synchronized(info) {
+                doCall();
+            }
+            decRunningTasks();
+            return info;
+        }
+        
+        private void doCall() throws Exception {
             // TODO this should update all records with this movie linked to it
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
@@ -299,15 +331,12 @@ public class MovieFinder {
                 converter.convert(site, storableMovieSite);
                 // TODO check if not fetched by some other duplicate before inserting
                 
-                movieCache.insertOrUpdate(info.getMovie());
+                info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
                 info.setStatus(MovieStatus.LOADED);
             } catch (Exception ex) {
                 LOGGER.error("Loading '" + info.getMovie().getTitle() + "' on " + service.getName() + " failed", ex);
                 info.setStatus(MovieStatus.ERROR);
-            } finally {
-                runningTasks--;
             }
-            return info;
         }
     }
 
@@ -348,10 +377,10 @@ public class MovieFinder {
     }
 
     public void renameFolderToTitle(MovieInfo info) {
-		renameFolder(info, info.getMovie().getTitle());
-	}
+        renameFolder(info, info.getMovie().getTitle());
+    }
 
-	public boolean renameFolder(MovieInfo info, String newName) {
+    public boolean renameFolder(MovieInfo info, String newName) {
         boolean success;
 
         File oldFile = info.getDirectory();
@@ -361,7 +390,7 @@ public class MovieFinder {
             LOGGER.info(oldFile.getAbsolutePath() + " auto renamed to " + newFile.getAbsolutePath());
             // update the path in the db
             info.setDirectory(newFile);
-            MovieLocation directory = info.getMovie().getDirectory(oldFile.getAbsolutePath());
+            MovieLocation directory = info.getMovie().getUniqueFileGroup().getDirectory(oldFile.getAbsolutePath());
             directory.setPath(newFile.getAbsolutePath());
             //info.getMovieFile().setPath(newFile.getAbsolutePath());
             movieCache.update(directory);
