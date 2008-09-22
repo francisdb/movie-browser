@@ -44,10 +44,11 @@ public class TomatoesParser extends AbstractJerichoParser {
         for (Iterator<?> i = divElements.iterator(); i.hasNext();) {
             Element divElement = (Element) i.next();
             String id = divElement.getAttributeValue("id");
-            if (id != null && "bubble_allCritics".equals(id)) {
+            if (id != null && "tomatometer_score".equals(id)) {
                 String userRating = divElement.getContent().getTextExtractor().toString().trim();
                 if (!"".equals(userRating)) {
                     userRating = userRating.replace("%", "");
+                    userRating = userRating.trim();
                     try {
                         int score = Integer.valueOf(userRating);
                         movieSite.setScore(score);
