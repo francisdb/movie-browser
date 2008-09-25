@@ -286,6 +286,14 @@ public class JPAMovieCache implements MovieCache {
             language = getOrCreateLanguage(language.getName(), em);
             movie.addLanguage(language);
         }
+        for (FileGroup g : movie.getGroups()) {
+            if (g.getAudio()!=null) {
+                g.setAudio(getOrCreateLanguage(g.getAudio().getName(), em));
+            }
+            if (g.getSubtitle()!=null) {
+                g.setSubtitle(getOrCreateLanguage(g.getSubtitle().getName(), em));
+            }
+        }
     }
 
     @Override
