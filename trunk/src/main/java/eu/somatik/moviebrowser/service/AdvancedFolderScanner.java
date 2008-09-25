@@ -117,7 +117,7 @@ public class AdvancedFolderScanner implements FolderScanner {
         if (compressedFiles>0) {
             StorableMovie sm = new StorableMovie();
             FileGroup fg = initStorableMovie(folder, sm);
-            fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+            fg.addLocation(new MovieLocation(folder.getParent(), currentLabel, true));
             addCompressedFiles(sm, fg, files );
             add(sm);
             return;
@@ -131,7 +131,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             if (directoryNames.contains("cd1") && directoryNames.contains("cd2")) {
                 StorableMovie sm = new StorableMovie();
                 FileGroup fg = initStorableMovie(folder, sm);
-                fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+                fg.addLocation(new MovieLocation(folder.getParent(), currentLabel, true));
                 
                 addCompressedFiles(sm, fg, files, "cd1");
                 addCompressedFiles(sm, fg, files, "cd2");
@@ -172,8 +172,7 @@ public class AdvancedFolderScanner implements FolderScanner {
                 case 1: {
                     StorableMovie sm = new StorableMovie();
                     FileGroup fg = initStorableMovie(folder, sm);
-
-                    fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+                    fg.addLocation(new MovieLocation(folder.getParent(), currentLabel, true));
                     addFiles(sm, fg, files,  plainFileNames.iterator().next());
                     add(sm);
                     break;
@@ -187,7 +186,7 @@ public class AdvancedFolderScanner implements FolderScanner {
                         StorableMovie sm = new StorableMovie();
                         FileGroup fg = initStorableMovie(folder, sm);
 
-                        fg.addLocation(new MovieLocation(folder.getParent(), currentLabel));
+                        fg.addLocation(new MovieLocation(folder.getParent(), currentLabel, true));
                         addFiles(sm, fg, files, name1);
                         add(sm);
                         break;
@@ -246,7 +245,7 @@ public class AdvancedFolderScanner implements FolderScanner {
                         fg = new FileGroup();
                         fg.setAudio(movieNameExtractor.getLanguageSuggestion(f.getName()));
                         m.addFileGroup(fg);
-                        fg.addLocation(new MovieLocation(f.getParent(), currentLabel));
+                        fg.addLocation(new MovieLocation(f.getParent(), currentLabel, false));
                         foundMovies.put(baseName, m);
                     } else {
                         fg = m.getUniqueFileGroup();
