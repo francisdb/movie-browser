@@ -389,23 +389,28 @@ public class MovieFinder {
 
     public boolean renameFolder(MovieInfo info, String newName) {
         boolean success;
-
-        File oldFile = info.getDirectory();
-        File newFile = new File(oldFile.getParent(), newName);
-        success = FileTools.renameDir(oldFile, newFile);
-        if (success) {
-            LOGGER.info(oldFile.getAbsolutePath() + " auto renamed to " + newFile.getAbsolutePath());
-            // update the path in the db
-            info.setDirectory(newFile);
-            MovieLocation directory = info.getMovie().getUniqueFileGroup().getDirectory(oldFile.getAbsolutePath());
-            directory.setPath(newFile.getAbsolutePath());
-            //info.getMovieFile().setPath(newFile.getAbsolutePath());
-            movieCache.update(directory);
-            info.triggerUpdate();
-            return true;
-        } else {
-            LOGGER.error("Error auto renaming " + oldFile.getAbsolutePath() + " to " + newFile.getAbsolutePath());
-            return false;
+        boolean needUpdate = false;
+        for (MovieLocation location : info.getLocations()) {
+            if (location.isFolderRenamingSafe()) {
+                File oldLocation = new File(location.getPath());
+                File newFileName = new File(oldLocation.getParent(), newName);
+                success = FileTools.renameDir(oldLocation, newFileName);
+                if (success) {
+                    LOGGER.info(oldLocation.getAbsolutePath() + " auto renamed to " + newFileName.getAbsolutePath());
+                    location.setPath(newFileName.getAbsolutePath());
+                    movieCache.update(location);
+                    needUpdate= true;
+                } else {
+                    LOGGER.error("Error auto renaming " + oldLocation.getAbsolutePath() + " to " + newFileName.getAbsolutePath());
+                    return false;
+                }
+            } else {
+                LOGGER.info("Folder renaming is not safe for "+location.getPath());
+            }
         }
+        if (needUpdate) {
+            info.triggerUpdate();
+        }
+        return true;
     }
 }
