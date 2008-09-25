@@ -372,8 +372,8 @@ public class MovieFinder {
         StorableMovieSite storableMovieSite = newMovie.getMovieSiteInfoOrCreate(site.getService());
         converter.convert(site, storableMovieSite);
 
-        //rename titles
-        if (settings.getRenameTitles()) {
+        //rename titles, if we have IMDB result
+        if (settings.getRenameTitles() && storableMovieSite.getIdForSite()!=null) {
             renameFolderToTitle(movieInfo);
         }
     // todo insert the site?
@@ -383,11 +383,15 @@ public class MovieFinder {
         return runningTasks;
     }
 
-    public void renameFolderToTitle(MovieInfo info) {
-        renameFolder(info, info.getMovie().getTitle());
+    private void renameFolderToTitle(MovieInfo info) {
+        renameFolder(info, info.getMovie().getTitle(), false);
     }
 
     public boolean renameFolder(MovieInfo info, String newName) {
+        return renameFolder(info, newName, true);
+    }
+    
+    private boolean renameFolder(MovieInfo info, String newName, boolean store) {
         boolean success;
         boolean needUpdate = false;
         for (MovieLocation location : info.getLocations()) {
@@ -398,7 +402,6 @@ public class MovieFinder {
                 if (success) {
                     LOGGER.info(oldLocation.getAbsolutePath() + " auto renamed to " + newFileName.getAbsolutePath());
                     location.setPath(newFileName.getAbsolutePath());
-                    movieCache.update(location);
                     needUpdate= true;
                 } else {
                     LOGGER.error("Error auto renaming " + oldLocation.getAbsolutePath() + " to " + newFileName.getAbsolutePath());
@@ -409,6 +412,9 @@ public class MovieFinder {
             }
         }
         if (needUpdate) {
+            if (store) {
+                info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
+            }
             info.triggerUpdate();
         }
         return true;
