@@ -24,5 +24,16 @@ package eu.somatik.moviebrowser.domain;
  *
  */
 public enum ReleaseType {
-    ONE_CD, TWO_CD, DVD
+    ONE_CD("One CD"), TWO_CD("Two CD"), DVD ("DVD");
+            
+    String label;
+
+    private ReleaseType(String label) {
+        this.label = label;
+    }
+    
+    public String getLabel() {
+        return label;
+    }
+    
 }

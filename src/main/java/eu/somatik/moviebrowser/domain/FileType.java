@@ -23,8 +23,18 @@ import java.util.regex.Pattern;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 
 public enum FileType {
-	VIDEO_CONTENT, SUBTITLE, NFO, COMPRESSED;
-	
+	VIDEO_CONTENT("Video file"), SUBTITLE("Subtitle"), NFO("Info file"), COMPRESSED("Compressed content");
+        
+    String label;
+
+    private FileType(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
 	
 	public static FileType getTypeByExtension(String ext) {
 		if ("nfo".equals(ext)) {

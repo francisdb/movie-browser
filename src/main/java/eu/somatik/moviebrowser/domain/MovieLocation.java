@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -42,7 +43,12 @@ public class MovieLocation {
 
     @ManyToOne
     FileGroup group;
-    
+    /**
+     * mark if the folder is safe to rename, so it is not shared with other films.
+     */
+    @Column(nullable=false, columnDefinition="boolean default 0")
+    boolean folderRenamingSafe = false;
+
     public MovieLocation() {
 
     }
@@ -50,6 +56,12 @@ public class MovieLocation {
     public MovieLocation(String path, String label) {
         this.path = path;
         this.label = label;
+    }
+
+    public MovieLocation(String path, String label, boolean renamingSafe) {
+        this.path = path;
+        this.label = label;
+        this.folderRenamingSafe = renamingSafe;
     }
 
     public String getPath() {
@@ -88,6 +100,13 @@ public class MovieLocation {
         return id;
     }
 
+    public boolean isFolderRenamingSafe() {
+        return folderRenamingSafe;
+    }
+    
+    public void setFolderRenamingSafe(boolean folderRenamingSafe) {
+        this.folderRenamingSafe = folderRenamingSafe;
+    }
     @Override
     public String toString() {
         return "MovieLocation[id:"+id+",label:"+label+",path:"+path+"]";
