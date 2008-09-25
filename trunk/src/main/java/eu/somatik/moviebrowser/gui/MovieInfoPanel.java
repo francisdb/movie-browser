@@ -58,6 +58,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final List<MovieService> services;
     private final Map<MovieService, JButton> siteButtons;
     private MovieInfo info;
+    private MovieFileTreeTableModel fileTree;
 
     /** Creates new form MovieInfoPanel
      * @param imageCache 
@@ -71,6 +72,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         // TODO get the services from the settings
         this.services = Arrays.asList(MovieService.values());
         this.siteButtons = new HashMap<MovieService, JButton>();
+        this.fileTree = new MovieFileTreeTableModel();
         initComponents();
         addIcons();
         infoTextPane.setContentType("text/html");
@@ -113,7 +115,11 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             for (MovieService service : services) {
                 updateButton(siteButtons.get(service), null);
             }
+            fileTree.setMovie(null);
         } else {
+            fileTree.setMovie(movie);
+            // to expand ratings...
+            movieFileTreeTable.expandRow(1);
             if (movie.getTitle() == null) {
                 movieHeader.setTitle(info.getDirectory().getName());
             } else {
@@ -268,17 +274,17 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         movieHeader = new org.jdesktop.swingx.JXHeader();
+        buttonPanel = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         infoTextPane = new javax.swing.JTextPane();
-        buttonPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        movieFileTreeTable = new org.jdesktop.swingx.JXTreeTable(fileTree);
+        System.out.println("teszt");
 
         movieHeader.setDescription("");
         movieHeader.setTitle("");
         movieHeader.setToolTipText("Movie info");
-
-        infoTextPane.setBackground(new java.awt.Color(254, 254, 254));
-        infoTextPane.setEditable(false);
-        jScrollPane2.setViewportView(infoTextPane);
 
         javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -291,13 +297,25 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             .addGap(0, 34, Short.MAX_VALUE)
         );
 
+        infoTextPane.setEditable(false);
+        infoTextPane.setBackground(new java.awt.Color(254, 254, 254));
+        jScrollPane2.setViewportView(infoTextPane);
+
+        jTabbedPane1.addTab("Informations", jScrollPane2);
+
+        movieFileTreeTable.setRootVisible(true);
+        movieFileTreeTable.setShowHorizontalLines(true);
+        jScrollPane1.setViewportView(movieFileTreeTable);
+
+        jTabbedPane1.addTab("Files", jScrollPane1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(movieHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
             .addComponent(buttonPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -306,13 +324,16 @@ public class MovieInfoPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JTextPane infoTextPane;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private org.jdesktop.swingx.JXTreeTable movieFileTreeTable;
     private org.jdesktop.swingx.JXHeader movieHeader;
     // End of variables declaration//GEN-END:variables
 }
