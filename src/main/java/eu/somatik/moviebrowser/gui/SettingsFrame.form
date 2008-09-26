@@ -40,8 +40,8 @@
                       <Component id="jScrollPane1" min="-2" pref="270" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="addLocationButton" pref="92" max="32767" attributes="1"/>
-                          <Component id="deleteLocationButton" alignment="0" pref="92" max="32767" attributes="1"/>
+                          <Component id="addLocationButton" pref="175" max="32767" attributes="1"/>
+                          <Component id="deleteLocationButton" alignment="0" pref="175" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Component id="websitesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -64,8 +64,8 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jSeparator1" alignment="0" pref="388" max="32767" attributes="1"/>
-          <Component id="jSeparator2" alignment="0" pref="388" max="32767" attributes="0"/>
+          <Component id="jSeparator1" alignment="0" pref="475" max="32767" attributes="1"/>
+          <Component id="jSeparator2" alignment="0" pref="475" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -77,12 +77,12 @@
                   </Group>
                   <Component id="subtitlesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="156" max="32767" attributes="0"/>
+              <EmptySpace pref="187" max="32767" attributes="0"/>
           </Group>
-          <Component id="jSeparator3" alignment="0" pref="388" max="32767" attributes="0"/>
+          <Component id="jSeparator3" alignment="0" pref="475" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="movieLocationsLabel" pref="368" max="32767" attributes="0"/>
+              <Component id="movieLocationsLabel" pref="451" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
@@ -91,11 +91,11 @@
               <EmptySpace pref="101" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="294" max="32767" attributes="0"/>
+              <EmptySpace pref="379" max="32767" attributes="0"/>
               <Component id="okayButton" min="-2" pref="84" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jSeparator4" alignment="1" pref="388" max="32767" attributes="0"/>
+          <Component id="jSeparator4" alignment="1" pref="475" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -109,7 +109,7 @@
                       <Component id="secondsLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="102" max="32767" attributes="0"/>
+              <EmptySpace pref="124" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -310,9 +310,6 @@
         <Property name="text" type="java.lang.String" value="Automatically rename movie folder to IMDB title."/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing."/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="renameTitlesCheckBoxActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator4">
     </Component>
@@ -330,9 +327,6 @@
         <Property name="text" type="java.lang.String" value="Save Cover Art in movie folder."/>
         <Property name="toolTipText" type="java.lang.String" value="Select this option to automatically save cover art to the movie directory."/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveCoverArtCheckBoxActionPerformed"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>

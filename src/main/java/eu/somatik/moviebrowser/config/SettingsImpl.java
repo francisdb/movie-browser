@@ -51,8 +51,10 @@ public class SettingsImpl implements Settings {
     
     private static final String FOLDERS_PROPERTY = "folders";
     private static final String LOOK_AND_FEEL_PROPERTY = "lookandfeel";
-    private boolean renameTitles;
-    private boolean saveAlbumArt;
+    private static final String RENAME_TITLES = "renameTitles";
+    private static final String SAVE_ALBUM_ART = "saveAlbumArt";
+    
+    private Map<String, String> preferences;
 
     /**
      *
@@ -154,30 +156,32 @@ public class SettingsImpl implements Settings {
 
     @Override
     public Map<String, String> loadPreferences() {
-        Properties props = defaultPreferences();
-        File prefsFile = new File(getSettingsDir(), PREFERENCES);
-        InputStream is = null;
-        try {
-            if (prefsFile.exists()) {
-                is = new FileInputStream(prefsFile);
-                props.load(is);
-            }
-        } catch (IOException ex) {
-            LOGGER.error("Could not load preferences to " + prefsFile.getAbsolutePath(), ex);
-        } catch (SecurityException ex) {
-            LOGGER.error("Could not load preferences to " + prefsFile.getAbsolutePath(), ex);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not load outputstream for" + prefsFile.getAbsolutePath(), ex);
+        if (preferences==null) {
+            Properties props = defaultPreferences();
+            File prefsFile = new File(getSettingsDir(), PREFERENCES);
+            InputStream is = null;
+            try {
+                if (prefsFile.exists()) {
+                    is = new FileInputStream(prefsFile);
+                    props.load(is);
+                }
+            } catch (IOException ex) {
+                LOGGER.error("Could not load preferences to " + prefsFile.getAbsolutePath(), ex);
+            } catch (SecurityException ex) {
+                LOGGER.error("Could not load preferences to " + prefsFile.getAbsolutePath(), ex);
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ex) {
+                        LOGGER.error("Could not load outputstream for" + prefsFile.getAbsolutePath(), ex);
+                    }
                 }
             }
-        }
-        Map<String, String> preferences = new HashMap<String, String>();
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            preferences.put((String) entry.getKey(), (String) entry.getValue());
+            preferences = new HashMap<String, String>();
+            for (Map.Entry<Object, Object> entry : props.entrySet()) {
+                preferences.put((String) entry.getKey(), (String) entry.getValue());
+            }
         }
         return preferences;
     }
@@ -262,22 +266,30 @@ public class SettingsImpl implements Settings {
 
     @Override
     public void setRenameTitles(boolean value) {
-        renameTitles = value;
+        Map<String,String> prefs = loadPreferences();
+        prefs.put(RENAME_TITLES, Boolean.valueOf(value).toString());
+        savePreferences(prefs);
     }
 
     @Override
     public boolean getRenameTitles() {
-        return renameTitles;
+        Map<String,String> prefs = loadPreferences();
+        String value = prefs.get(RENAME_TITLES);
+        return Boolean.valueOf(value);
     }
     
     @Override
     public void setSaveAlbumArt(boolean value) {
-        saveAlbumArt = value;
+        Map<String,String> prefs = loadPreferences();
+        prefs.put(SAVE_ALBUM_ART, Boolean.valueOf(value).toString());
+        savePreferences(prefs);
     }
 
     @Override
     public boolean getSaveAlbumArt() {
-        return saveAlbumArt;
+        Map<String,String> prefs = loadPreferences();
+        String value = prefs.get(SAVE_ALBUM_ART);
+        return Boolean.valueOf(value);
     }
 
     @Override

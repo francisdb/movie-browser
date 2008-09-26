@@ -41,6 +41,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     private final MainFrame mainFrame;
     private File selectedFile;
     private DefaultListModel model;
+    private boolean needRescan = false;
     
     /** Creates new form SettingsFrame */
     public SettingsFrame(final Settings settings,
@@ -48,9 +49,8 @@ public class SettingsFrame extends javax.swing.JFrame {
         this.mainFrame = mainFrame;
         this.settings = settings;
         initComponents();
-        getMovieLocations();
+        loadMovieLocations();
         getSettingsValues();
-        setSettingsValues();
     }
     
     /** This method is called from within the constructor to
@@ -158,11 +158,6 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         renameTitlesCheckBox.setText("Automatically rename movie folder to IMDB title.");
         renameTitlesCheckBox.setToolTipText("Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing.");
-        renameTitlesCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                renameTitlesCheckBoxActionPerformed(evt);
-            }
-        });
 
         okayButton.setText("Okay");
         okayButton.addActionListener(new java.awt.event.ActionListener() {
@@ -174,11 +169,6 @@ public class SettingsFrame extends javax.swing.JFrame {
         saveCoverArtCheckBox.setSelected(true);
         saveCoverArtCheckBox.setText("Save Cover Art in movie folder.");
         saveCoverArtCheckBox.setToolTipText("Select this option to automatically save cover art to the movie directory.");
-        saveCoverArtCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveCoverArtCheckBoxActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -191,8 +181,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)))
+                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
                     .addComponent(websitesLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -207,8 +197,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                                 .addComponent(flixsterCheckBox))
                             .addComponent(googleCheckBox))))
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,21 +208,21 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(openSubsCheckBox))
                     .addComponent(subtitlesLabel))
-                .addContainerGap(156, Short.MAX_VALUE))
-            .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                .addContainerGap(187, Short.MAX_VALUE))
+            .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(miscLabel)
                 .addContainerGap(101, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(294, Short.MAX_VALUE)
+                .addContainerGap(379, Short.MAX_VALUE)
                 .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,7 +234,7 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(timeoutText, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(secondsLabel)))
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,6 +297,10 @@ public class SettingsFrame extends javax.swing.JFrame {
 
     private void okayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okayButtonActionPerformed
         setSettingsValues();
+        storeMovieLocations();
+        if(needRescan) {
+            mainFrame.scanFolders();
+        }
         this.setVisible(false);
     }//GEN-LAST:event_okayButtonActionPerformed
 
@@ -315,10 +309,11 @@ public class SettingsFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
-            settings.addFolder(newFolder);
-            selectedFile = newFolder;
-            mainFrame.scanFolders();
-            getMovieLocations();
+            if (!model.contains(newFolder.getAbsolutePath())) {
+                model.addElement(newFolder.getAbsolutePath());
+                selectedFile = newFolder;
+                needRescan = true;
+            }
         } else {
             LOGGER.debug("No Selection ");
         }
@@ -327,42 +322,33 @@ public class SettingsFrame extends javax.swing.JFrame {
     private void deleteLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLocationButtonActionPerformed
 
         model.removeElementAt(locationsList.getSelectedIndex());
-        
+        /*
         Set<String> folders = new LinkedHashSet<String>();
         for(int i=0; i<locationsList.getModel().getSize(); i++) {
             folders.add(locationsList.getModel().getElementAt(i).toString());
         }
-        settings.saveFolders(folders);
-        mainFrame.scanFolders();
+        settings.saveFolders(folders);*/
+        needRescan = true;
+
     }//GEN-LAST:event_deleteLocationButtonActionPerformed
-
-    private void renameTitlesCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renameTitlesCheckBoxActionPerformed
-        if(renameTitlesCheckBox.isSelected()) {
-            renameTitlesCheckBox.setSelected(true);
-        }
-        else {
-            renameTitlesCheckBox.setSelected(false);
-        }
-        settings.setRenameTitles(renameTitlesCheckBox.isSelected());
-    }//GEN-LAST:event_renameTitlesCheckBoxActionPerformed
-
-private void saveCoverArtCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveCoverArtCheckBoxActionPerformed
-        if(saveCoverArtCheckBox.isSelected()) {
-            saveCoverArtCheckBox.setSelected(true);
-        }
-        else {
-            saveCoverArtCheckBox.setSelected(false);
-        }
-        settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
-}//GEN-LAST:event_saveCoverArtCheckBoxActionPerformed
     
-    private void getMovieLocations() {
+    private void loadMovieLocations() {
         model = new DefaultListModel();
         for(String folder:settings.loadFolders()){
             model.addElement(folder);
         }
         locationsList.setModel(model);
     }
+    
+    private void storeMovieLocations() {
+        Set<String> folders = new LinkedHashSet<String>();
+        for(int i=0; i<locationsList.getModel().getSize(); i++) {
+            folders.add(locationsList.getModel().getElementAt(i).toString());
+        }
+        settings.saveFolders(folders);
+        
+    }
+    
     
     private void getSettingsValues() {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
