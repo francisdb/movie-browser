@@ -263,12 +263,7 @@ public class MovieFinder {
             movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
             if (movie == null) {
                 info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
-                //movieCache.update(info.getMovieFile());
    
-                StorableMovieSite movieSite = info.siteFor(MovieService.IMDB);
-                if(movieSite.getId() == null){
-                    movieCache.insert(movieSite);
-                }
             } else {
                 // the movie is already in the database, but we haven't find this movie by 
                 // it's files, so it must be a different version, so we add as a new file
