@@ -114,7 +114,10 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
             switch(column) {
                 case NAME : {
                     StringBuilder info = new StringBuilder();
-                    info.append("Files:").append(row.getType().getLabel());
+                    info.append("Files:");
+                    if (row.getType()!=null) {
+                        info.append(row.getType().getLabel());
+                    }
                     Language l = row.getAudio();
                     if (l!=null) {
                         info.append(",").append(l.getName());
