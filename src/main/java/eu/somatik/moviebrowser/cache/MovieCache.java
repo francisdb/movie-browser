@@ -21,10 +21,7 @@ package eu.somatik.moviebrowser.cache;
 import java.util.List;
 
 import eu.somatik.moviebrowser.domain.FileGroup;
-import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
-import eu.somatik.moviebrowser.domain.StorableMovieFile;
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
 
 /**
  *
@@ -40,22 +37,11 @@ public interface MovieCache {
     public StorableMovie findMovieByTitle(String title);
 
     /**
-     *
-     * @param path the movie path
-     * @return the movie of null if not found in cache
-     */
-    //StorableMovie find(String path);
-
-    /**
      * Return the list of all movies, found in the database  
      * @return
      */
     public List<StorableMovie> list();
     
-    /**
-     * @return the StorableMovieFile
-     */
-    //StorableMovieFile getOrCreateFile(String path);
 
     boolean isStarted();
 
@@ -68,40 +54,6 @@ public interface MovieCache {
      * @param movie
      */
     void remove(StorableMovie movie);
-    
-    
-    /**
-     * 
-     * @param site
-     */
-    void remove(StorableMovieSite site);
-
-    /**
-     * 
-     * @param movieFile
-     */
-    void update(StorableMovieFile movieFile);
-    
-    void update(MovieLocation location);
-
-    /**
-     * @param movieFile 
-     */
-    void remove(StorableMovieFile movieFile);
-    
-    /**
-     * 
-     * @param site
-     */
-    void insert(StorableMovieSite site);
-
-
-    /**
-     * Load stored movies
-     * @param movie
-     * @return the list of StorableMovieSites
-     */
-    //List<StorableMovieSite> loadSites(StorableMovie movie);
     
     
     /**
