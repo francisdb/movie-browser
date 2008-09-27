@@ -38,7 +38,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "Site",uniqueConstraints={@UniqueConstraint(columnNames={"movie_id","service"})})
 
 @NamedQueries(@NamedQuery(name = "StorableMovieSite.findByMovie", query = "SELECT s FROM StorableMovieSite s WHERE s.movie = :movie"))
-public class StorableMovieSite {
+public class StorableMovieSite implements Cloneable, Persistent {
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -200,5 +200,10 @@ public class StorableMovieSite {
 	@Override
 	public String toString() {
 	    return "StorableMovieSite["+id+","+service+",id:"+idForSite+",score:"+score+",votes:"+votes+']';
+	}
+	
+	@Override
+	public StorableMovieSite clone() throws CloneNotSupportedException {
+	    return (StorableMovieSite) super.clone();
 	}
 }

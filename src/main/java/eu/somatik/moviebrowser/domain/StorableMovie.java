@@ -50,9 +50,8 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "StorableMovie.findByTitle", query = "SELECT m FROM StorableMovie m WHERE m.title = :title"),
     @NamedQuery(name = "StorableMovie.findAll", query = "SELECT s FROM StorableMovie s"), 
     @NamedQuery(name = "StorableMovie.findByFile", query = "SELECT f.movie FROM StorableMovieFile f WHERE f.name = :filename AND f.size = :size")
-    
 })
-public class StorableMovie {
+public class StorableMovie implements Cloneable, Persistent {
 
     @Id
     @GeneratedValue
@@ -74,10 +73,10 @@ public class StorableMovie {
     private Integer runtime;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Genre> genres;
+    private Set<Genre> genres = new HashSet<Genre>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Language> languages;
+    private Set<Language> languages = new HashSet<Language>();
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
@@ -89,18 +88,15 @@ public class StorableMovie {
     private Set<MovieLocation> locations;*/
     
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<StorableMovieSite> siteInfo;
+    private Set<StorableMovieSite> siteInfo = new HashSet<StorableMovieSite>();
     
     @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<FileGroup> groups;
+    private Set<FileGroup> groups = new HashSet<FileGroup> ();
     
 
     /** Creates a new instance of StorableMovie */
     public StorableMovie() {
-        this.genres = new HashSet<Genre>();
-        this.languages = new HashSet<Language>();
-        this.siteInfo = new HashSet<StorableMovieSite>();
-        this.groups = new HashSet<FileGroup> ();
+
     }
 
     public Long getId() {
@@ -344,5 +340,53 @@ public class StorableMovie {
     public String toString() {
         return "Movie " + getId() + ": " + getTitle();
     }
+    
+    @Override
+    public StorableMovie clone() throws CloneNotSupportedException {
+        StorableMovie m = (StorableMovie) super.clone();
+        m.lastModified = lastModified!=null ? new Date(lastModified.getTime()) : null;
+        m.genres = new HashSet<Genre>();
+        if (genres!=null) {
+            m.genres.addAll(genres);
+        }
+        m.languages = new HashSet<Language>();
+        if (languages!=null) {
+            m.languages.addAll(languages);
+        }
+        m.groups = new HashSet<FileGroup>();
+        for (FileGroup f : groups) {
+            FileGroup clone = f.clone();
+            clone.setMovieRecursive(m);
+            m.groups.add(clone);
+        }
+        m.siteInfo = new HashSet<StorableMovieSite>();
+        for (StorableMovieSite s : siteInfo) {
+            StorableMovieSite clone = s.clone();
+            clone.setMovie(m);
+            m.siteInfo.add(clone);
+        }
+        return m;
+    }
 
+    public FileGroup hasFiles(String filename, long size) {
+        for (FileGroup f : groups) {
+            if (f.hasFiles(filename, size)) {
+                return f;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * this method re-initialize the references to the parent objects, which are not serialized. (It's a feature, to keep the generated xml simpler)
+     */
+    public void initParentLinks() {
+        for (FileGroup f : groups) {
+            f.setMovieRecursive(this);
+        }
+        for (StorableMovieSite s : siteInfo) {
+            s.setMovie(this);
+        }
+    }
+    
 }

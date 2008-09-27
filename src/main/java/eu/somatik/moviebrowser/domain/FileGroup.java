@@ -47,13 +47,13 @@ import javax.persistence.Transient;
 @NamedQueries( { 
     @NamedQuery(name = "FileGroup.findByFile", query = "SELECT f.group FROM StorableMovieFile f WHERE f.name = :filename AND f.size = :size")
 })
-public class FileGroup {
+public class FileGroup implements Cloneable, Persistent {
 
     public final static long MB = 1024*1024;
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
+    Long id;
 
     @ManyToOne
     StorableMovie movie;
@@ -78,10 +78,15 @@ public class FileGroup {
         locations = new HashSet<MovieLocation>();
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     public StorableMovie getMovie() {
         return movie;
     }
@@ -218,6 +223,47 @@ public class FileGroup {
         return size;
     }
     
+    @Override
+    protected FileGroup clone() throws CloneNotSupportedException {
+        FileGroup m = (FileGroup) super.clone();
+        m.files = new HashSet<StorableMovieFile>();
+        for (StorableMovieFile f : files) {
+            StorableMovieFile clone = f.clone();
+            clone.setMovie(null);
+            clone.setGroup(m);
+            m.files.add(clone);
+        }
+        m.locations = new HashSet<MovieLocation>();
+        for (MovieLocation l : locations) {
+            MovieLocation clone = l.clone();
+            clone.setGroup(m);
+            clone.setMovie(null);
+            m.locations.add(clone);
+        }
+        return m;
+    }
+    
+    @Transient
+    public void setMovieRecursive(StorableMovie movie) {
+        setMovie(movie);
+        for (StorableMovieFile f : files) {
+            f.setMovie(movie);
+            f.setGroup(this);
+        }
+        for (MovieLocation f : locations) {
+            f.setMovie(movie);
+            f.setGroup(this);
+        }
+    }
+
+    public boolean hasFiles(String filename, long size) {
+        for (StorableMovieFile f : files) {
+            if (f.getSize()==size && f.getName().equals(filename)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 
 }

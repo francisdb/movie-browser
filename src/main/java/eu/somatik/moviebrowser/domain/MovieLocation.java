@@ -28,11 +28,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Location")
-public class MovieLocation {
+public class MovieLocation implements Cloneable, Persistent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer id;
+    Long id;
 
     String path;
 
@@ -96,8 +96,12 @@ public class MovieLocation {
         this.group = group;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean isFolderRenamingSafe() {
@@ -112,4 +116,9 @@ public class MovieLocation {
         return "MovieLocation[id:"+id+",label:"+label+",path:"+path+"]";
     }
 
+    @Override
+    public MovieLocation clone() throws CloneNotSupportedException {
+        return (MovieLocation) super.clone();
+    }
+    
 }
