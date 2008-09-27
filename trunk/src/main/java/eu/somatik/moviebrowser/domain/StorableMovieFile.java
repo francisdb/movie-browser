@@ -35,7 +35,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "File")
-public class StorableMovieFile {
+public class StorableMovieFile implements Cloneable, Persistent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -121,6 +121,11 @@ public class StorableMovieFile {
     @Override
     public String toString() {
         return "file[id:"+id+",name:"+name+",size:"+size+",type:"+type+']';
+    }
+    
+    @Override
+    protected StorableMovieFile clone() throws CloneNotSupportedException {
+        return (StorableMovieFile) super.clone();
     }
     
 }
