@@ -154,6 +154,12 @@ public class MainFrame extends javax.swing.JFrame {
         timer.start();
     }
 
+    MovieFileFilter getMovieFileFilter() {
+        return movieFileFilter;
+    }
+
+    
+    
     private void setColumnWidths() {
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new MovieStatusCellRenderer(iconLoader));
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
@@ -575,11 +581,11 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
             JOptionPane.showMessageDialog(MainFrame.this, "You have the latest version of Movie Browser.", "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else if (version == null || version.contains("SNAPSHOT")) {
             String msg = "You have a development version of Movie Browser. The latest stable release available is " + latestVersion + ".\nOpening our website where you can download the new version...";
-            loadUrl("http://code.google.com/p/movie-browser/downloads/list");
+            browser.openUrl("http://code.google.com/p/movie-browser/downloads/list");
             JOptionPane.showMessageDialog(MainFrame.this, msg, "Updates", JOptionPane.INFORMATION_MESSAGE);
         } else {
             String msg = "The latest version available is " + latestVersion + "\nYou are running the older version " + version + ".\nOpening our website where you can download the new version...";
-            loadUrl("http://code.google.com/p/movie-browser/downloads/list");
+            browser.openUrl("http://code.google.com/p/movie-browser/downloads/list");
             JOptionPane.showMessageDialog(MainFrame.this, msg, "Updates", JOptionPane.INFORMATION_MESSAGE);
         }
     }
@@ -632,15 +638,6 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 // TODO add your handling code here:
 }//GEN-LAST:event_toolsMenuActionPerformed
 
-    private void loadUrl(String url) {
-        try {
-            Desktop.getDesktop().browse(new URL(url).toURI());
-        } catch (IOException ex) {
-            LOGGER.error("Could not open hyperlink", ex);
-        } catch (URISyntaxException ex) {
-            LOGGER.error("Could not open hyperlink", ex);
-        }
-    }
 
     private void showRightClickMenu(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -653,14 +650,14 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
             JMenu trailerMenu = new JMenu("Trailer");
             trailerMenu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
-            trailerMenu.add(new AppleTrailerAction());
-            trailerMenu.add(new ImdbTrailerAction());
+            trailerMenu.add(new AppleTrailerAction(this, browser));
+            trailerMenu.add(new ImdbTrailerAction(this, browser));
             popup.add(trailerMenu);
 
             JMenu watchMenu = new JMenu("Watch");
             watchMenu.setIcon(iconLoader.loadIcon("images/16/video-display.png"));
-            watchMenu.add(new WatchMovieFileAction());
-            watchMenu.add(new WatchSampleAction());
+            watchMenu.add(new WatchMovieFileAction(this, browser));
+            watchMenu.add(new WatchSampleAction(this));
             popup.add(watchMenu);
 
             popup.add(new CrawlSubtitleAction());
@@ -764,7 +761,7 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
     }
 
-    private MovieInfo getSelectedMovie() {
+    protected MovieInfo getSelectedMovie() {
         int selected = movieTable.getRowSorter().convertRowIndexToModel(movieTable.getSelectedRow());
         return ((MovieInfoTableModel)movieTable.getModel()).getMovieInfo(selected);
         //return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
@@ -790,126 +787,6 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
                 JOptionPane.showMessageDialog(MainFrame.this, "Editing cannot be done while movie info is being loaded. \nPlease wait till all movie info is loaded and try again.", "Loading Info", JOptionPane.WARNING_MESSAGE);
             }
 
-        }
-    }
-
-    private void openUrl(String url) {
-        try {
-            Desktop.getDesktop().browse(new URI(url));
-        } catch (URISyntaxException ex) {
-            LOGGER.error("Failed launching default browser for " + url, ex);
-        } catch (IOException ex) {
-            LOGGER.error("Failed launching default browser for " + url, ex);
-        }
-    }
-
-    private void openFile(File file) {
-        LOGGER.info("Trying to open " + file.getAbsolutePath());
-        try {
-            Desktop.getDesktop().open(file);
-        } catch (IOException ex) {
-            LOGGER.error("Failed launching default browser for " + file.getAbsolutePath(), ex);
-        }
-    }
-
-    /**
-     * This action  tries to show the trailer
-     * @param evt
-     */
-    private class ImdbTrailerAction extends AbstractAction {
-
-        public ImdbTrailerAction() {
-            super("IMDB Trailer", iconLoader.loadIcon("images/16/imdb.png"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
-            TrailerFinder finder = new ImdbTrailerFinder();
-            LOGGER.error("Not implemented");
-            String url = finder.findTrailerUrl(info.getMovie().getTitle(), info.siteFor(MovieService.IMDB).getIdForSite());
-            if (url == null) {
-                JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.imdb.com");
-            } else {
-                openUrl(url);
-            }
-        }
-    }
-
-    /**
-     * This action tries to show the apple trailer site
-     * @param evt
-     */
-    private class AppleTrailerAction extends AbstractAction {
-
-        public AppleTrailerAction() {
-            super("Apple Trailer", iconLoader.loadIcon("images/16/apple.png"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
-            TrailerFinder finder = new AppleTrailerFinder();
-            LOGGER.error("Not implemented");
-            String url = finder.findTrailerUrl(info.getMovie().getTitle(), null);
-            if (url == null) {
-                JOptionPane.showMessageDialog(MainFrame.this, "Could not find a trailer on www.apple.com");
-            } else {
-                openUrl(url);
-            }
-        }
-    }
-
-    /**
-     * This action opens the sample if a sample is found
-     * @param evt
-     */
-    private class WatchSampleAction extends AbstractAction {
-
-        public WatchSampleAction() {
-            super("Sample", iconLoader.loadIcon("images/16/video-display.png"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
-            File sample = browser.getFileSystemScanner().findSample(info.getDirectory());
-            if (sample != null) {
-                openFile(sample);
-            } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "No sample found");
-            }
-        }
-    }
-
-    /**
-     * This action opens the sample if a sample is found
-     * @param evt
-     */
-    private class WatchMovieFileAction extends AbstractAction {
-
-        public WatchMovieFileAction() {
-            super("Video", iconLoader.loadIcon("images/16/video-display.png"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
-            File file = info.getDirectory();
-            if (file.isDirectory()) {
-                File[] movieFiles = file.listFiles(movieFileFilter);
-                if (movieFiles.length > 0) {
-                    for (File movieFile : movieFiles) {
-                        openFile(movieFile);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(MainFrame.this, "No video found");
-                }
-            } else if (movieFileFilter.accept(file)) {
-                openFile(file);
-            } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "No video found");
-            }
         }
     }
 

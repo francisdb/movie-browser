@@ -42,7 +42,12 @@ import eu.somatik.moviebrowser.gui.debug.EventDispatchThreadHangMonitor;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.export.ExporterModule;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -177,6 +182,10 @@ public class MovieBrowser {
         browser.start();
     }
 
+    public IconLoader getIconLoader() {
+        return iconLoader;
+    }
+    
     public MovieFinder getMovieFinder() {
         return movieFinder;
     }
@@ -200,6 +209,26 @@ public class MovieBrowser {
     public MovieCache getMovieCache() {
         return movieCache;
     }
+    
+    public void openUrl(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (URISyntaxException ex) {
+            LOGGER.error("Failed launching default browser for " + url, ex);
+        } catch (IOException ex) {
+            LOGGER.error("Failed launching default browser for " + url, ex);
+        }
+    }
+
+    public void openFile(File file) {
+        LOGGER.info("Trying to open " + file.getAbsolutePath());
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (IOException ex) {
+            LOGGER.error("Failed launching default browser for " + file.getAbsolutePath(), ex);
+        }
+    }
+
 
     private static class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler {
 
