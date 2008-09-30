@@ -47,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
@@ -657,10 +658,10 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
             JMenu watchMenu = new JMenu("Watch");
             watchMenu.setIcon(iconLoader.loadIcon("images/16/video-display.png"));
             watchMenu.add(new WatchMovieFileAction(this, browser));
-            watchMenu.add(new WatchSampleAction(this));
+            watchMenu.add(new WatchSampleAction(this, browser));
             popup.add(watchMenu);
 
-            popup.add(new CrawlSubtitleAction());
+            popup.add(new CrawlSubtitleAction(this, browser));
             popup.add(new EditAction());
             popup.add(new RenameAction());
             popup.show(evt.getComponent(), evt.getX(), evt.getY());
@@ -790,57 +791,12 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         }
     }
 
-    /**
-     * This action opens the SubtitleCrawlerFrame if a video file is found in the directory. 
-     */
-    private class CrawlSubtitleAction extends AbstractAction {
-
-        public CrawlSubtitleAction() {
-            super("Subtitle Crawler", iconLoader.loadIcon("images/16/subtitles.png"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //TODO get this out of here, this sould be somewhere in a logic class and not in the gui
-            if (browser.getMovieFinder().getRunningTasks() == 0) {
-                List<String> files = new ArrayList<String>();
-                MovieInfo info = getSelectedMovie();
-                File dir = info.getDirectory();
-                String alternateSearchKey = info.getMovie().getTitle();
-                File child;
-                if (!dir.isFile()) {
-                    for (File file : dir.listFiles()) {
-                        if (file.isDirectory()) {
-                            child = file;
-                            for (File file2 : child.listFiles()) {
-                                if (file2.isFile()) {
-                                    if (!file2.getName().contains("sample")) {
-                                        if (movieFileFilter.accept(file2)) {
-                                            files.add(file2.getName());
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if (file.isFile()) {
-                                if (!file.getName().contains("sample")) {
-                                    if (movieFileFilter.accept(file)) {
-                                        files.add(file.getName());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                files.add(alternateSearchKey);
-                openSubCrawler(files, info);
-            } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "Subtitle crawling cannot be done while movie info is being loaded. \nPlease try again after all movie info is loaded.", "Loading Info", JOptionPane.WARNING_MESSAGE);
-            }
-        }
+    JScrollPane getMovieTableScrollPane() {
+        return movieTableScrollPane;
     }
 
+    
+    
     /**
      * Loads SubtitleCrawlerFrame
      * @param fileName
