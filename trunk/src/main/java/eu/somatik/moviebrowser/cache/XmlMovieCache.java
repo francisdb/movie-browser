@@ -71,6 +71,12 @@ public class XmlMovieCache implements MovieCache {
         }
     }
 
+    /**
+     * This class is used to generate unique ID-s for the persistent objects.
+     * 
+     * @author zsombor
+     *
+     */
     static class IdGenerator {
         long maxId;
         
@@ -239,7 +245,9 @@ public class XmlMovieCache implements MovieCache {
         for (StorableMovie t : movies.values()) {
             FileGroup g = t.hasFiles(filename, size);
             if (g != null) {
-                return g;
+                StorableMovie movie= g.getMovie().clone();
+                // return the cloned movie + filegroup
+                return movie.hasFiles(filename, size);
             }
         }
         return null;
@@ -260,7 +268,7 @@ public class XmlMovieCache implements MovieCache {
         for (StorableMovie t : movies.values()) {
             if (LevenshteinDistance.distance(t.getTitle().toLowerCase(), lowerCase) < 4) {
                 // we are happy with similar titles :-)
-                return t;
+                return t.clone();
             }
         }
         return null;
@@ -283,11 +291,7 @@ public class XmlMovieCache implements MovieCache {
         // this ensures, that later modifications doesn't shows up in
         // accidentally
         StorableMovie clone;
-        try {
-            clone = movie.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException("Error in storing:" + movie + ", e:" + e.getMessage(), e);
-        }
+        clone = movie.clone();
         movies.put(clone.getId(), clone);
         save();
         return movie;
@@ -328,13 +332,8 @@ public class XmlMovieCache implements MovieCache {
         checkStarted();
         List<StorableMovie> dbValues = new ArrayList<StorableMovie>(movies.size());
         // we have to clone the movie graph, to avoid accidental modifications.
-        try {
-            for (StorableMovie m : movies.values()) {
-                dbValues.add(m.clone());
-            }
-        } catch (CloneNotSupportedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        for (StorableMovie m : movies.values()) {
+            dbValues.add(m.clone());
         }
         return dbValues;
     }
