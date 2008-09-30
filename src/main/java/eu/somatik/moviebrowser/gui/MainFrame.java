@@ -29,9 +29,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -64,10 +61,6 @@ import javax.swing.table.TableRowSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.flicklib.api.TrailerFinder;
-import com.flicklib.domain.MovieService;
-import com.flicklib.service.movie.apple.AppleTrailerFinder;
-import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
 import com.google.inject.Inject;
 
 import eu.somatik.moviebrowser.MovieBrowser;
