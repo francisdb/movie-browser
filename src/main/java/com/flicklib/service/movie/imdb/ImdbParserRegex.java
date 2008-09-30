@@ -19,7 +19,6 @@
 package com.flicklib.service.movie.imdb;
 
 import com.flicklib.domain.MovieType;
-import eu.somatik.moviebrowser.domain.Genre;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -45,7 +44,7 @@ class ImdbParserRegex {
      * Returns an array of the movie's genres, if the open document is a movie page.
      * @return an array of genres, or an empty array if none were found.
      */
-    List<Genre> getGenres() {
+    List<String> getGenres() {
 
         /*
          * Examples:
@@ -55,9 +54,9 @@ class ImdbParserRegex {
          */
         Pattern patternGenre = Pattern.compile("<a href=\"/Sections/Genres/[^/]+/\">([^<]+)</a>");
         Matcher matcherGenre = patternGenre.matcher(html);
-        List<Genre> temp = new ArrayList<Genre>();
+        List<String> temp = new ArrayList<String>();
         while (matcherGenre.find()) {
-            temp.add(new Genre(matcherGenre.group(1)));
+            temp.add(matcherGenre.group(1));
         }
         return temp;
     }
