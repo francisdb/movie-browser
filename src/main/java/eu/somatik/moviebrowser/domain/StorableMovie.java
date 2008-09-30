@@ -342,30 +342,34 @@ public class StorableMovie implements Cloneable, Persistent {
     }
     
     @Override
-    public StorableMovie clone() throws CloneNotSupportedException {
-        StorableMovie m = (StorableMovie) super.clone();
-        m.lastModified = lastModified!=null ? new Date(lastModified.getTime()) : null;
-        m.genres = new HashSet<Genre>();
-        if (genres!=null) {
-            m.genres.addAll(genres);
+    public StorableMovie clone() {
+        try {
+            StorableMovie m = (StorableMovie) super.clone();
+            m.lastModified = lastModified!=null ? new Date(lastModified.getTime()) : null;
+            m.genres = new HashSet<Genre>();
+            if (genres!=null) {
+                m.genres.addAll(genres);
+            }
+            m.languages = new HashSet<Language>();
+            if (languages!=null) {
+                m.languages.addAll(languages);
+            }
+            m.groups = new HashSet<FileGroup>();
+            for (FileGroup f : groups) {
+                FileGroup clone = f.clone();
+                clone.setMovieRecursive(m);
+                m.groups.add(clone);
+            }
+            m.siteInfo = new HashSet<StorableMovieSite>();
+            for (StorableMovieSite s : siteInfo) {
+                StorableMovieSite clone = s.clone();
+                clone.setMovie(m);
+                m.siteInfo.add(clone);
+            }
+            return m;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Error during cloning:"+this,e);
         }
-        m.languages = new HashSet<Language>();
-        if (languages!=null) {
-            m.languages.addAll(languages);
-        }
-        m.groups = new HashSet<FileGroup>();
-        for (FileGroup f : groups) {
-            FileGroup clone = f.clone();
-            clone.setMovieRecursive(m);
-            m.groups.add(clone);
-        }
-        m.siteInfo = new HashSet<StorableMovieSite>();
-        for (StorableMovieSite s : siteInfo) {
-            StorableMovieSite clone = s.clone();
-            clone.setMovie(m);
-            m.siteInfo.add(clone);
-        }
-        return m;
     }
 
     public FileGroup hasFiles(String filename, long size) {
