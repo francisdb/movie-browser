@@ -68,7 +68,8 @@ public class MovieFinder {
         MovieService.TOMATOES,
         MovieService.MOVIEWEB,
         MovieService.GOOGLE,
-        MovieService.FLIXSTER};
+        MovieService.FLIXSTER,
+        MovieService.NETFLIX};
     
     private final ExecutorService service;
     private final ExecutorService secondaryService;
@@ -320,6 +321,9 @@ public class MovieFinder {
             // TODO this should update all records with this movie linked to it
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
+                if(fetcher == null){
+                    throw new RuntimeException("No fetcher for "+service.getName());
+                }
                 LOGGER.trace("Calling fetch on {} for '{}'", fetcher.getClass().getSimpleName(), info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 Movie movie = new Movie();

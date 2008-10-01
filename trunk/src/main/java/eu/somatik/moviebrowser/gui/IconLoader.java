@@ -71,6 +71,9 @@ public class IconLoader {
             case TOMATOES:
                 fileName = "images/16/rottentomatoes.png";
                 break;
+            case NETFLIX:
+                fileName = "images/16/netflix.png";
+                break;
             default:
                 throw new AssertionError("Uncatched movieservice: "+service);
                 
