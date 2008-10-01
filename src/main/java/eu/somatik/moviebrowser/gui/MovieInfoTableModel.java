@@ -61,13 +61,15 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Tomato",
         "MWeb",
         "Google",
-        "Flixter"
+        "Flixter",
+        "Netflix"
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class,
         Object.class,
         Integer.class,
         Date.class,
+        Integer.class,
         Integer.class,
         Integer.class,
         Integer.class,
@@ -144,6 +146,9 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 //return movies.get(rowIndex).getMovieFile().getMovie().getGoogleScore();
             case 10:
                 return infoHandler.score(info, MovieService.FLIXSTER);
+                //return movies.get(rowIndex).getMovieFile().getMovie().getFlixterScore();
+            case 11:
+                return infoHandler.score(info, MovieService.NETFLIX);
                 //return movies.get(rowIndex).getMovieFile().getMovie().getFlixterScore();
             default:
                 assert false : "Should never come here";
