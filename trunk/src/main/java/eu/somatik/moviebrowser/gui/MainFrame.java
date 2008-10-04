@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import com.flicklib.domain.MovieService;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -774,7 +775,7 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         @Override
         public void actionPerformed(ActionEvent e) {
             if (browser.getMovieFinder().getRunningTasks() == 0) {
-                EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getImdbSearch(), browser.getMovieFinder());
+                EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getFetcherFactory().get(MovieService.IMDB), browser.getMovieFinder());
                 editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
                 editMovieFrame.setVisible(true);
             } else {
