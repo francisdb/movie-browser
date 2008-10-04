@@ -348,10 +348,13 @@ public class MovieFinder {
             url = fileSystemScanner.findNfoImdbUrl(movieInfo.getDirectory());
         }
 
-        StorableMovieSite storableMovieSite = fetchMoviePageInfo(movieInfo, MovieService.IMDB);
+        MoviePage moviePage = fetchMoviePageInfo(movieInfo, MovieService.IMDB);
+        if (moviePage!=null && moviePage.getIdForSite()!=null) {
+            converter.convert(moviePage, newMovie);
+        }
 
         //rename titles, if we have IMDB result
-        if (settings.getRenameTitles() && storableMovieSite.getIdForSite()!=null) {
+        if (settings.getRenameTitles() && moviePage.getIdForSite()!=null) {
             renameFolderToTitle(movieInfo);
         }
     // todo insert the site?
@@ -366,7 +369,7 @@ public class MovieFinder {
      * @param service
      * @throws IOException
      */
-    protected StorableMovieSite fetchMoviePageInfo(MovieInfo info, MovieService service) throws IOException {
+    protected MoviePage fetchMoviePageInfo(MovieInfo info, MovieService service) throws IOException {
         MoviePage site;
         MovieInfoFetcher fetcher = fetcherFactory.get(service);
         StorableMovieSite storableMovieSite = info.getMovie().getMovieSiteInfo(service);
@@ -376,8 +379,12 @@ public class MovieFinder {
         } else {
             site = fetcher.getMovieInfo(storableMovieSite.getIdForSite());
         }
-        converter.convert(site, storableMovieSite);
-        return storableMovieSite;
+        if (site!=null) {
+            converter.convert(site, storableMovieSite);
+        } else {
+            LOGGER.warn("Movie Page not found for "+info.getMovie().getTitle()+" by "+service);
+        }
+        return site;
     }
     
     public int getRunningTasks() {

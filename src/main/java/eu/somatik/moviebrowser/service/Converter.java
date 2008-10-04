@@ -60,6 +60,24 @@ public class Converter {
             storableMovie.addGenre(new Genre(genre));
         }
     }
+
+    public void convert(MoviePage movie, StorableMovie storableMovie){
+        storableMovie.setTitle(movie.getTitle());
+        storableMovie.setPlot(movie.getPlot());
+        storableMovie.setRuntime(movie.getRuntime());
+        storableMovie.setYear(movie.getYear());
+        storableMovie.setDirector(movie.getDirector());
+        storableMovie.setType(movie.getType());
+        storableMovie.getLanguages().clear();
+        for (String lang : movie.getLanguages()) {
+            storableMovie.addLanguage(new Language(lang));
+        }
+        storableMovie.getGenres().clear();
+        for (String genre :movie.getGenres()) {
+            storableMovie.addGenre(new Genre(genre));
+        }
+    }
+
     
     public void convert(StorableMovieSite storableMovieSite, MoviePage movieSite){
         movieSite.setService(storableMovieSite.getService());
