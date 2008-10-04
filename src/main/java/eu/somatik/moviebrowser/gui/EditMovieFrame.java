@@ -202,11 +202,11 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     statusProgressBar.setIndeterminate(true);
     statusProgressBar.setString("Searching...");
 
-    SwingWorker<List<MovieSearchResult>, Void> worker =
-            new SwingWorker<List<MovieSearchResult>, Void>() {
+    SwingWorker<List<? extends MovieSearchResult>, Void> worker =
+            new SwingWorker<List<? extends MovieSearchResult>, Void>() {
 
                 @Override
-                public List<MovieSearchResult> doInBackground() throws Exception {
+                public List<? extends MovieSearchResult> doInBackground() throws Exception {
                     return fetcher.search(searchTextField.getText().trim());
                 }
 
@@ -274,7 +274,7 @@ private void resultsListDoubleClick() {
 }    
 
  
- private void showResults(List<MovieSearchResult> movies){
+ private void showResults(List<? extends MovieSearchResult> movies){
      
         listModel.clear();
         for(MovieSearchResult movie : movies){
