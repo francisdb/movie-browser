@@ -168,11 +168,15 @@ public class MovieBrowser {
 
             @Override
             public void run() {
-
-                MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler, exporterLocator);
-                mainFrame.setupListeners();
-                mainFrame.setVisible(true);
-                mainFrame.loadMoviesFromDatabase();
+                try {
+                    MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler, exporterLocator);
+                    mainFrame.setupListeners();
+                    mainFrame.setVisible(true);
+                    mainFrame.loadMoviesFromDatabase();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    System.exit(-1);
+                }
             }
         });
     }
