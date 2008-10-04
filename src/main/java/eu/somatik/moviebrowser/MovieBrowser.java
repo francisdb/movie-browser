@@ -23,6 +23,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.flicklib.api.InfoFetcherFactory;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -73,7 +74,8 @@ public class MovieBrowser {
     private final InfoHandler infoHandler;
     private final MovieCache movieCache;
     private final ExporterLocator exporterLocator;
-
+    private final InfoFetcherFactory fetcherFactory;
+    
     /** 
      * Creates a new instance of MovieBrowser
      * @param finder
@@ -100,7 +102,8 @@ public class MovieBrowser {
             final SubtitlesLoader subtitlesLoader,
             final InfoHandler infoHandler,
             final MovieCache movieCache,
-            final ExporterLocator exporterLocator) {
+            final ExporterLocator exporterLocator,
+            final InfoFetcherFactory fetcherFactory) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
@@ -112,6 +115,7 @@ public class MovieBrowser {
         this.infoHandler = infoHandler;
         this.movieCache = movieCache;
         this.exporterLocator = exporterLocator;
+        this.fetcherFactory = fetcherFactory;
     }
 
     private void configureLogging() {
@@ -208,6 +212,10 @@ public class MovieBrowser {
 
     public MovieCache getMovieCache() {
         return movieCache;
+    }
+
+    public InfoFetcherFactory getFetcherFactory() {
+        return fetcherFactory;
     }
     
     public void openUrl(String url) {

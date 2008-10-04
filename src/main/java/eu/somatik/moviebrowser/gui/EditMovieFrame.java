@@ -18,6 +18,8 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import com.flicklib.api.MovieInfoFetcher;
+import com.flicklib.api.MovieSearchResult;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
@@ -40,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import com.flicklib.domain.MoviePage;
 import com.flicklib.domain.MovieService;
-import com.flicklib.service.movie.imdb.ImdbSearch;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
@@ -52,7 +53,7 @@ import eu.somatik.moviebrowser.service.MovieFinder;
 public class EditMovieFrame extends javax.swing.JFrame {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EditMovieFrame.class);
-    private final ImdbSearch imdbSearch;
+    private final MovieInfoFetcher fetcher;
     private final DefaultListModel listModel;
     private final MovieInfo movieInfo;
     private final MovieFinder movieFinder;
@@ -63,8 +64,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
      * @param imdbSearch
      * @param movieFinder 
      */
-    public EditMovieFrame(MovieInfo movieInfo, ImdbSearch imdbSearch, MovieFinder movieFinder) {
-        this.imdbSearch = imdbSearch;
+    public EditMovieFrame(MovieInfo movieInfo, MovieInfoFetcher fetcher, MovieFinder movieFinder) {
+        this.fetcher = fetcher;
         this.movieFinder = movieFinder;
         this.movieInfo = movieInfo;
 
@@ -201,12 +202,12 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     statusProgressBar.setIndeterminate(true);
     statusProgressBar.setString("Searching...");
 
-    SwingWorker<List<MoviePage>, Void> worker =
-            new SwingWorker<List<MoviePage>, Void>() {
+    SwingWorker<List<MovieSearchResult>, Void> worker =
+            new SwingWorker<List<MovieSearchResult>, Void>() {
 
                 @Override
-                public List<MoviePage> doInBackground() throws Exception {
-                    return imdbSearch.getResults(searchTextField.getText().trim());
+                public List<MovieSearchResult> doInBackground() throws Exception {
+                    return fetcher.search(searchTextField.getText().trim());
                 }
 
                 @Override
@@ -261,7 +262,7 @@ private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//G
 }//GEN-LAST:event_searchTextFieldActionPerformed
 
 private void resultsListDoubleClick() {
-    MoviePage moviePage = (MoviePage) resultsList.getSelectedValue();
+    MovieSearchResult moviePage = (MovieSearchResult) resultsList.getSelectedValue();
     String url = moviePage.getUrl();
     try {
         Desktop.getDesktop().browse(new URI(url));
@@ -273,10 +274,10 @@ private void resultsListDoubleClick() {
 }    
 
  
- private void showResults(List<MoviePage> movies){
+ private void showResults(List<MovieSearchResult> movies){
      
         listModel.clear();
-        for(MoviePage movie : movies){
+        for(MovieSearchResult movie : movies){
             listModel.addElement(movie);
         }
         
@@ -294,8 +295,8 @@ private void resultsListDoubleClick() {
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            MoviePage movieSite = (MoviePage) value;
-            setText(movieSite.getMovie().getTitle()+" ("+movieSite.getMovie().getYear()+" / "+movieSite.getMovie().getType().getName()+")");
+            MovieSearchResult movieSite = (MovieSearchResult) value;
+            setText(movieSite.getTitle()+" ("+movieSite.getYear()+" / "+movieSite.getType().getName()+")");
             return this;
         }
     }

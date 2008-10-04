@@ -19,6 +19,7 @@
 package eu.somatik.moviebrowser.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -32,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import com.flicklib.api.InfoFetcherFactory;
 import com.flicklib.api.MovieInfoFetcher;
-import com.flicklib.domain.Movie;
 import com.flicklib.domain.MoviePage;
 import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
@@ -293,7 +293,6 @@ public class MovieFinder {
 
     private class MovieServiceCaller implements Callable<MovieInfo> {
 
-        private final MovieInfoFetcher fetcher;
         private final MovieInfo info;
         private final MovieService service;
 
@@ -304,7 +303,6 @@ public class MovieFinder {
          */
         public MovieServiceCaller(final MovieService service, final MovieInfo info) {
             this.service = service;
-            this.fetcher = fetcherFactory.get(service);
             this.info = info;
             incRunningTasks();
         }
@@ -318,24 +316,12 @@ public class MovieFinder {
         }
         
         private void doCall() throws Exception {
-            // TODO this should update all records with this movie linked to it
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
-                if(fetcher == null){
-                    throw new RuntimeException("No fetcher for "+service.getName());
-                }
-                LOGGER.trace("Calling fetch on {} for '{}'", fetcher.getClass().getSimpleName(), info.getMovie().getTitle());
+                LOGGER.trace("Calling fetch on {} for '{}'", service.getClass().getSimpleName(), info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
-                Movie movie = new Movie();
-                converter.convert(info.getMovie(), movie);
-                String id = null;
-                if (service == MovieService.TOMATOES) {
-                    id = infoHandler.id(info, MovieService.IMDB);
-                }
-                MoviePage site = fetcher.fetch(movie, id);
-                StorableMovieSite storableMovieSite = info.getMovie().getMovieSiteInfoOrCreate(service);
-                converter.convert(site, storableMovieSite);
-                // TODO check if not fetched by some other duplicate before inserting
+                
+                fetchMoviePageInfo(info, service);
                 
                 info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
                 info.setStatus(MovieStatus.LOADED);
@@ -362,14 +348,7 @@ public class MovieFinder {
             url = fileSystemScanner.findNfoImdbUrl(movieInfo.getDirectory());
         }
 
-        // TODO find a way to pass the imdb url
-        // movieInfo.getMovieFile().getMovie().setImdbUrl(url);
-        Movie movie = new Movie();
-        converter.convert(newMovie, movie);
-        MoviePage site = fetcherFactory.get(MovieService.IMDB).fetch(movie, infoHandler.id(movieInfo, MovieService.IMDB));
-        converter.convert(movie, newMovie);
-        StorableMovieSite storableMovieSite = newMovie.getMovieSiteInfoOrCreate(site.getService());
-        converter.convert(site, storableMovieSite);
+        StorableMovieSite storableMovieSite = fetchMoviePageInfo(movieInfo, MovieService.IMDB);
 
         //rename titles, if we have IMDB result
         if (settings.getRenameTitles() && storableMovieSite.getIdForSite()!=null) {
@@ -378,6 +357,29 @@ public class MovieFinder {
     // todo insert the site?
     }
 
+    
+    /**
+     * fetch all movie information from the given movie service, and put into the MovieInfo/StorableMovie/StorableMovieSite,
+     * and returns the modified StorableMovieSite.
+     * 
+     * @param info
+     * @param service
+     * @throws IOException
+     */
+    protected StorableMovieSite fetchMoviePageInfo(MovieInfo info, MovieService service) throws IOException {
+        MoviePage site;
+        MovieInfoFetcher fetcher = fetcherFactory.get(service);
+        StorableMovieSite storableMovieSite = info.getMovie().getMovieSiteInfo(service);
+        if (storableMovieSite==null || storableMovieSite.getIdForSite()==null) {
+            site = fetcher.fetch(info.getMovie().getTitle());
+            storableMovieSite = info.getMovie().getMovieSiteInfoOrCreate(service);
+        } else {
+            site = fetcher.getMovieInfo(storableMovieSite.getIdForSite());
+        }
+        converter.convert(site, storableMovieSite);
+        return storableMovieSite;
+    }
+    
     public int getRunningTasks() {
         return runningTasks;
     }
