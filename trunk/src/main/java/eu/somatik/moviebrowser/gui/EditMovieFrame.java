@@ -19,7 +19,7 @@
 package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.api.MovieInfoFetcher;
-import com.flicklib.api.MovieSearchResult;
+import com.flicklib.domain.MovieSearchResult;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
@@ -61,8 +61,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
     /** 
      * Creates new form EditMovieFrame
      * @param movieInfo 
-     * @param imdbSearch
-     * @param movieFinder 
+     * @param fetcher 
+     * @param movieFinder
      */
     public EditMovieFrame(MovieInfo movieInfo, MovieInfoFetcher fetcher, MovieFinder movieFinder) {
         this.fetcher = fetcher;
