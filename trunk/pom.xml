@@ -39,7 +39,7 @@
             <name>Dev/User List</name>
             <subscribe>http://groups.google.com/group/movie-browser</subscribe>
             <unsubscribe>http://groups.google.com/group/movie-browser</unsubscribe>
-            <post>user@127.0.0.1</post>
+            <post>movie-browser@googlegroups.com</post>
             <archive>http://groups.google.com/group/movie-browser</archive>
         </mailingList>
     </mailingLists>
