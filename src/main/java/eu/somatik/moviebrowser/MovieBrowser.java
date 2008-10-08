@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.flicklib.api.SubtitlesLoader;
 import com.flicklib.module.FlicklibModule;
+import com.flicklib.module.NetFlixAuthModule;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
@@ -185,7 +186,9 @@ public class MovieBrowser {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule(), new ExporterModule());
+        // TODO request a key for moviebrowser
+        NetFlixAuthModule authModule = new NetFlixAuthModule("", "");
+        Injector injector = Guice.createInjector(authModule, new MovieBrowserModule(), new FlicklibModule(), new ExporterModule());
         MovieBrowser browser = injector.getInstance(MovieBrowser.class);
         browser.start();
     }
