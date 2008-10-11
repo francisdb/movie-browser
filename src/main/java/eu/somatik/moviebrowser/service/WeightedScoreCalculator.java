@@ -55,11 +55,11 @@ public class WeightedScoreCalculator implements ScoreCalculator {
             if (serviceScore != null) {
                 weight = 2;
                 // double weight
-                if (movieService == movieService.IMDB) {
+                if (movieService == MovieService.IMDB) {
                     weight = 4;
                 }
                 // half weight
-                if (movieService == movieService.MOVIEWEB) {
+                if (movieService == MovieService.MOVIEWEB) {
                     weight = 1;
                 }
                 score += serviceScore * weight;

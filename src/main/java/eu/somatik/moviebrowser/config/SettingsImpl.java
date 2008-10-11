@@ -18,8 +18,6 @@
  */
 package eu.somatik.moviebrowser.config;
 
-import com.google.inject.Singleton;
-import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,9 +30,16 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.swing.UIManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.domain.MovieService;
+import com.google.inject.Singleton;
+
+import eu.somatik.moviebrowser.tools.FileTools;
 
 /**
  * Singleton implementation for the settings
@@ -327,5 +332,26 @@ public class SettingsImpl implements Settings {
         prefs.put("flags.service."+name, Boolean.toString(value));
         savePreferences(prefs);
     }
-    
+
+    private String getPreferredServiceName() {
+        Map<String, String> prefs = loadPreferences();
+        return prefs.get("pref.service");
+    }
+
+    @Override
+    public MovieService getPreferredService() {
+        try {
+            String name = getPreferredServiceName();
+            return MovieService.valueOf(name);
+        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
+        }
+        return MovieService.IMDB;
+    }
+
+    public void setPreferredService(MovieService service) {
+        Map<String, String> prefs = loadPreferences();
+        prefs.put("pref.service", service.name());
+        savePreferences(prefs);
+    }
 }

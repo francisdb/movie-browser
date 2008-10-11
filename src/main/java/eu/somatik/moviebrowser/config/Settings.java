@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.config;
 
+import com.flicklib.domain.MovieService;
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import java.util.Set;
  * @author francisdb
  */
 public interface Settings {
+
     
     /**
      * Loads the user preferences
@@ -128,8 +130,9 @@ public interface Settings {
      */
     void setServiceEnabled(String name, boolean value);
     
+    public MovieService getPreferredService();
     
-    
+    public void setPreferredService(MovieService service);
     
     /**
      * Gets the look and feel

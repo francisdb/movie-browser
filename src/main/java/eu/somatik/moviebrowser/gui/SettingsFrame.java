@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.config.Settings;
 
 import javax.swing.DefaultListModel;
@@ -25,8 +26,12 @@ import javax.swing.JFileChooser;
 import javax.swing.ImageIcon;
 import java.io.File;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +42,10 @@ import org.slf4j.LoggerFactory;
  */
 public class SettingsFrame extends javax.swing.JFrame {
     
-    
+    private static final MovieService[] SERVICES = new MovieService[]{  
+        MovieService.IMDB,
+        MovieService.PORTHU
+    };
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private final Settings settings;
@@ -91,6 +99,8 @@ public class SettingsFrame extends javax.swing.JFrame {
         okayButton = new javax.swing.JButton();
         saveCoverArtCheckBox = new javax.swing.JCheckBox();
         portHuCheckbox = new javax.swing.JCheckBox();
+        preferSiteComboBox = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
 
         jTextField1.setText("jTextField1");
 
@@ -182,6 +192,11 @@ public class SettingsFrame extends javax.swing.JFrame {
         portHuCheckbox.setText("Port.hu");
         portHuCheckbox.setName("porthu"); // NOI18N
 
+        preferSiteComboBox.setModel(getMovieServices());
+        preferSiteComboBox.setToolTipText("Select the main site for information retrieval");
+
+        jLabel1.setText("Preferred site:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -241,6 +256,10 @@ public class SettingsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(preferSiteComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(saveCoverArtCheckBox)
                     .addComponent(renameTitlesCheckBox)
                     .addGroup(layout.createSequentialGroup()
@@ -301,7 +320,11 @@ public class SettingsFrame extends javax.swing.JFrame {
                     .addComponent(secondsLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(saveCoverArtCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(preferSiteComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(okayButton)
@@ -378,6 +401,11 @@ public class SettingsFrame extends javax.swing.JFrame {
         };
     }
     
+    private ComboBoxModel getMovieServices() {
+        return new DefaultComboBoxModel(SERVICES);
+    }
+    
+    
     
     private void getSettingsValues() {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
@@ -386,6 +414,7 @@ public class SettingsFrame extends javax.swing.JFrame {
             boolean value = settings.isServiceEnabled(jb.getName(), jb.isSelected());
             jb.setSelected(value);
         }
+        preferSiteComboBox.setSelectedItem(settings.getPreferredService());
     }
     
     private void setSettingsValues() {
@@ -394,6 +423,8 @@ public class SettingsFrame extends javax.swing.JFrame {
         for (JCheckBox jb : getCheckboxes()) {
             settings.setServiceEnabled(jb.getName(), jb.isSelected());
         }
+        MovieService item = (MovieService) preferSiteComboBox.getSelectedItem();
+        settings.setPreferredService(item);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -401,6 +432,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     private javax.swing.JButton deleteLocationButton;
     private javax.swing.JCheckBox flixsterCheckBox;
     private javax.swing.JCheckBox googleCheckBox;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
@@ -415,6 +447,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox omdbCheckBox;
     private javax.swing.JCheckBox openSubsCheckBox;
     private javax.swing.JCheckBox portHuCheckbox;
+    private javax.swing.JComboBox preferSiteComboBox;
     private javax.swing.JCheckBox renameTitlesCheckBox;
     private javax.swing.JCheckBox rottenTomatoesCheckBox;
     private javax.swing.JCheckBox saveCoverArtCheckBox;
