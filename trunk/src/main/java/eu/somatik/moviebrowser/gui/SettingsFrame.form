@@ -58,7 +58,11 @@
                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                               <Component id="flixsterCheckBox" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="googleCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="googleCheckBox" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="portHuCheckbox" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -145,6 +149,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="moviewebCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="googleCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="portHuCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
@@ -232,12 +237,14 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Rotten Tomatoes"/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.rottentomatoes.com"/>
+        <Property name="name" type="java.lang.String" value="rottenttomatoes" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="omdbCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="OMDB"/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.omdb.org"/>
+        <Property name="name" type="java.lang.String" value="omdb" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="googleCheckBox">
@@ -245,6 +252,7 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Google"/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.google.com"/>
+        <Property name="name" type="java.lang.String" value="google" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="moviewebCheckBox">
@@ -252,6 +260,7 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Movie Web"/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.movieweb.com"/>
+        <Property name="name" type="java.lang.String" value="movieweb" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="flixsterCheckBox">
@@ -259,6 +268,7 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Flixster"/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to get information from www.flixster.com"/>
+        <Property name="name" type="java.lang.String" value="flixster" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator2">
@@ -326,6 +336,12 @@
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Save Cover Art in movie folder."/>
         <Property name="toolTipText" type="java.lang.String" value="Select this option to automatically save cover art to the movie directory."/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="portHuCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Port.hu"/>
+        <Property name="name" type="java.lang.String" value="porthu" noResource="true"/>
       </Properties>
     </Component>
   </SubComponents>

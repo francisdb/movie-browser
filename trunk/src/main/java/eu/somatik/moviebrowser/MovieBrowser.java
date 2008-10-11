@@ -28,6 +28,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.flicklib.api.SubtitlesLoader;
+import com.flicklib.domain.MovieService;
 import com.flicklib.module.FlicklibModule;
 import com.flicklib.module.NetFlixAuthModule;
 import eu.somatik.moviebrowser.cache.ImageCache;
@@ -50,6 +51,9 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -170,7 +174,7 @@ public class MovieBrowser {
             @Override
             public void run() {
                 try {
-                    MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler, exporterLocator);
+                    MainFrame mainFrame = new MainFrame(MovieBrowser.this, imageCache, iconLoader, settings, infoHandler, exporterLocator, movieFinder);
                     mainFrame.setupListeners();
                     mainFrame.setVisible(true);
                     mainFrame.loadMoviesFromDatabase();
@@ -243,6 +247,7 @@ public class MovieBrowser {
             LOGGER.error("Failed launching default browser for " + file.getAbsolutePath(), ex);
         }
     }
+
 
 
     private static class LoggingUncaughtExceptionHandler implements UncaughtExceptionHandler {

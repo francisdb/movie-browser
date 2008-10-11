@@ -280,7 +280,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         infoTextPane = new javax.swing.JTextPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         movieFileTreeTable = new org.jdesktop.swingx.JXTreeTable(fileTree);
-        System.out.println("teszt");
 
         movieHeader.setDescription("");
         movieHeader.setTitle("");

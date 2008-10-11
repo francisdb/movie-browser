@@ -27,6 +27,7 @@ import java.io.File;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import javax.swing.JCheckBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,8 @@ import org.slf4j.LoggerFactory;
  * @author  rug
  */
 public class SettingsFrame extends javax.swing.JFrame {
+    
+    
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private final Settings settings;
@@ -87,6 +90,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JSeparator();
         okayButton = new javax.swing.JButton();
         saveCoverArtCheckBox = new javax.swing.JCheckBox();
+        portHuCheckbox = new javax.swing.JCheckBox();
 
         jTextField1.setText("jTextField1");
 
@@ -121,21 +125,26 @@ public class SettingsFrame extends javax.swing.JFrame {
         rottenTomatoesCheckBox.setSelected(true);
         rottenTomatoesCheckBox.setText("Rotten Tomatoes");
         rottenTomatoesCheckBox.setToolTipText("Select this to get information from www.rottentomatoes.com");
+        rottenTomatoesCheckBox.setName("rottenttomatoes"); // NOI18N
 
         omdbCheckBox.setText("OMDB");
         omdbCheckBox.setToolTipText("Select this to get information from www.omdb.org");
+        omdbCheckBox.setName("omdb"); // NOI18N
 
         googleCheckBox.setSelected(true);
         googleCheckBox.setText("Google");
         googleCheckBox.setToolTipText("Select this to get information from www.google.com");
+        googleCheckBox.setName("google"); // NOI18N
 
         moviewebCheckBox.setSelected(true);
         moviewebCheckBox.setText("Movie Web");
         moviewebCheckBox.setToolTipText("Select this to get information from www.movieweb.com");
+        moviewebCheckBox.setName("movieweb"); // NOI18N
 
         flixsterCheckBox.setSelected(true);
         flixsterCheckBox.setText("Flixster");
         flixsterCheckBox.setToolTipText("Select this to get information from www.flixster.com");
+        flixsterCheckBox.setName("flixster"); // NOI18N
 
         subtitlesLabel.setText("Websites to use when crawling for subtitles.");
 
@@ -170,6 +179,9 @@ public class SettingsFrame extends javax.swing.JFrame {
         saveCoverArtCheckBox.setText("Save Cover Art in movie folder.");
         saveCoverArtCheckBox.setToolTipText("Select this option to automatically save cover art to the movie directory.");
 
+        portHuCheckbox.setText("Port.hu");
+        portHuCheckbox.setName("porthu"); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -195,7 +207,10 @@ public class SettingsFrame extends javax.swing.JFrame {
                                 .addComponent(omdbCheckBox)
                                 .addGap(18, 18, 18)
                                 .addComponent(flixsterCheckBox))
-                            .addComponent(googleCheckBox))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(googleCheckBox)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(portHuCheckbox)))))
                 .addContainerGap())
             .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
             .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
@@ -263,7 +278,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(moviewebCheckBox)
-                    .addComponent(googleCheckBox))
+                    .addComponent(googleCheckBox)
+                    .addComponent(portHuCheckbox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -301,6 +317,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         if(needRescan) {
             mainFrame.scanFolders();
         }
+        mainFrame.refreshColumns();
         this.setVisible(false);
     }//GEN-LAST:event_okayButtonActionPerformed
 
@@ -350,14 +367,33 @@ public class SettingsFrame extends javax.swing.JFrame {
     }
     
     
+    private JCheckBox[] getCheckboxes() {
+        return new JCheckBox[] { 
+            flixsterCheckBox,
+            googleCheckBox,
+            moviewebCheckBox,
+            omdbCheckBox,
+            portHuCheckbox,
+            rottenTomatoesCheckBox
+        };
+    }
+    
+    
     private void getSettingsValues() {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
         saveCoverArtCheckBox.setSelected(settings.getSaveAlbumArt());
+        for (JCheckBox jb : getCheckboxes()) {
+            boolean value = settings.isServiceEnabled(jb.getName(), jb.isSelected());
+            jb.setSelected(value);
+        }
     }
     
     private void setSettingsValues() {
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
         settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
+        for (JCheckBox jb : getCheckboxes()) {
+            settings.setServiceEnabled(jb.getName(), jb.isSelected());
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -378,6 +414,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     private javax.swing.JButton okayButton;
     private javax.swing.JCheckBox omdbCheckBox;
     private javax.swing.JCheckBox openSubsCheckBox;
+    private javax.swing.JCheckBox portHuCheckbox;
     private javax.swing.JCheckBox renameTitlesCheckBox;
     private javax.swing.JCheckBox rottenTomatoesCheckBox;
     private javax.swing.JCheckBox saveCoverArtCheckBox;

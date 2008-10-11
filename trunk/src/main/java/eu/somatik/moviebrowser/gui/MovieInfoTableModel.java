@@ -18,22 +18,25 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.MovieStatus;
-
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import eu.somatik.moviebrowser.service.InfoHandler;
-import eu.somatik.moviebrowser.service.ScoreCalculator;
-import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+
+import com.flicklib.domain.MovieService;
+
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieStatus;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.service.InfoHandler;
+import eu.somatik.moviebrowser.service.MovieFinder;
+import eu.somatik.moviebrowser.service.ScoreCalculator;
+import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 
 /**
  *
@@ -58,11 +61,11 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Runtime",
         SCORE_COLUMN_NAME,
         "IMDB",
-        "Tomato",
+        /*"Tomato",
         "MWeb",
         "Google",
         "Flixter",
-        "Netflix"
+        "Netflix"*/
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class,
@@ -72,11 +75,11 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class,
         Integer.class,
         Integer.class,
+        /*Integer.class,
         Integer.class,
         Integer.class,
         Integer.class,
-        Integer.class,
-        Integer.class
+        Integer.class*/
     };
 
     
@@ -85,14 +88,25 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     private List<MovieInfo> movies;
 
+    private List<MovieService> extraColumns;
+    
+    private MovieFinder finder;
+    
     /** 
      * Creates a new instance of MovieInfoTableModel 
      * @param infoHandler 
      */
-    public MovieInfoTableModel(final InfoHandler infoHandler) {
+    public MovieInfoTableModel(final InfoHandler infoHandler, final MovieFinder finder) {
         this.infoHandler = infoHandler;
         this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
+        this.finder = finder;
+        calculateExtraColumns();
+    }
+
+    private void calculateExtraColumns() {
+        extraColumns = finder.getEnabledServices();
+        extraColumns.remove(MovieService.IMDB);
     }
 
     @Override
@@ -102,17 +116,27 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
 
     @Override
     public String getColumnName(int columnIndex) {
-        return COL_NAMES[columnIndex];
+        if (columnIndex<COL_CLASSES.length) {
+            return COL_NAMES[columnIndex];
+        } else {
+            MovieService service = extraColumns.get(columnIndex - COL_NAMES.length);
+            return service.getShortName();
+        }
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return COL_CLASSES[columnIndex];
+        if (columnIndex<COL_CLASSES.length) {
+            return COL_CLASSES[columnIndex];
+        } else {
+            // extra column, it's Integer
+            return Integer.class;
+        }
     }
 
     @Override
     public int getColumnCount() {
-        return COL_CLASSES.length;
+        return COL_CLASSES.length+ extraColumns.size();
     }
 
     @Override
@@ -134,25 +158,19 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 return calculator.calculate(info);
             case 6:
                 return infoHandler.score(info, MovieService.IMDB);
-                //return movies.get(rowIndex).getMovie().getImdbScore();
-            case 7:
+/*            case 7:
                 return infoHandler.score(info, MovieService.TOMATOES);
-                //return movies.get(rowIndex).getMovieFile().getMovie().getTomatoScore();
             case 8:
                 return infoHandler.score(info, MovieService.MOVIEWEB);
-                //return movies.get(rowIndex).getMovieFile().getMovie().getMovieWebScore();
             case 9:
                 return infoHandler.score(info, MovieService.GOOGLE);
-                //return movies.get(rowIndex).getMovieFile().getMovie().getGoogleScore();
             case 10:
                 return infoHandler.score(info, MovieService.FLIXSTER);
-                //return movies.get(rowIndex).getMovieFile().getMovie().getFlixterScore();
             case 11:
-                return infoHandler.score(info, MovieService.NETFLIX);
-                //return movies.get(rowIndex).getMovieFile().getMovie().getFlixterScore();
+                return infoHandler.score(info, MovieService.NETFLIX);*/
             default:
-                assert false : "Should never come here";
-                return null;
+                MovieService service = extraColumns.get(columnIndex - COL_NAMES.length);
+                return infoHandler.score(info, service);
         }
     }
 
@@ -205,4 +223,10 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     public Iterator<MovieInfo> iterator() {
         return movies.iterator();
     }
+
+    public void refreshColumns() {
+        calculateExtraColumns();
+        this.fireTableStructureChanged();
+    }
+    
 }

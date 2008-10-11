@@ -71,6 +71,7 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
+import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import eu.somatik.moviebrowser.service.export.Exporter;
@@ -107,7 +108,8 @@ public class MainFrame extends javax.swing.JFrame {
             final IconLoader iconLoader,
             final Settings settings,
             final InfoHandler infoHandler,
-            final ExporterLocator exporterLocator) {
+            final ExporterLocator exporterLocator,
+            final MovieFinder finder) {
         this.browser = browser;
         this.iconLoader = iconLoader;
         this.settings = settings;
@@ -122,7 +124,7 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        movieTable.setModel(new MovieInfoTableModel(infoHandler));
+        movieTable.setModel(new MovieInfoTableModel(infoHandler, finder));
         setColumnWidths();
 
         loadLookAndFeels();
@@ -754,6 +756,11 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
             }
         }.execute();
 
+    }
+    
+    protected void refreshColumns() {
+        ((MovieInfoTableModel)movieTable.getModel()).refreshColumns();
+        setColumnWidths();
     }
 
     protected MovieInfo getSelectedMovie() {

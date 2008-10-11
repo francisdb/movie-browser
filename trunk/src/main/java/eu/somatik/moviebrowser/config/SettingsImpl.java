@@ -151,6 +151,11 @@ public class SettingsImpl implements Settings {
     private Properties defaultPreferences() {
         Properties properties = new Properties();
         properties.put("lookandfeel", UIManager.getSystemLookAndFeelClassName());
+        properties.put("flags.service.flixster","true");
+        properties.put("flags.service.rottenttomatoes","true");
+        properties.put("flags.service.google","true");
+        properties.put("flags.service.movieweb","true");
+        properties.put("flags.service.imdb","true");
         return properties;
     }
 
@@ -304,4 +309,23 @@ public class SettingsImpl implements Settings {
         prefs.put(LOOK_AND_FEEL_PROPERTY, className);
         savePreferences(prefs);
     }
+
+    @Override
+    public boolean isServiceEnabled(String name, boolean defaultValue) {
+        Map<String, String> prefs = loadPreferences();
+        String value = prefs.get("flags.service."+name);
+        if (value==null) {
+            return defaultValue;
+        } else {
+            return Boolean.valueOf(value);
+        }
+    }
+
+    @Override
+    public void setServiceEnabled(String name, boolean value) {
+        Map<String, String> prefs = loadPreferences();
+        prefs.put("flags.service."+name, Boolean.toString(value));
+        savePreferences(prefs);
+    }
+    
 }
