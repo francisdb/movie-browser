@@ -60,16 +60,9 @@ public class MovieFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
     // TODO make this available in settings somewhere
-    private static final int IMDB_POOL_SIZE = 1;
-    private static final int OTHERS_POOL_SIZE = 1;
+    private static final int IMDB_POOL_SIZE = 5;
+    private static final int OTHERS_POOL_SIZE = 5;
 
-    
-    private final static MovieService[] EXTRA_SERVICES = new MovieService[]{
-        MovieService.TOMATOES,
-        MovieService.MOVIEWEB,
-        MovieService.GOOGLE,
-        MovieService.FLIXSTER,
-        MovieService.NETFLIX};
     
     private final ExecutorService service;
     private final ExecutorService secondaryService;
@@ -249,7 +242,8 @@ public class MovieFinder {
                 }
                 for (MovieService service : getEnabledServices()) {
                     if (service!=MovieService.IMDB) {
-                        if (info.siteFor(service) == null) {
+                        StorableMovieSite siteInfo = info.siteFor(service);
+                        if (siteInfo == null || siteInfo.getScore()==null) {
                             secondaryService.submit(new MovieServiceCaller(service, info));
                         }
                     }

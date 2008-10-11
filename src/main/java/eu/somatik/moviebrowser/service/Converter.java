@@ -95,5 +95,9 @@ public class Converter {
         storableMovieSite.setVotes(movieSite.getVotes());
         storableMovieSite.setUrl(movieSite.getUrl());
         storableMovieSite.setImgUrl(movieSite.getImgUrl());
+        storableMovieSite.setTitle(movieSite.getTitle());
+        storableMovieSite.setAlternateTitle(movieSite.getAlternateTitle());
+        storableMovieSite.setPlot(movieSite.getPlot());
+        
     }
 }
