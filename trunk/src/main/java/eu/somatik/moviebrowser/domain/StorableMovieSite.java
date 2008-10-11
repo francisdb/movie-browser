@@ -60,6 +60,13 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	private String idForSite;
 
 	private String imgUrl;
+	
+	private String title;
+
+	private String alternateTitle;
+
+	private String plot;
+	
 
 	/**
 	 * Constructs a new StorableMovieSite
@@ -201,6 +208,30 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	public String toString() {
 	    return "StorableMovieSite["+id+","+service+",id:"+idForSite+",score:"+score+",votes:"+votes+']';
 	}
+
+	public String getAlternateTitle() {
+            return alternateTitle;
+        }
+	
+	public void setAlternateTitle(String alternateTitle) {
+            this.alternateTitle = alternateTitle;
+        }
+	
+	public String getTitle() {
+            return title;
+        }
+	
+	public void setTitle(String title) {
+            this.title = title;
+        }
+	
+	public String getPlot() {
+            return plot;
+        }
+	
+	public void setPlot(String plot) {
+            this.plot = plot;
+        }
 	
 	@Override
 	public StorableMovieSite clone() throws CloneNotSupportedException {
