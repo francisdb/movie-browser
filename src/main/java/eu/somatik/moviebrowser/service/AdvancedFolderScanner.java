@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import com.flicklib.tools.LevenshteinDistance;
 import com.google.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
