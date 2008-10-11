@@ -60,8 +60,8 @@ public class MovieFinder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieFinder.class);
     // TODO make this available in settings somewhere
-    private static final int IMDB_POOL_SIZE = 5;
-    private static final int OTHERS_POOL_SIZE = 5;
+    private static final int IMDB_POOL_SIZE = 1;
+    private static final int OTHERS_POOL_SIZE = 1;
 
     
     private final static MovieService[] EXTRA_SERVICES = new MovieService[]{
@@ -247,9 +247,11 @@ public class MovieFinder {
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
-                for (MovieService service : EXTRA_SERVICES) {
-                    if (info.siteFor(service) == null) {
-                        secondaryService.submit(new MovieServiceCaller(service, info));
+                for (MovieService service : getEnabledServices()) {
+                    if (service!=MovieService.IMDB) {
+                        if (info.siteFor(service) == null) {
+                            secondaryService.submit(new MovieServiceCaller(service, info));
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -427,4 +429,16 @@ public class MovieFinder {
         }
         return true;
     }
+    
+    public List<MovieService> getEnabledServices() {
+        List<MovieService> result = new ArrayList<MovieService>();
+        for (MovieService ms : MovieService.values()) {
+            if (settings.isServiceEnabled(ms.name().toLowerCase(), false)) {
+                result.add(ms);
+            }
+        }
+        return result;
+    }
+
+    
 }

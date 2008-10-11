@@ -113,6 +113,25 @@ public interface Settings {
     boolean getSaveAlbumArt();
 
     /**
+     * get a boolean flag from the stored settings.
+     * 
+     * @param name
+     * @param defaultValue
+     * @return
+     */
+    boolean isServiceEnabled(String name, boolean defaultValue);
+    
+    /**
+     * Set a flag
+     * @param name
+     * @param value
+     */
+    void setServiceEnabled(String name, boolean value);
+    
+    
+    
+    
+    /**
      * Gets the look and feel
      * @return
      */
