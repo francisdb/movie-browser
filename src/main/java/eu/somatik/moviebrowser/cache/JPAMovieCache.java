@@ -169,7 +169,7 @@ public class JPAMovieCache implements MovieCache {
         }
     }
 
-    /**
+    /*
      * 
      * @param path the movie path
      * @return the movie of null if not found in cache
@@ -190,6 +190,7 @@ public class JPAMovieCache implements MovieCache {
     }*/
     
     @Override
+    @SuppressWarnings("unchecked")
     public List<StorableMovie> list() {
         EntityManager em = null;
         try {
@@ -336,6 +337,7 @@ public class JPAMovieCache implements MovieCache {
     
     /**
      * @param movie
+     * @return 
      */
     @Override
     public StorableMovie insertOrUpdate(StorableMovie movie) {

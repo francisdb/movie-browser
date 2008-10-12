@@ -22,7 +22,6 @@ import com.google.inject.AbstractModule;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.FileSystemImageCache;
 import eu.somatik.moviebrowser.cache.MovieCache;
-import eu.somatik.moviebrowser.cache.JPAMovieCache;
 import eu.somatik.moviebrowser.cache.XmlMovieCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.config.SettingsImpl;
