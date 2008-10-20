@@ -18,8 +18,6 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.api.MovieInfoFetcher;
-import com.flicklib.domain.MovieSearchResult;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
@@ -40,7 +38,8 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.flicklib.domain.MoviePage;
+import com.flicklib.api.MovieInfoFetcher;
+import com.flicklib.domain.MovieSearchResult;
 import com.flicklib.domain.MovieService;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
@@ -57,6 +56,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
     private final DefaultListModel listModel;
     private final MovieInfo movieInfo;
     private final MovieFinder movieFinder;
+    private final MovieService service;
 
     /** 
      * Creates new form EditMovieFrame
@@ -64,10 +64,11 @@ public class EditMovieFrame extends javax.swing.JFrame {
      * @param fetcher 
      * @param movieFinder
      */
-    public EditMovieFrame(MovieInfo movieInfo, MovieInfoFetcher fetcher, MovieFinder movieFinder) {
+    public EditMovieFrame(MovieInfo movieInfo, MovieInfoFetcher fetcher, MovieService service, MovieFinder movieFinder) {
         this.fetcher = fetcher;
         this.movieFinder = movieFinder;
         this.movieInfo = movieInfo;
+        this.service = service;
 
 
         this.listModel = new DefaultListModel();
@@ -229,12 +230,12 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 }//GEN-LAST:event_searchButtonActionPerformed
 
 private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-    MoviePage imdbPage = (MoviePage) resultsList.getSelectedValue();
-    if (imdbPage == null) {
+    MovieSearchResult moviePage = (MovieSearchResult) resultsList.getSelectedValue();
+    if (moviePage == null) {
         JOptionPane.showMessageDialog(EditMovieFrame.this, "No movie selected");
     } else {
-        movieInfo.getMovie().setTitle(imdbPage.getMovie().getTitle());
-        movieInfo.getMovie().getMovieSiteInfoOrCreate(MovieService.IMDB).setIdForSite(imdbPage.getIdForSite());
+        movieInfo.getMovie().setTitle(moviePage.getTitle());
+        movieInfo.getMovie().getMovieSiteInfoOrCreate(service).setIdForSite(moviePage.getIdForSite());
         movieInfo.setNeedRefetch(true);
         movieFinder.reloadMovie(movieInfo);
         this.dispose();
@@ -249,9 +250,9 @@ private void resultsListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_resultsListMouseReleased
 
 private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_resultsListValueChanged
-    MoviePage moviePage = (MoviePage) resultsList.getSelectedValue();   
+    MovieSearchResult moviePage = (MovieSearchResult) resultsList.getSelectedValue();   
     if(moviePage != null){
-        String tooltip = "You have selected " + moviePage.getMovie().getTitle();
+        String tooltip = "You have selected " + moviePage.getTitle();
         resultsList.setToolTipText(tooltip + ". Double click selection to go to the IMDB page or click Update button to update.");
         updateButton.setToolTipText(tooltip + ". Click here to update.");
     }
@@ -296,7 +297,25 @@ private void resultsListDoubleClick() {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             MovieSearchResult movieSite = (MovieSearchResult) value;
-            setText(movieSite.getTitle()+" ("+movieSite.getYear()+" / "+movieSite.getType().getName()+")");
+            StringBuilder buf = new StringBuilder();
+            buf.append(movieSite.getTitle());
+            if (movieSite.getAlternateTitle()!=null) {
+                buf.append('/').append(movieSite.getAlternateTitle());
+            }
+            if (movieSite.getYear()!=null || movieSite.getDescription() != null || movieSite.getType()!=null) {
+                buf.append(" (");
+                if (movieSite.getYear()!=null) {
+                    buf.append(movieSite.getYear()).append(' ');
+                }
+                if (movieSite.getDescription()!=null) {
+                    buf.append(movieSite.getDescription()).append(' ');
+                }
+                if (movieSite.getType()!=null) {
+                    buf.append(movieSite.getType().getName());
+                }
+                buf.append(')');
+            }
+            setText(buf.toString());
             return this;
         }
     }

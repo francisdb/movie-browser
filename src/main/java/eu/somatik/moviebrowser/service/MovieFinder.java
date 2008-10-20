@@ -38,7 +38,6 @@ import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.cache.MovieCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.FileGroup;
@@ -66,11 +65,8 @@ public class MovieFinder {
     
     private final ExecutorService service;
     private final ExecutorService secondaryService;
-    private final FileSystemScanner fileSystemScanner;
-    private final MovieNameExtractor movieNameExtractor;
     private final MovieCache movieCache;
     private final InfoFetcherFactory fetcherFactory;
-    private final InfoHandler infoHandler;
     private final Settings settings;
     private final Converter converter = new Converter();
     /**
@@ -88,25 +84,16 @@ public class MovieFinder {
     /**
      * Creates a new instance of MovieFinder
      * @param movieCache
-     * @param fileSystemScanner
-     * @param movieNameExtractor
      * @param fetcherFactory
-     * @param infoHandler
      * @param settings 
      */
     @Inject
     public MovieFinder(
             final MovieCache movieCache,
-            final FileSystemScanner fileSystemScanner,
-            final MovieNameExtractor movieNameExtractor,
             final InfoFetcherFactory fetcherFactory,
-            final InfoHandler infoHandler,
             final Settings settings) {
         this.movieCache = movieCache;
-        this.fileSystemScanner = fileSystemScanner;
-        this.movieNameExtractor = movieNameExtractor;
         this.fetcherFactory = fetcherFactory;
-        this.infoHandler = infoHandler;
         this.settings = settings;
 
         this.service = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
@@ -154,30 +141,30 @@ public class MovieFinder {
         movie.getMovieSiteInfoOrCreate(MovieService.IMDB).setIdForSite(imdbId);
 
         movieInfo.setMovie(movieCache.insertOrUpdate(movie));
-        loadMovies(list);
+        loadMovies(list, true);
     }
 
     /**
      * Loads all movies
      * @param movies
      */
-    public void loadMovies(List<MovieInfo> movies) {
+    public void loadMovies(List<MovieInfo> movies,boolean async) {
         LOGGER.info("Loading " + movies.size() + " movies");
-        List<ImdbCaller> callers = new LinkedList<ImdbCaller>();
-        for (MovieInfo info : movies) {
-            callers.add(new ImdbCaller(info));
-        }
-
-        //List<Future<MovieInfo>> futures = new LinkedList<Future<MovieInfo>>();
-        try {
-            // futures = 
-            service.invokeAll(callers);
-        // TODO check all futures for succes.
-//            for( Future<MovieInfo> future:futures){
-//                future.
-//            }
-        } catch (InterruptedException ex) {
-            LOGGER.error("Movie loader interrupted", ex);
+        if (async) {
+            for (MovieInfo info : movies) {
+                service.submit(new MainServiceCaller(info));
+            }
+        } else {
+            List<MainServiceCaller> callers = new LinkedList<MainServiceCaller>();
+            for (MovieInfo info : movies) {
+                callers.add(new MainServiceCaller(info));
+            }
+    
+            try {
+                service.invokeAll(callers);
+            } catch (InterruptedException ex) {
+                LOGGER.error("Movie loader interrupted", ex);
+            }
         }
     }
     
@@ -194,17 +181,19 @@ public class MovieFinder {
     
 
 
-    private class ImdbCaller implements Callable<MovieInfo> {
+    private class MainServiceCaller implements Callable<MovieInfo> {
 
         private final MovieInfo info;
+        private final MovieService preferredService;
 
         /**
          * Constructs a new ImdbCaller object
          *
          * @param info
          */
-        public ImdbCaller(MovieInfo info) {
+        public MainServiceCaller(MovieInfo info) {
             this.info = info;
+            this.preferredService = settings.getPreferredService();
             incRunningTasks();
         }
 
@@ -234,14 +223,14 @@ public class MovieFinder {
                     info.setStatus(MovieStatus.LOADED);
                 } else {
                     if (info.isNeedRefetch()) {
-                        getMovieInfoImdb(info);
+                        getMovieInfoImdb(info, preferredService);
                         
                         info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
                 for (MovieService service : getEnabledServices()) {
-                    if (service!=MovieService.IMDB) {
+                    if (service!=preferredService) {
                         StorableMovieSite siteInfo = info.siteFor(service);
                         if (siteInfo == null || siteInfo.getScore()==null) {
                             secondaryService.submit(new MovieServiceCaller(service, info));
@@ -256,7 +245,7 @@ public class MovieFinder {
 
         private void fetchInformations() throws UnknownHostException, Exception {
             StorableMovie movie;
-            getMovieInfoImdb(info);
+            getMovieInfoImdb(info, preferredService);
             movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
             if (movie == null) {
                 info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
@@ -331,20 +320,15 @@ public class MovieFinder {
     /**
      *
      * @param movieInfo
+     * @param movieService 
      * @return the MovieInfo
      * @throws java.net.UnknownHostException
      * @throws java.lang.Exception
      */
-    private void getMovieInfoImdb(MovieInfo movieInfo) throws UnknownHostException, Exception {
-        String url = infoHandler.url(movieInfo, MovieService.IMDB);
+    private void getMovieInfoImdb(MovieInfo movieInfo, MovieService movieService) throws UnknownHostException, Exception {
         StorableMovie newMovie = movieInfo.getMovie();
 
-        if (url == null) {
-            LOGGER.info("Finding NFO for " + movieInfo.getDirectory());
-            url = fileSystemScanner.findNfoImdbUrl(movieInfo.getDirectory());
-        }
-
-        MoviePage moviePage = fetchMoviePageInfo(movieInfo, MovieService.IMDB);
+        MoviePage moviePage = fetchMoviePageInfo(movieInfo, movieService);
         if (moviePage!=null && moviePage.getIdForSite()!=null) {
             converter.convert(moviePage, newMovie);
         }

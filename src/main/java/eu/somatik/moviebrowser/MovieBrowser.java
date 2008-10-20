@@ -68,7 +68,6 @@ public class MovieBrowser {
     private final MovieFinder movieFinder;
     private final FolderScanner folderScanner;
     private final FileSystemScanner fileSystemScanner;
-    private final ImdbSearch imdbSearch;
     private final ImageCache imageCache;
     private final IconLoader iconLoader;
     private final Settings settings;
@@ -97,7 +96,6 @@ public class MovieBrowser {
             final MovieFinder finder,
             final FolderScanner folderScanner,
             final FileSystemScanner fileSystemScanner,
-            final ImdbSearch imdbSearch,
             final ImageCache imageCache,
             final IconLoader iconLoader,
             final Settings settings,
@@ -109,7 +107,6 @@ public class MovieBrowser {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
-        this.imdbSearch = imdbSearch;
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.settings = settings;
@@ -208,10 +205,6 @@ public class MovieBrowser {
 
     public FileSystemScanner getFileSystemScanner() {
         return fileSystemScanner;
-    }
-
-    public ImdbSearch getImdbSearch() {
-        return imdbSearch;
     }
 
     public SubtitlesLoader getSubtitlesLoader() {

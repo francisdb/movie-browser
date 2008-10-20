@@ -734,7 +734,8 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
             @Override
             protected MovieInfo doInBackground() throws Exception {
                 browser.getMovieFinder().start();
-                browser.getMovieFinder().loadMovies(infos);
+                // we are already in a background thread, so no need to call with async true
+                browser.getMovieFinder().loadMovies(infos, false);
                 return null;
             }
 
@@ -782,7 +783,8 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
         @Override
         public void actionPerformed(ActionEvent e) {
             if (browser.getMovieFinder().getRunningTasks() == 0) {
-                EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getFetcherFactory().get(MovieService.IMDB), browser.getMovieFinder());
+                MovieService service = settings.getPreferredService();
+                EditMovieFrame editMovieFrame = new EditMovieFrame(getSelectedMovie(), browser.getFetcherFactory().get(service), service,  browser.getMovieFinder());
                 editMovieFrame.setLocationRelativeTo(movieTableScrollPane);
                 editMovieFrame.setVisible(true);
             } else {
