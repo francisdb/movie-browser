@@ -107,17 +107,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
     private void update() {
 
-        // TODO if loading takes a lot of time the, image might be shown after a new movie was selected
-        Image image = imageCache.loadImg(info);
-        if (image == null) {
-            new ImageLoadingWorker().execute();
-        } else {
-            updateImage(image);
-        }
 
-
-        StorableMovie movie = info.getMovie();
-        if (movie == null) {
+        if (info == null || info.getMovie() == null) {
             movieHeader.setTitle("");
             movieHeader.setDescription("");
             infoTextPane.setText("");
@@ -125,7 +116,16 @@ public class MovieInfoPanel extends javax.swing.JPanel {
                 updateButton(siteButtons.get(service), null);
             }
             fileTree.setMovie(null);
+            updateImage(null);
         } else {
+            StorableMovie movie = info.getMovie();
+            // TODO if loading takes a lot of time the, image might be shown after a new movie was selected
+            Image image = imageCache.loadImg(info);
+            if (image == null) {
+                new ImageLoadingWorker().execute();
+            } else {
+                updateImage(image);
+            }
             fileTree.setMovie(movie);
             // to expand ratings...
             movieFileTreeTable.expandRow(1);
