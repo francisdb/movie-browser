@@ -106,7 +106,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
         statusProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Edit Movie");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
+        setTitle(bundle.getString("EditMovieFrame.title")); // NOI18N
         setIconImage(new ImageIcon(EditMovieFrame.getFrames().getClass().getResource("/images/movie.png")).getImage());
 
         searchTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -115,9 +116,9 @@ public class EditMovieFrame extends javax.swing.JFrame {
             }
         });
 
-        searchLabel.setText("Look for:");
+        searchLabel.setText(bundle.getString("EditMovieFrame.searchLabel.text")); // NOI18N
 
-        searchButton.setText("Find");
+        searchButton.setText(bundle.getString("EditMovieFrame.searchButton.text")); // NOI18N
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
@@ -125,7 +126,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
         });
 
         resultsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        resultsList.setToolTipText("Double click on results to go to IMDB page.");
+        resultsList.setToolTipText(bundle.getString("EditMovieFrame.resultsList.toolTipText")); // NOI18N
         resultsList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 resultsListMouseClicked(evt);
@@ -141,8 +142,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(resultsList);
 
-        updateButton.setText("Update");
-        updateButton.setToolTipText("Select the correct title from results and click me to update cache.");
+        updateButton.setText(bundle.getString("EditMovieFrame.updateButton.text")); // NOI18N
+        updateButton.setToolTipText(bundle.getString("EditMovieFrame.updateButton.toolTipText")); // NOI18N
         updateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateButtonActionPerformed(evt);
@@ -150,7 +151,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
         });
 
         statusProgressBar.setForeground(new java.awt.Color(255, 153, 51));
-        statusProgressBar.setString("");
+        statusProgressBar.setString(bundle.getString("EditMovieFrame.statusProgressBar.string")); // NOI18N
         statusProgressBar.setStringPainted(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,20 +162,20 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(searchLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addComponent(searchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(updateButton)
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
