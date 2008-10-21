@@ -241,7 +241,9 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
     public void setMovie(StorableMovie movie) {
         this.movie = movie;
         this.rowInfos.clear();
-        this.rowInfos.put(DUMMY_RATING, new RatingsRowInfo(movie));
+        if(movie != null){
+            this.rowInfos.put(DUMMY_RATING, new RatingsRowInfo(movie));
+        }
         this.root = movie;
         this.modelSupport.fireNewRoot();
     }
