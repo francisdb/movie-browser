@@ -78,7 +78,7 @@ public class MovieFinder {
      * as the running tasks property is updated from several threads, it is possible to some concurrent modification get lost, to avoid
      * we need a lock ... 
      */
-    private Object runningTaskLock = new Object();
+    private final Object runningTaskLock = new Object();
     
 
     /**
@@ -147,9 +147,11 @@ public class MovieFinder {
 
     /**
      * Loads all movies
+     * 
      * @param movies
+     * @param async if true the method will return before finisihing the load
      */
-    public void loadMovies(List<MovieInfo> movies,boolean async) {
+    public void loadMovies(List<MovieInfo> movies, boolean async) {
         LOGGER.info("Loading " + movies.size() + " movies");
         if (async) {
             for (MovieInfo info : movies) {
@@ -209,6 +211,7 @@ public class MovieFinder {
         
         private void doCall() throws Exception {
             try {
+                LOGGER.info("call "+info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 if (info.getMovie().getId() == null) {
                 	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
@@ -219,7 +222,7 @@ public class MovieFinder {
                         //directory.setName(info.getDirectory().getName());
                         info.setMovie(movieCache.insertOrUpdate(group.getMovie()));
                     } else {
-                        fetchInformations();
+                        fetchInformation();
                     }
                     info.setStatus(MovieStatus.LOADED);
                 } else {
@@ -230,6 +233,7 @@ public class MovieFinder {
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
+
                 for (MovieService service : getEnabledServices()) {
                     if (service!=preferredService) {
                         StorableMovieSite siteInfo = info.siteFor(service);
@@ -244,7 +248,7 @@ public class MovieFinder {
             }
         }
 
-        private void fetchInformations() throws UnknownHostException, Exception {
+        private void fetchInformation() throws UnknownHostException, Exception {
             StorableMovie movie;
             getMovieInfoImdb(info, preferredService);
             movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
@@ -348,6 +352,7 @@ public class MovieFinder {
      * 
      * @param info
      * @param service
+     * @return the movie page
      * @throws IOException
      */
     protected MoviePage fetchMoviePageInfo(MovieInfo info, MovieService service) throws IOException {

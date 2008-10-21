@@ -100,7 +100,8 @@ public class MainFrame extends javax.swing.JFrame {
      * @param iconLoader
      * @param settings
      * @param infoHandler
-     * @param exporterLocator 
+     * @param exporterLocator
+     * @param finder 
      */
     @Inject
     public MainFrame(
