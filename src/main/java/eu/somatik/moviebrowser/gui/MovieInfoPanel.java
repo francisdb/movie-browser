@@ -300,6 +300,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         infoTextPane = new javax.swing.JTextPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         movieFileTreeTable = new org.jdesktop.swingx.JXTreeTable(fileTree);
+        System.out.println("teszt");
 
         movieHeader.setDescription("");
         movieHeader.setTitle("");
@@ -320,7 +321,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         infoTextPane.setBackground(new java.awt.Color(254, 254, 254));
         jScrollPane2.setViewportView(infoTextPane);
 
-        jTabbedPane1.addTab("Informations", jScrollPane2);
+        jTabbedPane1.addTab("Information", jScrollPane2);
 
         movieFileTreeTable.setRootVisible(true);
         movieFileTreeTable.setShowHorizontalLines(true);
