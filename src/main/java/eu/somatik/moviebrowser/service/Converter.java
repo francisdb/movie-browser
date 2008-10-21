@@ -78,16 +78,6 @@ public class Converter {
         }
     }
 
-    
-    public void convert(StorableMovieSite storableMovieSite, MoviePage movieSite){
-        movieSite.setService(storableMovieSite.getService());
-        movieSite.setScore(storableMovieSite.getScore());
-        movieSite.setVotes(storableMovieSite.getVotes());
-        movieSite.setIdForSite(storableMovieSite.getIdForSite());
-        movieSite.setUrl(storableMovieSite.getUrl());
-        movieSite.setImgUrl(storableMovieSite.getImgUrl());
-    }
-    
     public void convert(MoviePage movieSite, StorableMovieSite storableMovieSite){
         storableMovieSite.setService(movieSite.getService());
         storableMovieSite.setIdForSite(movieSite.getIdForSite());
@@ -97,7 +87,7 @@ public class Converter {
         storableMovieSite.setImgUrl(movieSite.getImgUrl());
         storableMovieSite.setTitle(movieSite.getTitle());
         storableMovieSite.setAlternateTitle(movieSite.getAlternateTitle());
+        storableMovieSite.setOriginalTitle(movieSite.getOriginalTitle());
         storableMovieSite.setPlot(movieSite.getPlot());
-        
     }
 }

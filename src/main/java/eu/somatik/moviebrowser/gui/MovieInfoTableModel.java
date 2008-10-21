@@ -37,6 +37,7 @@ import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.ScoreCalculator;
 import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
 
 /**
  *
@@ -92,15 +93,18 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     private MovieFinder finder;
     
+    private ContentProvider contentProvider;
+    
     /** 
      * Creates a new instance of MovieInfoTableModel 
      * @param infoHandler 
      */
-    public MovieInfoTableModel(final InfoHandler infoHandler, final MovieFinder finder) {
+    public MovieInfoTableModel(final InfoHandler infoHandler, final MovieFinder finder, final ContentProvider contentProvider) {
         this.infoHandler = infoHandler;
         this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
         this.finder = finder;
+        this.contentProvider = contentProvider;
         calculateExtraColumns();
     }
 
@@ -147,7 +151,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 0:
                 return info.getStatus();
             case 1:
-                return info.getMovie().getTitle();
+                return contentProvider.getTitle(info);
             case 2:
                 return movie == null?null:movie.getYear();
             case 3:
@@ -224,7 +228,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         return movies.iterator();
     }
 
-    public void refreshColumns() {
+    public void refreshColumns(ContentProvider contentProvider) {
+        this.contentProvider = contentProvider;
         calculateExtraColumns();
         this.fireTableStructureChanged();
     }

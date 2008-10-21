@@ -299,6 +299,9 @@ private void resultsListDoubleClick() {
             MovieSearchResult movieSite = (MovieSearchResult) value;
             StringBuilder buf = new StringBuilder();
             buf.append(movieSite.getTitle());
+            if (movieSite.getOriginalTitle()!=null) {
+                buf.append('/').append(movieSite.getOriginalTitle());
+            }
             if (movieSite.getAlternateTitle()!=null) {
                 buf.append('/').append(movieSite.getAlternateTitle());
             }
