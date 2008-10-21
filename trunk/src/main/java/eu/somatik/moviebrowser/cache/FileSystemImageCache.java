@@ -87,19 +87,21 @@ public class FileSystemImageCache implements ImageCache {
     public Image loadImg(MovieInfo info) {
         Image image = null;
         // TODO might accept images form other services
-        String imgUrl = imageUrl(info);
-        if (imgUrl != null) {
-            try {
-                File file = getCacheFile(imgUrl);
-                if (file.exists()) {
-                    image = ImageIO.read(file);
-                } else {
-                    LOGGER.debug("Image not available in local cache: " + imgUrl);
+        if(info != null){
+            String imgUrl = imageUrl(info);
+            if (imgUrl != null) {
+                try {
+                    File file = getCacheFile(imgUrl);
+                    if (file.exists()) {
+                        image = ImageIO.read(file);
+                    } else {
+                        LOGGER.debug("Image not available in local cache: " + imgUrl);
+                    }
+                } catch (IOException ex) {
+                    LOGGER.error("Could not load image", ex);
                 }
-            } catch (IOException ex) {
-                LOGGER.error("Could not load image", ex);
+                info.setStatus(MovieStatus.LOADED);
             }
-            info.setStatus(MovieStatus.LOADED);
         }
         return image;
     }

@@ -60,13 +60,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Year",
         "Date",
         "Runtime",
-        SCORE_COLUMN_NAME,
-        "IMDB",
-        /*"Tomato",
-        "MWeb",
-        "Google",
-        "Flixter",
-        "Netflix"*/
+        SCORE_COLUMN_NAME
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class,
@@ -75,12 +69,6 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Date.class,
         Integer.class,
         Integer.class,
-        Integer.class,
-        /*Integer.class,
-        Integer.class,
-        Integer.class,
-        Integer.class,
-        Integer.class*/
     };
 
     
@@ -110,7 +98,6 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
 
     private void calculateExtraColumns() {
         extraColumns = finder.getEnabledServices();
-        extraColumns.remove(MovieService.IMDB);
     }
 
     @Override
