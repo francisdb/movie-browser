@@ -28,6 +28,7 @@ import org.jdesktop.swingx.treetable.AbstractTreeTableModel;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.domain.ReleaseType;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
@@ -143,8 +144,15 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
                     }
                     return info.toString();
                 }
-                case TYPE : return row.getType().getLabel();
-                case SIZE : return Long.valueOf(row.getSize());
+                case TYPE :
+                    ReleaseType type = row.getType();
+                    if(type == null){
+                        return null;
+                    }else{
+                        return type.getLabel();
+                    }
+                case SIZE :
+                    return Long.valueOf(row.getSize());
                 default : 
                     return null;
             }
