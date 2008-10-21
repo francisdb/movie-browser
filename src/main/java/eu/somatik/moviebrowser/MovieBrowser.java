@@ -18,45 +18,54 @@
  */
 package eu.somatik.moviebrowser;
 
-import eu.somatik.moviebrowser.gui.MainFrame;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
-import com.flicklib.api.InfoFetcherFactory;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.flicklib.api.SubtitlesLoader;
-import com.flicklib.module.FlicklibModule;
-import com.flicklib.module.NetFlixAuthModule;
-import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.gui.IconLoader;
-import eu.somatik.moviebrowser.module.MovieBrowserModule;
-import eu.somatik.moviebrowser.api.FileSystemScanner;
-import eu.somatik.moviebrowser.api.FolderScanner;
-import eu.somatik.moviebrowser.service.MovieFinder;
-import com.flicklib.service.movie.imdb.ImdbSearch;
-import eu.somatik.moviebrowser.cache.MovieCache;
-import eu.somatik.moviebrowser.gui.debug.CheckThreadViolationRepaintManager;
-import eu.somatik.moviebrowser.gui.debug.EventDispatchThreadHangMonitor;
-import eu.somatik.moviebrowser.service.InfoHandler;
-import eu.somatik.moviebrowser.service.export.ExporterLocator;
-import eu.somatik.moviebrowser.service.export.ExporterModule;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+
+import com.flicklib.api.InfoFetcherFactory;
+import com.flicklib.api.SubtitlesLoader;
+import com.flicklib.domain.MovieService;
+import com.flicklib.module.FlicklibModule;
+import com.flicklib.module.NetFlixAuthModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
+import eu.somatik.moviebrowser.api.FileSystemScanner;
+import eu.somatik.moviebrowser.api.FolderScanner;
+import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.cache.MovieCache;
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.gui.IconLoader;
+import eu.somatik.moviebrowser.gui.MainFrame;
+import eu.somatik.moviebrowser.gui.debug.CheckThreadViolationRepaintManager;
+import eu.somatik.moviebrowser.gui.debug.EventDispatchThreadHangMonitor;
+import eu.somatik.moviebrowser.module.MovieBrowserModule;
+import eu.somatik.moviebrowser.service.InfoHandler;
+import eu.somatik.moviebrowser.service.MovieFinder;
+import eu.somatik.moviebrowser.service.export.ExporterLocator;
+import eu.somatik.moviebrowser.service.export.ExporterModule;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
+import eu.somatik.moviebrowser.service.ui.ImdbContentProvider;
+import eu.somatik.moviebrowser.service.ui.PorthuContentProvider;
 
 /**
  *
@@ -76,6 +85,8 @@ public class MovieBrowser {
     private final MovieCache movieCache;
     private final ExporterLocator exporterLocator;
     private final InfoFetcherFactory fetcherFactory;
+    private final Map<MovieService,ContentProvider> contentProviders = new HashMap<MovieService, ContentProvider>();
+    private final ContentProvider defaultContentProvider;
     
     /** 
      * Creates a new instance of MovieBrowser
@@ -115,6 +126,8 @@ public class MovieBrowser {
         this.movieCache = movieCache;
         this.exporterLocator = exporterLocator;
         this.fetcherFactory = fetcherFactory;
+        this.contentProviders.put(MovieService.PORTHU, new PorthuContentProvider());
+        this.defaultContentProvider = new ImdbContentProvider();
     }
 
     private void configureLogging() {
@@ -201,6 +214,16 @@ public class MovieBrowser {
 
     public FolderScanner getFolderScanner() {
         return folderScanner;
+    }
+    
+    public ContentProvider getContentProvider() {
+        MovieService service = settings.getPreferredService();
+        ContentProvider contentProvider = this.contentProviders.get(service);
+        if (contentProvider==null) {
+            return defaultContentProvider;
+        } else {
+            return contentProvider;
+        }
     }
 
     public FileSystemScanner getFileSystemScanner() {
