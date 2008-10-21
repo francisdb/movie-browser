@@ -45,12 +45,16 @@ import eu.somatik.moviebrowser.domain.Persistent;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author zsombor
  * 
  */
 public class XmlMovieCache implements MovieCache {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlMovieCache.class);
 
     final static class GenreConverter implements SingleValueConverter {
         @SuppressWarnings("unchecked")
@@ -114,22 +118,23 @@ public class XmlMovieCache implements MovieCache {
         }
     }
     
-    XStream xstream;
-    String path;
-    Map<Long, StorableMovie> movies = new HashMap<Long, StorableMovie>();
+    private final IdGenerator movieIdGenerator = new IdGenerator();
+    private final IdGenerator fileIdGenerator = new IdGenerator();
+    private final IdGenerator groupIdGenerator = new IdGenerator();
+    private final IdGenerator locationIdGenerator = new IdGenerator();
+    private final IdGenerator siteInfoIdGenerator = new IdGenerator();
     
-    IdGenerator movieIdGenerator = new IdGenerator();
-    IdGenerator fileIdGenerator = new IdGenerator();
-    IdGenerator groupIdGenerator = new IdGenerator();
-    IdGenerator locationIdGenerator = new IdGenerator();
-    IdGenerator siteInfoIdGenerator = new IdGenerator();
+    private final XStream xstream;
+    private String path;
+    private Map<Long, StorableMovie> movies;
     
     boolean started = false;
 
     @Inject
     public XmlMovieCache(final Settings settings) {
         this();
-        path = settings.getSettingsDir() + File.separator + "database.xml";
+        this.movies = new HashMap<Long, StorableMovie>();
+        this.path = settings.getSettingsDir() + File.separator + "database.xml";
     }
 
     /**
@@ -196,9 +201,16 @@ public class XmlMovieCache implements MovieCache {
         try {
             os = new BufferedWriter(new FileWriter(path));
             xstream.toXML(dbValues, os);
-            os.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not save cache to xml", e);
+        } finally{
+            if(os != null){
+                try {
+                    os.close();
+                } catch (IOException ex) {
+                    LOGGER.error("Could not close stream", ex);
+                }
+            }
         }
     }
 
@@ -206,21 +218,28 @@ public class XmlMovieCache implements MovieCache {
     synchronized void load() {
         Reader reader = null;
         List<StorableMovie> dbValues = null;
-        
         resetIds();
         
         try {
             reader = new FileReader(path);
             dbValues = (List<StorableMovie>) xstream.fromXML(reader);
-            reader.close();
         } catch (FileNotFoundException e) {
             movies.clear();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not load cache from xml", e);
+        } finally{
+             if(reader != null){
+                try {
+                    reader.close();
+                } catch (IOException ex) {
+                    LOGGER.error("Could not close reader", ex);
+                }
+            }
         }
         if (dbValues != null) {
             for (StorableMovie movie : dbValues) {
                 movie.initParentLinks();
+                LOGGER.info("adding movie "+movie.getTitle());
                 movies.put(movie.getId(), movie);
                 // we have to initialize the max ID values.
                 checkId(movie);
@@ -245,6 +264,7 @@ public class XmlMovieCache implements MovieCache {
      */
     @Override
     public synchronized void clear() {
+        LOGGER.info("Clearing cache");
         movies.clear();
         save();
     }
@@ -258,7 +278,7 @@ public class XmlMovieCache implements MovieCache {
      */
     @Override
     public FileGroup findByFile(String filename, long size) {
-        checkStarted();
+        startIfNotStarted();
         
         for (StorableMovie t : movies.values()) {
             FileGroup g = t.hasFiles(filename, size);
@@ -280,7 +300,7 @@ public class XmlMovieCache implements MovieCache {
      */
     @Override
     public StorableMovie findMovieByTitle(String title) {
-        checkStarted();
+        startIfNotStarted();
         
         String lowerCase = title.toLowerCase();
         for (StorableMovie t : movies.values()) {
@@ -300,7 +320,7 @@ public class XmlMovieCache implements MovieCache {
      */
     @Override
     public synchronized StorableMovie insertOrUpdate(StorableMovie movie) {
-        checkStarted();
+        startIfNotStarted();
         // give ID to the objects.
         checkId(movie);
 
@@ -308,8 +328,8 @@ public class XmlMovieCache implements MovieCache {
         // return the original passed in.
         // this ensures, that later modifications doesn't shows up in
         // accidentally
-        StorableMovie clone;
-        clone = movie.clone();
+        StorableMovie clone = movie.clone();
+        LOGGER.info("adding movie "+movie.getTitle());
         movies.put(clone.getId(), clone);
         save();
         return movie;
@@ -347,7 +367,7 @@ public class XmlMovieCache implements MovieCache {
 
     @Override
     public List<StorableMovie> list() {
-        checkStarted();
+        startIfNotStarted();
         List<StorableMovie> dbValues = new ArrayList<StorableMovie>(movies.size());
         // we have to clone the movie graph, to avoid accidental modifications.
         for (StorableMovie m : movies.values()) {
@@ -356,7 +376,7 @@ public class XmlMovieCache implements MovieCache {
         return dbValues;
     }
 
-    private void checkStarted() {
+    private void startIfNotStarted() {
         if (!started) {
             startup();
         }

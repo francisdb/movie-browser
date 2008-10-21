@@ -450,6 +450,7 @@ public class JPAMovieCache implements MovieCache {
 
     @Override
     public void clear(){
+        LOGGER.info("Clearing cache");
         shutdown();
         File databaseDir = new File(getDatabaseUrl());
         if (databaseDir.exists()) {
