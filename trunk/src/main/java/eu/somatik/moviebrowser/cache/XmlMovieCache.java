@@ -53,6 +53,7 @@ import eu.somatik.moviebrowser.domain.StorableMovieSite;
 public class XmlMovieCache implements MovieCache {
 
     final static class GenreConverter implements SingleValueConverter {
+        @SuppressWarnings("unchecked")
         @Override
         public boolean canConvert(Class cls) {
             return cls.equals(Genre.class);
@@ -70,6 +71,7 @@ public class XmlMovieCache implements MovieCache {
     }
 
     final static class LanguageConverter implements SingleValueConverter {
+        @SuppressWarnings("unchecked")
         @Override
         public boolean canConvert(Class cls) {
             return cls.equals(Language.class);

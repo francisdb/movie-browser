@@ -64,6 +64,8 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	private String title;
 
 	private String alternateTitle;
+	
+	private String originalTitle;
 
 	private String plot;
 	
@@ -216,8 +218,22 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	public void setAlternateTitle(String alternateTitle) {
             this.alternateTitle = alternateTitle;
         }
-	
-	public String getTitle() {
+    	
+    	/**
+         * @return the originalTitle
+         */
+        public String getOriginalTitle() {
+            return originalTitle;
+        }
+    
+        /**
+         * @param originalTitle the originalTitle to set
+         */
+        public void setOriginalTitle(String originalTitle) {
+            this.originalTitle = originalTitle;
+        }
+    
+        public String getTitle() {
             return title;
         }
 	

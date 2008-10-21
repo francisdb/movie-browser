@@ -76,6 +76,7 @@ import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
 import eu.somatik.moviebrowser.service.export.Exporter;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
 
 /**
  *
@@ -119,12 +120,13 @@ public class MainFrame extends javax.swing.JFrame {
         this.setPreferredSize(new Dimension(1000, 600));
 
         initComponents();
-        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler);
+        ContentProvider contentProvider = browser.getContentProvider();
+        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, contentProvider);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        movieTable.setModel(new MovieInfoTableModel(infoHandler, finder));
+        movieTable.setModel(new MovieInfoTableModel(infoHandler, finder, contentProvider));
         setColumnWidths();
 
         loadLookAndFeels();
@@ -760,8 +762,10 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     }
     
     protected void refreshColumns() {
-        ((MovieInfoTableModel)movieTable.getModel()).refreshColumns();
+        ContentProvider contentProvider = browser.getContentProvider();
+        ((MovieInfoTableModel)movieTable.getModel()).refreshColumns(contentProvider);
         setColumnWidths();
+        movieInfoPanel.setContentProvider(contentProvider);
     }
 
     protected MovieInfo getSelectedMovie() {

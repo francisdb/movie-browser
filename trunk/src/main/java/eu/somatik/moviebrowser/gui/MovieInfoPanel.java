@@ -25,6 +25,8 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.service.InfoHandler;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
+
 import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -59,13 +61,14 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final Map<MovieService, JButton> siteButtons;
     private MovieInfo info;
     private MovieFileTreeTableModel fileTree;
+    private ContentProvider provider;
 
     /** Creates new form MovieInfoPanel
      * @param imageCache 
      * @param iconLoader
      * @param infoHandler 
      */
-    public MovieInfoPanel(final ImageCache imageCache, final IconLoader iconLoader, final InfoHandler infoHandler) {
+    public MovieInfoPanel(final ImageCache imageCache, final IconLoader iconLoader, final InfoHandler infoHandler, ContentProvider provider) {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.infoHandler = infoHandler;
@@ -73,6 +76,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         this.services = Arrays.asList(MovieService.values());
         this.siteButtons = new HashMap<MovieService, JButton>();
         this.fileTree = new MovieFileTreeTableModel();
+        this.provider = provider;
         initComponents();
         addIcons();
         infoTextPane.setContentType("text/html");
@@ -94,6 +98,11 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         } else {
             button.setEnabled(false);
         }
+    }
+    
+    public void setContentProvider(ContentProvider provider) {
+        this.provider = provider;
+        update();
     }
 
     private void update() {
@@ -120,20 +129,26 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             fileTree.setMovie(movie);
             // to expand ratings...
             movieFileTreeTable.expandRow(1);
-            if (movie.getTitle() == null) {
+            String title = provider.getTitle(info);
+            if (title == null) {
                 movieHeader.setTitle(info.getDirectory().getName());
             } else {
-                movieHeader.setTitle(movie.getTitle());
+                movieHeader.setTitle(title);
             }
-            movieHeader.setDescription(movie.getPlot());
-
+            String plot = provider.getPlot(info);
+            if (plot!=null) {
+                movieHeader.setDescription(plot.substring(0, Math.min(plot.length(), 256)));
+            } else {
+                movieHeader.setDescription("");
+            }
+            
             for (MovieService service : services) {
                 updateButton(siteButtons.get(service), infoHandler.url(info, service));
             }
 
             StringBuilder builder = new StringBuilder("<html>");
 
-            builder.append("<h2>").append(movie.getTitle()).append("</h2>");
+            builder.append("<h2>").append(title).append("</h2>");
             boolean first = true;
             String type = movie.getType() == null ? "" : movie.getType().getName();
             builder.append("<strong>Type</strong> ").append(type).append("<br/>");
@@ -161,14 +176,19 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             builder.append("<br/>");
             builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
             builder.append("<br/>");
-            builder.append("<strong>IMDB</strong> ").append(info(info, MovieService.IMDB)).append("<br/>");
+            
+            for (MovieService s : services) {
+                builder.append("<strong>").append(s.getName()).append("</strong> ").append(info(info, s)).append("<br/>");
+            }
+            /*builder.append("<strong>IMDB</strong> ").append(info(info, MovieService.IMDB)).append("<br/>");
             builder.append("<strong>Tomato</strong> ").append(info(info, MovieService.TOMATOES)).append("<br/>");
             builder.append("<strong>MovieWeb</strong> ").append(info(info, MovieService.MOVIEWEB)).append("<br/>");
-            builder.append("<strong>Goolge</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
+            builder.append("<strong>Google</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
+            builder.append("<strong>Port.hu</strong> ").append(info(info, MovieService.PORTHU)).append("<br/>");
             //builder.append("<strong>OMDB</strong> ").append(info(info, MovieService.OMDB)).append("<br/>");
-            builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXSTER)).append("<br/>");
+            builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXSTER)).append("<br/>");*/
             builder.append("<br/>");
-            builder.append(movie.getPlot());
+            builder.append(plot);
             builder.append("</html>");
             infoTextPane.setText(builder.toString());
         }

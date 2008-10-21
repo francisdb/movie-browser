@@ -118,7 +118,8 @@ public class MovieFinder {
     }
 
     public void reloadMovie(MovieInfo movieInfo) {
-        String imdbId = movieInfo.siteFor(MovieService.IMDB).getIdForSite();
+        MovieService preferredService = settings.getPreferredService();
+        String movieId = movieInfo.siteFor(preferredService).getIdForSite();
 
         List<MovieInfo> list = new ArrayList<MovieInfo>();
         list.add(movieInfo);
@@ -138,7 +139,7 @@ public class MovieFinder {
             sms.setIdForSite(null);
         }
         
-        movie.getMovieSiteInfoOrCreate(MovieService.IMDB).setIdForSite(imdbId);
+        movie.getMovieSiteInfoOrCreate(preferredService).setIdForSite(movieId);
 
         movieInfo.setMovie(movieCache.insertOrUpdate(movie));
         loadMovies(list, true);
