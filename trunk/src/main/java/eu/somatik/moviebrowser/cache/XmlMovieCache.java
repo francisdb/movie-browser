@@ -202,6 +202,7 @@ public class XmlMovieCache implements MovieCache {
         }
     }
 
+    @SuppressWarnings("unchecked")
     synchronized void load() {
         Reader reader = null;
         List<StorableMovie> dbValues = null;
