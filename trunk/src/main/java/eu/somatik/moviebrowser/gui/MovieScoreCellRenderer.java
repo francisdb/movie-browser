@@ -29,7 +29,7 @@ final class MovieScoreCellRenderer extends DefaultTableCellRenderer {
 
     public MovieScoreCellRenderer() {
         super();
-        colors = new Color[100];
+        colors = new Color[101];
         for (int i = 0; i < colors.length; i++) {
             colors[i] = new Color(Math.min((100 - i) * 7, 255), Math.min(i * 3, 255), 128);
         }
