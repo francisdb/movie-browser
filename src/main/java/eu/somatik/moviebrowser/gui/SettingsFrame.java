@@ -26,9 +26,9 @@ import javax.swing.JFileChooser;
 import javax.swing.ImageIcon;
 import java.io.File;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -54,7 +54,11 @@ public class SettingsFrame extends javax.swing.JFrame {
     private DefaultListModel model;
     private boolean needRescan = false;
     
-    /** Creates new form SettingsFrame */
+    /**
+     * Creates new form SettingsFrame
+     * @param settings
+     * @param mainFrame 
+     */
     public SettingsFrame(final Settings settings,
                          final MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -390,15 +394,15 @@ public class SettingsFrame extends javax.swing.JFrame {
     }
     
     
-    private JCheckBox[] getCheckboxes() {
-        return new JCheckBox[] { 
-            flixsterCheckBox,
-            googleCheckBox,
-            moviewebCheckBox,
-            omdbCheckBox,
-            portHuCheckbox,
-            rottenTomatoesCheckBox
-        };
+    private Map<JCheckBox, MovieService> getCheckboxes() {
+        Map<JCheckBox, MovieService> cbs = new HashMap<JCheckBox, MovieService>();
+        cbs.put(omdbCheckBox, MovieService.OMDB);
+        cbs.put(flixsterCheckBox, MovieService.FLIXSTER);
+        cbs.put(googleCheckBox, MovieService.GOOGLE);
+        cbs.put(moviewebCheckBox, MovieService.MOVIEWEB);
+        cbs.put(portHuCheckbox, MovieService.PORTHU);
+        cbs.put(rottenTomatoesCheckBox, MovieService.TOMATOES);
+        return cbs;
     }
     
     private ComboBoxModel getMovieServices() {
@@ -410,9 +414,9 @@ public class SettingsFrame extends javax.swing.JFrame {
     private void getSettingsValues() {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
         saveCoverArtCheckBox.setSelected(settings.getSaveAlbumArt());
-        for (JCheckBox jb : getCheckboxes()) {
-            boolean value = settings.isServiceEnabled(jb.getName(), jb.isSelected());
-            jb.setSelected(value);
+        for (Map.Entry<JCheckBox, MovieService> entry : getCheckboxes().entrySet()) {
+            boolean value = settings.isServiceEnabled(entry.getValue().name().toLowerCase(), entry.getKey().isSelected());
+            entry.getKey().setSelected(value);
         }
         preferSiteComboBox.setSelectedItem(settings.getPreferredService());
     }
@@ -420,8 +424,8 @@ public class SettingsFrame extends javax.swing.JFrame {
     private void setSettingsValues() {
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
         settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
-        for (JCheckBox jb : getCheckboxes()) {
-            settings.setServiceEnabled(jb.getName(), jb.isSelected());
+        for (Map.Entry<JCheckBox, MovieService> entry : getCheckboxes().entrySet()) {
+            settings.setServiceEnabled(entry.getValue().name().toLowerCase(), entry.getKey().isSelected());
         }
         MovieService item = (MovieService) preferSiteComboBox.getSelectedItem();
         settings.setPreferredService(item);

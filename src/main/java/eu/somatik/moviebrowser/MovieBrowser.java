@@ -100,7 +100,8 @@ public class MovieBrowser {
      * @param subtitlesLoader
      * @param infoHandler
      * @param movieCache
-     * @param exporterLocator 
+     * @param exporterLocator
+     * @param fetcherFactory 
      */
     @Inject
     public MovieBrowser(
