@@ -234,7 +234,7 @@ public class MovieFinder {
                     info.setStatus(MovieStatus.CACHED);
                 }
 
-                for (MovieService service : getEnabledServices()) {
+                for (MovieService service : settings.getEnabledServices()) {
                     if (service!=preferredService) {
                         StorableMovieSite siteInfo = info.siteFor(service);
                         if (siteInfo == null || siteInfo.getScore()==null) {
@@ -308,7 +308,7 @@ public class MovieFinder {
         private void doCall() throws Exception {
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
-                LOGGER.trace("Calling fetch on {} for '{}'", service.getClass().getSimpleName(), info.getMovie().getTitle());
+                LOGGER.trace("Calling fetch on {} for '{}'", service.name(), info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 
                 fetchMoviePageInfo(info, service);
@@ -413,16 +413,5 @@ public class MovieFinder {
         }
         return true;
     }
-    
-    public List<MovieService> getEnabledServices() {
-        List<MovieService> result = new ArrayList<MovieService>();
-        for (MovieService ms : MovieService.values()) {
-            if (settings.isServiceEnabled(ms.name().toLowerCase(), false)) {
-                result.add(ms);
-            }
-        }
-        return result;
-    }
-
     
 }

@@ -42,9 +42,10 @@ import org.slf4j.LoggerFactory;
  */
 public class SettingsFrame extends javax.swing.JFrame {
     
-    private static final MovieService[] SERVICES = new MovieService[]{  
+    private static final MovieService[] MAIN_SERVICES = new MovieService[]{
         MovieService.IMDB,
-        MovieService.PORTHU
+        MovieService.PORTHU,
+        MovieService.CINEBEL
     };
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
@@ -105,6 +106,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         portHuCheckbox = new javax.swing.JCheckBox();
         preferSiteComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
+        cinebelCheckBox = new javax.swing.JCheckBox();
 
         jTextField1.setText("jTextField1");
 
@@ -201,6 +203,8 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Preferred site:");
 
+        cinebelCheckBox.setText("Cinebel");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -225,7 +229,9 @@ public class SettingsFrame extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(omdbCheckBox)
                                 .addGap(18, 18, 18)
-                                .addComponent(flixsterCheckBox))
+                                .addComponent(flixsterCheckBox)
+                                .addGap(18, 18, 18)
+                                .addComponent(cinebelCheckBox))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(googleCheckBox)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -242,7 +248,7 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(openSubsCheckBox))
                     .addComponent(subtitlesLabel))
-                .addContainerGap(187, Short.MAX_VALUE))
+                .addContainerGap(210, Short.MAX_VALUE))
             .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -251,7 +257,7 @@ public class SettingsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(miscLabel)
-                .addContainerGap(101, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(379, Short.MAX_VALUE)
                 .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -272,7 +278,7 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(timeoutText, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(secondsLabel)))
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(148, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,7 +303,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rottenTomatoesCheckBox)
                     .addComponent(flixsterCheckBox)
-                    .addComponent(omdbCheckBox))
+                    .addComponent(omdbCheckBox)
+                    .addComponent(cinebelCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(moviewebCheckBox)
@@ -402,11 +409,12 @@ public class SettingsFrame extends javax.swing.JFrame {
         cbs.put(moviewebCheckBox, MovieService.MOVIEWEB);
         cbs.put(portHuCheckbox, MovieService.PORTHU);
         cbs.put(rottenTomatoesCheckBox, MovieService.TOMATOES);
+        cbs.put(cinebelCheckBox, MovieService.CINEBEL);
         return cbs;
     }
     
     private ComboBoxModel getMovieServices() {
-        return new DefaultComboBoxModel(SERVICES);
+        return new DefaultComboBoxModel(MAIN_SERVICES);
     }
     
     
@@ -415,7 +423,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
         saveCoverArtCheckBox.setSelected(settings.getSaveAlbumArt());
         for (Map.Entry<JCheckBox, MovieService> entry : getCheckboxes().entrySet()) {
-            boolean value = settings.isServiceEnabled(entry.getValue().name().toLowerCase(), entry.getKey().isSelected());
+            boolean value = settings.isServiceEnabled(entry.getValue(), entry.getKey().isSelected());
             entry.getKey().setSelected(value);
         }
         preferSiteComboBox.setSelectedItem(settings.getPreferredService());
@@ -425,7 +433,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         settings.setRenameTitles(renameTitlesCheckBox.isSelected());
         settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
         for (Map.Entry<JCheckBox, MovieService> entry : getCheckboxes().entrySet()) {
-            settings.setServiceEnabled(entry.getValue().name().toLowerCase(), entry.getKey().isSelected());
+            settings.setServiceEnabled(entry.getValue(), entry.getKey().isSelected());
         }
         MovieService item = (MovieService) preferSiteComboBox.getSelectedItem();
         settings.setPreferredService(item);
@@ -433,6 +441,7 @@ public class SettingsFrame extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addLocationButton;
+    private javax.swing.JCheckBox cinebelCheckBox;
     private javax.swing.JButton deleteLocationButton;
     private javax.swing.JCheckBox flixsterCheckBox;
     private javax.swing.JCheckBox googleCheckBox;

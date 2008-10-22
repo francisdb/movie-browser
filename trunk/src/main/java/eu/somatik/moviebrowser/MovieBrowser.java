@@ -63,6 +63,7 @@ import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.export.ExporterModule;
+import eu.somatik.moviebrowser.service.ui.CinebelContentProvider;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import eu.somatik.moviebrowser.service.ui.ImdbContentProvider;
 import eu.somatik.moviebrowser.service.ui.PorthuContentProvider;
@@ -85,7 +86,7 @@ public class MovieBrowser {
     private final MovieCache movieCache;
     private final ExporterLocator exporterLocator;
     private final InfoFetcherFactory fetcherFactory;
-    private final Map<MovieService,ContentProvider> contentProviders = new HashMap<MovieService, ContentProvider>();
+    private final Map<MovieService,ContentProvider> contentProviders;
     private final ContentProvider defaultContentProvider;
     
     /** 
@@ -127,8 +128,17 @@ public class MovieBrowser {
         this.movieCache = movieCache;
         this.exporterLocator = exporterLocator;
         this.fetcherFactory = fetcherFactory;
-        this.contentProviders.put(MovieService.PORTHU, new PorthuContentProvider());
-        this.defaultContentProvider = new ImdbContentProvider();
+        this.contentProviders = setupContentProviders();
+        this.defaultContentProvider = contentProviders.get(MovieService.IMDB);
+    }
+
+
+    private Map<MovieService,ContentProvider> setupContentProviders(){
+        Map<MovieService,ContentProvider> providers = new HashMap<MovieService, ContentProvider>();
+        providers.put(MovieService.IMDB, new ImdbContentProvider());
+        providers.put(MovieService.PORTHU, new PorthuContentProvider());
+        providers.put(MovieService.CINEBEL, new CinebelContentProvider());
+        return providers;
     }
 
     private void configureLogging() {
@@ -221,6 +231,7 @@ public class MovieBrowser {
         MovieService service = settings.getPreferredService();
         ContentProvider contentProvider = this.contentProviders.get(service);
         if (contentProvider==null) {
+            LOGGER.warn("Falling back to default contentprovider "+defaultContentProvider.getClass().getSimpleName()+" for service "+service);
             return defaultContentProvider;
         } else {
             return contentProvider;
