@@ -50,6 +50,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
         }
         builder.append("<strong>Version</strong> ").append(version).append("<br/>");
         builder.append("<strong>Settings</strong> ").append(settings.getSettingsDir()).append("<br/>");
+        builder.append("<strong>Java</strong> ").append(System.getProperty("java.version")).append("<br/>");
         builder.append("<strong>Memory total</strong> ").append(mem(Runtime.getRuntime().totalMemory())).append("<br/>");
         builder.append("<strong>Memory free</strong> ").append(mem(Runtime.getRuntime().freeMemory())).append("<br/>");
         builder.append("<strong>Available Processors</strong> ").append(Runtime.getRuntime().availableProcessors()).append("<br/>");
