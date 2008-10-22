@@ -122,12 +122,12 @@ public class MainFrame extends javax.swing.JFrame {
 
         initComponents();
         ContentProvider contentProvider = browser.getContentProvider();
-        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, contentProvider);
+        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, contentProvider, settings);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        movieTable.setModel(new MovieInfoTableModel(infoHandler, finder, contentProvider));
+        movieTable.setModel(new MovieInfoTableModel(infoHandler, finder, contentProvider, settings));
         setColumnWidths();
 
         loadLookAndFeels();

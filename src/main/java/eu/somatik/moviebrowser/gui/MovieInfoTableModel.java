@@ -30,6 +30,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.flicklib.domain.MovieService;
 
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovie;
@@ -74,6 +75,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     private final InfoHandler infoHandler;
     private final ScoreCalculator calculator;
+    private final Settings settings;
     
     private List<MovieInfo> movies;
 
@@ -87,8 +89,9 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * Creates a new instance of MovieInfoTableModel 
      * @param infoHandler 
      */
-    public MovieInfoTableModel(final InfoHandler infoHandler, final MovieFinder finder, final ContentProvider contentProvider) {
+    public MovieInfoTableModel(final InfoHandler infoHandler, final MovieFinder finder, final ContentProvider contentProvider, final Settings settings) {
         this.infoHandler = infoHandler;
+        this.settings = settings;
         this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
         this.finder = finder;
@@ -97,7 +100,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     }
 
     private void calculateExtraColumns() {
-        extraColumns = finder.getEnabledServices();
+        extraColumns = settings.getEnabledServices();
     }
 
     @Override

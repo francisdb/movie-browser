@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -40,6 +41,7 @@ import com.flicklib.domain.MovieService;
 import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.tools.FileTools;
+import java.util.ArrayList;
 
 /**
  * Singleton implementation for the settings
@@ -53,9 +55,11 @@ public class SettingsImpl implements Settings {
     private static final String IMG_CACHE = "images";
     private static final String PREFERENCES = "preferences.properties";
     private static final String FOLDER_SETTINGS = "folders.lst";
+    private static final String SERVICE_PREFIX="flags.service.";
     
     private static final String FOLDERS_PROPERTY = "folders";
     private static final String LOOK_AND_FEEL_PROPERTY = "lookandfeel";
+    private static final String PREF_SERVICE_PROPERTY = "pref.service";
     private static final String RENAME_TITLES = "renameTitles";
     private static final String SAVE_ALBUM_ART = "saveAlbumArt";
     
@@ -155,12 +159,12 @@ public class SettingsImpl implements Settings {
 
     private Properties defaultPreferences() {
         Properties properties = new Properties();
-        properties.put("lookandfeel", UIManager.getSystemLookAndFeelClassName());
-        properties.put("flags.service.flixster","true");
-        properties.put("flags.service.rottenttomatoes","true");
-        properties.put("flags.service.google","true");
-        properties.put("flags.service.movieweb","true");
-        properties.put("flags.service.imdb","true");
+        properties.put(LOOK_AND_FEEL_PROPERTY, UIManager.getSystemLookAndFeelClassName());
+        properties.put(serviceKey(MovieService.FLIXSTER),"true");
+        properties.put(serviceKey(MovieService.TOMATOES),"true");
+        properties.put(serviceKey(MovieService.GOOGLE),"true");
+        properties.put(serviceKey(MovieService.MOVIEWEB),"true");
+        properties.put(serviceKey(MovieService.IMDB),"true");
         return properties;
     }
 
@@ -316,9 +320,9 @@ public class SettingsImpl implements Settings {
     }
 
     @Override
-    public boolean isServiceEnabled(String name, boolean defaultValue) {
+    public boolean isServiceEnabled(MovieService service, boolean defaultValue) {
         Map<String, String> prefs = loadPreferences();
-        String value = prefs.get("flags.service."+name);
+        String value = prefs.get(serviceKey(service));
         if (value==null) {
             return defaultValue;
         } else {
@@ -327,31 +331,55 @@ public class SettingsImpl implements Settings {
     }
 
     @Override
-    public void setServiceEnabled(String name, boolean value) {
+    public void setServiceEnabled(MovieService service, boolean value) {
         Map<String, String> prefs = loadPreferences();
-        prefs.put("flags.service."+name, Boolean.toString(value));
+        prefs.put(serviceKey(service), Boolean.toString(value));
         savePreferences(prefs);
     }
 
+    @Override
+    public List<MovieService> getEnabledServices() {
+        List<MovieService> services = new ArrayList<MovieService>();
+        Map<String, String> prefs = loadPreferences();
+        for(MovieService service:MovieService.values()){
+            String value = prefs.get(serviceKey(service));
+            if (value != null && Boolean.valueOf(value) == Boolean.TRUE) {
+                services.add(service);
+            }
+        }
+        return services;
+    }
+
+
+
     private String getPreferredServiceName() {
         Map<String, String> prefs = loadPreferences();
-        return prefs.get("pref.service");
+        return prefs.get(PREF_SERVICE_PROPERTY);
     }
 
     @Override
     public MovieService getPreferredService() {
+        // default is imdb
+        MovieService service = MovieService.IMDB;
         try {
             String name = getPreferredServiceName();
-            return MovieService.valueOf(name);
-        } catch (NullPointerException e) {
+            if(name != null){
+                service = MovieService.valueOf(name);
+            }
         } catch (IllegalArgumentException e) {
+            LOGGER.error("problem looking up preferred service", e);
         }
-        return MovieService.IMDB;
+        return service;
     }
 
+    @Override
     public void setPreferredService(MovieService service) {
         Map<String, String> prefs = loadPreferences();
-        prefs.put("pref.service", service.name());
+        prefs.put(PREF_SERVICE_PROPERTY, service.name());
         savePreferences(prefs);
+    }
+
+    private String serviceKey(final MovieService movieService){
+        return SERVICE_PREFIX+movieService.name().toLowerCase();
     }
 }

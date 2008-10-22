@@ -20,6 +20,7 @@ package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.Genre;
@@ -35,7 +36,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,21 +59,27 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final InfoHandler infoHandler;
     private final List<MovieService> services;
     private final Map<MovieService, JButton> siteButtons;
-    private MovieInfo info;
-    private MovieFileTreeTableModel fileTree;
+    private final MovieFileTreeTableModel fileTree;
     private ContentProvider provider;
+    private MovieInfo info;
+
 
     /** Creates new form MovieInfoPanel
      * @param imageCache 
      * @param iconLoader
      * @param infoHandler 
      */
-    public MovieInfoPanel(final ImageCache imageCache, final IconLoader iconLoader, final InfoHandler infoHandler, ContentProvider provider) {
+    public MovieInfoPanel(
+            final ImageCache imageCache,
+            final IconLoader iconLoader,
+            final InfoHandler infoHandler,
+            final ContentProvider provider,
+            final Settings settings) {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.infoHandler = infoHandler;
         // TODO get the services from the settings
-        this.services = Arrays.asList(MovieService.values());
+        this.services = settings.getEnabledServices();
         this.siteButtons = new HashMap<MovieService, JButton>();
         this.fileTree = new MovieFileTreeTableModel();
         this.provider = provider;
@@ -180,13 +186,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             for (MovieService s : services) {
                 builder.append("<strong>").append(s.getName()).append("</strong> ").append(info(info, s)).append("<br/>");
             }
-            /*builder.append("<strong>IMDB</strong> ").append(info(info, MovieService.IMDB)).append("<br/>");
-            builder.append("<strong>Tomato</strong> ").append(info(info, MovieService.TOMATOES)).append("<br/>");
-            builder.append("<strong>MovieWeb</strong> ").append(info(info, MovieService.MOVIEWEB)).append("<br/>");
-            builder.append("<strong>Google</strong> ").append(info(info, MovieService.GOOGLE)).append("<br/>");
-            builder.append("<strong>Port.hu</strong> ").append(info(info, MovieService.PORTHU)).append("<br/>");
-            //builder.append("<strong>OMDB</strong> ").append(info(info, MovieService.OMDB)).append("<br/>");
-            builder.append("<strong>Flixter</strong> ").append(info(info, MovieService.FLIXSTER)).append("<br/>");*/
             builder.append("<br/>");
             builder.append(plot);
             builder.append("</html>");
