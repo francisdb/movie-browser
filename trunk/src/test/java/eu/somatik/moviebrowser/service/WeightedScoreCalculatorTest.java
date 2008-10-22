@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 public class WeightedScoreCalculatorTest {
 
     /**
-     * Test of calculate method, of class InfoHandlerImpl.
+     * Test of calculate method, of class WeightedScoreCalculator.
      */
     @Test
     public void testCalculate() {
