@@ -313,7 +313,8 @@ public class MainFrame extends javax.swing.JFrame {
         loadProgressBar.setString("");
         loadProgressBar.setStringPainted(true);
 
-        filterLabel.setText("Filter:");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
+        filterLabel.setText(bundle.getString("MainFrame.filterLabel.text")); // NOI18N
 
         filterText.setFont(filterText.getFont().deriveFont(filterText.getFont().getSize()-2f));
         filterText.setToolTipText("Seperate filter words with a space (ex: action adventure thriller)");
@@ -329,10 +330,10 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         movieMenu.setMnemonic('M');
-        movieMenu.setText("Movies");
+        movieMenu.setText(bundle.getString("MainFrame.menu.movies")); // NOI18N
 
         importMenuItem.setMnemonic('I');
-        importMenuItem.setText("Import folder...");
+        importMenuItem.setText(bundle.getString("MainFrame.menu.importFolder")); // NOI18N
         importMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 importMenuItemActionPerformed(evt);
@@ -343,14 +344,14 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1.add(movieMenu);
 
         toolsMenu.setMnemonic('T');
-        toolsMenu.setText("Tools");
+        toolsMenu.setText(bundle.getString("MainFrame.menu.tools")); // NOI18N
         toolsMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 toolsMenuActionPerformed(evt);
             }
         });
 
-        jMenuItem1.setText("Generate HTML Movie Catalog");
+        jMenuItem1.setText(bundle.getString("MainFrame.menu.generateHtmlMovieCatalog")); // NOI18N
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
@@ -358,7 +359,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         toolsMenu.add(jMenuItem1);
 
-        clearCacheMenuItem.setText("Clear Cache");
+        clearCacheMenuItem.setText(bundle.getString("MainFrame.menu.clearCache")); // NOI18N
         clearCacheMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearCacheMenuItemActionPerformed(evt);
@@ -367,7 +368,7 @@ public class MainFrame extends javax.swing.JFrame {
         toolsMenu.add(clearCacheMenuItem);
 
         rescanMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
-        rescanMenuItem.setText("Rescan Folders");
+        rescanMenuItem.setText(bundle.getString("MainFrame.menu.rescanFolders")); // NOI18N
         rescanMenuItem.setToolTipText("Rescan the file system for movies");
         rescanMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -377,7 +378,7 @@ public class MainFrame extends javax.swing.JFrame {
         toolsMenu.add(rescanMenuItem);
 
         settingsMenuItem.setMnemonic('S');
-        settingsMenuItem.setText("Settings");
+        settingsMenuItem.setText(bundle.getString("MainFrame.menu.settings")); // NOI18N
         settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 settingsMenuItemActionPerformed(evt);
@@ -388,12 +389,12 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1.add(toolsMenu);
 
         extraMenu.setMnemonic('E');
-        extraMenu.setText("Extra");
+        extraMenu.setText(bundle.getString("MainFrame.menu.extras")); // NOI18N
 
-        lookAndFeelMenu.setText("Look and feel");
+        lookAndFeelMenu.setText(bundle.getString("MainFrame.menu.lookAndFeel")); // NOI18N
         extraMenu.add(lookAndFeelMenu);
 
-        checkUpdatesMenuItem.setText("Check for Updates");
+        checkUpdatesMenuItem.setText(bundle.getString("MainFrame.menu.checkForUpdates")); // NOI18N
         checkUpdatesMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 checkUpdatesMenuItemActionPerformed(evt);
@@ -401,7 +402,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         extraMenu.add(checkUpdatesMenuItem);
 
-        aboutMenuItem.setText("About");
+        aboutMenuItem.setText(bundle.getString("MainFrame.menu.about")); // NOI18N
         aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aboutMenuItemActionPerformed(evt);
