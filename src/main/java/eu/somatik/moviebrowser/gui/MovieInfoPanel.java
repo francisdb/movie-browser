@@ -36,9 +36,11 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -62,6 +64,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final MovieFileTreeTableModel fileTree;
     private ContentProvider provider;
     private MovieInfo info;
+    private ResourceBundle bundle;
 
 
     /** Creates new form MovieInfoPanel
@@ -83,6 +86,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         this.siteButtons = new HashMap<MovieService, JButton>();
         this.fileTree = new MovieFileTreeTableModel();
         this.provider = provider;
+        this.bundle = ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
+
         initComponents();
         addIcons();
         infoTextPane.setContentType("text/html");
@@ -157,9 +162,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             builder.append("<h2>").append(title).append("</h2>");
             boolean first = true;
             String type = movie.getType() == null ? "" : movie.getType().getName();
-            builder.append("<strong>Type</strong> ").append(type).append("<br/>");
-            builder.append("<strong>Director</strong> ").append(movie.getDirector()).append("<br/>");
-            builder.append("<strong>Genres</strong> ");
+            builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.type")+"</strong> ").append(type).append("<br/>");
+            builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.director")+"</strong> ").append(movie.getDirector()).append("<br/>");
+            builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.genres")+"</strong> ");
             for (Genre genre : movie.getGenres()) {
                 if (first) {
                     first = false;
@@ -169,7 +174,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
                 builder.append(genre);
             }
             builder.append("<br/>");
-            builder.append("<strong>Languages</strong> ");
+            builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.languages")+"</strong> ");
             first = true;
             for (Language language : movie.getLanguages()) {
                 if (first) {
@@ -180,8 +185,10 @@ public class MovieInfoPanel extends javax.swing.JPanel {
                 builder.append(language);
             }
             builder.append("<br/>");
-            builder.append("<strong>Runtime</strong> ").append(movie.getRuntime()).append(" min<br/>");
-            builder.append("<br/>");
+            if (movie.getRuntime()!=null) {
+                builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.runtime")+"</strong> ").append(movie.getRuntime()).append(" min<br/>");
+                builder.append("<br/>");
+            }
             
             for (MovieService s : services) {
                 builder.append("<strong>").append(s.getName()).append("</strong> ").append(info(info, s)).append("<br/>");
@@ -208,9 +215,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         builder.append(scoreString(infoHandler.score(info, service)));
         Integer votes = infoHandler.votes(info, service);
         if (votes != null) {
-            builder.append(" ");
-            builder.append(votes);
-            builder.append(" votes");
+            builder.append(' ');
+            builder.append(MessageFormat.format(
+                    bundle.getString("MovieInfoPanel.panel.votes"), votes));
         }
         return builder;
     }
@@ -226,7 +233,11 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private JButton createSiteButton(MovieService service) {
         final JButton serviceButton = new JButton(iconLoader.iconFor(service));
         serviceButton.setEnabled(false);
-        serviceButton.setToolTipText("Open " + service.getName() + " page for this movie");
+        //serviceButton.setToolTipText("Open " + service.getName() + " page for this movie");
+        serviceButton.setToolTipText(
+                MessageFormat.format(
+                    bundle.getString("MovieInfoPanel.serviceButton.tooltip"), 
+                    service.getName()));
         serviceButton.addActionListener(new ActionListener() {
 
             @Override
