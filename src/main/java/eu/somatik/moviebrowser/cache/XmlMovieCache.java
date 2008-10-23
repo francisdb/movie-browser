@@ -33,6 +33,7 @@ import java.util.Map;
 
 import com.flicklib.tools.LevenshteinDistance;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
@@ -52,6 +53,7 @@ import org.slf4j.LoggerFactory;
  * @author zsombor
  * 
  */
+@Singleton
 public class XmlMovieCache implements MovieCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlMovieCache.class);
