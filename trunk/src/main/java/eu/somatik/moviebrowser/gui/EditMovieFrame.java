@@ -44,6 +44,8 @@ import com.flicklib.domain.MovieService;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -57,7 +59,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
     private final MovieInfo movieInfo;
     private final MovieFinder movieFinder;
     private final MovieService service;
-
+    private final ResourceBundle bundle;
     /** 
      * Creates new form EditMovieFrame
      * @param movieInfo 
@@ -69,7 +71,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
         this.movieFinder = movieFinder;
         this.movieInfo = movieInfo;
         this.service = service;
-
+        this.bundle = ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
+        
 
         this.listModel = new DefaultListModel();
         initComponents();
@@ -104,6 +107,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
         resultsList = new javax.swing.JList();
         updateButton = new javax.swing.JButton();
         statusProgressBar = new javax.swing.JProgressBar();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
@@ -154,6 +158,13 @@ public class EditMovieFrame extends javax.swing.JFrame {
         statusProgressBar.setString(bundle.getString("EditMovieFrame.statusProgressBar.string")); // NOI18N
         statusProgressBar.setStringPainted(true);
 
+        cancelButton.setText(bundle.getString("EditMovieFrame.cancelButton.text")); // NOI18N
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -162,20 +173,22 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(searchLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                .addComponent(searchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                .addComponent(statusProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cancelButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(updateButton)
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -193,7 +206,8 @@ public class EditMovieFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(updateButton)
-                    .addComponent(statusProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(statusProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
@@ -202,7 +216,7 @@ public class EditMovieFrame extends javax.swing.JFrame {
 
 private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
     statusProgressBar.setIndeterminate(true);
-    statusProgressBar.setString("Searching...");
+    statusProgressBar.setString(bundle.getString("EditMovieFrame.searchInProgress"));// NOI18N
 
     SwingWorker<List<? extends MovieSearchResult>, Void> worker =
             new SwingWorker<List<? extends MovieSearchResult>, Void>() {
@@ -233,7 +247,7 @@ private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
     MovieSearchResult moviePage = (MovieSearchResult) resultsList.getSelectedValue();
     if (moviePage == null) {
-        JOptionPane.showMessageDialog(EditMovieFrame.this, "No movie selected");
+        JOptionPane.showMessageDialog(EditMovieFrame.this, java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle").getString("EditMovieFrame.noMovieSelected"));
     } else {
         movieInfo.getMovie().setTitle(moviePage.getTitle());
         movieInfo.getMovie().getMovieSiteInfoOrCreate(service).setIdForSite(moviePage.getIdForSite());
@@ -253,15 +267,26 @@ private void resultsListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRS
 private void resultsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_resultsListValueChanged
     MovieSearchResult moviePage = (MovieSearchResult) resultsList.getSelectedValue();   
     if(moviePage != null){
-        String tooltip = "You have selected " + moviePage.getTitle();
+        /*String tooltip = "You have selected " + moviePage.getTitle();
         resultsList.setToolTipText(tooltip + ". Double click selection to go to the IMDB page or click Update button to update.");
-        updateButton.setToolTipText(tooltip + ". Click here to update.");
+        updateButton.setToolTipText(tooltip + ". Click here to update.");*/
+        resultsList.setToolTipText(MessageFormat.format(
+                bundle.getString("EditMovieFrame.resultList.movie_tooltip"), moviePage.getTitle()));
+        updateButton.setToolTipText(MessageFormat.format(
+                bundle.getString("EditMovieFrame.updateButton.movie_tooltip"), moviePage.getTitle()));
+        
+        
     }
 }//GEN-LAST:event_resultsListValueChanged
 
 private void searchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchTextFieldActionPerformed
     searchButtonActionPerformed(evt);
 }//GEN-LAST:event_searchTextFieldActionPerformed
+
+private void cancelPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelPerformed
+// TODO add your handling code here:
+    this.dispose();
+}//GEN-LAST:event_cancelPerformed
 
 private void resultsListDoubleClick() {
     MovieSearchResult moviePage = (MovieSearchResult) resultsList.getSelectedValue();
@@ -286,9 +311,10 @@ private void resultsListDoubleClick() {
         resultsList.setModel(listModel);
         statusProgressBar.setIndeterminate(false);
         if(listModel.isEmpty()) {
-            statusProgressBar.setString("No Results Found");
+            statusProgressBar.setString(bundle.getString("EditMovieFrame.noResultsFound"));
         } else {
-            statusProgressBar.setString(listModel.getSize() + " Results Found");
+            statusProgressBar.setString(MessageFormat.format(bundle.getString("EditMovieFrame.resultsFound"),
+                    listModel.getSize()));
         }
  }
  
@@ -325,6 +351,7 @@ private void resultsListDoubleClick() {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JList resultsList;
