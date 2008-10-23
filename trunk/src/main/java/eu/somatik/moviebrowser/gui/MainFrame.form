@@ -7,13 +7,17 @@
         <Menu class="javax.swing.JMenu" name="movieMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="77"/>
-            <Property name="text" type="java.lang.String" value="Movies"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.movies" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="importMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="73"/>
-                <Property name="text" type="java.lang.String" value="Import folder..."/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.importFolder" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importMenuItemActionPerformed"/>
@@ -24,7 +28,9 @@
         <Menu class="javax.swing.JMenu" name="toolsMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="84"/>
-            <Property name="text" type="java.lang.String" value="Tools"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.tools" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="toolsMenuActionPerformed"/>
@@ -32,7 +38,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Generate HTML Movie Catalog"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.generateHtmlMovieCatalog" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
@@ -40,7 +48,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="clearCacheMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Clear Cache"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.clearCache" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearCacheMenuItemActionPerformed"/>
@@ -51,7 +61,9 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Alt+R"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Rescan Folders"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.rescanFolders" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Rescan the file system for movies"/>
               </Properties>
               <Events>
@@ -61,7 +73,9 @@
             <MenuItem class="javax.swing.JMenuItem" name="settingsMenuItem">
               <Properties>
                 <Property name="mnemonic" type="int" value="83"/>
-                <Property name="text" type="java.lang.String" value="Settings"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.settings" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="settingsMenuItemActionPerformed"/>
@@ -72,17 +86,23 @@
         <Menu class="javax.swing.JMenu" name="extraMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="69"/>
-            <Property name="text" type="java.lang.String" value="Extra"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.extras" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <SubComponents>
             <Menu class="javax.swing.JMenu" name="lookAndFeelMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Look and feel"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.lookAndFeel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
             </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="checkUpdatesMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Check for Updates"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.checkForUpdates" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkUpdatesMenuItemActionPerformed"/>
@@ -90,7 +110,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="About"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.menu.about" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutMenuItemActionPerformed"/>
@@ -215,7 +237,9 @@
     </Component>
     <Component class="javax.swing.JLabel" name="filterLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Filter:"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="MainFrame.filterLabel.text" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="filterText">
