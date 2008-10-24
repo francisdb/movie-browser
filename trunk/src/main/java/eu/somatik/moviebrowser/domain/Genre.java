@@ -18,38 +18,41 @@
  */
 package eu.somatik.moviebrowser.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- *
+ * 
  * @author francisdb
  */
 @Entity
 public class Genre {
+
+    private static Map<String,Genre> instanceCache = new HashMap();
     
     @Id
     private String name;
-    
+
     /** Creates a new instance of Genre */
     public Genre() {
-    	// nothing here
+        // nothing here
     }
 
     /**
      * Constructs a new Genre object
-     *
+     * 
      * @param name
      */
     public Genre(String name) {
         this.name = name;
     }
-    
-    
-    
+
     /**
      * 
-     * @param name 
+     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -62,29 +65,36 @@ public class Genre {
     public String getName() {
         return name;
     }
-    
+
     @Override
     public String toString() {
         return name;
     }
-    
+
     @Override
     public int hashCode() {
         return name.hashCode();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Genre) {
-            if (name!=null) {
-                return name.equals(((Genre)obj).name);
+            if (name != null) {
+                return name.equals(((Genre) obj).name);
             }
         }
         return false;
     }
 
     
-
-    
-    
+    public static Genre get(String name) {
+        synchronized (instanceCache) {
+            Genre genre = instanceCache.get(name);
+            if (genre==null) {
+                genre = new Genre(name);
+                instanceCache.put(name, genre);
+            }
+            return genre;
+        }
+    }
 }

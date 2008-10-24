@@ -67,7 +67,7 @@ public class XmlMovieCache implements MovieCache {
 
         @Override
         public Object fromString(String name) {
-            return new Genre(name);
+            return Genre.get(name);
         }
 
         @Override
