@@ -18,6 +18,8 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import java.util.Set;
+
 import com.flicklib.domain.Movie;
 import com.flicklib.domain.MoviePage;
 import eu.somatik.moviebrowser.domain.Genre;
@@ -57,7 +59,7 @@ public class Converter {
             storableMovie.addLanguage(new Language(lang));
         }
         for (String genre :movie.getGenres()) {
-            storableMovie.addGenre(new Genre(genre));
+            storableMovie.addGenre(Genre.get(genre));
         }
     }
 
@@ -74,7 +76,7 @@ public class Converter {
         }
         storableMovie.getGenres().clear();
         for (String genre :movie.getGenres()) {
-            storableMovie.addGenre(new Genre(genre));
+            storableMovie.addGenre(Genre.get(genre));
         }
     }
 
@@ -89,5 +91,11 @@ public class Converter {
         storableMovieSite.setAlternateTitle(movieSite.getAlternateTitle());
         storableMovieSite.setOriginalTitle(movieSite.getOriginalTitle());
         storableMovieSite.setPlot(movieSite.getPlot());
+        Set<Genre> genres = storableMovieSite.getGenres();
+        genres.clear();
+        for (String genre :movieSite.getGenres()) {
+            genres.add(Genre.get(genre));
+        }
+
     }
 }

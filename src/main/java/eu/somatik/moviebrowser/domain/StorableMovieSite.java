@@ -18,8 +18,10 @@
  */
 package eu.somatik.moviebrowser.domain;
 
-import com.flicklib.domain.MovieService;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +31,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.flicklib.domain.MovieService;
 
 /**
  * 
@@ -69,6 +73,7 @@ public class StorableMovieSite implements Cloneable, Persistent {
 
 	private String plot;
 	
+	private Set<Genre> genres = new HashSet<Genre>();
 
 	/**
 	 * Constructs a new StorableMovieSite
@@ -248,6 +253,15 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	public void setPlot(String plot) {
             this.plot = plot;
         }
+	
+	public Set<Genre> getGenres() {
+            return genres;
+        }
+	
+	public void setGenres(Set<Genre> genres) {
+            this.genres = genres;
+        }
+	
 	
 	@Override
 	public StorableMovieSite clone() throws CloneNotSupportedException {
