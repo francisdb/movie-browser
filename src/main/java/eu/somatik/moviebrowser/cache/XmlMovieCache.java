@@ -172,6 +172,7 @@ public class XmlMovieCache implements MovieCache {
         xstream.omitField(MovieLocation.class, "group");
         
         xstream.alias("site", StorableMovieSite.class);
+        xstream.addImplicitCollection(StorableMovieSite.class, "genres",  Genre.class);
         xstream.omitField(StorableMovieSite.class, "movie");
         xstream.useAttributeFor(StorableMovieSite.class, "id");
         xstream.useAttributeFor(StorableMovieSite.class, "service");
