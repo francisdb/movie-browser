@@ -275,7 +275,7 @@ public class AdvancedFolderScanner implements FolderScanner {
                 String baseName = getNameWithoutExt(f);
                 String ext = getExtension(f);
                 if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(ext)) {
-                    if (LevenshteinDistance.distance(plainFileName, baseName) < 3) {
+                    if (LevenshteinDistance.distance(plainFileName, baseName) <= 3) {
                         fg.addFile(new StorableMovieFile(f, FileType.getTypeByExtension(ext), fg));
                     }
                 }
