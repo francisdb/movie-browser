@@ -213,6 +213,8 @@ public class MovieFinder {
             try {
                 LOGGER.info("call "+info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
+                // set true, if we should call extra services for this movie
+                boolean needExtraServiceCheck = false;
                 if (info.getMovie().getId() == null) {
                 	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
                     // TODO load movie
@@ -222,23 +224,25 @@ public class MovieFinder {
                         //directory.setName(info.getDirectory().getName());
                         info.setMovie(movieCache.insertOrUpdate(group.getMovie()));
                     } else {
-                        fetchInformation();
+                        needExtraServiceCheck = fetchInformation();
                     }
                     info.setStatus(MovieStatus.LOADED);
                 } else {
                     if (info.isNeedRefetch()) {
-                        getMovieInfoImdb(info, preferredService);
+                        needExtraServiceCheck = getMovieInfoImdb(info, preferredService);
                         
                         info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
 
-                for (MovieService service : settings.getEnabledServices()) {
-                    if (service!=preferredService) {
-                        StorableMovieSite siteInfo = info.siteFor(service);
-                        if (siteInfo == null || siteInfo.getScore()==null) {
-                            secondaryService.submit(new MovieServiceCaller(service, info));
+                if (needExtraServiceCheck) {
+                    for (MovieService service : settings.getEnabledServices()) {
+                        if (service!=preferredService) {
+                            StorableMovieSite siteInfo = info.siteFor(service);
+                            if (siteInfo == null || siteInfo.getScore()==null) {
+                                secondaryService.submit(new MovieServiceCaller(service, info));
+                            }
                         }
                     }
                 }
@@ -248,24 +252,27 @@ public class MovieFinder {
             }
         }
 
-        private void fetchInformation() throws UnknownHostException, Exception {
+        private boolean fetchInformation() throws UnknownHostException, Exception {
             StorableMovie movie;
-            getMovieInfoImdb(info, preferredService);
-            movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
-            if (movie == null) {
-                info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
-   
-            } else {
-                // the movie is already in the database, but we haven't find this movie by 
-                // it's files, so it must be a different version, so we add as a new file
-                // group.
-                FileGroup newFileGroup = info.getMovie().getUniqueFileGroup();
-                MovieLocation directory = newFileGroup.getDirectory(info.getDirectory().getAbsolutePath());
-                movie.addFileGroup(newFileGroup);
-            	//directory.setName(info.getDirectory().getName());
-            	info.setMovie(movieCache.insertOrUpdate(movie));
+            boolean checkSucceeded = getMovieInfoImdb(info, preferredService);
+            if (checkSucceeded) {
+                movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
+                if (movie == null) {
+                    info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
+       
+                } else {
+                    // the movie is already in the database, but we haven't find this movie by 
+                    // it's files, so it must be a different version, so we add as a new file
+                    // group.
+                    FileGroup newFileGroup = info.getMovie().getUniqueFileGroup();
+                    MovieLocation directory = newFileGroup.getDirectory(info.getDirectory().getAbsolutePath());
+                    movie.addFileGroup(newFileGroup);
+                	//directory.setName(info.getDirectory().getName());
+                	info.setMovie(movieCache.insertOrUpdate(movie));
+                }
             }
             info.setNeedRefetch(false);
+            return checkSucceeded;
         }
 
         private FileGroup findMovie(MovieInfo info) {
@@ -330,18 +337,21 @@ public class MovieFinder {
      * @throws java.net.UnknownHostException
      * @throws java.lang.Exception
      */
-    private void getMovieInfoImdb(MovieInfo movieInfo, MovieService movieService) throws UnknownHostException, Exception {
+    private boolean getMovieInfoImdb(MovieInfo movieInfo, MovieService movieService) throws UnknownHostException, Exception {
         StorableMovie newMovie = movieInfo.getMovie();
 
         MoviePage moviePage = fetchMoviePageInfo(movieInfo, movieService);
         if (moviePage!=null && moviePage.getIdForSite()!=null) {
             converter.convert(moviePage, newMovie);
+            //rename titles, if we have IMDB result
+            if (settings.getRenameTitles() && moviePage.getIdForSite()!=null) {
+                renameFolderToTitle(movieInfo);
+            }
+            return true;
+        } else {
+            return false;
         }
 
-        //rename titles, if we have IMDB result
-        if (settings.getRenameTitles() && moviePage.getIdForSite()!=null) {
-            renameFolderToTitle(movieInfo);
-        }
     // todo insert the site?
     }
 
