@@ -392,5 +392,14 @@ public class StorableMovie implements Cloneable, Persistent {
             s.setMovie(this);
         }
     }
+
+    @Transient
+    public int getCopyCount() {
+        int count = 0;
+        for (FileGroup f : groups) {
+            count += f.getLocations().size();
+        }
+        return count;
+    }
     
 }

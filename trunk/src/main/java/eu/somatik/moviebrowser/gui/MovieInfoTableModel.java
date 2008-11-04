@@ -54,20 +54,22 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     /**
      * Movie column number
      */
-    public static final int MOVIE_COL = 1;
+    //public static final int MOVIE_COL = 1;
     private static final String COL_NAMES[] = {
         STATUS_COLUMN_NAME,
         MOVIE_COLUMN_NAME,
         "Year",
         "Date",
         "Runtime",
-        SCORE_COLUMN_NAME
+        SCORE_COLUMN_NAME,
+        "Copies"
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class,
         Object.class,
         Integer.class,
         Date.class,
+        Integer.class,
         Integer.class,
         Integer.class,
     };
@@ -81,8 +83,6 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
 
     private List<MovieService> extraColumns;
     
-    private MovieFinder finder;
-    
     private ContentProvider contentProvider;
     
     /** 
@@ -94,7 +94,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         this.settings = settings;
         this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
-        this.finder = finder;
+        //this.finder = finder;
         this.contentProvider = contentProvider;
         calculateExtraColumns();
     }
@@ -151,7 +151,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
             case 5:
                 return calculator.calculate(info);
             case 6:
-                return infoHandler.score(info, MovieService.IMDB);
+                return info.getMovie().getCopyCount();
 /*            case 7:
                 return infoHandler.score(info, MovieService.TOMATOES);
             case 8:
