@@ -36,6 +36,7 @@ public class MovieNameExtractor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieNameExtractor.class);
 
     private static final String TO_REMOVE[] = {
+        ".5.1",
         ".ws.dvdrip",
         ".fs.dvdrip",
         ".fs.internal",
@@ -53,6 +54,7 @@ public class MovieNameExtractor {
         ".dvdivx5",
         ".dvdr",
         ".divx",
+        ".dual",
         ".xvid",
         ".limited",
         ".internal",
@@ -64,6 +66,7 @@ public class MovieNameExtractor {
         ".uncut",
         ".stv",
         ".dutch", // keep this one?
+        ".hundub",
         ".hund",
         ".hun",
         ".nfofix",
@@ -167,7 +170,7 @@ public class MovieNameExtractor {
         int lastDotPos = name.lastIndexOf('.');
         if (lastDotPos != -1 && lastDotPos != 0 && lastDotPos < name.length() - 1) {
             String ext = name.substring(lastDotPos + 1).toLowerCase();
-            if (MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
+            if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(ext)) {
                 return name.substring(0, lastDotPos);
             }
         }
