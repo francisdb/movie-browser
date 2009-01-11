@@ -224,7 +224,7 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
     
     Map<Object,RowInfo<?>> rowInfos = new HashMap<Object, RowInfo<?>>();
     /**
-     * 
+     *
      */
     public MovieFileTreeTableModel() {
         // TODO Auto-generated constructor stub

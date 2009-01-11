@@ -21,6 +21,7 @@ package eu.somatik.moviebrowser.gui;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -190,7 +191,7 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * Adds all movies
      * @param items 
      */
-    public void addAll(List<MovieInfo> items) {
+    public void addAll(Collection<MovieInfo> items) {
         if (items.size() != 0) {
             int firstRow = movies.size();
             movies.addAll(items);

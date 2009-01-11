@@ -259,7 +259,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        generateMovieCatItem = new javax.swing.JMenuItem();
         clearCacheMenuItem = new javax.swing.JMenuItem();
         rescanMenuItem = new javax.swing.JMenuItem();
         settingsMenuItem = new javax.swing.JMenuItem();
@@ -332,6 +332,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieMenu.setMnemonic('M');
         movieMenu.setText(bundle.getString("MainFrame.menu.movies")); // NOI18N
 
+        importMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
         importMenuItem.setMnemonic('I');
         importMenuItem.setText(bundle.getString("MainFrame.menu.importFolder")); // NOI18N
         importMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -351,13 +352,13 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jMenuItem1.setText(bundle.getString("MainFrame.menu.generateHtmlMovieCatalog")); // NOI18N
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        generateMovieCatItem.setText(bundle.getString("MainFrame.menu.generateHtmlMovieCatalog")); // NOI18N
+        generateMovieCatItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                generateMovieCatItemActionPerformed(evt);
             }
         });
-        toolsMenu.add(jMenuItem1);
+        toolsMenu.add(generateMovieCatItem);
 
         clearCacheMenuItem.setText(bundle.getString("MainFrame.menu.clearCache")); // NOI18N
         clearCacheMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -451,9 +452,11 @@ public class MainFrame extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
-            settings.addFolder(newFolder);
+            //settings.addFolder(newFolder);
             this.selectedFile = newFolder;
-            scanFolders();
+
+            new ImportDialogController(browser, new ImportDialog(this, false), selectedFile, (MovieInfoTableModel) movieTable.getModel()).startImporting();
+            //scanFolders();
         } else {
             LOGGER.debug("No Selection ");
         }
@@ -603,7 +606,7 @@ private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scan
     scanFolders();
 }//GEN-LAST:event_scanFolders
 
-private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+private void generateMovieCatItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateMovieCatItemActionPerformed
         
         String title = JOptionPane.showInputDialog(MainFrame.this, "Enter a title for this movie catalog (ex. John's Movie Library):", "Title", JOptionPane.QUESTION_MESSAGE);
         if(title.isEmpty()) {
@@ -633,7 +636,7 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             //FIXME we arrive here if the file exists
             LOGGER.debug("Location to create HTML catalog not selected.");
         }    
-}//GEN-LAST:event_jMenuItem1ActionPerformed
+}//GEN-LAST:event_generateMovieCatItemActionPerformed
 
 private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toolsMenuActionPerformed
 // TODO add your handling code here:
@@ -868,9 +871,9 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JMenu extraMenu;
     private javax.swing.JLabel filterLabel;
     private javax.swing.JTextField filterText;
+    private javax.swing.JMenuItem generateMovieCatItem;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JProgressBar loadProgressBar;
     private javax.swing.JMenu lookAndFeelMenu;
