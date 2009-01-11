@@ -310,7 +310,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         infoTextPane = new javax.swing.JTextPane();
         movieFileScrollPane = new javax.swing.JScrollPane();
         movieFileTreeTable = new org.jdesktop.swingx.JXTreeTable(fileTree);
-        System.out.println("teszt");
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
         movieHeader.setDescription(bundle.getString("MovieInfoPanel.movieHeader.description")); // NOI18N
