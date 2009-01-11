@@ -4,24 +4,29 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.api.MovieInfoFetcher;
-import com.flicklib.domain.MovieSearchResult;
-import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.MovieBrowser;
-import eu.somatik.moviebrowser.domain.FileGroup;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
 import javax.swing.SwingWorker;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.api.MovieInfoFetcher;
+import com.flicklib.domain.MovieSearchResult;
+import com.flicklib.domain.MovieService;
+
+import eu.somatik.moviebrowser.MovieBrowser;
+import eu.somatik.moviebrowser.domain.FileGroup;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.service.MovieVisitor;
 
 /**
  *
@@ -127,12 +132,22 @@ public class ImportDialogController {
     }
 
     void okButtonPressed() {
+        final String label = dialog.getFolderLabel();
+        
+        MovieVisitor visitor = new MovieVisitor() {
+            @Override
+            public void visitLocation(FileGroup fileGroup, MovieLocation location) {
+                location.setLabel(label);
+            }
+        };
         for (MovieInfo info : selectedResults.keySet()) {
             MovieSearchResult result = selectedResults.get(info);
             
             // set the site-id into the MovieInfo object, and call the regular check/retrieval methods.
             StorableMovieSite movieSite = info.getMovie().getMovieSiteInfoOrCreate(result.getService());
             movieSite.setIdForSite(result.getIdForSite());
+            
+            visitor.startVisit(info.getMovie());
             
             browser.getMovieFinder().loadMovie(info, result.getService());
         }

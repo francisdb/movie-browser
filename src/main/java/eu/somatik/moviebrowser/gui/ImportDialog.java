@@ -412,7 +412,6 @@ public class ImportDialog extends javax.swing.JDialog {
         return (MovieSearchResult) this.suggestedTitlesList.getSelectedValue();
     }
 
-
     public void setEnablePrevButton(boolean flag) {
         this.prevButton.setEnabled(flag);
     }

@@ -186,7 +186,7 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         public Object getValue(int column) {
             switch(column) {
                 case NAME : return row.getPath();
-                case LABEL : return row.getLabel();
+                case TYPE : return row.getLabel();
                 default : return null;
             }
         }
