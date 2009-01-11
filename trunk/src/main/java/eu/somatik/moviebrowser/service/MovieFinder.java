@@ -145,6 +145,10 @@ public class MovieFinder {
         loadMovies(list, true);
     }
 
+    public void loadMovie(MovieInfo info, MovieService mservice) {
+        service.submit(new MainServiceCaller(info, mservice));
+    }
+    
     /**
      * Loads all movies
      * 
@@ -195,10 +199,15 @@ public class MovieFinder {
          * @param info
          */
         public MainServiceCaller(MovieInfo info) {
+            this(info,settings.getPreferredService());
+        }
+
+        public MainServiceCaller(MovieInfo info, MovieService service) {
             this.info = info;
-            this.preferredService = settings.getPreferredService();
+            this.preferredService = service;
             incRunningTasks();
         }
+
 
         @Override
         public MovieInfo call() throws Exception {
