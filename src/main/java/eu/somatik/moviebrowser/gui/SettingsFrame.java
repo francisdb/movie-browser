@@ -22,38 +22,35 @@ import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.config.Settings;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
 import javax.swing.ImageIcon;
-import java.io.File;
 
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+
 import java.util.Map;
 import java.util.Set;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  *
  * @author  rug
  */
 public class SettingsFrame extends javax.swing.JFrame {
-    
-    private static final MovieService[] MAIN_SERVICES = new MovieService[]{
+
+    //TODO move this to the correct location
+    public static final MovieService[] MAIN_SERVICES = new MovieService[]{
         MovieService.IMDB,
         MovieService.PORTHU,
         MovieService.CINEBEL
     };
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private final Settings settings;
     private final MainFrame mainFrame;
-    private File selectedFile;
-    private DefaultListModel model;
-    private boolean needRescan = false;
+
+    private SettingsFrameController controller;
     
     /**
      * Creates new form SettingsFrame
@@ -65,8 +62,8 @@ public class SettingsFrame extends javax.swing.JFrame {
         this.mainFrame = mainFrame;
         this.settings = settings;
         initComponents();
-        loadMovieLocations();
-        getSettingsValues();
+
+        this.locationsList.setModel(new DefaultListModel());
     }
     
     /** This method is called from within the constructor to
@@ -346,97 +343,75 @@ public class SettingsFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okayButtonActionPerformed
-        setSettingsValues();
-        storeMovieLocations();
-        if(needRescan) {
-            mainFrame.scanFolders();
-        }
-        mainFrame.refreshColumns();
-        this.setVisible(false);
+        controller.okayButtonPressed();
     }//GEN-LAST:event_okayButtonActionPerformed
 
     private void addLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLocationButtonActionPerformed
-        JFileChooser chooser = new JFileChooser(selectedFile);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File newFolder = chooser.getSelectedFile();
-            if (!model.contains(newFolder.getAbsolutePath())) {
-                model.addElement(newFolder.getAbsolutePath());
-                selectedFile = newFolder;
-                needRescan = true;
-            }
-        } else {
-            LOGGER.debug("No Selection ");
-        }
+        controller.addLocationButtonpressed();
     }//GEN-LAST:event_addLocationButtonActionPerformed
 
     private void deleteLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLocationButtonActionPerformed
-
-        model.removeElementAt(locationsList.getSelectedIndex());
-        /*
-        Set<String> folders = new LinkedHashSet<String>();
-        for(int i=0; i<locationsList.getModel().getSize(); i++) {
-            folders.add(locationsList.getModel().getElementAt(i).toString());
-        }
-        settings.saveFolders(folders);*/
-        needRescan = true;
-
+        controller.deleteLocationPressed();
     }//GEN-LAST:event_deleteLocationButtonActionPerformed
-    
-    private void loadMovieLocations() {
-        model = new DefaultListModel();
-        for(String folder:settings.loadFolders()){
-            model.addElement(folder);
-        }
-        locationsList.setModel(model);
-    }
-    
-    private void storeMovieLocations() {
-        Set<String> folders = new LinkedHashSet<String>();
-        for(int i=0; i<locationsList.getModel().getSize(); i++) {
-            folders.add(locationsList.getModel().getElementAt(i).toString());
-        }
-        settings.saveFolders(folders);
-        
-    }
-    
-    
-    private Map<JCheckBox, MovieService> getCheckboxes() {
-        Map<JCheckBox, MovieService> cbs = new HashMap<JCheckBox, MovieService>();
-        cbs.put(omdbCheckBox, MovieService.OMDB);
-        cbs.put(flixsterCheckBox, MovieService.FLIXSTER);
-        cbs.put(googleCheckBox, MovieService.GOOGLE);
-        cbs.put(moviewebCheckBox, MovieService.MOVIEWEB);
-        cbs.put(portHuCheckbox, MovieService.PORTHU);
-        cbs.put(rottenTomatoesCheckBox, MovieService.TOMATOES);
-        cbs.put(cinebelCheckBox, MovieService.CINEBEL);
-        return cbs;
-    }
-    
+
+
     private ComboBoxModel getMovieServices() {
         return new DefaultComboBoxModel(MAIN_SERVICES);
     }
     
-    
-    
-    private void getSettingsValues() {
-        renameTitlesCheckBox.setSelected(settings.getRenameTitles());    
-        saveCoverArtCheckBox.setSelected(settings.getSaveAlbumArt());
-        for (Map.Entry<JCheckBox, MovieService> entry : getCheckboxes().entrySet()) {
-            boolean value = settings.isServiceEnabled(entry.getValue(), entry.getKey().isSelected());
-            entry.getKey().setSelected(value);
-        }
-        preferSiteComboBox.setSelectedItem(settings.getPreferredService());
+    public Map<MovieService, Boolean> getServiceSelection() {
+        Map<MovieService, Boolean> cbs = new HashMap<MovieService, Boolean>();
+        cbs.put(MovieService.OMDB, omdbCheckBox.isSelected());
+        cbs.put(MovieService.FLIXSTER, flixsterCheckBox.isSelected());
+        cbs.put(MovieService.GOOGLE, googleCheckBox.isSelected());
+        cbs.put(MovieService.MOVIEWEB, moviewebCheckBox.isSelected());
+        cbs.put(MovieService.PORTHU, portHuCheckbox.isSelected());
+        cbs.put(MovieService.TOMATOES, rottenTomatoesCheckBox.isSelected());
+        cbs.put(MovieService.CINEBEL, cinebelCheckBox.isSelected());
+        return cbs;
     }
-    
-    private void setSettingsValues() {
-        settings.setRenameTitles(renameTitlesCheckBox.isSelected());
-        settings.setSaveAlbumArt(saveCoverArtCheckBox.isSelected());
-        for (Map.Entry<JCheckBox, MovieService> entry : getCheckboxes().entrySet()) {
-            settings.setServiceEnabled(entry.getValue(), entry.getKey().isSelected());
+
+    public boolean isRenameTitlesSelected() {
+        return renameTitlesCheckBox.isSelected();
+    }
+
+    public boolean isSaveCoverArtSelected() {
+        return saveCoverArtCheckBox.isSelected();
+    }
+
+    public MovieService getSelectedPreferredSite(){
+        return (MovieService) preferSiteComboBox.getSelectedItem();
+    }
+
+    public String getSelectedLocation(){
+        return (String) locationsList.getSelectedValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public Enumeration<String> getSelectedLocations(){
+        return (Enumeration<String>) ((DefaultListModel)locationsList.getModel()).elements();
+    }
+
+    public void setController(SettingsFrameController controller) {
+        this.controller = controller;
+    }
+
+    public void setMovieLocations(Set<String> locations){
+        for(String location:locations){
+            ((DefaultListModel)this.locationsList.getModel()).addElement(location);
         }
-        MovieService item = (MovieService) preferSiteComboBox.getSelectedItem();
-        settings.setPreferredService(item);
+    }
+
+    public void addMovieLocation(String location){
+        ((DefaultListModel)this.locationsList.getModel()).addElement(location);
+    }
+
+    public void removeMovieLocation(String location){
+        ((DefaultListModel)this.locationsList.getModel()).removeElement(location);
+    }
+
+    public boolean hasMovieLocation(String location){
+        return ((DefaultListModel)this.locationsList.getModel()).contains(location);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

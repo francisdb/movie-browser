@@ -57,8 +57,10 @@ import java.util.Date;
 /**
  *
  * @author francisdb
+ * @deprecated use the XmlMovieCache instead
  */
 @Singleton
+@Deprecated
 public class JPAMovieCache implements MovieCache {
 
     /**
