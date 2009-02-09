@@ -1,6 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of Movie Browser.
+ *
+ * Copyright (C) Francis De Brabandere
+ *
+ * Movie Browser is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Movie Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package eu.somatik.moviebrowser.gui;
 
@@ -35,16 +49,19 @@ import eu.somatik.moviebrowser.service.MovieVisitor;
 public class ImportDialogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportDialogController.class);
-    ImportDialog dialog;
-    File scanDirectory;
-    MovieBrowser browser;
-    List<MovieInfo> movies;
-    MovieInfo currentMovieInfo;
-    Map<MovieInfo,MovieSearchResult> selectedResults = new HashMap<MovieInfo,MovieSearchResult>();
-    Map<MovieInfo,MovieService> lastService = new HashMap<MovieInfo,MovieService>();
-    Map<MovieInfo,List<MovieSearchResult>> lastSearchResults= new HashMap<MovieInfo,List<MovieSearchResult>>();
+    
+    private final ImportDialog dialog;
+    private final File scanDirectory;
+    private final MovieBrowser browser;
+    private final MovieInfoTableModel tableModel;
 
-    MovieInfoTableModel tableModel;
+    private final Map<MovieInfo,MovieSearchResult> selectedResults;
+    private final Map<MovieInfo,MovieService> lastServices;
+    private final Map<MovieInfo,List<? extends MovieSearchResult>> lastSearchResults;
+
+
+    private List<MovieInfo> movies;
+    private MovieInfo currentMovieInfo;
 
     public ImportDialogController(MovieBrowser browser, ImportDialog dialog, File selectedFile, MovieInfoTableModel model) {
         this.dialog = dialog;
@@ -52,6 +69,10 @@ public class ImportDialogController {
         this.scanDirectory = selectedFile;
         this.browser = browser;
         this.tableModel = model;
+
+        this.selectedResults = new HashMap<MovieInfo,MovieSearchResult>();
+        this.lastServices = new HashMap<MovieInfo,MovieService>();
+        this.lastSearchResults= new HashMap<MovieInfo,List<? extends MovieSearchResult>>();
     }
 
     public void startImporting() {
@@ -101,15 +122,15 @@ public class ImportDialogController {
         dialog.setRelatedFiles(fg.getFiles());
 
 
-        dialog.setEnableNextButton(pos < movies.size() - 1);
+        dialog.setEnableNextButton(pos < movies.size() -1);
         dialog.setEnablePrevButton(0 < pos);
 
-        List<MovieSearchResult> lastResult = this.lastSearchResults.get(currentMovieInfo);
+        List<? extends MovieSearchResult> lastResult = this.lastSearchResults.get(currentMovieInfo);
         MovieSearchResult lastSelection = this.selectedResults.get(currentMovieInfo);
         dialog.setMovieSuggestions(lastResult);
         dialog.setSelectedMovie(lastSelection);
 
-        MovieService lastService = this.lastService.get(currentMovieInfo);
+        MovieService lastService = this.lastServices.get(currentMovieInfo);
         if (lastService!=null) {
             dialog.setSelectedMovieService(lastService);
         }
@@ -132,6 +153,9 @@ public class ImportDialogController {
     }
 
     void okButtonPressed() {
+        if (currentMovieInfo != null) {
+            storeValues();
+        }
         final String label = dialog.getFolderLabel();
         
         MovieVisitor visitor = new MovieVisitor() {
@@ -185,7 +209,7 @@ public class ImportDialogController {
         final String title = dialog.getMovieTitle().trim();
 
         final MovieInfo info = currentMovieInfo;
-        lastService.put(currentMovieInfo, service);
+        lastServices.put(currentMovieInfo, service);
 
         SwingWorker<List<? extends MovieSearchResult>, Void> worker =
                 new SwingWorker<List<? extends MovieSearchResult>, Void>() {
@@ -198,7 +222,7 @@ public class ImportDialogController {
                     @Override
                     public void done() {
                         try {
-                            List<MovieSearchResult> result = (List<MovieSearchResult>)get();
+                            List<? extends MovieSearchResult> result = get();
                             lastSearchResults.put(info, result);
                             dialog.setMovieSuggestions(result);
                             dialog.setEnableSearch(true);

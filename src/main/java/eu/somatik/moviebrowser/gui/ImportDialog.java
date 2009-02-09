@@ -1,14 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * ImportDialog.java
+ * This file is part of Movie Browser.
  *
- * Created on 2009.01.09., 9:22:03
+ * Copyright (C) Francis De Brabandere
+ *
+ * Movie Browser is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Movie Browser is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.domain.MovieSearchResult;
@@ -305,17 +312,14 @@ public class ImportDialog extends javax.swing.JDialog {
 }//GEN-LAST:event_searchButtonActionPerformed
 
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
-        // TODO add your handling code here:
         controller.prevButtonPressed();
     }//GEN-LAST:event_prevButtonActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        // TODO add your handling code here:
         controller.nextButtonPressed();
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void acceptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acceptButtonActionPerformed
-        // TODO add your handling code here:
         controller.okButtonPressed();
     }//GEN-LAST:event_acceptButtonActionPerformed
 
@@ -361,7 +365,7 @@ public class ImportDialog extends javax.swing.JDialog {
         //this.relatedFilesList.setModel(listModel);
     }
 
-    public void setMovieSuggestions(List<MovieSearchResult> result) {
+    public void setMovieSuggestions(List<? extends MovieSearchResult> result) {
         DefaultListModel listModel = new DefaultListModel();
         if (result!=null) {
             for (MovieSearchResult movie : result) {
