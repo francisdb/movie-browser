@@ -19,6 +19,7 @@
 package eu.somatik.moviebrowser.tools;
 
 import com.flicklib.module.FlicklibModule;
+import com.flicklib.module.NetFlixAuthModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -28,13 +29,17 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
 
+/**
+ * This tool can be used to copy the cache from one system to an other one
+ * @author francisdb
+ */
 public class MovieCacheTools {
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule());
+        Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule(), new NetFlixAuthModule("", ""));
         Settings settings = injector.getInstance(Settings.class);
         
         MovieCache cache = injector.getInstance(MovieCache.class);

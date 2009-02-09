@@ -258,6 +258,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         movieMenu = new javax.swing.JMenu();
         importMenuItem = new javax.swing.JMenuItem();
+        importAutoMenuItem = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         generateMovieCatItem = new javax.swing.JMenuItem();
         clearCacheMenuItem = new javax.swing.JMenuItem();
@@ -275,7 +276,6 @@ public class MainFrame extends javax.swing.JFrame {
         jSplitPane1.setBorder(null);
         jSplitPane1.setDividerLocation(530);
         jSplitPane1.setResizeWeight(1.0);
-        jSplitPane1.setContinuousLayout(true);
         jSplitPane1.setOneTouchExpandable(true);
 
         movieTable.setAutoCreateRowSorter(true);
@@ -333,7 +333,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieMenu.setText(bundle.getString("MainFrame.menu.movies")); // NOI18N
 
         importMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_MASK));
-        importMenuItem.setMnemonic('I');
+        importMenuItem.setMnemonic('i');
         importMenuItem.setText(bundle.getString("MainFrame.menu.importFolder")); // NOI18N
         importMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -342,15 +342,20 @@ public class MainFrame extends javax.swing.JFrame {
         });
         movieMenu.add(importMenuItem);
 
+        importAutoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
+        importAutoMenuItem.setMnemonic('a');
+        importAutoMenuItem.setText("Import folder auto...");
+        importAutoMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importAutoMenuItemActionPerformed(evt);
+            }
+        });
+        movieMenu.add(importAutoMenuItem);
+
         jMenuBar1.add(movieMenu);
 
         toolsMenu.setMnemonic('T');
         toolsMenu.setText(bundle.getString("MainFrame.menu.tools")); // NOI18N
-        toolsMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                toolsMenuActionPerformed(evt);
-            }
-        });
 
         generateMovieCatItem.setText(bundle.getString("MainFrame.menu.generateHtmlMovieCatalog")); // NOI18N
         generateMovieCatItem.addActionListener(new java.awt.event.ActionListener() {
@@ -360,6 +365,8 @@ public class MainFrame extends javax.swing.JFrame {
         });
         toolsMenu.add(generateMovieCatItem);
 
+        clearCacheMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
+        clearCacheMenuItem.setMnemonic('c');
         clearCacheMenuItem.setText(bundle.getString("MainFrame.menu.clearCache")); // NOI18N
         clearCacheMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -597,9 +604,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    SettingsFrame settingsFrame = new SettingsFrame(settings, this);
-    settingsFrame.setLocationRelativeTo(movieTableScrollPane);
-    settingsFrame.setVisible(true);
+    new SettingsFrameController(settings, browser, new SettingsFrame(settings, this), this).load(movieTableScrollPane);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
 private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFolders
@@ -638,9 +643,19 @@ private void generateMovieCatItemActionPerformed(java.awt.event.ActionEvent evt)
         }    
 }//GEN-LAST:event_generateMovieCatItemActionPerformed
 
-private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toolsMenuActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_toolsMenuActionPerformed
+private void importAutoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importAutoMenuItemActionPerformed
+     JFileChooser chooser = new JFileChooser(selectedFile);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File newFolder = chooser.getSelectedFile();
+            settings.addFolder(newFolder);
+            this.selectedFile = newFolder;
+
+            scanFolders();
+        } else {
+            LOGGER.debug("No Selection ");
+        }
+}//GEN-LAST:event_importAutoMenuItemActionPerformed
 
 
     private void showRightClickMenu(MouseEvent evt) {
@@ -701,7 +716,10 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     		}
     	}.execute();
     }
-    
+
+    /*
+     * TODO move this method to some kind of controller of moviebrowser
+     */
     public void scanFolders() {
         loadProgressBar.setString("Scanning folders...");
         loadProgressBar.setIndeterminate(true);
@@ -872,6 +890,7 @@ private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JLabel filterLabel;
     private javax.swing.JTextField filterText;
     private javax.swing.JMenuItem generateMovieCatItem;
+    private javax.swing.JMenuItem importAutoMenuItem;
     private javax.swing.JMenuItem importMenuItem;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JSplitPane jSplitPane1;

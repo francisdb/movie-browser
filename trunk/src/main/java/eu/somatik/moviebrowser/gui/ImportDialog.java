@@ -38,7 +38,7 @@ import javax.swing.table.TableColumnModel;
  */
 public class ImportDialog extends javax.swing.JDialog {
 
-    ImportDialogController controller;
+    private ImportDialogController controller;
 
     /** Creates new form ImportDialog */
     public ImportDialog(java.awt.Frame parent, boolean modal) {
@@ -384,19 +384,8 @@ public class ImportDialog extends javax.swing.JDialog {
         }*/
     }
 
-
-
-
-    // TODO : fix ...
-    private static final MovieService[] MAIN_SERVICES = new MovieService[]{
-        MovieService.IMDB,
-        MovieService.PORTHU,
-        MovieService.CINEBEL
-    };
-
-
    private ComboBoxModel getMovieServices() {
-        return new DefaultComboBoxModel(MAIN_SERVICES);
+        return new DefaultComboBoxModel(SettingsFrame.MAIN_SERVICES);
    }
 
    public void setSelectedMovieService(MovieService service) {
