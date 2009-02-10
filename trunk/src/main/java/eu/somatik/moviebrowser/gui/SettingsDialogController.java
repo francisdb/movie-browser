@@ -23,11 +23,13 @@ import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.config.Settings;
 import java.awt.Component;
 import java.io.File;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +38,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author francisdb
  */
-public class SettingsFrameController {
+public class SettingsDialogController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsFrameController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsDialogController.class);
+
+    private static final Set<MovieService> DEFAULT_SERVICES = Collections.unmodifiableSet(EnumSet.of(
+                MovieService.GOOGLE, MovieService.IMDB, MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.FLIXSTER));
 
     private final Settings settings;
     private final MovieBrowser movieBrowser;
-    private final SettingsFrame settingsFrame;
+    private final SettingsDialog settingsFrame;
 
     private boolean needRescan;
     private File selectedFile;
@@ -50,7 +55,7 @@ public class SettingsFrameController {
     // TODO get rid of this
     private final MainFrame mainFrame;
 
-    public SettingsFrameController(Settings settings, MovieBrowser movieBrowser, SettingsFrame settingsFrame, MainFrame mainFrame) {
+    public SettingsDialogController(Settings settings, MovieBrowser movieBrowser, SettingsDialog settingsFrame, MainFrame mainFrame) {
         this.settingsFrame = settingsFrame;
         this.settingsFrame.setController(this);
         this.mainFrame = mainFrame;
@@ -64,7 +69,7 @@ public class SettingsFrameController {
     void load(Component componentToCenterOn){
         settingsFrame.setLocationRelativeTo(componentToCenterOn);
         loadMovieLocations();
-        setSettingsValues();
+        loadSettingsValues();
         settingsFrame.setVisible(true);
     }
 
@@ -119,13 +124,18 @@ public class SettingsFrameController {
     }
 
 
+    private void loadSettingsValues() {
+        Map<MovieService, Boolean> values = new HashMap<MovieService, Boolean>();
+        for (MovieService service : settingsFrame.getServiceSelection().keySet()) {
+            // TODO set default values for each service
+            values.put(service, settings.isServiceEnabled(service, DEFAULT_SERVICES.contains(service)));
+        }
+        settingsFrame.setServiceSelection(values);
+    }
 
     private void setSettingsValues() {
         settings.setRenameTitles(settingsFrame.isRenameTitlesSelected());
         settings.setSaveAlbumArt(settingsFrame.isSaveCoverArtSelected());
-
-
-
         for (Map.Entry<MovieService, Boolean> entry : settingsFrame.getServiceSelection().entrySet()) {
             settings.setServiceEnabled(entry.getKey(), entry.getValue());
         }

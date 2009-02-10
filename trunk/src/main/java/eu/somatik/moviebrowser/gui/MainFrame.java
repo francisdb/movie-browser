@@ -462,7 +462,8 @@ public class MainFrame extends javax.swing.JFrame {
             //settings.addFolder(newFolder);
             this.selectedFile = newFolder;
 
-            new ImportDialogController(browser, new ImportDialog(this, false), selectedFile, (MovieInfoTableModel) movieTable.getModel()).startImporting();
+            new ImportDialogController(browser, new ImportDialog(this, false), selectedFile, (MovieInfoTableModel) movieTable.getModel())
+                    .startImporting(this);
             //scanFolders();
         } else {
             LOGGER.debug("No Selection ");
@@ -604,7 +605,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    new SettingsFrameController(settings, browser, new SettingsFrame(settings, this), this).load(movieTableScrollPane);
+    new SettingsDialogController(settings, browser, new SettingsDialog(settings, this), this).load(movieTableScrollPane);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
 private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFolders

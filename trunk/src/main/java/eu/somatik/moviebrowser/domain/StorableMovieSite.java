@@ -73,12 +73,13 @@ public class StorableMovieSite implements Cloneable, Persistent {
 
 	private String plot;
 	
-	private Set<Genre> genres = new HashSet<Genre>();
+	private Set<Genre> genres;
 
 	/**
 	 * Constructs a new StorableMovieSite
 	 */
 	public StorableMovieSite() {
+        this.genres = new HashSet<Genre>();
 	}
 
 	/**

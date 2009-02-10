@@ -41,6 +41,7 @@ import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.service.MovieVisitor;
+import java.awt.Component;
 
 /**
  *
@@ -75,7 +76,7 @@ public class ImportDialogController {
         this.lastSearchResults= new HashMap<MovieInfo,List<? extends MovieSearchResult>>();
     }
 
-    public void startImporting() {
+    public void startImporting(final Component componentToCenterOn) {
         new SwingWorker<List<MovieInfo>, Void>() {
 
             @Override
@@ -93,6 +94,7 @@ public class ImportDialogController {
                         dialog.setImportFolderPath(scanDirectory.getAbsolutePath());
                         dialog.setFolderLabel(scanDirectory.getName());
                         initDialogWithMovieInfo(0);
+                        dialog.setLocationRelativeTo(componentToCenterOn);
                         dialog.setVisible(true);
                     } else {
                         dialog.showMessageDialog("Unable to locate any movies in " + scanDirectory.getAbsolutePath(), "No movies found!");
