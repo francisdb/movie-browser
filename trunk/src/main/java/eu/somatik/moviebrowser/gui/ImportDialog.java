@@ -29,6 +29,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -153,7 +154,13 @@ public class ImportDialog extends javax.swing.JDialog {
 
         jLabel7.setText("Suggested Titles:");
 
+        suggestedTitlesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         suggestedTitlesList.setCellRenderer(new MovieListCellRenderer());
+        suggestedTitlesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                suggestedTitlesListValueChanged(evt);
+            }
+        });
         suggestedTitlesScrollPane.setViewportView(suggestedTitlesList);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -328,6 +335,17 @@ public class ImportDialog extends javax.swing.JDialog {
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         controller.removeButtonPressed();
     }//GEN-LAST:event_removeButtonActionPerformed
+
+    private void suggestedTitlesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_suggestedTitlesListValueChanged
+        if(!evt.getValueIsAdjusting() && suggestedTitlesList.getSelectedIndex() != -1){
+            int firstIndex = evt.getFirstIndex();
+            int lastIndex = evt.getLastIndex();
+            boolean isAdjusting = evt.getValueIsAdjusting();
+            System.out.append("Event for indexes " + firstIndex + " - " + lastIndex + "; isAdjusting is " + isAdjusting + "; selected indexe: " + suggestedTitlesList.getSelectedIndex());
+            System.out.println();
+            controller.selectionChanged();
+        }
+    }//GEN-LAST:event_suggestedTitlesListValueChanged
 
     
     public void setController(ImportDialogController controller) {
