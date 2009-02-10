@@ -116,14 +116,31 @@ public class MovieNameExtractor {
     }
 
     public String removeCrap(File file) {
-        String movieName = file.getName().toLowerCase().replace('_', '.').replace('-','.');
+        String movieName = file.getName().toLowerCase().replace('_', '.');
         if (!file.isDirectory()) {
             movieName = clearMovieExtension(movieName);
         }
             //getYear(movieName);
+        boolean release = false;
         for (String bad : TO_REMOVE) {
-            movieName = movieName.replaceAll(bad, "");
+            if(movieName.contains(bad)){
+                // these strings should not be available in non-release movies
+                release = true;
+                movieName = movieName.replaceAll(bad, "");
+            }
         }
+
+        if(release){
+            int dashPos = movieName.lastIndexOf('-');
+            if (dashPos != -1) {
+                movieName = movieName.substring(0, movieName.lastIndexOf('-'));
+            }
+        }
+
+        // clean up dashes for normal movies
+        movieName = movieName.replace('-', '.');
+
+
         // should we remove year, also? I don't think so...
         
 /*
@@ -135,11 +152,9 @@ public class MovieNameExtractor {
         for (int i = 1800; i < thisYear; i++) {
             movieName = movieName.replaceAll(Integer.toString(i), "");
         }
-        int dashPos = movieName.lastIndexOf('-');
-        if (dashPos != -1) {
-            movieName = movieName.substring(0, movieName.lastIndexOf('-'));
-        }
-*/            
+ */
+        // possible release name suffix, we need to make sure it is
+           
         movieName = movieName.replaceAll("\\.", " ");
         movieName = movieName.trim();
         LOGGER.debug(movieName);

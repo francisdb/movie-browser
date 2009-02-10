@@ -110,22 +110,23 @@ public class ImportDialogController {
     }
 
     private void initDialogWithMovieInfo(int pos) {
+        dialog.setEnableNextButton(pos < movies.size() -1);
+        dialog.setEnablePrevButton(0 < pos);
+
         currentMovieInfo = movies.get(pos);
-        dialog.clearMovieSuggestions();
         StorableMovie mv = currentMovieInfo.getMovie();
+
+        dialog.clearMovieSuggestions();
         dialog.setMovieTitle(mv.getTitle());
         FileGroup fg = mv.getUniqueFileGroup();
         String path = fg.getDirectoryPath();
         if (path.length()>scanDirectory.getAbsolutePath().length() + 1) {
             dialog.setPathToMovie(path.substring(scanDirectory.getAbsolutePath().length() + 1));
         } else {
-            dialog.setPathToMovie("");
+            dialog.setPathToMovie("[scanned folder]");
         }
         dialog.setRelatedFiles(fg.getFiles());
 
-
-        dialog.setEnableNextButton(pos < movies.size() -1);
-        dialog.setEnablePrevButton(0 < pos);
 
         List<? extends MovieSearchResult> lastResult = this.lastSearchResults.get(currentMovieInfo);
         MovieSearchResult lastSelection = this.selectedResults.get(currentMovieInfo);
@@ -136,7 +137,13 @@ public class ImportDialogController {
         if (lastService!=null) {
             dialog.setSelectedMovieService(lastService);
         }
+    }
 
+
+    void selectionChanged() {
+        if (currentMovieInfo != null) {
+            storeValues();
+        }
         dialog.setProgressBar(selectedResults.size(), movies.size());
     }
 
@@ -146,18 +153,16 @@ public class ImportDialogController {
     }
 
     void nextButtonPressed() {
-        int pos = 0;
-        if (currentMovieInfo != null) {
-            storeValues();
-            pos = Math.min(movies.indexOf(currentMovieInfo) + 1, movies.size() -1);
-        }
+        int pos = Math.min(movies.indexOf(currentMovieInfo) + 1, movies.size() -1);
+        initDialogWithMovieInfo(pos);
+    }
+
+    void prevButtonPressed() {
+        int pos = movies.indexOf(currentMovieInfo) - 1;
         initDialogWithMovieInfo(pos);
     }
 
     void okButtonPressed() {
-        if (currentMovieInfo != null) {
-            storeValues();
-        }
         final String label = dialog.getFolderLabel();
         
         MovieVisitor visitor = new MovieVisitor() {
@@ -196,14 +201,7 @@ public class ImportDialogController {
         }
     }
 
-    void prevButtonPressed() {
-        int pos = 0;
-        if (currentMovieInfo != null) {
-            storeValues();
-            pos = movies.indexOf(currentMovieInfo) - 1;
-        }
-        initDialogWithMovieInfo(pos);
-    }
+
 
     void searchPressed() {
         dialog.setEnableSearch(false);

@@ -192,7 +192,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         renameTitlesCheckBox.setText("Automatically rename movie folder to IMDB title.");
         renameTitlesCheckBox.setToolTipText("Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing.");
 
-        okayButton.setText("Okay");
+        okayButton.setText("Save");
         okayButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okayButtonActionPerformed(evt);
