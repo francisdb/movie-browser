@@ -26,6 +26,7 @@ import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import java.util.HashSet;
 
 /**
  * TODO this class could work using reflection!
@@ -92,7 +93,11 @@ public class Converter {
         storableMovieSite.setOriginalTitle(movieSite.getOriginalTitle());
         storableMovieSite.setPlot(movieSite.getPlot());
         Set<Genre> genres = storableMovieSite.getGenres();
-        genres.clear();
+        if(genres == null){
+            genres = new HashSet<Genre>();
+        }else{
+            genres.clear();
+        }
         for (String genre :movieSite.getGenres()) {
             genres.add(Genre.get(genre));
         }

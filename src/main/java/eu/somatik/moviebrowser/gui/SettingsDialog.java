@@ -38,7 +38,7 @@ import javax.swing.JCheckBox;
  *
  * @author  rug
  */
-public class SettingsFrame extends javax.swing.JFrame {
+public class SettingsDialog extends javax.swing.JDialog {
 
     //TODO move this to the correct location
     public static final MovieService[] MAIN_SERVICES = new MovieService[]{
@@ -49,21 +49,34 @@ public class SettingsFrame extends javax.swing.JFrame {
     
     private final Settings settings;
     private final MainFrame mainFrame;
+    private final Map<MovieService, JCheckBox> serviceCheckBoxes;
 
-    private SettingsFrameController controller;
+    private SettingsDialogController controller;
     
     /**
-     * Creates new form SettingsFrame
+     * Creates new form SettingsDialog
      * @param settings
      * @param mainFrame 
      */
-    public SettingsFrame(final Settings settings,
+    public SettingsDialog(final Settings settings,
                          final MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         this.settings = settings;
         initComponents();
-
+        this.serviceCheckBoxes = mapServiceCheckBoxes();
         this.locationsList.setModel(new DefaultListModel());
+    }
+
+    private Map<MovieService, JCheckBox> mapServiceCheckBoxes(){
+        Map<MovieService, JCheckBox> cbs = new HashMap<MovieService, JCheckBox>();
+        cbs.put(MovieService.OMDB, omdbCheckBox);
+        cbs.put(MovieService.FLIXSTER, flixsterCheckBox);
+        cbs.put(MovieService.GOOGLE, googleCheckBox);
+        cbs.put(MovieService.MOVIEWEB, moviewebCheckBox);
+        cbs.put(MovieService.PORTHU, portHuCheckbox);
+        cbs.put(MovieService.TOMATOES, rottenTomatoesCheckBox);
+        cbs.put(MovieService.CINEBEL, cinebelCheckBox);
+        return cbs;
     }
     
     /** This method is called from within the constructor to
@@ -107,8 +120,10 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         jTextField1.setText("jTextField1");
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Settings");
-        setIconImage(new ImageIcon(SettingsFrame.getFrames().getClass().getResource("/images/movie.png")).getImage());
+        setIconImage(new ImageIcon(SettingsDialog.class.getClass().getResource("/images/movie.png")).getImage());
+        setModal(true);
         setResizable(false);
 
         locationsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -135,7 +150,6 @@ public class SettingsFrame extends javax.swing.JFrame {
 
         websitesLabel.setText("Additional websites to use for information and ratings.");
 
-        rottenTomatoesCheckBox.setSelected(true);
         rottenTomatoesCheckBox.setText("Rotten Tomatoes");
         rottenTomatoesCheckBox.setToolTipText("Select this to get information from www.rottentomatoes.com");
         rottenTomatoesCheckBox.setName("rottenttomatoes"); // NOI18N
@@ -144,17 +158,14 @@ public class SettingsFrame extends javax.swing.JFrame {
         omdbCheckBox.setToolTipText("Select this to get information from www.omdb.org");
         omdbCheckBox.setName("omdb"); // NOI18N
 
-        googleCheckBox.setSelected(true);
         googleCheckBox.setText("Google");
         googleCheckBox.setToolTipText("Select this to get information from www.google.com");
         googleCheckBox.setName("google"); // NOI18N
 
-        moviewebCheckBox.setSelected(true);
         moviewebCheckBox.setText("Movie Web");
         moviewebCheckBox.setToolTipText("Select this to get information from www.movieweb.com");
         moviewebCheckBox.setName("movieweb"); // NOI18N
 
-        flixsterCheckBox.setSelected(true);
         flixsterCheckBox.setText("Flixster");
         flixsterCheckBox.setToolTipText("Select this to get information from www.flixster.com");
         flixsterCheckBox.setName("flixster"); // NOI18N
@@ -213,8 +224,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
+                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)))
                     .addComponent(websitesLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -234,8 +245,8 @@ public class SettingsFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(portHuCheckbox)))))
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,21 +256,21 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(openSubsCheckBox))
                     .addComponent(subtitlesLabel))
-                .addContainerGap(210, Short.MAX_VALUE))
-            .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addContainerGap(221, Short.MAX_VALUE))
+            .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(miscLabel)
                 .addContainerGap(129, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(379, Short.MAX_VALUE)
+                .addContainerGap(413, Short.MAX_VALUE)
                 .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,7 +286,7 @@ public class SettingsFrame extends javax.swing.JFrame {
                         .addComponent(timeoutText, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(secondsLabel)))
-                .addContainerGap(148, Short.MAX_VALUE))
+                .addContainerGap(154, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -361,14 +372,16 @@ public class SettingsFrame extends javax.swing.JFrame {
     
     public Map<MovieService, Boolean> getServiceSelection() {
         Map<MovieService, Boolean> cbs = new HashMap<MovieService, Boolean>();
-        cbs.put(MovieService.OMDB, omdbCheckBox.isSelected());
-        cbs.put(MovieService.FLIXSTER, flixsterCheckBox.isSelected());
-        cbs.put(MovieService.GOOGLE, googleCheckBox.isSelected());
-        cbs.put(MovieService.MOVIEWEB, moviewebCheckBox.isSelected());
-        cbs.put(MovieService.PORTHU, portHuCheckbox.isSelected());
-        cbs.put(MovieService.TOMATOES, rottenTomatoesCheckBox.isSelected());
-        cbs.put(MovieService.CINEBEL, cinebelCheckBox.isSelected());
+        for(Map.Entry<MovieService, JCheckBox> entry:serviceCheckBoxes.entrySet()){
+            cbs.put(entry.getKey(), entry.getValue().isSelected());
+        }
         return cbs;
+    }
+
+    public void setServiceSelection(Map<MovieService, Boolean> selection) {
+        for(Map.Entry<MovieService, Boolean> entry:selection.entrySet()){
+            serviceCheckBoxes.get(entry.getKey()).setSelected(entry.getValue());
+        }
     }
 
     public boolean isRenameTitlesSelected() {
@@ -392,7 +405,7 @@ public class SettingsFrame extends javax.swing.JFrame {
         return (Enumeration<String>) ((DefaultListModel)locationsList.getModel()).elements();
     }
 
-    public void setController(SettingsFrameController controller) {
+    public void setController(SettingsDialogController controller) {
         this.controller = controller;
     }
 
