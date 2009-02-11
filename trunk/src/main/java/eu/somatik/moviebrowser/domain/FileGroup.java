@@ -19,6 +19,7 @@
 package eu.somatik.moviebrowser.domain;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -74,8 +75,8 @@ public class FileGroup implements Cloneable, Persistent {
     Set<MovieLocation> locations;
 
     public FileGroup() {
-        files = new HashSet<StorableMovieFile>();
-        locations = new HashSet<MovieLocation>();
+        files = new LinkedHashSet<StorableMovieFile>();
+        locations = new LinkedHashSet<MovieLocation>();
     }
 
     public Long getId() {
@@ -195,13 +196,13 @@ public class FileGroup implements Cloneable, Persistent {
     }
 
 
-    public void addLocation(MovieLocation f) {
-        if (f.getGroup()!= null) {
-            f.getGroup().getLocations().remove(f);
+    public void addLocation(MovieLocation location) {
+        if (location.getGroup()!= null) {
+            location.getGroup().getLocations().remove(location);
         }
-        f.setMovie(getMovie());
-        f.setGroup(this);
-        this.locations.add(f);
+        location.setMovie(getMovie());
+        location.setGroup(this);
+        this.locations.add(location);
     }
 
     public void addFile(StorableMovieFile file) {

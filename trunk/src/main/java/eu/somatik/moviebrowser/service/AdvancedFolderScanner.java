@@ -85,22 +85,26 @@ public class AdvancedFolderScanner implements FolderScanner {
         return movies;
     }
 
+    /**
+     * TODO make this a walker instead of recursive
+     * @param folder
+     */
     private void browse(File folder) {
         LOGGER.info("entering "+folder.getAbsolutePath());
         File[] files = folder.listFiles();
 
         Set<String> plainFileNames = new HashSet<String>();
-        int subDirectory = 0;
+        int subDirectories = 0;
         int compressedFiles = 0;
         Set<String> directoryNames = new HashSet<String>();
         for (File f : files) {
             if (f.isDirectory()) {
-                subDirectory ++;
+                subDirectories ++;
                 directoryNames.add(f.getName().toLowerCase());
             } else {
                 String ext = getExtension(f);
                 if(ext == null){
-                    LOGGER.warn("Ignoring file without extension: "+f.getAbsolutePath());
+                    LOGGER.trace("Ignoring file without extension: "+f.getAbsolutePath());
                 }else{
                     if (FileType.getTypeByExtension(ext)==FileType.COMPRESSED) {
                         compressedFiles ++;
@@ -115,20 +119,21 @@ public class AdvancedFolderScanner implements FolderScanner {
         // Title_of_the_film/abc.rar
         // Title_of_the_film/abc.r01
         // Title_of_the_film/abc.r02
-        if (compressedFiles>0) {
+        if (compressedFiles > 0) {
             StorableMovie sm = new StorableMovie();
             FileGroup fg = initStorableMovie(folder, sm);
-            fg.addLocation(new MovieLocation(folder.getParent(), currentLabel, true));
+            fg.addLocation(new MovieLocation(folder.getPath(), currentLabel, true));
             addCompressedFiles(sm, fg, files );
             add(sm);
             return;
         }
-        if (subDirectory>=2 && subDirectory<=3) {
+        if (subDirectories>=2 && subDirectories<=4) {
             // the case of :
             // Title_of_the_film/cd1/...
             // Title_of_the_film/cd2/...
-            // with an optional sample directory
-            // Title_of_the_film/sample/ 
+            // with an optional sample/subs directory
+            // Title_of_the_film/sample/
+            // Title_of_the_film/subs/
             if (directoryNames.contains("cd1") && directoryNames.contains("cd2")) {
                 StorableMovie sm = new StorableMovie();
                 FileGroup fg = initStorableMovie(folder, sm);
@@ -162,7 +167,7 @@ public class AdvancedFolderScanner implements FolderScanner {
         // Title_of_the_film/abc-cd2.srt
         //
 
-        if (subDirectory>0) {
+        if (subDirectories>0) {
             genericMovieFindProcess(files);
         } else {
             

@@ -341,8 +341,8 @@ public class ImportDialog extends javax.swing.JDialog {
             int firstIndex = evt.getFirstIndex();
             int lastIndex = evt.getLastIndex();
             boolean isAdjusting = evt.getValueIsAdjusting();
-            System.out.append("Event for indexes " + firstIndex + " - " + lastIndex + "; isAdjusting is " + isAdjusting + "; selected indexe: " + suggestedTitlesList.getSelectedIndex());
-            System.out.println();
+//            System.out.append("Event for indexes " + firstIndex + " - " + lastIndex + "; isAdjusting is " + isAdjusting + "; selected indexe: " + suggestedTitlesList.getSelectedIndex());
+//            System.out.println();
             controller.selectionChanged();
         }
     }//GEN-LAST:event_suggestedTitlesListValueChanged
