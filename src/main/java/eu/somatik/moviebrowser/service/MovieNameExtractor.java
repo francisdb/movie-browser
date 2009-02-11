@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.somatik.moviebrowser.domain.Language;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -35,6 +37,9 @@ public class MovieNameExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovieNameExtractor.class);
 
+    /*
+     * more specefic items first!
+     */
     private static final String TO_REMOVE[] = {
         ".5.1",
         ".ws.dvdrip",
@@ -49,12 +54,13 @@ public class MovieNameExtractor {
         ".limited.color.fixed",
         ".dvdrip",
         ".samplefix",
-        ".dvdivx",
         ".dvdivx4",
         ".dvdivx5",
+        ".dvdivx",
         ".dvdr",
         ".divx",
         ".dual",
+        ".r5.xvid",
         ".xvid",
         ".limited",
         ".internal",
@@ -70,6 +76,7 @@ public class MovieNameExtractor {
         ".hund",
         ".hun",
         ".nfofix",
+        ".full.subpack",
         ".subpack",
         ".subfix",
         ".syncfix",
@@ -130,34 +137,28 @@ public class MovieNameExtractor {
             }
         }
 
-        if(release){
+        if (release) {
             int dashPos = movieName.lastIndexOf('-');
             if (dashPos != -1) {
                 movieName = movieName.substring(0, movieName.lastIndexOf('-'));
+            }
+
+            // this actualy yields better results in imdb
+            // TODO make this optional or depending on the main service
+            Calendar calendar = new GregorianCalendar();
+            int thisYear = calendar.get(Calendar.YEAR);
+            // TODO recup the movie year!
+            for (int i = 1800; i < thisYear; i++) {
+                movieName = movieName.replaceAll(Integer.toString(i), "");
             }
         }
 
         // clean up dashes for normal movies
         movieName = movieName.replace('-', '.');
 
-
-        // should we remove year, also? I don't think so...
-        
-/*
-        Calendar calendar = new GregorianCalendar();
-        int thisYear = calendar.get(Calendar.YEAR);
-
-        // TODO recup the movie year!
-
-        for (int i = 1800; i < thisYear; i++) {
-            movieName = movieName.replaceAll(Integer.toString(i), "");
-        }
- */
-        // possible release name suffix, we need to make sure it is
-           
         movieName = movieName.replaceAll("\\.", " ");
         movieName = movieName.trim();
-        LOGGER.debug(movieName);
+        LOGGER.trace(movieName);
         return movieName;
     }
 

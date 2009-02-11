@@ -125,6 +125,7 @@ public class ImportDialogController {
         } else {
             dialog.setPathToMovie("[scanned folder]");
         }
+
         dialog.setRelatedFiles(fg.getFiles());
 
 
@@ -177,7 +178,6 @@ public class ImportDialogController {
             // set the site-id into the MovieInfo object, and call the regular check/retrieval methods.
             StorableMovieSite movieSite = info.getMovie().getMovieSiteInfoOrCreate(result.getService());
             movieSite.setIdForSite(result.getIdForSite());
-            System.out.println(movieSite.getIdForSite());
             
             visitor.startVisit(info.getMovie());
             
