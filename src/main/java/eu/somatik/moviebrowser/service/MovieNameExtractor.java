@@ -135,7 +135,6 @@ public class MovieNameExtractor {
                 // these strings should not be available in non-release movies
                 release = true;
                 movieName = movieName.replaceAll(bad, "");
-                LOGGER.info(movieName);
             }
         }
 
