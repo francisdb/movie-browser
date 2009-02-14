@@ -159,7 +159,6 @@ public class AdvancedFolderScanner implements FolderScanner {
                 }
                 for(File file: folder.listFiles()){
                     if(!file.isDirectory()){
-                        System.out.println(file);
                         String ext = getExtension(file);
                         if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(ext)) {
                             fg.addFile(new StorableMovieFile(file, FileType.getTypeByExtension(ext), fg));
