@@ -54,6 +54,10 @@
   <logger name="org.hibernate">
       <level value="INFO" />
   </logger>
+
+  <logger name="com.flicklib">
+      <level value="INFO" />
+  </logger>
   
   <!-- c3p0 and co -->
   <logger name="com.mchange.v2">

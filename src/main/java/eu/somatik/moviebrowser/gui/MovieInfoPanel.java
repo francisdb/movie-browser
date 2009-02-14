@@ -161,7 +161,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
             builder.append("<h2>").append(title).append("</h2>");
             boolean first = true;
+            //String dir = info.getDirectory() == null ? "" : info.getDirectory().getName();
             String type = movie.getType() == null ? "" : movie.getType().getName();
+            //builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.dir")+"</strong> ").append(dir).append("<br/>");
             builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.type")+"</strong> ").append(type).append("<br/>");
             builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.director")+"</strong> ").append(movie.getDirector()).append("<br/>");
             builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.genres")+"</strong> ");

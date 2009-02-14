@@ -18,8 +18,6 @@
  */
 package eu.somatik.moviebrowser.domain;
 
-import java.util.regex.Pattern;
-
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 
 public enum FileType {
@@ -46,7 +44,8 @@ public enum FileType {
 				if (MovieFileFilter.VIDEO_EXTENSIONS.contains(ext)) {
 				    return VIDEO_CONTENT;
 				}
-				if ("rar".equals(ext) || Pattern.matches("r\\d\\d", ext)) {
+                // only use save the rar as the other files are not important
+				if ("rar".equals(ext) /*|| Pattern.matches("r\\d\\d", ext)*/) {
 				    return COMPRESSED; 
 				}
 			}

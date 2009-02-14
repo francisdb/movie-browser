@@ -106,9 +106,9 @@ public class MovieFinder {
      * Stops the finder
      */
     public void stop() {
-        movieCache.shutdown();
         service.shutdownNow();
         secondaryService.shutdownNow();
+        movieCache.shutdown();
     }
 
     public void start() {
