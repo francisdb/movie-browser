@@ -77,6 +77,8 @@ import eu.somatik.moviebrowser.tools.SwingTools;
 import eu.somatik.moviebrowser.service.export.Exporter;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
+import javax.swing.Icon;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
  *
@@ -164,6 +166,7 @@ public class MainFrame extends javax.swing.JFrame {
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setCellRenderer(new MovieStatusCellRenderer(iconLoader));
         movieTable.getColumn(MovieInfoTableModel.STATUS_COLUMN_NAME).setPreferredWidth(16);
         movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setPreferredWidth(150);
+        movieTable.getColumn(MovieInfoTableModel.MOVIE_COLUMN_NAME).setMaxWidth(300);
         movieTable.getColumn(MovieInfoTableModel.SCORE_COLUMN_NAME).setCellRenderer(new MovieScoreCellRenderer());
     }
 
@@ -481,7 +484,7 @@ public class MainFrame extends javax.swing.JFrame {
      * @param evt
      */
 private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCacheMenuItemActionPerformed
-    int val = JOptionPane.showConfirmDialog(this, "Are you sure you wish to remove all cached movie data?", "Confirm", JOptionPane.YES_NO_OPTION);
+    int val = JOptionPane.showConfirmDialog(this, "Are you sure you want to clear the local database?", "Confirm", JOptionPane.YES_NO_OPTION);
     if (val == JOptionPane.YES_OPTION) {
         clearCache();
     }
@@ -551,12 +554,19 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
      * @param evt
      */
 private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMouseReleased
-    showRightClickMenu(evt);
+    //createRightClickMenu(evt);
 }//GEN-LAST:event_movieTableMouseReleased
 
 private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMousePressed
     // needed for linux gtk look and feel
-    showRightClickMenu(evt);
+    if (evt.isPopupTrigger()) {
+        JTable source = (JTable) evt.getSource();
+        int row = source.rowAtPoint(evt.getPoint());
+        int column = source.columnAtPoint(evt.getPoint());
+        source.changeSelection(row, column, false, false);
+        JPopupMenu popup = createRightClickMenu();
+        popup.show(evt.getComponent(), evt.getX(), evt.getY());
+    }
 }//GEN-LAST:event_movieTableMousePressed
 
 private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
@@ -662,32 +672,28 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
 }//GEN-LAST:event_formWindowClosing
 
 
-    private void showRightClickMenu(MouseEvent evt) {
-        if (evt.isPopupTrigger()) {
-            JTable source = (JTable) evt.getSource();
-            int row = source.rowAtPoint(evt.getPoint());
-            int column = source.columnAtPoint(evt.getPoint());
-            source.changeSelection(row, column, false, false);
+    private JPopupMenu createRightClickMenu() {
+        JPopupMenu popup = new JPopupMenu();
 
-            JPopupMenu popup = new JPopupMenu();
+        JMenu trailerMenu = new JMenu("Trailer");
+        trailerMenu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
+        trailerMenu.add(new AppleTrailerAction(this, browser));
+        trailerMenu.add(new ImdbTrailerAction(this, browser));
+        popup.add(trailerMenu);
 
-            JMenu trailerMenu = new JMenu("Trailer");
-            trailerMenu.setIcon(iconLoader.loadIcon("images/16/video-x-generic.png"));
-            trailerMenu.add(new AppleTrailerAction(this, browser));
-            trailerMenu.add(new ImdbTrailerAction(this, browser));
-            popup.add(trailerMenu);
+        JMenu watchMenu = new JMenu("Watch");
+        watchMenu.setIcon(iconLoader.loadIcon("images/16/video-display.png"));
+        watchMenu.add(new WatchMovieFileAction(this, browser));
+        watchMenu.add(new WatchSampleAction(this, browser));
+        popup.add(watchMenu);
 
-            JMenu watchMenu = new JMenu("Watch");
-            watchMenu.setIcon(iconLoader.loadIcon("images/16/video-display.png"));
-            watchMenu.add(new WatchMovieFileAction(this, browser));
-            watchMenu.add(new WatchSampleAction(this, browser));
-            popup.add(watchMenu);
+        MovieInfo info = getSelectedMovie();
+        popup.add(new OpenFolderAction(browser, info));
+        popup.add(new CrawlSubtitleAction(this, browser));
+        popup.add(new EditAction());
+        popup.add(new RenameAction());
 
-            popup.add(new CrawlSubtitleAction(this, browser));
-            popup.add(new EditAction());
-            popup.add(new RenameAction());
-            popup.show(evt.getComponent(), evt.getX(), evt.getY());
-        }
+        return popup;
     }
 
     public void loadMoviesFromDatabase() {
@@ -801,6 +807,24 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         //return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
     }
 
+
+
+    JScrollPane getMovieTableScrollPane() {
+        return movieTableScrollPane;
+    }
+
+
+
+    /**
+     * Loads SubtitleCrawlerFrame
+     * @param fileName
+     */
+    private void openSubCrawler(List<String> file, MovieInfo movie) {
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
+        subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
+        subtitleCrawler.setVisible(true);
+    }
+
     /**
      * This action lets you edit a record
      * @param evt
@@ -825,20 +849,27 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         }
     }
 
-    JScrollPane getMovieTableScrollPane() {
-        return movieTableScrollPane;
-    }
 
-    
-    
-    /**
-     * Loads SubtitleCrawlerFrame
-     * @param fileName
-     */
-    private void openSubCrawler(List<String> file, MovieInfo movie) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
-        subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
-        subtitleCrawler.setVisible(true);
+
+
+    private static class OpenFolderAction extends AbstractAction{
+
+        private final MovieBrowser browser;
+        private final MovieInfo info;
+
+        public OpenFolderAction(final MovieBrowser browser, final MovieInfo info) {
+            super("Open folder", UIManager.getIcon("FileView.directoryIcon"));
+            // see here for more icons
+            this.browser = browser;
+            this.info = info;
+            this.setEnabled(info.getDirectory() != null);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            browser.openFile(info.getDirectory());
+        }
+
     }
 
     /**

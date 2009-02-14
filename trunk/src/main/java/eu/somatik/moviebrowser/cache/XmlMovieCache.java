@@ -47,8 +47,10 @@ import eu.somatik.moviebrowser.domain.Persistent;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +146,7 @@ public class XmlMovieCache implements MovieCache {
     @Inject
     public XmlMovieCache(final Settings settings) {
         this();
-        this.movies = new HashMap<Long, StorableMovie>();
+        this.movies = new ConcurrentHashMap<Long, StorableMovie>();
         this.path = settings.getSettingsDir() + File.separator + "database.xml";
     }
 
@@ -219,7 +221,7 @@ public class XmlMovieCache implements MovieCache {
     /**
      * FIXME don't do this on every new movie!
      */
-    synchronized void save() {
+    private synchronized void save() {
         if(stuffToSave.get()){
             long start = System.currentTimeMillis();
             // make defensive copy and save
@@ -236,13 +238,13 @@ public class XmlMovieCache implements MovieCache {
     }
 
     @SuppressWarnings("unchecked")
-    synchronized void load() {
+    private synchronized void load() {
         resetIds();
         List<StorableMovie> dbValues = loadFromFile();
         if (dbValues != null && dbValues.size() > 0) {
             for (StorableMovie movie : dbValues) {
                 movie.initParentLinks();
-                LOGGER.debug("adding movie " + movie.getTitle());
+                LOGGER.trace("adding movie " + movie.getTitle());
                 movies.put(movie.getId(), movie);
                 // we have to initialize the max ID values.
                 checkId(movie);
@@ -319,8 +321,9 @@ public class XmlMovieCache implements MovieCache {
      */
     @Override
     public synchronized void clear() {
-        LOGGER.info("Clearing cache");
+        LOGGER.info("Clearing database");
         movies.clear();
+        stuffToSave.set(true);
         save();
     }
 

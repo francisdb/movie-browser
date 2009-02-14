@@ -47,6 +47,7 @@ import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
+import java.io.FileNotFoundException;
 
 /**
  *
@@ -166,7 +167,11 @@ public class FileSystemImageCache implements ImageCache {
                         File save = new File(
                                 new File(l.getPath()),
                                 info.getMovie().getTitle() + "-cover-art.jpg");
-                        FileTools.copy(cover, save);
+                        try{
+                            FileTools.copy(cover, save);
+                        }catch(FileNotFoundException ex){
+                            LOGGER.warn("Could not save cover to "+save.getAbsolutePath());
+                        }
                     }
                 }
             } catch (MalformedURLException ex) {

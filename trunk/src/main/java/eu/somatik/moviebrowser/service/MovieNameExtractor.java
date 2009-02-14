@@ -75,6 +75,7 @@ public class MovieNameExtractor {
         ".hundub",
         ".hund",
         ".hun",
+        ".rerip",
         ".nfofix",
         ".full.subpack",
         ".subpack",
@@ -134,6 +135,7 @@ public class MovieNameExtractor {
                 // these strings should not be available in non-release movies
                 release = true;
                 movieName = movieName.replaceAll(bad, "");
+                LOGGER.info(movieName);
             }
         }
 

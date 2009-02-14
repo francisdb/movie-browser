@@ -41,6 +41,7 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
+import java.util.Arrays;
 
 /**
  * Scans a folder for movies
@@ -50,7 +51,14 @@ import eu.somatik.moviebrowser.domain.StorableMovieFile;
 @Singleton
 public class AdvancedFolderScanner implements FolderScanner {
 
-    final static Logger LOGGER = LoggerFactory.getLogger(AdvancedFolderScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedFolderScanner.class);
+
+    /**
+     * If a folder contains no other than these it is a movie folder
+     * TODO make regex?
+     */
+    private static final String[] VALID_SUB_DIRS =
+            new String[]{"subs", "subtitles", "cd1", "cd2", "cd3", "cd4", "sample", "covers", "cover" };
 
     private final MovieNameExtractor movieNameExtractor;
    
@@ -61,14 +69,16 @@ public class AdvancedFolderScanner implements FolderScanner {
 
 
 
-    List<MovieInfo> movies;
-    String currentLabel;
+    private List<MovieInfo> movies;
+    private String currentLabel;
 
     /**
      * Scans the folders
      * 
      * @param folders
      * @return a List of MovieInfo
+     *
+     * TODO get rid of the synchronized and create a factory or pass all state data
      */
     @Override
     public synchronized List<MovieInfo> scan(final Set<String> folders) {
@@ -90,7 +100,7 @@ public class AdvancedFolderScanner implements FolderScanner {
      * @param folder
      */
     private void browse(File folder) {
-        LOGGER.debug("entering "+folder.getAbsolutePath());
+        LOGGER.trace("entering "+folder.getAbsolutePath());
         File[] files = folder.listFiles();
 
         Set<String> plainFileNames = new HashSet<String>();
@@ -134,14 +144,28 @@ public class AdvancedFolderScanner implements FolderScanner {
             // with an optional sample/subs directory
             // Title_of_the_film/sample/
             // Title_of_the_film/subs/
-            if (directoryNames.contains("cd1") && directoryNames.contains("cd2")) {
+            // Title_of_the_film/subtitles/
+            // or
+            // Title_of_the_film/bla1.avi
+            // Title_of_the_film/bla2.avi
+            // Title_of_the_film/sample/
+            // Title_of_the_film/subs/
+            if (isMovieFolder(directoryNames)) {
                 StorableMovie sm = new StorableMovie();
                 FileGroup fg = initStorableMovie(folder, sm);
                 fg.addLocation(new MovieLocation(folder.getPath(), currentLabel, true));
-                
-                addCompressedFiles(sm, fg, files, "cd1");
-                addCompressedFiles(sm, fg, files, "cd2");
-
+                for(String cdFolder:getCdFolders(directoryNames)){
+                    addCompressedFiles(sm, fg, files, cdFolder);
+                }
+                for(File file: folder.listFiles()){
+                    if(!file.isDirectory()){
+                        System.out.println(file);
+                        String ext = getExtension(file);
+                        if (MovieFileFilter.VIDEO_EXT_EXTENSIONS.contains(ext)) {
+                            fg.addFile(new StorableMovieFile(file, FileType.getTypeByExtension(ext), fg));
+                        }
+                    }
+                }
                 add(sm);
                 return;
             }
@@ -205,6 +229,27 @@ public class AdvancedFolderScanner implements FolderScanner {
                 }
             }
         }
+    }
+
+
+    private boolean isMovieFolder(Set<String> subDirectoryNames){
+        boolean movieFolder = true;
+        List<String> valid = Arrays.asList(VALID_SUB_DIRS);
+        Iterator<String> iter = subDirectoryNames.iterator();
+        while(iter.hasNext() && movieFolder){
+            movieFolder = valid.contains(iter.next());
+        }
+        return movieFolder;
+    }
+
+    private Set<String> getCdFolders(Set<String> subDirectoryNames){
+        Set<String> valid = new HashSet<String>();
+        for(String folder:subDirectoryNames){
+            if(folder.startsWith("cd") || folder.startsWith("disk") || folder.startsWith("part")){
+                valid.add(folder);
+            }
+        }
+        return valid;
     }
 
     /**
@@ -293,7 +338,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             if (!f.isDirectory()) {
                 String ext = getExtension(f);
                 if(ext == null){
-                    LOGGER.warn("Ignoring file without extension: "+f.getAbsolutePath());
+                    LOGGER.trace("Ignoring file without extension: "+f.getAbsolutePath());
                 }else{
                     FileType type = FileType.getTypeByExtension(ext);
                     if (type==FileType.COMPRESSED || type==FileType.NFO || type==FileType.SUBTITLE) {
@@ -314,10 +359,13 @@ public class AdvancedFolderScanner implements FolderScanner {
     }
 
     private String getExtension(File file) {
-        String name = file.getName();
-        int lastDotPos = name.lastIndexOf('.');
-        if (lastDotPos != -1 && lastDotPos != 0 && lastDotPos < name.length() - 1) {
-            return name.substring(lastDotPos + 1).toLowerCase();
+        return getExtension(file.getName());
+    }
+
+    private String getExtension(String fileName) {
+        int lastDotPos = fileName.lastIndexOf('.');
+        if (lastDotPos != -1 && lastDotPos != 0 && lastDotPos < fileName.length() - 1) {
+            return fileName.substring(lastDotPos + 1).toLowerCase();
         }
         return null;
     }
