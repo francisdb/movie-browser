@@ -48,7 +48,7 @@
   </logger>
   
   <logger name="org.apache.commons.httpclient">
-      <level value="INFO" />
+      <level value="ERROR" />
   </logger>
   
   <logger name="org.hibernate">
