@@ -90,7 +90,7 @@ public class AdvancedFolderScanner implements FolderScanner {
      * @param folder
      */
     private void browse(File folder) {
-        LOGGER.info("entering "+folder.getAbsolutePath());
+        LOGGER.debug("entering "+folder.getAbsolutePath());
         File[] files = folder.listFiles();
 
         Set<String> plainFileNames = new HashSet<String>();

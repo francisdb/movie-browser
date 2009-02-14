@@ -207,13 +207,6 @@ public class MainFrame extends javax.swing.JFrame {
      * Makes the frame ready for use
      */
     public void setupListeners() {
-        this.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                browser.getMovieFinder().stop();
-            }
-        });
         movieTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -272,6 +265,11 @@ public class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Movie browser");
         setName("mainFrame"); // NOI18N
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jSplitPane1.setBorder(null);
         jSplitPane1.setDividerLocation(530);
@@ -518,7 +516,7 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
                 //    busyDialog.dispose();
                 //}
                 clearTableList();
-                scanFolders();
+                //scanFolders();
             }
         };
         worker.execute();
@@ -605,7 +603,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    new SettingsDialogController(settings, browser, new SettingsDialog(settings, this), this).load(movieTableScrollPane);
+    new SettingsDialogController(settings, browser, new SettingsDialog(settings, this), this).load(this);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
 private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFolders
@@ -657,6 +655,11 @@ private void importAutoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
             LOGGER.debug("No Selection ");
         }
 }//GEN-LAST:event_importAutoMenuItemActionPerformed
+
+private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+    //JOptionPane.showMessageDialog(this, "Show shutdown dialog...");
+    browser.getMovieFinder().stop();
+}//GEN-LAST:event_formWindowClosing
 
 
     private void showRightClickMenu(MouseEvent evt) {
