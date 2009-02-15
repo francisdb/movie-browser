@@ -203,6 +203,16 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     }
 
     /**
+     * Adds all movies
+     * @param item 
+     */
+    public void delete(MovieInfo item) {
+        int row = movies.indexOf(item);
+        movies.remove(item);
+        this.fireTableRowsDeleted(row, row);
+    }
+
+    /**
      * Clears the movie list
      */
     public void clear() {

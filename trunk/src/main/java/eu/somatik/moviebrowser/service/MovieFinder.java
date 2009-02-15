@@ -38,7 +38,7 @@ import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import eu.somatik.moviebrowser.cache.MovieCache;
+import eu.somatik.moviebrowser.cache.MovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;
@@ -66,7 +66,7 @@ public class MovieFinder {
     
     private final ExecutorService service;
     private final ExecutorService secondaryService;
-    private final MovieCache movieCache;
+    private final MovieDatabase movieCache;
     private final InfoFetcherFactory fetcherFactory;
     private final Settings settings;
     private final Converter converter = new Converter();
@@ -84,7 +84,7 @@ public class MovieFinder {
      */
     @Inject
     public MovieFinder(
-            final MovieCache movieCache,
+            final MovieDatabase movieCache,
             final InfoFetcherFactory fetcherFactory,
             final Settings settings) {
         this.movieCache = movieCache;

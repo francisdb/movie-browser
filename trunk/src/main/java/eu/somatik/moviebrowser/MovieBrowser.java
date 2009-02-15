@@ -52,7 +52,7 @@ import com.google.inject.Injector;
 import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.cache.MovieCache;
+import eu.somatik.moviebrowser.cache.MovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.gui.MainFrame;
@@ -84,7 +84,7 @@ public class MovieBrowser {
     private final Settings settings;
     private final SubtitlesLoader subtitlesLoader;
     private final InfoHandler infoHandler;
-    private final MovieCache movieCache;
+    private final MovieDatabase movieCache;
     private final ExporterLocator exporterLocator;
     private final InfoFetcherFactory fetcherFactory;
     private final Map<MovieService,ContentProvider> contentProviders;
@@ -115,7 +115,7 @@ public class MovieBrowser {
             final Settings settings,
             final SubtitlesLoader subtitlesLoader,
             final InfoHandler infoHandler,
-            final MovieCache movieCache,
+            final MovieDatabase movieCache,
             final ExporterLocator exporterLocator,
             final InfoFetcherFactory fetcherFactory) {
         this.movieFinder = finder;
@@ -254,7 +254,7 @@ public class MovieBrowser {
         return subtitlesLoader;
     }
 
-    public MovieCache getMovieCache() {
+    public MovieDatabase getMovieCache() {
         return movieCache;
     }
 

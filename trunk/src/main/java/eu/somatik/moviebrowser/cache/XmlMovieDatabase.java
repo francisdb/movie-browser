@@ -58,9 +58,9 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Singleton
-public class XmlMovieCache implements MovieCache {
+public class XmlMovieDatabase implements MovieDatabase {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlMovieCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlMovieDatabase.class);
 
     final static class GenreConverter implements SingleValueConverter {
 
@@ -144,7 +144,7 @@ public class XmlMovieCache implements MovieCache {
 
 
     @Inject
-    public XmlMovieCache(final Settings settings) {
+    public XmlMovieDatabase(final Settings settings) {
         this();
         this.movies = new ConcurrentHashMap<Long, StorableMovie>();
         File localFile = new File(DBFILE);
@@ -161,7 +161,7 @@ public class XmlMovieCache implements MovieCache {
     /**
      * 
      */
-    public XmlMovieCache() {
+    public XmlMovieDatabase() {
         this.xstream = initXstream();
         this.stuffToSave = new AtomicBoolean(false);
         this.timer = new Timer("SaveTimer", true);
@@ -173,7 +173,7 @@ public class XmlMovieCache implements MovieCache {
         }, 0, 1000*10);
     }
 
-    public XmlMovieCache(String path) {
+    public XmlMovieDatabase(String path) {
         this();
         this.path = path;
     }
@@ -325,7 +325,7 @@ public class XmlMovieCache implements MovieCache {
     /*
      * (non-Javadoc)
      * 
-     * @see eu.somatik.moviebrowser.cache.MovieCache#clear()
+     * @see eu.somatik.moviebrowser.cache.MovieDatabase#clear()
      */
     @Override
     public synchronized void clear() {
@@ -339,7 +339,7 @@ public class XmlMovieCache implements MovieCache {
      * (non-Javadoc)
      * 
      * @see
-     * eu.somatik.moviebrowser.cache.MovieCache#findByFile(java.lang.String,
+     * eu.somatik.moviebrowser.cache.MovieDatabase#findByFile(java.lang.String,
      * long)
      */
     @Override
@@ -361,7 +361,7 @@ public class XmlMovieCache implements MovieCache {
      * (non-Javadoc)
      * 
      * @see
-     * eu.somatik.moviebrowser.cache.MovieCache#findMovieByTitle(java.lang.String
+     * eu.somatik.moviebrowser.cache.MovieDatabase#findMovieByTitle(java.lang.String
      * )
      */
     @Override
@@ -381,7 +381,7 @@ public class XmlMovieCache implements MovieCache {
     /*
      * (non-Javadoc)
      * 
-     * @seeeu.somatik.moviebrowser.cache.MovieCache#insertOrUpdate(eu.somatik.
+     * @seeeu.somatik.moviebrowser.cache.MovieDatabase#insertOrUpdate(eu.somatik.
      * moviebrowser.domain.StorableMovie)
      */
     @Override
@@ -424,7 +424,7 @@ public class XmlMovieCache implements MovieCache {
     /*
      * (non-Javadoc)
      * 
-     * @see eu.somatik.moviebrowser.cache.MovieCache#isStarted()
+     * @see eu.somatik.moviebrowser.cache.MovieDatabase#isStarted()
      */
     @Override
     public boolean isStarted() {
@@ -452,18 +452,19 @@ public class XmlMovieCache implements MovieCache {
      * (non-Javadoc)
      * 
      * @see
-     * eu.somatik.moviebrowser.cache.MovieCache#remove(eu.somatik.moviebrowser
+     * eu.somatik.moviebrowser.cache.MovieDatabase#remove(eu.somatik.moviebrowser
      * .domain.StorableMovie)
      */
     @Override
     public void remove(StorableMovie movie) {
         movies.remove(movie.getId());
+        stuffToSave.set(true);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see eu.somatik.moviebrowser.cache.MovieCache#shutdown()
+     * @see eu.somatik.moviebrowser.cache.MovieDatabase#shutdown()
      */
     @Override
     public void shutdown() {
@@ -477,7 +478,7 @@ public class XmlMovieCache implements MovieCache {
     /*
      * (non-Javadoc)
      * 
-     * @see eu.somatik.moviebrowser.cache.MovieCache#startup()
+     * @see eu.somatik.moviebrowser.cache.MovieDatabase#startup()
      */
     @Override
     public void startup() {

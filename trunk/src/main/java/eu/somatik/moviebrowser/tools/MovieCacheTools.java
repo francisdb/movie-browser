@@ -23,8 +23,8 @@ import com.flicklib.module.NetFlixAuthModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import eu.somatik.moviebrowser.cache.MovieCache;
-import eu.somatik.moviebrowser.cache.XmlMovieCache;
+import eu.somatik.moviebrowser.cache.MovieDatabase;
+import eu.somatik.moviebrowser.cache.XmlMovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
@@ -42,9 +42,9 @@ public class MovieCacheTools {
         Injector injector = Guice.createInjector(new MovieBrowserModule(), new FlicklibModule(), new NetFlixAuthModule("", ""));
         Settings settings = injector.getInstance(Settings.class);
         
-        MovieCache cache = injector.getInstance(MovieCache.class);
+        MovieDatabase cache = injector.getInstance(MovieDatabase.class);
 
-        XmlMovieCache xml = new XmlMovieCache(settings);
+        XmlMovieDatabase xml = new XmlMovieDatabase(settings);
         xml.startup();
         for (StorableMovie m : cache.list()) {
             m.setId(null);

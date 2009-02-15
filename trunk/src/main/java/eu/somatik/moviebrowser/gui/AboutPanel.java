@@ -54,7 +54,10 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
         builder.append("<strong>Memory total</strong> ").append(mem(Runtime.getRuntime().totalMemory())).append("<br/>");
         builder.append("<strong>Memory free</strong> ").append(mem(Runtime.getRuntime().freeMemory())).append("<br/>");
         builder.append("<strong>Available Processors</strong> ").append(Runtime.getRuntime().availableProcessors()).append("<br/>");
-        builder.append("<strong>Site</strong> <a href=\"http://code.google.com/p/movie-browser/\">http://code.google.com/p/movie-browser/</a>");
+        
+        
+        builder.append("<strong>Site</strong> <a href=\"http://code.google.com/p/movie-browser/\">movie-browser</a>").append("<br/>");
+        builder.append("<strong>Reporting issues</strong> <a href=\"http://code.google.com/p/movie-browser/issues\">issue tracker</a>");
         builder.append("<p>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE CREATORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>");
         builder.append("</html>");
         aboutTextPane.setContentType("text/html");

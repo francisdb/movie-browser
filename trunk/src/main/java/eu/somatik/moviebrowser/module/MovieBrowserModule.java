@@ -21,8 +21,8 @@ package eu.somatik.moviebrowser.module;
 import com.google.inject.AbstractModule;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.cache.FileSystemImageCache;
-import eu.somatik.moviebrowser.cache.MovieCache;
-import eu.somatik.moviebrowser.cache.XmlMovieCache;
+import eu.somatik.moviebrowser.cache.MovieDatabase;
+import eu.somatik.moviebrowser.cache.XmlMovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.config.SettingsImpl;
 import eu.somatik.moviebrowser.gui.IconLoader;
@@ -49,8 +49,8 @@ public class MovieBrowserModule extends AbstractModule {
         bind(IconLoader.class);
 
 
-        //bind(MovieCache.class).to(JPAMovieCache.class);
-        bind(MovieCache.class).to(XmlMovieCache.class);
+        //bind(MovieDatabase.class).to(JPAMovieCache.class);
+        bind(MovieDatabase.class).to(XmlMovieDatabase.class);
         bind(ImageCache.class).to(FileSystemImageCache.class);
         bind(FolderScanner.class).to(AdvancedFolderScanner.class);
         //bind(FolderScanner.class).to(SimpleFolderScanner.class);

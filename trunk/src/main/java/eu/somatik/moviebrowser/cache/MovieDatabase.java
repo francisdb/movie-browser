@@ -24,29 +24,35 @@ import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 
 /**
- *
+ * Movie database
+ * 
  * @author francisdb
  */
-public interface MovieCache {
+public interface MovieDatabase {
 
     /**
      * Selects a movie using its title
      * @param title
      * @return
      */
-    public StorableMovie findMovieByTitle(String title);
+    StorableMovie findMovieByTitle(String title);
 
     /**
      * Return the list of all movies, found in the database  
      * @return
      */
-    public List<StorableMovie> list();
+    List<StorableMovie> list();
     
 
+    /**
+     * Has this database been started
+     * @return true if started
+     */
     boolean isStarted();
 
     /**
      * @param movie
+     * @return the inserted or updated movie
      */
     StorableMovie insertOrUpdate(StorableMovie movie);
 
@@ -62,7 +68,7 @@ public interface MovieCache {
      * @param size
      * @return
      */
-    public FileGroup findByFile(String filename, long size);
+    FileGroup findByFile(String filename, long size);
     
     /**
      * Shuts down the cache
