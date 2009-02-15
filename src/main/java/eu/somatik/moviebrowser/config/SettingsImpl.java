@@ -236,7 +236,7 @@ public class SettingsImpl implements Settings {
             props.load(is);
             version = props.getProperty("version");
         } catch (IOException ex) {
-            LOGGER.error("Could not read pom.properties", ex);
+            LOGGER.warn(ex.getMessage());
         } finally {
             if (is != null) {
                 try {

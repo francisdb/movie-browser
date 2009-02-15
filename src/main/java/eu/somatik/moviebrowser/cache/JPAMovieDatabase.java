@@ -61,24 +61,24 @@ import java.util.Date;
  */
 @Singleton
 @Deprecated
-public class JPAMovieCache implements MovieCache {
+public class JPAMovieDatabase implements MovieDatabase {
 
     /**
      * Augment this value whenever the data model changes (jpa domain classes)
      */
     private static final int DATABASE_VERSION = 2;
     private static final String VERSION_FILE = "version";
-    private static final Logger LOGGER = LoggerFactory.getLogger(JPAMovieCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JPAMovieDatabase.class);
     private static final boolean DEBUG = true;
     private final Settings settings;
     private EntityManagerFactory emf;
 
     /** 
-     * Creates a new instance of MovieCache 
+     * Creates a new instance of MovieDatabase
      * @param settings 
      */
     @Inject
-    public JPAMovieCache(final Settings settings) {
+    public JPAMovieDatabase(final Settings settings) {
         this.settings = settings;
     }
 

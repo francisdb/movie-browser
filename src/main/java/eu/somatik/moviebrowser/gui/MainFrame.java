@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,8 +75,6 @@ import eu.somatik.moviebrowser.tools.SwingTools;
 import eu.somatik.moviebrowser.service.export.Exporter;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
-import javax.swing.Icon;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
  *
@@ -692,6 +688,7 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         popup.add(new CrawlSubtitleAction(this, browser));
         popup.add(new EditAction());
         popup.add(new RenameAction());
+        popup.add(new DeleteAction());
 
         return popup;
     }
@@ -801,10 +798,14 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         movieInfoPanel.setContentProvider(contentProvider);
     }
 
-    protected MovieInfo getSelectedMovie() {
+    MovieInfo getSelectedMovie() {
         int selected = movieTable.getRowSorter().convertRowIndexToModel(movieTable.getSelectedRow());
         return ((MovieInfoTableModel)movieTable.getModel()).getMovieInfo(selected);
         //return (MovieInfo) movieTable.getValueAt(movieTable.getSelectedRow(), movieTable.convertColumnIndexToView(MovieInfoTableModel.MOVIE_COL));
+    }
+
+    private void deleteMovie(MovieInfo info){
+        ((MovieInfoTableModel)movieTable.getModel()).delete(info);
     }
 
 
@@ -849,27 +850,25 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         }
     }
 
+     /**
+     * This action lets you edit a record
+     * @param evt
+     */
+    private class DeleteAction extends AbstractAction {
 
-
-
-    private static class OpenFolderAction extends AbstractAction{
-
-        private final MovieBrowser browser;
-        private final MovieInfo info;
-
-        public OpenFolderAction(final MovieBrowser browser, final MovieInfo info) {
-            super("Open folder", UIManager.getIcon("FileView.directoryIcon"));
-            // see here for more icons
-            this.browser = browser;
-            this.info = info;
-            this.setEnabled(info.getDirectory() != null);
+        public DeleteAction() {
+            super("Delete", iconLoader.loadIcon("images/16/delete.png"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            browser.openFile(info.getDirectory());
+            MovieInfo info = getSelectedMovie();
+            int option = JOptionPane.showConfirmDialog(MainFrame.this, "Are you sure you want to delete '"+info.getMovie().getTitle()+"' from the database?", "Delete?", JOptionPane.OK_CANCEL_OPTION);
+            if(option == JOptionPane.OK_OPTION){
+                deleteMovie(info);
+                browser.getMovieCache().remove(info.getMovie());
+            }
         }
-
     }
 
     /**
