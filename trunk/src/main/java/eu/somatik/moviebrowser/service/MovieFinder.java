@@ -64,51 +64,52 @@ public class MovieFinder {
     private static final int OTHERS_POOL_SIZE = 5;
 
     
-    private final ExecutorService service;
-    private final ExecutorService secondaryService;
-    private final MovieDatabase movieCache;
+    private final ExecutorService mainServicePool;
+    private final ExecutorService secondaryServicePool;
+    private final MovieDatabase movieDatabase;
     private final InfoFetcherFactory fetcherFactory;
     private final Settings settings;
-    private final Converter converter = new Converter();
+    private final Converter converter;
     /**
      * Keeps track of how many tasks are running
      */
-    private AtomicInteger runningTasks;
+    private final AtomicInteger runningTasks;
 
 
     /**
      * Creates a new instance of MovieFinder
-     * @param movieCache
+     * @param movieDatabase
      * @param fetcherFactory
      * @param settings 
      */
     @Inject
     public MovieFinder(
-            final MovieDatabase movieCache,
+            final MovieDatabase movieDatabase,
             final InfoFetcherFactory fetcherFactory,
             final Settings settings) {
-        this.movieCache = movieCache;
+        this.movieDatabase = movieDatabase;
         this.fetcherFactory = fetcherFactory;
         this.settings = settings;
 
-        this.service = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
-        this.secondaryService = Executors.newFixedThreadPool(OTHERS_POOL_SIZE);
+        this.runningTasks = new AtomicInteger();
+        this.converter = new Converter();
+        this.mainServicePool = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
+        this.secondaryServicePool = Executors.newFixedThreadPool(OTHERS_POOL_SIZE);
 
-        runningTasks = new AtomicInteger();
     }
 
     /**
      * Stops the finder
      */
     public void stop() {
-        service.shutdownNow();
-        secondaryService.shutdownNow();
-        movieCache.shutdown();
+        mainServicePool.shutdownNow();
+        secondaryServicePool.shutdownNow();
+        movieDatabase.shutdown();
     }
 
     public void start() {
-        if (!movieCache.isStarted()) {
-            movieCache.startup();
+        if (!movieDatabase.isStarted()) {
+            movieDatabase.startup();
         }
     }
 
@@ -121,11 +122,11 @@ public class MovieFinder {
 
         // TODO put this all in the cache?
         
-        //movieCache.remove(movieInfo.getMovieFile());
+        //movieDatabase.remove(movieInfo.getMovieFile());
         // TODO make sure the movie is not linked to an other file
         StorableMovie movie = movieInfo.getMovie();
         /*if(movie != null){
-            movieCache.remove(movieInfo.getMovie());
+            movieDatabase.remove(movieInfo.getMovie());
         }*/
 
         for (StorableMovieSite sms : movie.getSiteInfo()) {
@@ -136,12 +137,12 @@ public class MovieFinder {
         
         movie.getMovieSiteInfoOrCreate(preferredService).setIdForSite(movieId);
 
-        movieInfo.setMovie(movieCache.insertOrUpdate(movie));
+        movieInfo.setMovie(movieDatabase.insertOrUpdate(movie));
         loadMovies(list, true);
     }
 
     public void loadMovie(MovieInfo info, MovieService mservice) {
-        service.submit(new MainServiceCaller(info, mservice));
+        mainServicePool.submit(new MainServiceCaller(info, mservice));
     }
     
     /**
@@ -154,7 +155,7 @@ public class MovieFinder {
         LOGGER.info("Loading " + movies.size() + " movies");
         if (async) {
             for (MovieInfo info : movies) {
-                service.submit(new MainServiceCaller(info));
+                mainServicePool.submit(new MainServiceCaller(info));
             }
         } else {
             List<MainServiceCaller> callers = new LinkedList<MainServiceCaller>();
@@ -163,7 +164,7 @@ public class MovieFinder {
             }
     
             try {
-                service.invokeAll(callers);
+                mainServicePool.invokeAll(callers);
             } catch (InterruptedException ex) {
                 LOGGER.error("Movie loader interrupted", ex);
             }
@@ -209,13 +210,13 @@ public class MovieFinder {
                 // set true, if we should call extra services for this movie
                 boolean needExtraServiceCheck = false;
                 if (info.getMovie().getId() == null) {
-                	//info.setMovieFile(movieCache.getOrCreateFile(info.getDirectory().getAbsolutePath()));
+                	//info.setMovieFile(movieDatabase.getOrCreateFile(info.getDirectory().getAbsolutePath()));
                     // TODO load movie
                     FileGroup group = findMovie(info);
                     if (group!=null) {
                         MovieLocation directory = group.getDirectory(info.getDirectory().getAbsolutePath());
                         //directory.setName(info.getDirectory().getName());
-                        info.setMovie(movieCache.insertOrUpdate(group.getMovie()));
+                        info.setMovie(movieDatabase.insertOrUpdate(group.getMovie()));
                     } else {
                         needExtraServiceCheck = fetchInformation();
                     }
@@ -224,7 +225,7 @@ public class MovieFinder {
                     if (info.isNeedRefetch()) {
                         needExtraServiceCheck = getMovieInfoImdb(info, preferredService);
                         
-                        info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
+                        info.setMovie(movieDatabase.insertOrUpdate(info.getMovie()));
                     }
                     info.setStatus(MovieStatus.CACHED);
                 }
@@ -234,7 +235,7 @@ public class MovieFinder {
                         if (service!=preferredService) {
                             StorableMovieSite siteInfo = info.siteFor(service);
                             if (siteInfo == null || siteInfo.getScore()==null) {
-                                secondaryService.submit(new MovieServiceCaller(service, info));
+                                secondaryServicePool.submit(new MovieServiceCaller(service, info));
                             }
                         }
                     }
@@ -249,9 +250,9 @@ public class MovieFinder {
             StorableMovie movie;
             boolean checkSucceeded = getMovieInfoImdb(info, preferredService);
             if (checkSucceeded) {
-                movie = movieCache.findMovieByTitle(info.getMovie().getTitle());
+                movie = movieDatabase.findMovieByTitle(info.getMovie().getTitle());
                 if (movie == null) {
-                    info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
+                    info.setMovie(movieDatabase.insertOrUpdate(info.getMovie()));
        
                 } else {
                     // the movie is already in the database, but we haven't find this movie by 
@@ -261,7 +262,7 @@ public class MovieFinder {
                     MovieLocation directory = newFileGroup.getDirectory(info.getDirectory().getAbsolutePath());
                     movie.addFileGroup(newFileGroup);
                 	//directory.setName(info.getDirectory().getName());
-                	info.setMovie(movieCache.insertOrUpdate(movie));
+                	info.setMovie(movieDatabase.insertOrUpdate(movie));
                 }
             }
             info.setNeedRefetch(false);
@@ -271,7 +272,7 @@ public class MovieFinder {
         private FileGroup findMovie(MovieInfo info) {
             for (StorableMovieFile file : info.getMovie().getUniqueFileGroup().getFiles()) {
                 if (file.getType()==FileType.VIDEO_CONTENT) {
-                    FileGroup fileGroup = movieCache.findByFile(file.getName(), file.getSize());
+                    FileGroup fileGroup = movieDatabase.findByFile(file.getName(), file.getSize());
                     if (fileGroup!=null) {
                         return fileGroup;
                     }
@@ -288,7 +289,7 @@ public class MovieFinder {
 
         /**
          * Constructs a new MovieCaller object
-         * @param service
+         * @param mainServicePool
          * @param info
          */
         public MovieServiceCaller(final MovieService service, final MovieInfo info) {
@@ -313,7 +314,7 @@ public class MovieFinder {
                 
                 fetchMoviePageInfo(info, service);
                 
-                info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
+                info.setMovie(movieDatabase.insertOrUpdate(info.getMovie()));
                 info.setStatus(MovieStatus.LOADED);
             } catch (Exception ex) {
                 LOGGER.error("Loading '" + info.getMovie().getTitle() + "' on " + service.getName() + " failed", ex);
@@ -350,11 +351,11 @@ public class MovieFinder {
 
     
     /**
-     * fetch all movie information from the given movie service, and put into the MovieInfo/StorableMovie/StorableMovieSite,
+     * fetch all movie information from the given movie mainServicePool, and put into the MovieInfo/StorableMovie/StorableMovieSite,
      * and returns the modified StorableMovieSite.
      * 
      * @param info
-     * @param service
+     * @param service 
      * @return the movie page
      * @throws IOException
      */
@@ -410,7 +411,7 @@ public class MovieFinder {
         }
         if (needUpdate) {
             if (store) {
-                info.setMovie(movieCache.insertOrUpdate(info.getMovie()));
+                info.setMovie(movieDatabase.insertOrUpdate(info.getMovie()));
             }
             info.triggerUpdate();
         }

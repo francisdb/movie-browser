@@ -20,7 +20,6 @@ package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.domain.MovieSearchResult;
 import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +29,6 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 
