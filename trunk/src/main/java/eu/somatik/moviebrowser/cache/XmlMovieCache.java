@@ -149,12 +149,11 @@ public class XmlMovieCache implements MovieCache {
         this.movies = new ConcurrentHashMap<Long, StorableMovie>();
         File localFile = new File(DBFILE);
         if(localFile.exists()){
-                        this.path = localFile.getAbsolutePath();
+            this.path = localFile.getAbsolutePath();
             LOGGER.info("Using local database file: "+path);
         }else{
             this.path = settings.getSettingsDir() + File.separator + DBFILE;
             LOGGER.info("Using default database file: "+path);
-            
         }
         
     }
