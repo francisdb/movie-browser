@@ -20,6 +20,7 @@ package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.domain.MovieSearchResult;
 import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -350,6 +351,10 @@ public class ImportDialog extends javax.swing.JDialog {
     
     public void setController(ImportDialogController controller) {
         this.controller = controller;
+    }
+
+    public void setMovieService(MovieService movieService){
+        siteSelectorComboBox.setSelectedItem(movieService);
     }
 
     public String getFolderLabel() {

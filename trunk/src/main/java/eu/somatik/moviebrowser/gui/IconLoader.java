@@ -80,6 +80,9 @@ public class IconLoader {
             case CINEBEL:
                 fileName = "images/16/cinebel.png";
                 break;
+            case OFDB:
+                fileName = "images/16/ofdb.png";
+                break;
             default:
                 throw new AssertionError("Uncatched movieservice: "+service);
                 

@@ -57,8 +57,8 @@ public class AdvancedFolderScanner implements FolderScanner {
      * If a folder contains no other than these it is a movie folder
      * TODO make regex?
      */
-    private static final String[] VALID_SUB_DIRS =
-            new String[]{"subs", "subtitles", "cd1", "cd2", "cd3", "cd4", "sample", "covers", "cover" };
+    private static final String[] MOVIE_SUB_DIRS =
+            new String[]{"subs", "subtitles", "cd1", "cd2", "cd3", "cd4", "sample", "covers", "cover", "approved" };
 
     private final MovieNameExtractor movieNameExtractor;
    
@@ -137,7 +137,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             add(sm);
             return;
         }
-        if (subDirectories>=2 && subDirectories<=4) {
+        if (subDirectories >= 2 && subDirectories <= 5) {
             // the case of :
             // Title_of_the_film/cd1/...
             // Title_of_the_film/cd2/...
@@ -233,10 +233,15 @@ public class AdvancedFolderScanner implements FolderScanner {
 
     private boolean isMovieFolder(Set<String> subDirectoryNames){
         boolean movieFolder = true;
-        List<String> valid = Arrays.asList(VALID_SUB_DIRS);
+        List<String> valid = Arrays.asList(MOVIE_SUB_DIRS);
         Iterator<String> iter = subDirectoryNames.iterator();
+        String next;
         while(iter.hasNext() && movieFolder){
-            movieFolder = valid.contains(iter.next());
+            next = iter.next();
+            movieFolder = valid.contains(next);
+            if(!movieFolder){
+                LOGGER.trace("not movie folder because: " + next);
+            }
         }
         return movieFolder;
     }

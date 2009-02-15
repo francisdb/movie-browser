@@ -463,6 +463,7 @@ public class XmlMovieCache implements MovieCache {
         if (started) {
             save();
         }
+        LOGGER.info(this.getClass().getSimpleName() + " shut down.");
     }
 
     /*

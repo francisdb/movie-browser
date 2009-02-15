@@ -49,6 +49,7 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -72,14 +73,8 @@ public class MovieFinder {
     /**
      * Keeps track of how many tasks are running
      */
-    private int runningTasks;
-    
-    /**
-     * as the running tasks property is updated from several threads, it is possible to some concurrent modification get lost, to avoid
-     * we need a lock ... 
-     */
-    private final Object runningTaskLock = new Object();
-    
+    private AtomicInteger runningTasks;
+
 
     /**
      * Creates a new instance of MovieFinder
@@ -99,7 +94,7 @@ public class MovieFinder {
         this.service = Executors.newFixedThreadPool(IMDB_POOL_SIZE);
         this.secondaryService = Executors.newFixedThreadPool(OTHERS_POOL_SIZE);
 
-        runningTasks = 0;
+        runningTasks = new AtomicInteger();
     }
 
     /**
@@ -175,17 +170,6 @@ public class MovieFinder {
         }
     }
     
-    public void incRunningTasks() {
-        synchronized (runningTaskLock) {
-            runningTasks++;
-        }
-    }
-    public void decRunningTasks() {
-        synchronized (runningTaskLock) {
-            runningTasks--;
-        }
-    }
-    
 
 
     private class MainServiceCaller implements Callable<MovieInfo> {
@@ -199,13 +183,13 @@ public class MovieFinder {
          * @param info
          */
         public MainServiceCaller(MovieInfo info) {
-            this(info,settings.getPreferredService());
+            this(info, settings.getPreferredService());
         }
 
         public MainServiceCaller(MovieInfo info, MovieService service) {
             this.info = info;
             this.preferredService = service;
-            incRunningTasks();
+            runningTasks.incrementAndGet();
         }
 
 
@@ -214,7 +198,7 @@ public class MovieFinder {
             synchronized(info) {
                 doCall();
             }
-            decRunningTasks();
+            runningTasks.decrementAndGet();
             return info;
         }
         
@@ -310,14 +294,14 @@ public class MovieFinder {
         public MovieServiceCaller(final MovieService service, final MovieInfo info) {
             this.service = service;
             this.info = info;
-            incRunningTasks();
+            runningTasks.incrementAndGet();
         }
         @Override
         public MovieInfo call() throws Exception {
             synchronized(info) {
                 doCall();
             }
-            decRunningTasks();
+            runningTasks.decrementAndGet();
             return info;
         }
         
@@ -393,7 +377,7 @@ public class MovieFinder {
     }
     
     public int getRunningTasks() {
-        return runningTasks;
+        return runningTasks.get();
     }
 
     private void renameFolderToTitle(MovieInfo info) {

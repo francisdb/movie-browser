@@ -52,6 +52,7 @@ public class MovieNameExtractor {
         ".real.retail",
         ".limited.dvdrip",
         ".limited.color.fixed",
+        ".read.nfo",
         ".dvdrip",
         ".samplefix",
         ".dvdivx4",

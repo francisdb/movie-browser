@@ -67,6 +67,7 @@ public class ImportDialogController {
     public ImportDialogController(MovieBrowser browser, ImportDialog dialog, File selectedFile, MovieInfoTableModel model) {
         this.dialog = dialog;
         this.dialog.setController(this);
+        this.dialog.setMovieService(browser.getSettings().getPreferredService());
         this.scanDirectory = selectedFile;
         this.browser = browser;
         this.tableModel = model;
