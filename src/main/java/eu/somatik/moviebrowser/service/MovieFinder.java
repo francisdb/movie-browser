@@ -38,7 +38,7 @@ import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import eu.somatik.moviebrowser.cache.MovieDatabase;
+import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;

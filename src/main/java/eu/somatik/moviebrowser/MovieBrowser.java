@@ -52,7 +52,7 @@ import com.google.inject.Injector;
 import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.cache.MovieDatabase;
+import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.gui.MainFrame;
