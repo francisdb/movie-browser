@@ -66,6 +66,7 @@ import eu.somatik.moviebrowser.service.export.ExporterModule;
 import eu.somatik.moviebrowser.service.ui.CinebelContentProvider;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import eu.somatik.moviebrowser.service.ui.ImdbContentProvider;
+import eu.somatik.moviebrowser.service.ui.OfdbContentProvider;
 import eu.somatik.moviebrowser.service.ui.PorthuContentProvider;
 
 /**
@@ -138,6 +139,7 @@ public class MovieBrowser {
         providers.put(MovieService.IMDB, new ImdbContentProvider());
         providers.put(MovieService.PORTHU, new PorthuContentProvider());
         providers.put(MovieService.CINEBEL, new CinebelContentProvider());
+        providers.put(MovieService.OFDB, new OfdbContentProvider());
         return providers;
     }
 
@@ -226,6 +228,12 @@ public class MovieBrowser {
     public FolderScanner getFolderScanner() {
         return folderScanner;
     }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    
     
     public ContentProvider getContentProvider() {
         MovieService service = settings.getPreferredService();

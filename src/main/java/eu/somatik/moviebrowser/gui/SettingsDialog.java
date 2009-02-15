@@ -44,7 +44,8 @@ public class SettingsDialog extends javax.swing.JDialog {
     public static final MovieService[] MAIN_SERVICES = new MovieService[]{
         MovieService.IMDB,
         MovieService.PORTHU,
-        MovieService.CINEBEL
+        MovieService.CINEBEL,
+        MovieService.OFDB
     };
     
     private final Settings settings;
@@ -65,6 +66,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         initComponents();
         this.serviceCheckBoxes = mapServiceCheckBoxes();
         this.locationsList.setModel(new DefaultListModel());
+        this.preferSiteComboBox.setSelectedItem(settings.getPreferredService());
     }
 
     private Map<MovieService, JCheckBox> mapServiceCheckBoxes(){
@@ -76,6 +78,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         cbs.put(MovieService.PORTHU, portHuCheckbox);
         cbs.put(MovieService.TOMATOES, rottenTomatoesCheckBox);
         cbs.put(MovieService.CINEBEL, cinebelCheckBox);
+        cbs.put(MovieService.OFDB, ofdbCheckBox);
         return cbs;
     }
     
@@ -117,6 +120,7 @@ public class SettingsDialog extends javax.swing.JDialog {
         preferSiteComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         cinebelCheckBox = new javax.swing.JCheckBox();
+        ofdbCheckBox = new javax.swing.JCheckBox();
 
         jTextField1.setText("jTextField1");
 
@@ -213,6 +217,8 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         cinebelCheckBox.setText("Cinebel");
 
+        ofdbCheckBox.setText("OFDb");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -224,8 +230,8 @@ public class SettingsDialog extends javax.swing.JDialog {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)))
+                            .addComponent(addLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                            .addComponent(deleteLocationButton, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)))
                     .addComponent(websitesLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -234,19 +240,20 @@ public class SettingsDialog extends javax.swing.JDialog {
                             .addComponent(moviewebCheckBox))
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(omdbCheckBox)
-                                .addGap(18, 18, 18)
-                                .addComponent(flixsterCheckBox)
-                                .addGap(18, 18, 18)
-                                .addComponent(cinebelCheckBox))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(googleCheckBox)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(portHuCheckbox)))))
+                            .addComponent(googleCheckBox)
+                            .addComponent(omdbCheckBox))
+                        .addGap(70, 70, 70)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(portHuCheckbox)
+                            .addComponent(flixsterCheckBox))
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ofdbCheckBox)
+                            .addComponent(cinebelCheckBox))
+                        .addGap(71, 71, 71)))
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -256,21 +263,21 @@ public class SettingsDialog extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(openSubsCheckBox))
                     .addComponent(subtitlesLabel))
-                .addContainerGap(221, Short.MAX_VALUE))
-            .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                .addContainerGap(258, Short.MAX_VALUE))
+            .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                .addComponent(movieLocationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(miscLabel)
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addContainerGap(166, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(413, Short.MAX_VALUE)
+                .addContainerGap(450, Short.MAX_VALUE)
                 .addComponent(okayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+            .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -286,7 +293,7 @@ public class SettingsDialog extends javax.swing.JDialog {
                         .addComponent(timeoutText, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(secondsLabel)))
-                .addContainerGap(154, Short.MAX_VALUE))
+                .addContainerGap(191, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -310,13 +317,14 @@ public class SettingsDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rottenTomatoesCheckBox)
-                    .addComponent(flixsterCheckBox)
                     .addComponent(omdbCheckBox)
-                    .addComponent(cinebelCheckBox))
+                    .addComponent(cinebelCheckBox)
+                    .addComponent(flixsterCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(moviewebCheckBox)
                     .addComponent(googleCheckBox)
+                    .addComponent(ofdbCheckBox)
                     .addComponent(portHuCheckbox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -444,6 +452,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     private javax.swing.JLabel miscLabel;
     private javax.swing.JLabel movieLocationsLabel;
     private javax.swing.JCheckBox moviewebCheckBox;
+    private javax.swing.JCheckBox ofdbCheckBox;
     private javax.swing.JButton okayButton;
     private javax.swing.JCheckBox omdbCheckBox;
     private javax.swing.JCheckBox openSubsCheckBox;
