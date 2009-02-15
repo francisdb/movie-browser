@@ -23,8 +23,8 @@ import com.flicklib.module.NetFlixAuthModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import eu.somatik.moviebrowser.cache.MovieDatabase;
-import eu.somatik.moviebrowser.cache.XmlMovieDatabase;
+import eu.somatik.moviebrowser.database.MovieDatabase;
+import eu.somatik.moviebrowser.database.XmlMovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.module.MovieBrowserModule;
