@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +46,6 @@ import eu.somatik.moviebrowser.domain.Persistent;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -142,12 +140,23 @@ public class XmlMovieCache implements MovieCache {
 
     private boolean started = false;
 
+    private static final String DBFILE = "database.xml";
+
 
     @Inject
     public XmlMovieCache(final Settings settings) {
         this();
         this.movies = new ConcurrentHashMap<Long, StorableMovie>();
-        this.path = settings.getSettingsDir() + File.separator + "database.xml";
+        File localFile = new File(DBFILE);
+        if(localFile.exists()){
+                        this.path = localFile.getAbsolutePath();
+            LOGGER.info("Using local database file: "+path);
+        }else{
+            this.path = settings.getSettingsDir() + File.separator + DBFILE;
+            LOGGER.info("Using default database file: "+path);
+            
+        }
+        
     }
 
     /**
