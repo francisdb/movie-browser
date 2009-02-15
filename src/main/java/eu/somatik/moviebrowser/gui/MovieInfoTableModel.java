@@ -153,16 +153,6 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 return calculator.calculate(info);
             case 6:
                 return info.getMovie().getCopyCount();
-/*            case 7:
-                return infoHandler.score(info, MovieService.TOMATOES);
-            case 8:
-                return infoHandler.score(info, MovieService.MOVIEWEB);
-            case 9:
-                return infoHandler.score(info, MovieService.GOOGLE);
-            case 10:
-                return infoHandler.score(info, MovieService.FLIXSTER);
-            case 11:
-                return infoHandler.score(info, MovieService.NETFLIX);*/
             default:
                 MovieService service = extraColumns.get(columnIndex - COL_NAMES.length);
                 return infoHandler.score(info, service);
