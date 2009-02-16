@@ -18,7 +18,6 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,10 +27,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
