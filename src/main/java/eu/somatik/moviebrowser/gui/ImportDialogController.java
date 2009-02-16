@@ -227,11 +227,16 @@ public class ImportDialogController {
                             List<? extends MovieSearchResult> result = get();
                             lastSearchResults.put(info, result);
                             dialog.setMovieSuggestions(result);
-                            dialog.setEnableSearch(true);
                         } catch (InterruptedException ex) {
-                            LOGGER.error("Get request intterrupted: ", ex);
+                        	LOGGER.error("Get request intterrupted: ", ex);
+                            dialog.setMovieSuggestions(null);
+                            dialog.showMessageDialog(ex.getCause().getMessage(), "Error during fetching information");
                         } catch (ExecutionException ex) {
-                            LOGGER.error("Get request failed: ", ex.getCause());
+                        	LOGGER.error("Get request failed: ", ex.getCause());
+                            dialog.setMovieSuggestions(null);
+                            dialog.showMessageDialog(ex.getCause().getMessage(), "Error during fetching information");
+                        } finally {
+                            dialog.setEnableSearch(true);
                         }
                     }
                 };
