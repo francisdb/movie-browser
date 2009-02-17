@@ -170,7 +170,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             }
         }
         for (File f : files) {
-            if (f.isDirectory()) {
+            if (f.isDirectory() && !f.getName().equalsIgnoreCase("sample")) {
                 browse(f);
             }
         }
