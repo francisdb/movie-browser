@@ -28,8 +28,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -122,7 +120,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         initComponents();
         ContentProvider contentProvider = browser.getContentProvider();
-        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, contentProvider, settings);
+        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, settings, browser);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
