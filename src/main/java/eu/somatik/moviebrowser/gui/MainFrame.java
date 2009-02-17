@@ -550,7 +550,15 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
      * @param evt
      */
 private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMouseReleased
-    //createRightClickMenu(evt);
+    // for windows look and feel
+    if (evt.isPopupTrigger()) {
+//        JTable source = (JTable) evt.getSource();
+//        int row = source.rowAtPoint(evt.getPoint());
+//        int column = source.columnAtPoint(evt.getPoint());
+//        source.changeSelection(row, column, false, false);
+        JPopupMenu popup = createRightClickMenu();
+        popup.show(evt.getComponent(), evt.getX(), evt.getY());
+    }
 }//GEN-LAST:event_movieTableMouseReleased
 
 private void movieTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMousePressed
