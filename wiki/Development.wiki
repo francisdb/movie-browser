@@ -9,6 +9,7 @@ The project is maven based so everybody should be able to just check out the cod
  * Maven 2
  * Subversion
  * Netbeans (or some other IDE if you won't be working on the gui)
+ * a checkout of flicklib http://code.google.com/p/flicklib/
 
 
 = Used frameworks =
@@ -16,12 +17,10 @@ The project is maven based so everybody should be able to just check out the cod
 These will be downloaded by maven during your first build.
 
  * Guice (dependency injection)
- * HSQLDB (database)
- * Commons Httpclient (http connections)
+ * XStream (storage to xml)
+ * Flicklib and dependencies (http connections)
  * Jericho (html parsing)
  * SwingX (gui components)
- * Hibernate (Entity Manager)
- * C3P0 (database connection pooling)
  * SLF4J/Logback (logging)
 
 = Domain Model =
