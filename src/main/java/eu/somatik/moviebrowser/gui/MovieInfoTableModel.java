@@ -192,6 +192,19 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         }
     }
 
+    public void addAllMovie(Collection<StorableMovie> items) {
+        if (items.size() != 0) {
+            int firstRow = movies.size();
+            for (StorableMovie movie : items) {
+            	MovieInfo info = new MovieInfo(movie);
+                info.addPropertyChangeListener(this);
+                movies.add(info);
+            }
+            this.fireTableRowsInserted(firstRow, firstRow + items.size() - 1);
+        }
+    }
+
+    
     /**
      * Adds all movies
      * @param item 

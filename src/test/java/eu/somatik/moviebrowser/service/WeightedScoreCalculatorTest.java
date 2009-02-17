@@ -37,7 +37,7 @@ public class WeightedScoreCalculatorTest {
      */
     @Test
     public void testCalculate() {
-        MovieInfo movie = new MovieInfo((File) null);
+        MovieInfo movie = new MovieInfo();
         InfoHandler handler = new InfoHandlerImpl();
         ScoreCalculator calc = new WeightedScoreCalculator(handler);
         assertNull("Result should be null when no data", calc.calculate(movie));

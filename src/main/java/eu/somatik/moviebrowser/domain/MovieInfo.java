@@ -44,8 +44,7 @@ public class MovieInfo {
      * 
      * @param directory
      */
-    public MovieInfo(File directory) {
-        this.directory = directory;
+    public MovieInfo() {
         this.status = MovieStatus.NEW;
         this.movie = new StorableMovie();
     }
@@ -131,14 +130,6 @@ public class MovieInfo {
         this.movie = movie;
     }
 
-    public PropertyChangeSupport getPropertyChangeSupport() {
-        return propertyChangeSupport;
-    }
-
-    public void setPropertyChangeSupport(PropertyChangeSupport propertyChangeSupport) {
-        this.propertyChangeSupport = propertyChangeSupport;
-    }
-
     public void addSite(StorableMovieSite storableMovieSite) {
         this.movie.addSiteInfo(storableMovieSite);
     }
@@ -163,4 +154,18 @@ public class MovieInfo {
         return needRefetch;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+    	if (obj instanceof MovieInfo) {
+    		MovieInfo other = (MovieInfo) obj;
+    		return movie.equals(other.movie);
+    	}
+    	return false;
+    }
+    
+    @Override
+    public int hashCode() {
+    	return movie.hashCode();
+    }
+    
 }
