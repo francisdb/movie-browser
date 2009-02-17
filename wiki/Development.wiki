@@ -9,7 +9,7 @@ The project is maven based so everybody should be able to just check out the cod
  * Maven 2
  * Subversion
  * Netbeans (or some other IDE if you won't be working on the gui)
- * a checkout of flicklib http://code.google.com/p/flicklib/
+ * A checkout of flicklib http://code.google.com/p/flicklib/
 
 
 = Used frameworks =
