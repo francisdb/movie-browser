@@ -183,9 +183,9 @@ public class XmlMovieDatabase implements MovieDatabase {
         XStream xstream = new XStream();
         xstream.alias("movie", StorableMovie.class);
         xstream.useAttributeFor(StorableMovie.class, "id");
-        xstream.addImplicitCollection(StorableMovie.class, "genres", Genre.class);
-        xstream.addImplicitCollection(StorableMovie.class, "languages", Language.class);
-        xstream.addImplicitCollection(StorableMovie.class, "siteInfo", StorableMovieSite.class);
+//        xstream.addImplicitCollection(StorableMovie.class, "genres", Genre.class);
+//        xstream.addImplicitCollection(StorableMovie.class, "languages", Language.class);
+//        xstream.addImplicitCollection(StorableMovie.class, "siteInfo", StorableMovieSite.class);
 
         xstream.alias("group", FileGroup.class);
         xstream.useAttributeFor(FileGroup.class, "id");
@@ -209,7 +209,7 @@ public class XmlMovieDatabase implements MovieDatabase {
         xstream.omitField(MovieLocation.class, "group");
 
         xstream.alias("site", StorableMovieSite.class);
-        xstream.addImplicitCollection(StorableMovieSite.class, "genres", Genre.class);
+//        xstream.addImplicitCollection(StorableMovieSite.class, "genres", Genre.class);
         xstream.omitField(StorableMovieSite.class, "movie");
         xstream.useAttributeFor(StorableMovieSite.class, "id");
         xstream.useAttributeFor(StorableMovieSite.class, "service");
