@@ -18,7 +18,6 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieService;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -29,6 +28,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -60,6 +61,7 @@ import javax.swing.table.TableRowSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 
 import eu.somatik.moviebrowser.MovieBrowser;
@@ -70,11 +72,11 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.service.MovieFinder;
-import eu.somatik.moviebrowser.tools.FileTools;
-import eu.somatik.moviebrowser.tools.SwingTools;
 import eu.somatik.moviebrowser.service.export.Exporter;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
+import eu.somatik.moviebrowser.tools.FileTools;
+import eu.somatik.moviebrowser.tools.SwingTools;
 
 /**
  *
@@ -742,9 +744,14 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
             protected void done() {
                 try {
                     List<MovieInfo> movies = get();
+                    
+                    List<StorableMovie> list = browser.getMovieCache().list();
+                    
                     MovieInfoTableModel model = (MovieInfoTableModel) movieTable.getModel();
                     model.clear();
+                    model.addAllMovie(list);
                     model.addAll(movies);
+                    
                     SwingTools.packColumns(movieTable, 3);
                     loadProgressBar.setString(model.getRowCount() + " movies found, loading info...");
                     loadMovies(movies);
