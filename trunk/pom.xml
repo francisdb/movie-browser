@@ -67,14 +67,16 @@
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <version>1.5.3</version>
-            <!-- TODO enable runtime scope (breaks running in netbeans atm) -->
+            <!-- TODO enable runtime scope (breaks running in netbeans atm) 
+              but needed for assembly-->
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.9</version>
-            <!-- TODO enable runtime scope (breaks running in netbeans atm) -->
+            <!-- TODO enable runtime scope (breaks running in netbeans atm) 
+              but needed for assembly-->
             <scope>provided</scope>
         </dependency>
         <dependency>
