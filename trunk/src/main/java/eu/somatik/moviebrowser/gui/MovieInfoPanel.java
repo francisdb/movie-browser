@@ -19,12 +19,15 @@
 package eu.somatik.moviebrowser.gui;
 
 import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 
@@ -33,6 +36,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -65,6 +69,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private ContentProvider provider;
     private MovieInfo info;
     private ResourceBundle bundle;
+    private MovieBrowser browser;
 
 
     /** Creates new form MovieInfoPanel
@@ -76,16 +81,17 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             final ImageCache imageCache,
             final IconLoader iconLoader,
             final InfoHandler infoHandler,
-            final ContentProvider provider,
-            final Settings settings) {
+            final Settings settings,
+            final MovieBrowser browser) {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.infoHandler = infoHandler;
+        this.browser = browser;
         // TODO get the services from the settings
         this.services = settings.getEnabledServices();
         this.siteButtons = new HashMap<MovieService, JButton>();
         this.fileTree = new MovieFileTreeTableModel();
-        this.provider = provider;
+        this.provider = browser.getContentProvider();
         this.bundle = ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
 
         initComponents();
@@ -275,6 +281,31 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         }
     }
 
+    private void delete(Object selected) {
+            if (selected instanceof FileGroup) {
+                FileGroup fg = (FileGroup) selected;
+                String question = MessageFormat.format(bundle.getString("MovieInfoPanel.panel.removeQuestion.fileGroup"), fg.getDirectoryPath());
+                int val = JOptionPane.showConfirmDialog(this.getParent(), question, bundle.getString("MovieInfoPanel.panel.confirmTitle"), JOptionPane.YES_NO_OPTION);
+                if (val == JOptionPane.YES_OPTION) {
+                    fg.getMovie().getGroups().remove(fg);
+                    browser.getMovieCache().insertOrUpdate(fg.getMovie());
+                    update();
+                }
+            }
+            if (selected instanceof MovieLocation) {
+                MovieLocation loc = (MovieLocation) selected;
+                String question = MessageFormat.format(bundle.getString("MovieInfoPanel.panel.removeQuestion.movieLocation"), loc.getPath(), loc.getLabel());
+                int val = JOptionPane.showConfirmDialog(this.getParent(), question, bundle.getString("MovieInfoPanel.panel.confirmTitle"), JOptionPane.YES_NO_OPTION);
+                if (val == JOptionPane.YES_OPTION) {
+                    loc.getGroup().getLocations().remove(loc);
+                    browser.getMovieCache().insertOrUpdate(loc.getMovie());
+                    update();
+                }
+            }
+
+
+    }
+
     private class ImageLoadingWorker extends SwingWorker<Image, Void> {
 
         @Override
@@ -314,9 +345,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         movieFileTreeTable = new org.jdesktop.swingx.JXTreeTable(fileTree);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
+        movieHeader.setToolTipText(bundle.getString("MovieInfoPanel.movieHeader.toolTipText")); // NOI18N
         movieHeader.setDescription(bundle.getString("MovieInfoPanel.movieHeader.description")); // NOI18N
         movieHeader.setTitle(bundle.getString("MovieInfoPanel.movieHeader.title")); // NOI18N
-        movieHeader.setToolTipText(bundle.getString("MovieInfoPanel.movieHeader.toolTipText")); // NOI18N
 
         javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -329,14 +360,19 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             .addGap(0, 34, Short.MAX_VALUE)
         );
 
-        infoTextPane.setEditable(false);
         infoTextPane.setBackground(new java.awt.Color(254, 254, 254));
+        infoTextPane.setEditable(false);
         infoScrollPane.setViewportView(infoTextPane);
 
         infoTabbedPane.addTab(bundle.getString("MovieInfoPanel.infoScrollPane.TabConstraints.tabTitle"), infoScrollPane); // NOI18N
 
         movieFileTreeTable.setRootVisible(true);
         movieFileTreeTable.setShowHorizontalLines(true);
+        movieFileTreeTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                movieFileTreeTableKeyReleased(evt);
+            }
+        });
         movieFileScrollPane.setViewportView(movieFileTreeTable);
 
         infoTabbedPane.addTab(bundle.getString("MovieInfoPanel.movieFileScrollPane.TabConstraints.tabTitle"), movieFileScrollPane); // NOI18N
@@ -359,6 +395,15 @@ public class MovieInfoPanel extends javax.swing.JPanel {
                 .addComponent(infoTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void movieFileTreeTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_movieFileTreeTableKeyReleased
+        Object selected = movieFileTreeTable.getTreeSelectionModel().getSelectionPath().getLastPathComponent();
+        //System.out.println("key released:"+KeyEvent.getKeyText(evt.getKeyCode()) + " selected :" +selected);
+        if (evt.getKeyCode() == KeyEvent.VK_DELETE || evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            delete(selected);
+        }
+    }//GEN-LAST:event_movieFileTreeTableKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JScrollPane infoScrollPane;
