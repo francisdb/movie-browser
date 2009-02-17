@@ -552,10 +552,10 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
 private void movieTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_movieTableMouseReleased
     // for windows look and feel
     if (evt.isPopupTrigger()) {
-//        JTable source = (JTable) evt.getSource();
-//        int row = source.rowAtPoint(evt.getPoint());
-//        int column = source.columnAtPoint(evt.getPoint());
-//        source.changeSelection(row, column, false, false);
+        JTable source = (JTable) evt.getSource();
+        int row = source.rowAtPoint(evt.getPoint());
+        int column = source.columnAtPoint(evt.getPoint());
+        source.changeSelection(row, column, false, false);
         JPopupMenu popup = createRightClickMenu();
         popup.show(evt.getComponent(), evt.getX(), evt.getY());
     }
