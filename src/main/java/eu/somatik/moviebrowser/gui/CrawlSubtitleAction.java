@@ -52,7 +52,7 @@ class CrawlSubtitleAction extends AbstractAction {
             for (FileGroup fg : info.getMovie().getGroups()) {
                 for (MovieLocation location : fg.getLocations()) {
                     File dir = new File(location.getPath());
-                    if (!dir.isFile()) {
+                    if (!dir.isFile() && dir.isDirectory() && dir.canRead()) {
                         findFiles(dir, files);
                     }
                 }
