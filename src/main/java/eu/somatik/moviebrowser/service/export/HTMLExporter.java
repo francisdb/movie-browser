@@ -19,12 +19,13 @@
 package eu.somatik.moviebrowser.service.export;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
-import eu.somatik.moviebrowser.gui.MovieInfoTableModel;
 import com.flicklib.domain.MovieService;
+
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandlerImpl;
@@ -40,8 +41,6 @@ class HTMLExporter implements Exporter {
     public static final String NAME = "html";
     
     private final ScoreCalculator scoreCalculator;
-    
-    private MovieInfoTableModel model;
 
     public HTMLExporter() {
         // TODO use guice?
@@ -51,13 +50,18 @@ class HTMLExporter implements Exporter {
     
 
     @Override
-    public void exportToFile(String libName, Iterable<MovieInfo> movieIterator, File file) throws IOException {
-
-        FileWriter outFile = new FileWriter(file.getPath());
+    public File exportToFile(String libName, Iterable<MovieInfo> movieIterator, File file) throws IOException {
+    	if (file.isDirectory()) {
+    		file = new File(file, libName.toLowerCase().endsWith(".html") ? libName : libName +".html");
+    	}
+        OutputStreamWriter outFile = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
         PrintWriter out = new PrintWriter(outFile);
 
         //Generate Simple Movie Catalog.
-        out.println("<html><head><title>" + libName + "</title><meta name='author' content='Generated using Movie Browser' /></head><body>");
+        out.println("<html><head><title>" + libName + "</title>" +
+        		"<meta name='author' content='Generated using Movie Browser' />" +
+        		"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />" +
+        		"</head><body>");
         out.println("<h1>" + libName + "</h1>");
         out.println("<table><tr><th>Movie Browser Score<th>Title</th><th>Year</th><th>Director</th><th>Runtime</th></tr>");
         String title;
@@ -93,7 +97,7 @@ class HTMLExporter implements Exporter {
         out.println("</body></html>");
         out.close();
 
-
+        return file;
     }
 
     @Override

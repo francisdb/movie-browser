@@ -644,7 +644,8 @@ private void generateMovieCatItemActionPerformed(java.awt.event.ActionEvent evt)
                 Exporter exporter = exporterLocator.get("html");
 
                 try {
-                    exporter.exportToFile(title, (MovieInfoTableModel) movieTable.getModel(), saveFile);
+                    File result = exporter.exportToFile(title, (MovieInfoTableModel) movieTable.getModel(), saveFile);
+                    JOptionPane.showMessageDialog(this, "Catalog exported to "+result.getAbsolutePath(), "Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     LOGGER.error("Chould not export to "+saveFile, ex);
                     JOptionPane.showMessageDialog(this, "Error exporting to "+saveFile.getAbsolutePath(),"Error exporting", JOptionPane.ERROR_MESSAGE);
