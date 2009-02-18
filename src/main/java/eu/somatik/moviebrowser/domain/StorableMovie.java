@@ -81,6 +81,9 @@ public class StorableMovie implements Cloneable, Persistent {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+    
     /*    @OneToMany(mappedBy = "movie", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<StorableMovieFile> files;
 
@@ -326,6 +329,14 @@ public class StorableMovie implements Cloneable, Persistent {
     public Date getLastModified() {
         return lastModified;
     }
+    
+    public Date getCreated() {
+		return created;
+	}
+    
+    public void setCreated(Date created) {
+		this.created = created;
+	}
     
     @Transient
     public long getSize() {

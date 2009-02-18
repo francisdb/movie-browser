@@ -27,8 +27,16 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.flicklib.tools.LevenshteinDistance;
 import com.google.inject.Inject;
@@ -46,12 +54,6 @@ import eu.somatik.moviebrowser.domain.Persistent;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author zsombor
@@ -390,6 +392,10 @@ public class XmlMovieDatabase implements MovieDatabase {
         // give ID to the objects.
         checkId(movie);
 
+        movie.setLastModified(new Date());
+        if (movie.getCreated() == null) {
+        	movie.setCreated(new Date());
+        }
         // we store the cloned one - a snapshot of the current object, and
         // return the original passed in.
         // this ensures, that later modifications doesn't shows up in
