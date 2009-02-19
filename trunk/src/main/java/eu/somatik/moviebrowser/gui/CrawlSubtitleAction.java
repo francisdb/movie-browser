@@ -34,10 +34,10 @@ import javax.swing.JOptionPane;
  */
 class CrawlSubtitleAction extends AbstractAction {
 
-    final MainFrame mainFrame;
-    final MovieBrowser browser;
+    private final MainFrame mainFrame;
+    private final MovieBrowser browser;
 
-    public CrawlSubtitleAction(MainFrame mainFrame, MovieBrowser browser) {
+    public CrawlSubtitleAction(final MainFrame mainFrame, final MovieBrowser browser) {
         super("Subtitle Crawler", browser.getIconLoader().loadIcon("images/16/subtitles.png"));
         this.mainFrame = mainFrame;
         this.browser = browser;
@@ -45,26 +45,23 @@ class CrawlSubtitleAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (browser.getMovieFinder().getRunningTasks() == 0) {
-            List<String> files = new ArrayList<String>();
-            MovieInfo info = mainFrame.getSelectedMovie();
-            String alternateSearchKey = info.getMovie().getTitle();
-            for (FileGroup fg : info.getMovie().getGroups()) {
-                for (MovieLocation location : fg.getLocations()) {
-                    File dir = new File(location.getPath());
-                    if (!dir.isFile() && dir.isDirectory() && dir.canRead()) {
-                        findFiles(dir, files);
-                    }
+        List<String> files = new ArrayList<String>();
+        MovieInfo info = mainFrame.getSelectedMovie();
+        String alternateSearchKey = info.getMovie().getTitle();
+        for (FileGroup fg : info.getMovie().getGroups()) {
+            for (MovieLocation location : fg.getLocations()) {
+                // FIXME do we realy need to crawl the folder again?
+                File dir = new File(location.getPath());
+                if (!dir.isFile() && dir.isDirectory() && dir.canRead()) {
+                    findFiles(dir, files);
                 }
             }
-            files.add(alternateSearchKey);
-            openSubCrawler(files, info);
-        } else {
-            JOptionPane.showMessageDialog(mainFrame, "Subtitle crawling cannot be done while movie info is being loaded. \nPlease try again after all movie info is loaded.", "Loading Info", JOptionPane.WARNING_MESSAGE);
         }
+        files.add(alternateSearchKey);
+        openSubCrawler(files, info);
     }
 
-    void findFiles(File dir, List<String> files) {
+    private void findFiles(File dir, List<String> files) {
         for (File file : dir.listFiles()) {
             if (file.isDirectory()) {
                 File child = file;
