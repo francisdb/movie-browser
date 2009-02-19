@@ -42,7 +42,9 @@ import eu.somatik.moviebrowser.tools.SwingTools;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
@@ -66,7 +68,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
      * @param subtitlesLoader
      * @param iconLoader 
      */
-    public SubtitleCrawlerFrame(List<String> files, MovieInfo movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
+    public SubtitleCrawlerFrame(Set<String> files, MovieInfo movie, final SubtitlesLoader subtitlesLoader, final IconLoader iconLoader) {
         this.subtitlesLoader = subtitlesLoader;
         this.subtitlesLoader2 = new SubtitleSourceLoader();
         this.model = new SubtitleTableModel();
@@ -167,7 +169,7 @@ public class SubtitleCrawlerFrame extends javax.swing.JFrame {
 
 private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
     String searchKey = searchText.getText();
-    List<String> searchList = new ArrayList<String>();
+    Set<String> searchList = new HashSet<String>();
     searchList.add(searchKey);
     model.clear();
     crawl(searchList, movie);
@@ -192,7 +194,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
     }
 }//GEN-LAST:event_subtitlesTableMousePressed
 
-    public void crawl(final List<String> files, final MovieInfo movie) {
+    public void crawl(final Set<String> files, final MovieInfo movie) {
         statusProgressBar.setIndeterminate(true);
         statusProgressBar.setString("Crawling sites for subtitles. This may take a while...");
         new SwingWorker<List<Subtitle>,Void>() {

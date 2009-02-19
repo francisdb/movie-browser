@@ -11,7 +11,7 @@ class OpenFolderAction extends AbstractAction {
     private final MovieBrowser browser;
     private final MovieInfo info;
 
-    public OpenFolderAction(final MovieBrowser browser, final MovieInfo info) {
+    public OpenFolderAction(final MovieInfo info, final MovieBrowser browser) {
         super("Open folder", UIManager.getIcon("FileView.directoryIcon"));
         // see here for more icons
         this.browser = browser;
