@@ -95,6 +95,8 @@ public class AdvancedFolderScanner implements FolderScanner {
 				} catch (IOException e) {
 					LOGGER.error("error during acquiring canonical path for "+folder.getAbsolutePath() +", "+e.getMessage(), e);
 				}
+            }else{
+                LOGGER.warn("folder "+folder.getAbsolutePath()+" does not exist!");
             }
         }
         return movies;
