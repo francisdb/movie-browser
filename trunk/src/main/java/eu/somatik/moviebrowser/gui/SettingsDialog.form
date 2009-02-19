@@ -108,22 +108,23 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="saveCoverArtCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="preferSiteComboBox" min="-2" pref="86" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="saveCoverArtCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="renameTitlesCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
                       <Component id="timeoutLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="timeoutText" min="-2" pref="67" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="secondsLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="191" max="32767" attributes="0"/>
+              <EmptySpace pref="274" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -178,20 +179,20 @@
               <Component id="miscLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="renameTitlesCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="saveCoverArtCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="timeoutLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="timeoutText" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                   <Component id="secondsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="saveCoverArtCheckBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="preferSiteComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="36" max="32767" attributes="0"/>
+              <EmptySpace pref="26" max="32767" attributes="0"/>
               <Component id="jSeparator4" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="okayButton" min="-2" max="-2" attributes="0"/>
@@ -330,7 +331,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="renameTitlesCheckBox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Automatically rename movie folder to IMDB title."/>
+        <Property name="text" type="java.lang.String" value="Automatically rename movie folder"/>
         <Property name="toolTipText" type="java.lang.String" value="Select this to automatically rename movie directories to the IMDB title matched by Movie Browser when parsing."/>
       </Properties>
     </Component>
