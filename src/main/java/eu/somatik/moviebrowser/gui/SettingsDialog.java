@@ -400,6 +400,10 @@ public class SettingsDialog extends javax.swing.JDialog {
         return saveCoverArtCheckBox.isSelected();
     }
 
+    public void setSaveCoverArtSelected(boolean selected) {
+        saveCoverArtCheckBox.setSelected(selected);
+    }
+    
     public MovieService getSelectedPreferredSite(){
         return (MovieService) preferSiteComboBox.getSelectedItem();
     }
