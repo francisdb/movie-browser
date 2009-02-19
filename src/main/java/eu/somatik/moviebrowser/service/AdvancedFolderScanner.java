@@ -21,6 +21,7 @@ package eu.somatik.moviebrowser.service;
 import com.flicklib.tools.LevenshteinDistance;
 import com.google.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public class AdvancedFolderScanner implements FolderScanner {
      * TODO make regex?
      */
     private static final String[] MOVIE_SUB_DIRS =
-            new String[]{"subs", "subtitles", "cd1", "cd2", "cd3", "cd4", "sample", "covers", "cover", "approved" };
+            new String[]{"subs", "subtitles", "cd1", "cd2", "cd3", "cd4", "sample", "covers", "cover", "approved", "info" };
 
     private final MovieNameExtractor movieNameExtractor;
    
@@ -89,17 +90,22 @@ public class AdvancedFolderScanner implements FolderScanner {
             if (folder.exists()) {
                 currentLabel = folder.getAbsolutePath();
                 LOGGER.info("scanning "+folder.getAbsolutePath());
-                browse(folder);
+                try {
+					browse(folder.getCanonicalFile());
+				} catch (IOException e) {
+					LOGGER.error("error during acquiring canonical path for "+folder.getAbsolutePath() +", "+e.getMessage(), e);
+				}
             }
         }
         return movies;
     }
 
     /**
-     * TODO make this a walker instead of recursive
+     * 
      * @param folder
+     * @return true, if it contained movie file
      */
-    private void browse(File folder) {
+    private boolean browse(File folder) {
         LOGGER.trace("entering "+folder.getAbsolutePath());
         File[] files = folder.listFiles();
 
@@ -135,7 +141,7 @@ public class AdvancedFolderScanner implements FolderScanner {
             fg.addLocation(new MovieLocation(folder.getPath(), currentLabel, true));
             addCompressedFiles(sm, fg, files );
             add(sm);
-            return;
+            return true;
         }
         if (subDirectories >= 2 && subDirectories <= 5) {
             // the case of :
@@ -166,12 +172,13 @@ public class AdvancedFolderScanner implements FolderScanner {
                     }
                 }
                 add(sm);
-                return;
+                return true;
             }
         }
+        boolean subFolderContainMovie = false;
         for (File f : files) {
             if (f.isDirectory() && !f.getName().equalsIgnoreCase("sample")) {
-                browse(f);
+                subFolderContainMovie |= browse(f);
             }
         }
         
@@ -190,21 +197,21 @@ public class AdvancedFolderScanner implements FolderScanner {
         // Title_of_the_film/abc-cd2.srt
         //
 
-        if (subDirectories>0) {
-            genericMovieFindProcess(files);
+        if (subDirectories>0 && subFolderContainMovie) {
+            return genericMovieFindProcess(files) || subFolderContainMovie;
         } else {
             
             int foundFiles = plainFileNames.size();
             switch (foundFiles) {
                 case 0:
-                    break;
+                    return subFolderContainMovie;
                 case 1: {
                     StorableMovie sm = new StorableMovie();
                     FileGroup fg = initStorableMovie(folder, sm);
                     fg.addLocation(new MovieLocation(folder.getPath(), currentLabel, true));
                     addFiles(sm, fg, files,  plainFileNames.iterator().next());
                     add(sm);
-                    break;
+                    return true;
                 }
                 case 2: {
                     Iterator<String> it = plainFileNames.iterator();
@@ -218,19 +225,25 @@ public class AdvancedFolderScanner implements FolderScanner {
                         fg.addLocation(new MovieLocation(folder.getPath(), currentLabel, true));
                         addFiles(sm, fg, files, name1);
                         add(sm);
-                        break;
+                        return true;
                     }
                     // the difference is significant, we use the generic
                     // solution
                 }
                 default: {
-                    genericMovieFindProcess(files);
+                    return genericMovieFindProcess(files);
                 }
             }
         }
     }
 
 
+    /**
+     * check that every sub folder name is some common movie related folder name, eg 'cd1', 'cd2', 'sample', etc...
+     * 
+     * @param subDirectoryNames
+     * @return
+     */
     private boolean isMovieFolder(Set<String> subDirectoryNames){
         boolean movieFolder = true;
         List<String> valid = Arrays.asList(MOVIE_SUB_DIRS);
@@ -246,6 +259,12 @@ public class AdvancedFolderScanner implements FolderScanner {
         return movieFolder;
     }
 
+    /**
+     * Return a set of directory names, which starts with 'cd','disk' or 'part'.
+     * 
+     * @param subDirectoryNames
+     * @return
+     */
     private Set<String> getCdFolders(Set<String> subDirectoryNames){
         Set<String> valid = new HashSet<String>();
         for(String folder:subDirectoryNames){
@@ -285,7 +304,12 @@ public class AdvancedFolderScanner implements FolderScanner {
         return fg;
     }
 
-    private void genericMovieFindProcess(File[] files) {
+    /**
+     * Handle the one directory with several different movies case.
+     * @param files
+     * @return true, if a movie found
+     */
+    private boolean genericMovieFindProcess(File[] files) {
         Map<String, StorableMovie> foundMovies = new HashMap<String, StorableMovie>();
         for (File f : files) {
             if (!f.isDirectory()) {
@@ -309,11 +333,14 @@ public class AdvancedFolderScanner implements FolderScanner {
                 }
             }
         }
+        boolean foundMovie = false;
         for (StorableMovie m : foundMovies.values()) {
             if (m.isValid()) {
                 add(m);
+                foundMovie = true;
             }
         }
+        return foundMovie;
     }
 
     /**
