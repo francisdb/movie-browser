@@ -75,7 +75,9 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     /** Creates new form MovieInfoPanel
      * @param imageCache 
      * @param iconLoader
-     * @param infoHandler 
+     * @param infoHandler
+     * @param settings
+     * @param browser 
      */
     public MovieInfoPanel(
             final ImageCache imageCache,
