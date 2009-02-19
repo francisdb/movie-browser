@@ -131,6 +131,7 @@ public class SettingsDialogController {
             values.put(service, settings.isServiceEnabled(service, DEFAULT_SERVICES.contains(service)));
         }
         settingsFrame.setServiceSelection(values);
+        settingsFrame.setSaveCoverArtSelected(settings.getSaveAlbumArt());
     }
 
     private void setSettingsValues() {
