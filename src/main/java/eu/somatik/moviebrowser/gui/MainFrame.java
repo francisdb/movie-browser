@@ -617,7 +617,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    new SettingsDialogController(settings, browser, new SettingsDialog(settings, this), this).load(this);
+    new SettingsDialogController(settings, browser, new SettingsDialog(settings, this, iconLoader), this).load(this);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
 private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFolders

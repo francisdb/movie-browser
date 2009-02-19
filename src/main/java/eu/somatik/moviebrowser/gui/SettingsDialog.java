@@ -50,6 +50,7 @@ public class SettingsDialog extends javax.swing.JDialog {
     
     private final Settings settings;
     private final MainFrame mainFrame;
+    private final IconLoader iconLoader;
     private final Map<MovieService, JCheckBox> serviceCheckBoxes;
 
     private SettingsDialogController controller;
@@ -57,11 +58,14 @@ public class SettingsDialog extends javax.swing.JDialog {
     /**
      * Creates new form SettingsDialog
      * @param settings
-     * @param mainFrame 
+     * @param mainFrame
+     * @param iconLoader 
      */
     public SettingsDialog(final Settings settings,
-                         final MainFrame mainFrame) {
+                         final MainFrame mainFrame,
+                         final IconLoader iconLoader) {
         this.mainFrame = mainFrame;
+        this.iconLoader = iconLoader;
         this.settings = settings;
         initComponents();
         this.serviceCheckBoxes = mapServiceCheckBoxes();
@@ -126,7 +130,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Settings");
-        setIconImage(new ImageIcon(SettingsDialog.class.getClass().getResource("/images/movie.png")).getImage());
+        setIconImage(iconLoader.loadIcon("images/movie.png").getImage());
         setModal(true);
         setResizable(false);
 
