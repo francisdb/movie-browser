@@ -39,4 +39,12 @@ public class AdvancedFolderScannerTest {
         assertEquals(3, movies.size());
     }
 
+    @Test
+    public void testStructure3() {
+        Set<String> folders = new HashSet<String>();
+        folders.add("target/test-classes/structure3");
+        List<MovieInfo> movies = scanner.scan(folders);
+        assertEquals(3, movies.size());
+    }
+
 }
