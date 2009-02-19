@@ -22,77 +22,46 @@ import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
 
 /**
  * This action opens the SubtitleCrawlerFrame if a video file is found in the directory.
  */
 class CrawlSubtitleAction extends AbstractAction {
 
-    private final MainFrame mainFrame;
+    private final Component parent;
+    private final MovieInfo info;
     private final MovieBrowser browser;
 
-    public CrawlSubtitleAction(final MainFrame mainFrame, final MovieBrowser browser) {
+    public CrawlSubtitleAction(final MovieInfo info, final MovieBrowser browser, final Component parent) {
         super("Subtitle Crawler", browser.getIconLoader().loadIcon("images/16/subtitles.png"));
-        this.mainFrame = mainFrame;
         this.browser = browser;
+        this.parent = parent;
+        this.info = info;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<String> files = new ArrayList<String>();
-        MovieInfo info = mainFrame.getSelectedMovie();
-        String alternateSearchKey = info.getMovie().getTitle();
+        Set<String> files = new HashSet<String>();
         for (FileGroup fg : info.getMovie().getGroups()) {
             for (MovieLocation location : fg.getLocations()) {
                 // FIXME do we realy need to crawl the folder again?
-                File dir = new File(location.getPath());
-                if (!dir.isFile() && dir.isDirectory() && dir.canRead()) {
-                    findFiles(dir, files);
-                }
+                File locationFile = new File(location.getPath());
+                files.add(locationFile.getName());
             }
         }
-        files.add(alternateSearchKey);
-        openSubCrawler(files, info);
-    }
+        files.add(info.getMovie().getTitle());
 
-    private void findFiles(File dir, List<String> files) {
-        for (File file : dir.listFiles()) {
-            if (file.isDirectory()) {
-                File child = file;
-                for (File file2 : child.listFiles()) {
-                    if (file2.isFile()) {
-                        if (!file2.getName().toLowerCase().contains("sample")) {
-                            if (mainFrame.getMovieFileFilter().accept(file2)) {
-                                files.add(file2.getName());
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (file.isFile()) {
-                    if (!file.getName().toLowerCase().contains("sample")) {
-                        if (mainFrame.getMovieFileFilter().accept(file)) {
-                            files.add(file.getName());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Loads SubtitleCrawlerFrame
-     * @param fileName
-     */
-    private void openSubCrawler(List<String> file, MovieInfo movie) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), browser.getIconLoader());
-        subtitleCrawler.setLocationRelativeTo(mainFrame.getMovieTableScrollPane());
+        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(files, info, browser.getSubtitlesLoader(), browser.getIconLoader());
+        subtitleCrawler.setLocationRelativeTo(parent);
         subtitleCrawler.setVisible(true);
     }
+
 }

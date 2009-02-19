@@ -89,16 +89,6 @@ public class MovieInfo {
         return directory;
     }
 
-    /**
-     * 
-     * @param directory
-     * 
-     */
-    @Deprecated
-    public void setDirectory(File directory) {
-        this.directory = directory;
-    }
-
     @Override
     public String toString() {
         return movie.getTitle();

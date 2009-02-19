@@ -75,6 +75,7 @@ import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
+import java.awt.Component;
 
 /**
  *
@@ -523,25 +524,6 @@ private void clearCacheMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         // busyDialog.setVisible(true);
     }
 
-    private class BusyDialog extends JDialog {
-
-        private JProgressBar progressB;
-
-        public BusyDialog(JFrame relativeTo, boolean modal) {
-            super(relativeTo, "Working...", modal);
-            setModalityType(ModalityType.APPLICATION_MODAL);
-            setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
-            setResizable(false);
-            setUndecorated(true);
-            setLayout(new BorderLayout());
-            progressB = new JProgressBar();
-            progressB.setIndeterminate(true);
-            add(progressB, BorderLayout.CENTER);
-            pack();
-            this.setLocationRelativeTo(relativeTo);
-        }
-    }
-
     /**
      * This method is the movie tables right click mouse event action listner. 
      * It identifies the row (and column, might be useful for other right click options
@@ -693,10 +675,10 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         popup.add(watchMenu);
 
         MovieInfo info = getSelectedMovie();
-        popup.add(new OpenFolderAction(browser, info));
-        popup.add(new CrawlSubtitleAction(this, browser));
+        popup.add(new OpenFolderAction(info, browser));
+        popup.add(new CrawlSubtitleAction(info, browser, this));
         popup.add(new EditAction());
-        popup.add(new RenameAction());
+        popup.add(new RenameAction(info, browser, this));
         popup.add(new DeleteAction());
 
         return popup;
@@ -822,22 +804,8 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         ((MovieInfoTableModel)movieTable.getModel()).delete(info);
     }
 
-
-
     JScrollPane getMovieTableScrollPane() {
         return movieTableScrollPane;
-    }
-
-
-
-    /**
-     * Loads SubtitleCrawlerFrame
-     * @param fileName
-     */
-    private void openSubCrawler(List<String> file, MovieInfo movie) {
-        SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(file, movie, browser.getSubtitlesLoader(), iconLoader);
-        subtitleCrawler.setLocationRelativeTo(movieTableScrollPane);
-        subtitleCrawler.setVisible(true);
     }
 
     /**
@@ -885,51 +853,7 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         }
     }
 
-    /**
-     * This action renames a movie folder. 
-     */
-    private class RenameAction extends AbstractAction {
 
-        public RenameAction() {
-            super("Rename", iconLoader.loadIcon("images/16/film_edit.png"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MovieInfo info = getSelectedMovie();
-            File oldFile = info.getDirectory();
-            String newName = (String) JOptionPane.showInputDialog(MainFrame.this, "Enter the new title for " + oldFile.getName(), "Renaming " + oldFile.getName(), JOptionPane.PLAIN_MESSAGE, null, null, oldFile.getName());
-            if (newName != null) {
-            	boolean success = browser.getMovieFinder().renameFolder(info, newName);
-
-                if (!success) {
-                    LOGGER.error("Error renaming movie directory " + oldFile + " to " + newName);
-                    JOptionPane.showMessageDialog(MainFrame.this, "Error renaming movie folder " + oldFile.getName() + ". You cannot have two movie folders with the same name and \\ / : * ? \" < > | characters are not allowed by the Operating System for folder naming.", "Error Renaming", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    JOptionPane dialog = new JOptionPane("Would you like Movie Browser to search and cache movie information to match the new movie name?\nSay No if the information in cache is correct for " + newName + ".", JOptionPane.QUESTION_MESSAGE);
-                    Object[] options = new String[]{"Yes, please :)", "No thanks"};
-                    dialog.setOptions(options);
-                    JDialog dialogWindow = dialog.createDialog(new JFrame(), "Find Information");
-                    dialogWindow.setVisible(true);
-                    Object obj = dialog.getValue();
-                    int result = -1;
-                    for (int i = 0; i < options.length; i++) {
-                        if (options[i].equals(obj)) {
-                            result = i;
-                        }
-                    }
-                    LOGGER.debug(String.valueOf(result));
-                    if (result == 0) {
-                        // unlink the file from the movie
-                        //info.getMovieFile().setMovie(null);
-                        //browser.getMovieCache().update(info.getMovieFile());
-                        // request reload
-                        browser.getMovieFinder().reloadMovie(info);
-                    }
-                }
-            }
-        }
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuItem checkUpdatesMenuItem;
