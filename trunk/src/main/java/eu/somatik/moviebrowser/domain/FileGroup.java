@@ -266,5 +266,18 @@ public class FileGroup implements Cloneable, Persistent {
         return false;
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof FileGroup) {
+            FileGroup fg = (FileGroup) obj;
+            return getId()!=null && getId().equals(fg.getId());
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return getId()!=null ? getId().hashCode() : super.hashCode();
+    }
 
 }
