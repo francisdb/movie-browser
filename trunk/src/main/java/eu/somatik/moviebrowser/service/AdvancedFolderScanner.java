@@ -179,7 +179,7 @@ public class AdvancedFolderScanner implements FolderScanner {
         }
         boolean subFolderContainMovie = false;
         for (File f : files) {
-            if (f.isDirectory() && !f.getName().equalsIgnoreCase("sample")) {
+            if (f.isDirectory() && !f.getName().equalsIgnoreCase("sample") && !f.getName().startsWith(".")) {
                 subFolderContainMovie |= browse(f);
             }
         }
