@@ -107,8 +107,8 @@ public class ImportDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(importFolderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
-                    .addComponent(deviceLabelTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE))
+                    .addComponent(importFolderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                    .addComponent(deviceLabelTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -159,6 +159,11 @@ public class ImportDialog extends javax.swing.JDialog {
 
         suggestedTitlesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         suggestedTitlesList.setCellRenderer(new MovieListCellRenderer());
+        suggestedTitlesList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                suggestedTitlesListMouseClicked(evt);
+            }
+        });
         suggestedTitlesList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 suggestedTitlesListValueChanged(evt);
@@ -173,7 +178,7 @@ public class ImportDialog extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(selectionProgressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 675, Short.MAX_VALUE)
+                    .addComponent(selectionProgressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -263,7 +268,7 @@ public class ImportDialog extends javax.swing.JDialog {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(208, Short.MAX_VALUE)
+                .addContainerGap(312, Short.MAX_VALUE)
                 .addComponent(prevButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(nextButton)
@@ -353,6 +358,12 @@ public class ImportDialog extends javax.swing.JDialog {
     private void movieTitleTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_movieTitleTextFieldActionPerformed
         controller.searchPressed();
     }//GEN-LAST:event_movieTitleTextFieldActionPerformed
+
+    private void suggestedTitlesListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_suggestedTitlesListMouseClicked
+        if (evt.getClickCount() == 2) {
+            controller.suggestedTitlesDoubleClicked(getSelectedMovie());
+        }
+    }//GEN-LAST:event_suggestedTitlesListMouseClicked
 
     
     public void setController(ImportDialogController controller) {

@@ -43,6 +43,10 @@ import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.service.DuplicateFinder;
 import eu.somatik.moviebrowser.service.MovieVisitor;
 import java.awt.Component;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  *
@@ -112,34 +116,58 @@ public class ImportDialogController {
 
     }
 
+    void suggestedTitlesDoubleClicked(MovieSearchResult selectedMovie) {
+        String url = selectedMovie.getUrl();
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (URISyntaxException ex) {
+            LOGGER.error("Failed launching default browser for " + url, ex);
+        } catch (IOException ex) {
+            LOGGER.error("Failed launching default browser for " + url, ex);
+        }
+    }
+
     private void initDialogWithMovieInfo(int pos) {
         dialog.setEnableNextButton(pos < movies.size() -1);
         dialog.setEnablePrevButton(0 < pos);
 
-        currentMovieInfo = movies.get(pos);
-        StorableMovie mv = currentMovieInfo.getMovie();
-
-        dialog.clearMovieSuggestions();
-        dialog.setMovieTitle(mv.getTitle());
-        FileGroup fg = mv.getUniqueFileGroup();
-        String path = fg.getDirectoryPath();
-        if (path.length()>scanDirectory.getAbsolutePath().length() + 1) {
-            dialog.setPathToMovie(path.substring(scanDirectory.getAbsolutePath().length() + 1));
+        if (0<=pos && pos<movies.size()) {
+            currentMovieInfo = movies.get(pos);
+            StorableMovie mv = currentMovieInfo.getMovie();
+    
+            dialog.clearMovieSuggestions();
+            dialog.setMovieTitle(mv.getTitle());
+            FileGroup fg = mv.getUniqueFileGroup();
+            String path = fg.getDirectoryPath();
+            if (path.length()>scanDirectory.getAbsolutePath().length() + 1) {
+                dialog.setPathToMovie(path.substring(scanDirectory.getAbsolutePath().length() + 1));
+            } else {
+                dialog.setPathToMovie("[scanned folder]");
+            }
+    
+            dialog.setRelatedFiles(fg.getFiles());
+    
+    
+            List<? extends MovieSearchResult> lastResult = this.lastSearchResults.get(currentMovieInfo);
+            MovieSearchResult lastSelection = this.selectedResults.get(currentMovieInfo);
+            dialog.setMovieSuggestions(lastResult);
+            dialog.setSelectedMovie(lastSelection);
+    
+            MovieService lastService = this.lastServices.get(currentMovieInfo);
+            if (lastService!=null) {
+                dialog.setSelectedMovieService(lastService);
+            }
         } else {
-            dialog.setPathToMovie("[scanned folder]");
-        }
-
-        dialog.setRelatedFiles(fg.getFiles());
-
-
-        List<? extends MovieSearchResult> lastResult = this.lastSearchResults.get(currentMovieInfo);
-        MovieSearchResult lastSelection = this.selectedResults.get(currentMovieInfo);
-        dialog.setMovieSuggestions(lastResult);
-        dialog.setSelectedMovie(lastSelection);
-
-        MovieService lastService = this.lastServices.get(currentMovieInfo);
-        if (lastService!=null) {
-            dialog.setSelectedMovieService(lastService);
+            if (movies.size()==0) {
+                cancelPressed();
+                return;
+            }
+            currentMovieInfo = null;
+            dialog.clearMovieSuggestions();
+            dialog.setMovieTitle("");
+            dialog.setRelatedFiles(Collections.EMPTY_SET);
+            dialog.setSelectedMovie(null);
+            dialog.setPathToMovie("");
         }
     }
 
