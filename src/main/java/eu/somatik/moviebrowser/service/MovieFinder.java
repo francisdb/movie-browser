@@ -246,7 +246,7 @@ public class MovieFinder {
             }
         }
 
-        private boolean fetchInformation() throws UnknownHostException, Exception {
+        private boolean fetchInformation() {
             StorableMovie movie;
             boolean checkSucceeded = getMovieInfoImdb(info, preferredService);
             if (checkSucceeded) {
@@ -328,21 +328,24 @@ public class MovieFinder {
      * @param movieInfo
      * @param movieService 
      * @return the MovieInfo
-     * @throws java.net.UnknownHostException
-     * @throws java.lang.Exception
+     * @throws IOException 
      */
-    private boolean getMovieInfoImdb(MovieInfo movieInfo, MovieService movieService) throws UnknownHostException, Exception {
+    private boolean getMovieInfoImdb(MovieInfo movieInfo, MovieService movieService) {
         StorableMovie newMovie = movieInfo.getMovie();
-
-        MoviePage moviePage = fetchMoviePageInfo(movieInfo, movieService);
-        if (moviePage!=null && moviePage.getIdForSite()!=null) {
-            converter.convert(moviePage, newMovie);
-            //rename titles, if we have IMDB result
-            if (settings.getRenameTitles() && moviePage.getIdForSite()!=null) {
-                renameFolderToTitle(movieInfo);
+        try {
+            MoviePage moviePage = fetchMoviePageInfo(movieInfo, movieService);
+            if (moviePage!=null && moviePage.getIdForSite()!=null) {
+                converter.convert(moviePage, newMovie);
+                //rename titles, if we have IMDB result
+                if (settings.getRenameTitles() && moviePage.getIdForSite()!=null) {
+                    renameFolderToTitle(movieInfo);
+                }
+                return true;
+            } else {
+                return false;
             }
-            return true;
-        } else {
+        } catch (IOException e) {
+            LOGGER.error("info fetching from "+movieService+" failed : "+e.getMessage(), e);
             return false;
         }
 

@@ -40,6 +40,7 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.service.DuplicateFinder;
 import eu.somatik.moviebrowser.service.MovieVisitor;
 import java.awt.Component;
 
@@ -83,7 +84,8 @@ public class ImportDialogController {
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
                 LOGGER.info("scanning in " + scanDirectory.getAbsolutePath());
-                return browser.getFolderScanner().scan(Collections.singleton(scanDirectory.getAbsolutePath()));
+                List<MovieInfo> list = browser.getFolderScanner().scan(Collections.singleton(scanDirectory.getAbsolutePath()));
+                return new DuplicateFinder(browser.getMovieCache()).filter(list);
             }
 
             @Override

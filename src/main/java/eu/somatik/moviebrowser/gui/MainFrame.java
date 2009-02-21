@@ -67,6 +67,7 @@ import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.service.DuplicateFinder;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.service.MovieFinder;
@@ -726,7 +727,8 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
 
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
-                return browser.getFolderScanner().scan(folders);
+                List<MovieInfo> list = browser.getFolderScanner().scan(folders);
+                return new DuplicateFinder(browser.getMovieCache()).filter(list);
             }
 
             @Override
