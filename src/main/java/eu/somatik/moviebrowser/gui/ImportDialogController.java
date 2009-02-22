@@ -1,7 +1,7 @@
 /*
  * This file is part of Movie Browser.
  *
- * Copyright (C) Francis De Brabandere
+ * Copyright (C) Movie Browser Team
  *
  * Movie Browser is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,11 +260,11 @@ public class ImportDialogController {
                         } catch (InterruptedException ex) {
                         	LOGGER.error("Get request intterrupted: ", ex);
                             dialog.setMovieSuggestions(null);
-                            dialog.showMessageDialog(ex.getCause().getMessage(), "Error during fetching information");
+                            dialog.showFetchingInformationErrorMessage(ex.getCause().getMessage());
                         } catch (ExecutionException ex) {
                         	LOGGER.error("Get request failed: ", ex.getCause());
                             dialog.setMovieSuggestions(null);
-                            dialog.showMessageDialog(ex.getCause().getMessage(), "Error during fetching information");
+                            dialog.showFetchingInformationErrorMessage(ex.getCause().getMessage());
                         } finally {
                             dialog.setEnableSearch(true);
                         }
