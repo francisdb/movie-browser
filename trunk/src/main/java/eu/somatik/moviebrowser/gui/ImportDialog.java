@@ -1,7 +1,7 @@
 /*
  * This file is part of Movie Browser.
  *
- * Copyright (C) Francis De Brabandere
+ * Copyright (C) Movie Browser Team
  *
  * Movie Browser is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -39,10 +40,12 @@ import javax.swing.table.TableColumnModel;
 public class ImportDialog extends javax.swing.JDialog {
 
     private ImportDialogController controller;
+    private final ResourceBundle bundle;
 
     /** Creates new form ImportDialog */
     public ImportDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        this.bundle = ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle");
         initComponents();
         initTableSizes();
     }
@@ -90,11 +93,12 @@ public class ImportDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel1.setText("Import folder:");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
+        jLabel1.setText(bundle.getString("ImportDialog.importFolderLabel")); // NOI18N
 
         importFolderTextField.setEditable(false);
 
-        jLabel2.setText("Label of the folder:");
+        jLabel2.setText(bundle.getString("ImportDialog.folderDescriptionLabel")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -127,16 +131,16 @@ public class ImportDialog extends javax.swing.JDialog {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel3.setText("Path to movie:");
+        jLabel3.setText(bundle.getString("ImportDialog.pathToMovieLabel")); // NOI18N
 
         moveiPathTextField.setEditable(false);
 
-        jLabel4.setText("Related files :");
+        jLabel4.setText(bundle.getString("ImportDialog.relatedFilesLabel")); // NOI18N
 
         relatedFilesTable.setModel(new MovieFileTable());
         jScrollPane1.setViewportView(relatedFilesTable);
 
-        jLabel5.setText("Movie Title:");
+        jLabel5.setText(bundle.getString("ImportDialog.movieTitleLabel")); // NOI18N
 
         movieTitleTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,20 +148,21 @@ public class ImportDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel6.setText("Web Site:");
+        jLabel6.setText(bundle.getString("ImportDialog.webServiceLabel")); // NOI18N
 
         siteSelectorComboBox.setModel(getMovieServices());
 
-        searchButton.setText("Find");
+        searchButton.setText(bundle.getString("ImportDialog.findButtonLabel")); // NOI18N
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
             }
         });
 
-        jLabel7.setText("Suggested Titles:");
+        jLabel7.setText(bundle.getString("ImportDialog.suggestedTitlesLabel")); // NOI18N
 
         suggestedTitlesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        suggestedTitlesList.setToolTipText(bundle.getString("ImportDialog.suggestedTitlesListTooltip")); // NOI18N
         suggestedTitlesList.setCellRenderer(new MovieListCellRenderer());
         suggestedTitlesList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -228,35 +233,35 @@ public class ImportDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        prevButton.setText("Previous");
+        prevButton.setText(bundle.getString("ImportDialog.previousButtonLabel")); // NOI18N
         prevButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 prevButtonActionPerformed(evt);
             }
         });
 
-        nextButton.setText("Next");
+        nextButton.setText(bundle.getString("ImportDialog.nextButtonLabel")); // NOI18N
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextButtonActionPerformed(evt);
             }
         });
 
-        removeButton.setText("Remove");
+        removeButton.setText(bundle.getString("ImportDialog.removeButtonLabel")); // NOI18N
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText("Cancel All");
+        cancelButton.setText(bundle.getString("ImportDialog.cancelButtonLabel")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
             }
         });
 
-        acceptButton.setText("Accept All");
+        acceptButton.setText(bundle.getString("ImportDialog.acceptButtonLabel")); // NOI18N
         acceptButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 acceptButtonActionPerformed(evt);
@@ -470,6 +475,10 @@ public class ImportDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.WARNING_MESSAGE);
     }
 
+    public void showFetchingInformationErrorMessage(String message) {
+        showMessageDialog(message, bundle.getString("ImportDialog.fetchingInformationError"));
+    }
+
     final static int TYPE = 0;
     final static int NAME = 1;
     final static int SIZE = 2;;
@@ -485,7 +494,7 @@ public class ImportDialog extends javax.swing.JDialog {
         model.getColumn(SIZE).setMaxWidth(120);
     }
 
-    static class MovieFileTable extends AbstractTableModel {
+    class MovieFileTable extends AbstractTableModel {
 
         List<StorableMovieFile> files = Collections.EMPTY_LIST;;
 
@@ -518,9 +527,9 @@ public class ImportDialog extends javax.swing.JDialog {
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case TYPE : return "Type";
-                case NAME : return "Name";
-                case SIZE : return "Size";
+                case TYPE : return bundle.getString("ImportDialog.fileTableColumn.Type");
+                case NAME : return bundle.getString("ImportDialog.fileTableColumn.Name");
+                case SIZE : return bundle.getString("ImportDialog.fileTableColumn.Size");
             }
             return null;
         }

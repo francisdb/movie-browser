@@ -101,7 +101,9 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Import folder:"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.importFolderLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="importFolderTextField">
@@ -111,7 +113,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Label of the folder:"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.folderDescriptionLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="deviceLabelTextField">
@@ -201,7 +205,9 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Path to movie:"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.pathToMovieLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="moveiPathTextField">
@@ -211,7 +217,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Related files :"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.relatedFilesLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -232,7 +240,9 @@
         </Container>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Movie Title:"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.movieTitleLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="movieTitleTextField">
@@ -242,7 +252,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel6">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Web Site:"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.webServiceLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="siteSelectorComboBox">
@@ -254,7 +266,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="searchButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Find"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.findButtonLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchButtonActionPerformed"/>
@@ -262,7 +276,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Suggested Titles:"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.suggestedTitlesLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="suggestedTitlesScrollPane">
@@ -275,6 +291,9 @@
             <Component class="javax.swing.JList" name="suggestedTitlesList">
               <Properties>
                 <Property name="selectionMode" type="int" value="0"/>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.suggestedTitlesListTooltip" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
                 <Property name="cellRenderer" type="javax.swing.ListCellRenderer" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="new MovieListCellRenderer()" type="code"/>
                 </Property>
@@ -329,7 +348,9 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="prevButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Previous"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.previousButtonLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prevButtonActionPerformed"/>
@@ -337,7 +358,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="nextButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Next"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.nextButtonLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextButtonActionPerformed"/>
@@ -345,7 +368,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="removeButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Remove"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.removeButtonLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeButtonActionPerformed"/>
@@ -353,7 +378,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="cancelButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Cancel All"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.cancelButtonLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
@@ -361,7 +388,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="acceptButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Accept All"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="eu/somatik/moviebrowser/gui/Bundle.properties" key="ImportDialog.acceptButtonLabel" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="acceptButtonActionPerformed"/>
