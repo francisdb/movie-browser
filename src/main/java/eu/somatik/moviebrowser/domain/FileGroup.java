@@ -168,16 +168,24 @@ public class FileGroup implements Cloneable, Persistent {
     }
 
     public MovieLocation getDirectory(String path) {
+        MovieLocation f = getMovieLocationIfExists(path);
+        if (f==null) {
+            f = new MovieLocation();
+            f.setPath(path);
+            addLocation(f);
+        }
+        return f;
+    }
+
+    public MovieLocation getMovieLocationIfExists(String path) {
         for (MovieLocation f : locations) {
             if (f.getPath().equals(path)) {
                 return f;
             }
         }
-        MovieLocation f = new MovieLocation();
-        f.setPath(path);
-        addLocation(f);
-        return f;
+        return null;
     }
+    
     
     /**
      * Return a file based on the file type.

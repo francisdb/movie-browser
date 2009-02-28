@@ -58,6 +58,13 @@ public class MovieLocation implements Cloneable, Persistent {
         this.label = label;
     }
 
+    public MovieLocation(MovieLocation oldLoc) {
+        this.path = oldLoc.path;
+        this.label = oldLoc.label;
+        this.folderRenamingSafe = oldLoc.folderRenamingSafe;
+    }
+
+    
     public MovieLocation(String path, String label, boolean renamingSafe) {
         this.path = path;
         this.label = label;

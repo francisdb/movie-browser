@@ -25,6 +25,7 @@ import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 
@@ -71,13 +72,20 @@ public class DuplicateFinder {
      * @return true, if in the database.
      */
     protected boolean check(StorableMovie movie) {
-        for (FileGroup fileGroup : movie.getGroups()) {
-            for (StorableMovieFile file : fileGroup.getFiles()) {
-                if (file.getType()==FileType.VIDEO_CONTENT) {
-                    FileGroup group = database.findByFile(file.getName(), file.getSize());
-                    if (group!=null) {
-                        if (!group.equals(fileGroup)) {
-                            if (deepCompare(fileGroup, group)) {
+        for (FileGroup newlyFoundFileGroup : movie.getGroups()) {
+            for (StorableMovieFile newlyFoundFile : newlyFoundFileGroup.getFiles()) {
+                if (newlyFoundFile.getType()==FileType.VIDEO_CONTENT) {
+                    FileGroup storedFileGroup = database.findByFile(newlyFoundFile.getName(), newlyFoundFile.getSize());
+                    if (storedFileGroup!=null) {
+                        if (!storedFileGroup.equals(newlyFoundFileGroup)) {
+                            if (deepCompare(newlyFoundFileGroup, storedFileGroup)) {
+                                MovieLocation newLocation = newlyFoundFileGroup.getDirectory();
+                                MovieLocation movieLocationIfExists = storedFileGroup.getMovieLocationIfExists(newLocation.getPath());
+                                if (movieLocationIfExists==null) {
+                                    // we found at a new location, we should add that location to the file
+                                    storedFileGroup.addLocation(new MovieLocation(newLocation));
+                                    database.insertOrUpdate(storedFileGroup.getMovie());
+                                }
                                 return true;
                             }
                         }
