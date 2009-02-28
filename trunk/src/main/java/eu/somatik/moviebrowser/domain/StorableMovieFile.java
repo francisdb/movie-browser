@@ -62,7 +62,13 @@ public class StorableMovieFile implements Cloneable, Persistent {
         setSize(file.length());
         setName(file.getName());
     }
-
+    
+    public StorableMovieFile(String name, long size, FileType contentType) {
+        setType(contentType);
+        setSize(size);
+        setName(name);
+    }
+    
     public StorableMovieFile(File file, FileType contentType, FileGroup fg) {
         this(file,contentType);
         setGroup(fg);

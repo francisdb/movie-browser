@@ -23,6 +23,7 @@ import com.flicklib.module.NetFlixAuthModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import eu.somatik.moviebrowser.database.InMemoryDatabase;
 import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.database.XmlMovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
@@ -44,7 +45,7 @@ public class MovieCacheTools {
         
         MovieDatabase cache = injector.getInstance(MovieDatabase.class);
 
-        XmlMovieDatabase xml = new XmlMovieDatabase(settings);
+        InMemoryDatabase xml = new XmlMovieDatabase(settings);
         xml.startup();
         for (StorableMovie m : cache.list()) {
             m.setId(null);

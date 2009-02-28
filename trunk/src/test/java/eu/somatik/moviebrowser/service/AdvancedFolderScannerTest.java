@@ -65,7 +65,7 @@ public class AdvancedFolderScannerTest {
         assertNotNull("startrek", map.get("startrek"));
     }
     
-    Map<String,MovieInfo> map(List<MovieInfo> movies) {
+    public static Map<String,MovieInfo> map(List<MovieInfo> movies) {
         Map<String,MovieInfo> result = new HashMap<String,MovieInfo>();
         for (MovieInfo movie:movies) {
             result.put(movie.getMovie().getTitle(), movie);
