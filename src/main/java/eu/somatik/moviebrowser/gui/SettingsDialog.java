@@ -48,8 +48,6 @@ public class SettingsDialog extends javax.swing.JDialog {
         MovieService.OFDB
     };
     
-    private final Settings settings;
-    private final MainFrame mainFrame;
     private final IconLoader iconLoader;
     private final Map<MovieService, JCheckBox> serviceCheckBoxes;
 
@@ -61,12 +59,8 @@ public class SettingsDialog extends javax.swing.JDialog {
      * @param mainFrame
      * @param iconLoader 
      */
-    public SettingsDialog(final Settings settings,
-                         final MainFrame mainFrame,
-                         final IconLoader iconLoader) {
-        this.mainFrame = mainFrame;
+    public SettingsDialog(final IconLoader iconLoader) {
         this.iconLoader = iconLoader;
-        this.settings = settings;
         initComponents();
         this.serviceCheckBoxes = mapServiceCheckBoxes();
         this.locationsList.setModel(new DefaultListModel());
