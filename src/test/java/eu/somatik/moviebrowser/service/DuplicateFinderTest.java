@@ -24,8 +24,8 @@ import eu.somatik.moviebrowser.domain.StorableMovieFile;
 
 public class DuplicateFinderTest {
 
-    static MockDatabase mdb;
-    static File rootDir;
+    private static MockDatabase mdb;
+    private static File rootDir;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
