@@ -19,6 +19,8 @@
 package eu.somatik.moviebrowser.cache;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
+
 import java.awt.Image;
 import java.io.File;
 
@@ -33,14 +35,14 @@ public interface ImageCache {
      * @param info
      * @return the image or null if not found
      */
-    Image loadImg(MovieInfo info);
+    Image loadImg(MovieInfo info, ContentProvider provider);
 
-    void removeImgFromCache(MovieInfo movie);
+    void removeImgFromCache(MovieInfo movie, ContentProvider provider);
 
     /**
      * @param movie
      * @return the saved file
      */
-    File saveImgToCache(MovieInfo movie);
+    File saveImgToCache(MovieInfo movie, ContentProvider provider);
 
 }
