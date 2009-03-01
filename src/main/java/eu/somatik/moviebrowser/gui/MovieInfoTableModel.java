@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -192,16 +193,25 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         }
     }
 
-    public void addAllMovie(Collection<StorableMovie> items) {
+    /**
+     * Add all storable movies, and return a list of MovieInfo objects.
+     * @param items
+     * @return
+     */
+    public List<MovieInfo> addAllMovie(Collection<StorableMovie> items) {
         if (items.size() != 0) {
             int firstRow = movies.size();
+            List<MovieInfo> newInfos = new ArrayList<MovieInfo>(items.size());
             for (StorableMovie movie : items) {
             	MovieInfo info = new MovieInfo(movie);
                 info.addPropertyChangeListener(this);
                 movies.add(info);
+                newInfos.add(info);
             }
             this.fireTableRowsInserted(firstRow, firstRow + items.size() - 1);
+            return newInfos;
         }
+        return (List<MovieInfo>) Collections.EMPTY_LIST;
     }
 
     

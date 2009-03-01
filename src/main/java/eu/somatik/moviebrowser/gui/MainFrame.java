@@ -600,7 +600,7 @@ private void checkUpdatesMenuItemActionPerformed(java.awt.event.ActionEvent evt)
 }//GEN-LAST:event_checkUpdatesMenuItemActionPerformed
 
 private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-    new SettingsDialogController(settings, browser, new SettingsDialog(iconLoader), this).load(this);
+    new SettingsDialogController(settings, browser, new SettingsDialog(settings.getPreferredService(), iconLoader), this).load(this);
 }//GEN-LAST:event_settingsMenuItemActionPerformed
 
 private void scanFolders(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanFolders
@@ -740,12 +740,13 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
                     
                     MovieInfoTableModel model = (MovieInfoTableModel) movieTable.getModel();
                     model.clear();
-                    model.addAllMovie(list);
+                    List<MovieInfo> oldMovies = model.addAllMovie(list);
                     model.addAll(movies);
                     
                     SwingTools.packColumns(movieTable, 3);
                     loadProgressBar.setString(model.getRowCount() + " movies found, loading info...");
                     loadMovies(movies);
+                    browser.getMovieFinder().checkWithSecondaryServices(oldMovies, null);
                 } catch (InterruptedException ex) {
                     LOGGER.error("Loading interrupted", ex);
                     loadProgressBar.setIndeterminate(false);

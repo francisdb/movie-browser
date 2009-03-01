@@ -42,8 +42,8 @@
                       <Component id="jScrollPane1" min="-2" pref="270" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="addLocationButton" pref="252" max="32767" attributes="1"/>
-                          <Component id="deleteLocationButton" alignment="0" pref="252" max="32767" attributes="1"/>
+                          <Component id="addLocationButton" pref="289" max="32767" attributes="1"/>
+                          <Component id="deleteLocationButton" alignment="0" pref="289" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Component id="websitesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -52,6 +52,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="rottenTomatoesCheckBox" min="-2" max="-2" attributes="0"/>
                           <Component id="moviewebCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="xpressHuCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -73,8 +74,7 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jSeparator1" alignment="0" pref="540" max="32767" attributes="1"/>
-          <Component id="jSeparator2" alignment="0" pref="540" max="32767" attributes="0"/>
+          <Component id="jSeparator1" alignment="0" pref="589" max="32767" attributes="1"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -86,25 +86,25 @@
                   </Group>
                   <Component id="subtitlesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="258" max="32767" attributes="0"/>
+              <EmptySpace pref="274" max="32767" attributes="0"/>
           </Group>
-          <Component id="jSeparator3" alignment="0" pref="540" max="32767" attributes="0"/>
+          <Component id="jSeparator3" alignment="0" pref="589" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="movieLocationsLabel" pref="528" max="32767" attributes="0"/>
+              <Component id="movieLocationsLabel" pref="565" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               <Component id="miscLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="166" max="32767" attributes="0"/>
+              <EmptySpace pref="179" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="450" max="32767" attributes="0"/>
+              <EmptySpace pref="493" max="32767" attributes="0"/>
               <Component id="okayButton" min="-2" pref="84" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
-          <Component id="jSeparator4" alignment="1" pref="540" max="32767" attributes="0"/>
+          <Component id="jSeparator4" alignment="1" pref="589" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -124,48 +124,54 @@
                       <Component id="secondsLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="274" max="32767" attributes="0"/>
+              <EmptySpace pref="293" max="32767" attributes="0"/>
           </Group>
+          <Component id="jSeparator2" alignment="0" pref="589" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="movieLocationsLabel" min="-2" pref="17" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="xpressHuCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="movieLocationsLabel" min="-2" pref="17" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jScrollPane1" min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="1">
+                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                              <Component id="addLocationButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="deleteLocationButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                      <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" min="-2" pref="100" max="-2" attributes="0"/>
+                      <Component id="websitesLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="rottenTomatoesCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="omdbCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cinebelCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="flixsterCheckBox" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="moviewebCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="googleCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ofdbCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="portHuCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="jSeparator2" min="-2" pref="4" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="1">
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Component id="addLocationButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="deleteLocationButton" min="-2" max="-2" attributes="0"/>
-                  </Group>
               </Group>
-              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-              <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="websitesLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="rottenTomatoesCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="omdbCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="cinebelCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="flixsterCheckBox" alignment="3" min="-2" pref="18" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="moviewebCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="googleCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="ofdbCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="portHuCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="subtitlesLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -192,7 +198,7 @@
                   <Component id="preferSiteComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="26" max="32767" attributes="0"/>
+              <EmptySpace pref="43" max="32767" attributes="0"/>
               <Component id="jSeparator4" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="okayButton" min="-2" max="-2" attributes="0"/>
@@ -379,6 +385,11 @@
     <Component class="javax.swing.JCheckBox" name="ofdbCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="OFDb"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="xpressHuCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Xpress.hu"/>
       </Properties>
     </Component>
   </SubComponents>
