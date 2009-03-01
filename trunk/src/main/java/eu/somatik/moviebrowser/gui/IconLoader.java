@@ -83,6 +83,9 @@ public class IconLoader {
             case OFDB:
                 fileName = "images/16/ofdb.png";
                 break;
+            case XPRESSHU:
+                fileName = "images/16/xpresshu.png";
+                break;
             default:
                 throw new AssertionError("Uncatched movieservice: "+service);
                 

@@ -231,14 +231,7 @@ public class MovieFinder {
                 }
 
                 if (needExtraServiceCheck) {
-                    for (MovieService service : settings.getEnabledServices()) {
-                        if (service!=preferredService) {
-                            StorableMovieSite siteInfo = info.siteFor(service);
-                            if (siteInfo == null || siteInfo.getScore()==null) {
-                                secondaryServicePool.submit(new MovieServiceCaller(service, info));
-                            }
-                        }
-                    }
+                    checkWithSecondaryServices(info, preferredService);
                 }
             } catch (Exception ex) {
                 LOGGER.error("Exception while loading/saving movie", ex);
@@ -420,5 +413,33 @@ public class MovieFinder {
         }
         return true;
     }
+
+    /**
+     * Submit tasks for load informations with services which from is not information presented yet.
+     * @param info
+     * @param exceptService
+     */
+    public void checkWithSecondaryServices(MovieInfo info, MovieService exceptService) {
+        for (MovieService service : settings.getEnabledServices()) {
+            if (service!=exceptService) {
+                StorableMovieSite siteInfo = info.siteFor(service);
+                if (siteInfo == null || siteInfo.getScore()==null) {
+                    secondaryServicePool.submit(new MovieServiceCaller(service, info));
+                }
+            }
+        }
+    }
+
+    /**
+     * Submit tasks for load informations with services which from is not information presented yet.
+     * @param info
+     * @param exceptService
+     */
+    public void checkWithSecondaryServices(List<MovieInfo> info, MovieService exceptService) {
+        for (MovieInfo movie : info) {
+            checkWithSecondaryServices(movie, exceptService);
+        }
+    }
+
     
 }
