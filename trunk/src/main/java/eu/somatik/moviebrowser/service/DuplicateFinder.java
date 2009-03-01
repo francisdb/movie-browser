@@ -28,6 +28,8 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -36,7 +38,9 @@ import eu.somatik.moviebrowser.domain.StorableMovieFile;
  */
 public class DuplicateFinder {
 
-    MovieDatabase database;
+    private static final Logger logger = LoggerFactory.getLogger(DuplicateFinder.class);
+
+    private final MovieDatabase database;
 
     public DuplicateFinder(MovieDatabase database) {
         this.database = database;
@@ -74,6 +78,8 @@ public class DuplicateFinder {
     protected boolean check(StorableMovie movie) {
         for (FileGroup newlyFoundFileGroup : movie.getGroups()) {
             for (StorableMovieFile newlyFoundFile : newlyFoundFileGroup.getFiles()) {
+                // FIXME this fails for a folder containing only compressed files
+                // http://code.google.com/p/movie-browser/issues/detail?id=95
                 if (newlyFoundFile.getType()==FileType.VIDEO_CONTENT) {
                     FileGroup storedFileGroup = database.findByFile(newlyFoundFile.getName(), newlyFoundFile.getSize());
                     if (storedFileGroup!=null) {
@@ -90,7 +96,8 @@ public class DuplicateFinder {
                             }
                         }
                     }
-                    
+                }else{
+                    logger.debug("Skipping file type: "+newlyFoundFile.getType());
                 }
             }
         }

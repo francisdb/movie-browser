@@ -18,7 +18,6 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -34,13 +33,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -76,7 +72,6 @@ import eu.somatik.moviebrowser.service.export.ExporterLocator;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import eu.somatik.moviebrowser.tools.FileTools;
 import eu.somatik.moviebrowser.tools.SwingTools;
-import java.awt.Component;
 
 /**
  *
