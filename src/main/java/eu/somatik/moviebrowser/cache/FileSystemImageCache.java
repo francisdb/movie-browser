@@ -46,6 +46,7 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import eu.somatik.moviebrowser.tools.FileTools;
 import java.io.FileNotFoundException;
 
@@ -58,26 +59,10 @@ public class FileSystemImageCache implements ImageCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemImageCache.class);
     private final Settings settings;
-
+    
     @Inject
     public FileSystemImageCache(final Settings settings) {
         this.settings = settings;
-    }
-
-    
-    private String imageUrl(MovieInfo info){
-        return imgUrl(info, MovieService.IMDB);
-    }
-    
-    private  String imgUrl(MovieInfo info, MovieService service) {
-        String val;
-        StorableMovieSite site = info.siteFor(service);
-        if (site == null) {
-            val = null;
-        } else {
-            val = info.siteFor(service).getImgUrl();
-        }
-        return val;
     }
     
     /**
@@ -85,11 +70,11 @@ public class FileSystemImageCache implements ImageCache {
      * @param info
      */
     @Override
-    public Image loadImg(MovieInfo info) {
+    public Image loadImg(MovieInfo info, ContentProvider provider) {
         Image image = null;
         // TODO might accept images form other services
         if(info != null){
-            String imgUrl = imageUrl(info);
+            String imgUrl = provider.getImageUrl(info);
             if (imgUrl != null) {
                 try {
                     File file = getCacheFile(imgUrl);
@@ -122,8 +107,8 @@ public class FileSystemImageCache implements ImageCache {
     }
 
     @Override
-    public void removeImgFromCache(MovieInfo info) {
-        String url = imageUrl(info);
+    public void removeImgFromCache(MovieInfo info, ContentProvider provider) {
+        String url = provider.getImageUrl(info);
         if (url != null) {
             File file = new File(url);
             if (file.exists()) {
@@ -137,9 +122,9 @@ public class FileSystemImageCache implements ImageCache {
      * @return the saved file
      */
     @Override
-    public File saveImgToCache(MovieInfo info) {
+    public File saveImgToCache(MovieInfo info, ContentProvider provider) {
         File cached = null;
-        String url = imageUrl(info);
+        final String url = provider.getImageUrl(info);
         if (url != null) {
             InputStream is = null;
             try {
@@ -157,10 +142,9 @@ public class FileSystemImageCache implements ImageCache {
                 
                 //If users wants album art in movie folder, save there as well. 
                 if(settings.getSaveAlbumArt()) {
-                    String coverURL = imageUrl(info);
-                    System.out.println("COVER URL: " + coverURL);
+                    LOGGER.info("COVER URL: " + url);
                     File cover = null;
-                    cover = getCacheFile(coverURL);
+                    cover = getCacheFile(url);
                     
                     Set<MovieLocation> locations = info.getMovie().getLocations();
                     for (MovieLocation l : locations) {

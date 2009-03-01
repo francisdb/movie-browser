@@ -139,7 +139,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         } else {
             StorableMovie movie = info.getMovie();
             // TODO if loading takes a lot of time the, image might be shown after a new movie was selected
-            Image image = imageCache.loadImg(info);
+            Image image = imageCache.loadImg(info, provider);
             if (image == null) {
                 new ImageLoadingWorker().execute();
             } else {
@@ -312,8 +312,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
 
         @Override
         protected Image doInBackground() throws Exception {
-            imageCache.saveImgToCache(info);
-            Image image = imageCache.loadImg(info);
+            imageCache.saveImgToCache(info, provider);
+            Image image = imageCache.loadImg(info, provider);
             return image;
         }
 

@@ -35,9 +35,13 @@ public class ImdbContentProvider implements ContentProvider {
 
     @Override
     public String getImageUrl(MovieInfo info) {
+        return getImageUrl(info, MovieService.IMDB);
+    }
+    
+    protected String getImageUrl(MovieInfo info, MovieService service) {
         StorableMovie movie = info.getMovie(); 
         if (movie!=null) {
-            StorableMovieSite siteInfo = movie.getMovieSiteInfo(MovieService.IMDB);
+            StorableMovieSite siteInfo = movie.getMovieSiteInfo(service);
             if (siteInfo!=null) {
                 String imgUrl = siteInfo.getImgUrl();
                 if (imgUrl!=null) {

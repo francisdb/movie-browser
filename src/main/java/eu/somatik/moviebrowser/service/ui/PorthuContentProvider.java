@@ -20,6 +20,8 @@ package eu.somatik.moviebrowser.service.ui;
 
 import com.flicklib.domain.MovieService;
 
+import eu.somatik.moviebrowser.domain.MovieInfo;
+
 /**
  * 
  * This content provider shows hungarian titles, and gets the title, plot information from the porthu service, and 
@@ -33,6 +35,12 @@ public class PorthuContentProvider extends AbstractFallbackContentProvider imple
 
     public PorthuContentProvider() {
         super(MovieService.PORTHU);
+    }
+    
+    @Override
+    public String getImageUrl(MovieInfo info) {
+        String xpressImage = getImageUrl(info, MovieService.XPRESSHU);
+        return xpressImage != null ? xpressImage : super.getImageUrl(info);
     }
 
 }
