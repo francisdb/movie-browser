@@ -122,7 +122,9 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        movieTable.setModel(new MovieInfoTableModel(infoHandler, finder, contentProvider, settings));
+        movieTable.setModel(new MovieInfoTableModel(infoHandler, contentProvider, settings, imageCache));
+        // for covers
+        // movieTable.setRowHeight(140);
         setColumnWidths();
 
         loadLookAndFeels();
@@ -209,6 +211,7 @@ public class MainFrame extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() && movieTable.getSelectedRowCount() == 1) {
                     MovieInfo info = getSelectedMovie();
+                    movieInfoPanel.setMovies(((MovieInfoTableModel)movieTable.getModel()).getMovies());
                     movieInfoPanel.setMovieInfo(info);
                 }
             }

@@ -28,6 +28,9 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.gui.shelf.CDShelf;
+import eu.somatik.moviebrowser.gui.shelf.GradientPanel;
+import eu.somatik.moviebrowser.gui.shelf.StackLayout;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 
@@ -49,6 +52,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +74,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private MovieInfo info;
     private ResourceBundle bundle;
     private MovieBrowser browser;
+
+    private CDShelf shelf;
 
 
     /** Creates new form MovieInfoPanel
@@ -99,6 +105,16 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         initComponents();
         addIcons();
         infoTextPane.setContentType("text/html");
+        infoTabbedPane.add("Flow", createShelf());
+    }
+
+    private JPanel createShelf(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new StackLayout());
+        panel.add(new GradientPanel(), StackLayout.BOTTOM);
+        this.shelf = new CDShelf(imageCache, provider);
+        panel.add(shelf, StackLayout.TOP);
+        return panel;
     }
 
     /**
@@ -107,7 +123,12 @@ public class MovieInfoPanel extends javax.swing.JPanel {
      */
     public void setMovieInfo(final MovieInfo movieInfo) {
         this.info = movieInfo;
+        shelf.selectMovie(info);
         update();
+    }
+
+    public void setMovies(List<MovieInfo> info){
+        shelf.setMovies(info);
     }
 
     private void updateButton(final JButton button, final String url) {
