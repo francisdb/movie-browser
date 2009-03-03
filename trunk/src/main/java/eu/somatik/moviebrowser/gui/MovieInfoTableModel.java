@@ -32,12 +32,12 @@ import javax.swing.table.AbstractTableModel;
 
 import com.flicklib.domain.MovieService;
 
+import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandler;
-import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.ScoreCalculator;
 import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
@@ -64,7 +64,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         "Date",
         "Runtime",
         SCORE_COLUMN_NAME,
-        "Copies"
+        "Copies",
+//        "Cover"
     };
     private static final Class<?> COL_CLASSES[] = {
         MovieStatus.class,
@@ -74,10 +75,12 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
         Integer.class,
         Integer.class,
         Integer.class,
+//        ImageIcon.class
     };
 
     
     private final InfoHandler infoHandler;
+    private final ImageCache imageCache;
     private final ScoreCalculator calculator;
     private final Settings settings;
     
@@ -89,15 +92,19 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     
     /** 
      * Creates a new instance of MovieInfoTableModel 
-     * @param infoHandler 
+     * @param infoHandler
+     * @param contentProvider
+     * @param settings
+     * @param imageCache
      */
-    public MovieInfoTableModel(final InfoHandler infoHandler, final MovieFinder finder, final ContentProvider contentProvider, final Settings settings) {
+    public MovieInfoTableModel(final InfoHandler infoHandler, final ContentProvider contentProvider, final Settings settings, final ImageCache imageCache) {
         this.infoHandler = infoHandler;
         this.settings = settings;
         this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
         //this.finder = finder;
         this.contentProvider = contentProvider;
+        this.imageCache = imageCache;
         calculateExtraColumns();
     }
 
@@ -154,6 +161,8 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
                 return calculator.calculate(info);
             case 6:
                 return info.getMovie().getCopyCount();
+//            case 7:
+//                return new ImageIcon(imageCache.loadImg(info, contentProvider));
             default:
                 MovieService service = extraColumns.get(columnIndex - COL_NAMES.length);
                 return infoHandler.score(info, service);
@@ -241,6 +250,12 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     public Iterator<MovieInfo> iterator() {
         return movies.iterator();
     }
+
+    public List<MovieInfo> getMovies() {
+        return Collections.unmodifiableList(movies);
+    }
+
+
 
     public void refreshColumns(ContentProvider contentProvider) {
         this.contentProvider = contentProvider;
