@@ -65,9 +65,9 @@ public class IconLoader {
             case MOVIEWEB:
                 fileName = "images/16/movieweb.png";
                 break;
-            case OMDB:
-                fileName = "images/16/omdb.png";
-                break;
+//            case OMDB:
+//                fileName = "images/16/omdb.png";
+//                break;
             case TOMATOES:
                 fileName = "images/16/rottentomatoes.png";
                 break;

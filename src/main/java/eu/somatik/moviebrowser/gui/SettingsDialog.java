@@ -70,7 +70,7 @@ public class SettingsDialog extends javax.swing.JDialog {
 
     private Map<MovieService, JCheckBox> mapServiceCheckBoxes(){
         Map<MovieService, JCheckBox> cbs = new HashMap<MovieService, JCheckBox>();
-        cbs.put(MovieService.OMDB, omdbCheckBox);
+        //cbs.put(MovieService.OMDB, omdbCheckBox);
         cbs.put(MovieService.FLIXSTER, flixsterCheckBox);
         cbs.put(MovieService.GOOGLE, googleCheckBox);
         cbs.put(MovieService.MOVIEWEB, moviewebCheckBox);

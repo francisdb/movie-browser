@@ -59,7 +59,7 @@ public class WeightedScoreCalculatorTest {
         assertEquals(Integer.valueOf(32), calc.calculate(movie));
         
         site = new StorableMovieSite();
-        site.setService(MovieService.OMDB);
+        site.setService(MovieService.FLIXSTER);
         site.setScore(80);
         movie.addSite(site);
         assertEquals(Integer.valueOf((32*7+80*2)/9), calc.calculate(movie));
