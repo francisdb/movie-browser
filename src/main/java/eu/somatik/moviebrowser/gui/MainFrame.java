@@ -87,6 +87,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final MovieInfoPanel movieInfoPanel;
     private final MovieFileFilter movieFileFilter;
     private final ExporterLocator exporterLocator;
+    private final MovieInfoTableModel movieInfoModel;
 
     /** 
      * Creates new form MainFrame
@@ -117,12 +118,13 @@ public class MainFrame extends javax.swing.JFrame {
 
         initComponents();
         ContentProvider contentProvider = browser.getContentProvider();
-        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, settings, browser);
+        movieInfoModel = new MovieInfoTableModel(infoHandler, contentProvider, settings, imageCache);
+        this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, settings, browser, movieInfoModel);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
         movieTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        movieTable.setModel(new MovieInfoTableModel(infoHandler, contentProvider, settings, imageCache));
+        movieTable.setModel(movieInfoModel);
         // for covers
         // movieTable.setRowHeight(140);
         setColumnWidths();
@@ -211,7 +213,6 @@ public class MainFrame extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() && movieTable.getSelectedRowCount() == 1) {
                     MovieInfo info = getSelectedMovie();
-                    movieInfoPanel.setMovies(((MovieInfoTableModel)movieTable.getModel()).getMovies());
                     movieInfoPanel.setMovieInfo(info);
                 }
             }

@@ -254,6 +254,10 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     public List<MovieInfo> getMovies() {
         return Collections.unmodifiableList(movies);
     }
+    
+    public List<MovieInfo> getRange(int fromIndex, int toIndex) {
+        return Collections.unmodifiableList(movies.subList(fromIndex, toIndex));
+    }
 
 
 
