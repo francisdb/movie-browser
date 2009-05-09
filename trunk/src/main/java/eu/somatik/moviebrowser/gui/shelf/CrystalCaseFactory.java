@@ -55,9 +55,9 @@ public class CrystalCaseFactory {
     }
 
     private void loadPictures() throws IOException {
-         cdCase = ImageIO.read(getClass().getClassLoader().getResource("resources/cd_case.png"));
-            stitch = ImageIO.read(getClass().getClassLoader().getResource("resources/stitch.png"));
-            reflections = ImageIO.read(getClass().getClassLoader().getResource("resources/reflections.png"));
+         cdCase = ImageIO.read(getClass().getClassLoader().getResource("cdshelf/cd_case.png"));
+            stitch = ImageIO.read(getClass().getClassLoader().getResource("cdshelf/stitch.png"));
+            reflections = ImageIO.read(getClass().getClassLoader().getResource("cdshelf/reflections.png"));
             mask = createGradientMask(cdCase.getWidth(), cdCase.getHeight());
 
     }
