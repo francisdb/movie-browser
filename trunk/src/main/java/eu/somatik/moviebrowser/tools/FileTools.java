@@ -96,7 +96,8 @@ public class FileTools {
               MappedByteBuffer buf = in.map(FileChannel.MapMode.READ_ONLY, 0, size);
           
               out.write(buf);
-          
+              
+              dest.setLastModified(source.lastModified());
         } finally {
             if (in != null) {
                 in.close();
@@ -105,6 +106,32 @@ public class FileTools {
                 out.close();
             }
          }
+    }
+    
+    
+    public static long copy(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[65536];
+        int readCount = 0;
+        long written = 0;
+        while ((readCount = input.read(buffer)) != -1) {
+            output.write(buffer, 0, readCount);
+            if (readCount > 0) {
+                written += readCount;
+            }
+        }
+        return written;
+    }
+    
+    public static void writeToFile(InputStream input, File destination) throws IOException {
+        FileOutputStream fs = null;
+        try {
+            fs = new FileOutputStream(destination);
+            copy(input, fs);
+        } finally {
+            if (fs != null) {
+                fs.close();
+            }
+        }
     }
     
     /**
