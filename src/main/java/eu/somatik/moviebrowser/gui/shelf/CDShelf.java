@@ -59,7 +59,6 @@ public class CDShelf extends JPanel {
     private final CrystalCaseFactory fx;
     private final ImageCache cache;
     private final ContentProvider contentProvider;
-    private final AvatarName avatarName;
 
     private final int displayWidth = CD_SIZE;
     private final int displayHeight = (int) (CD_SIZE * 2 / 0.80);
@@ -102,7 +101,6 @@ public class CDShelf extends JPanel {
         this.avatarFont = new Font("Dialog", Font.PLAIN, 24);
         this.fx = CrystalCaseFactory.getInstance();
         this.movieModel = movieModel;
-        this.avatarName = new AvatarName();
         //loadAvatars(null);
 
         setLayout(new GridBagLayout());
@@ -245,7 +243,7 @@ public class CDShelf extends JPanel {
         drawAvatars(g2, drawableAvatars);
 
         if (drawableAvatars.length > 0 && avatarText != null) {
-            avatarName.draw(g2, avatarText);
+            drawAvatarText(g2, avatarText);
         }
 
         g2.setComposite(oldComposite);
@@ -769,44 +767,36 @@ public class CDShelf extends JPanel {
         }
     }
 
-    private class AvatarName {
 
-        private final CrystalCaseFactory fx;
+    private void drawAvatarText(Graphics2D g2, String avatarText) {
+        Composite composite = g2.getComposite();
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
+                textAlphaLevel));
 
-        public AvatarName() {
-            this.fx = CrystalCaseFactory.getInstance();
-        }
+        FontRenderContext context = g2.getFontRenderContext();
+        TextLayout layout = new TextLayout(avatarText, avatarFont, context);
+        Rectangle2D bounds = layout.getBounds();
 
-        public void draw(Graphics2D g2, String avatarText) {
-            Composite composite = g2.getComposite();
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                    textAlphaLevel));
+        double bulletWidth = bounds.getWidth() + 12;
+        double bulletHeight = bounds.getHeight() + layout.getDescent() + 4;
 
-            FontRenderContext context = g2.getFontRenderContext();
-            TextLayout layout = new TextLayout(avatarText, avatarFont, context);
-            Rectangle2D bounds = layout.getBounds();
+        double x = (getWidth() - bulletWidth) / 2.0;
+        double y = (getHeight() + CD_SIZE + 30) / 2.0;
 
-            double bulletWidth = bounds.getWidth() + 12;
-            double bulletHeight = bounds.getHeight() + layout.getDescent() + 4;
+        BufferedImage textImage = new BufferedImage((int) bulletWidth,
+                (int) bulletHeight,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2text = textImage.createGraphics();
+        g2text.setColor(new Color(0, 0, 0, 170));
+        layout.draw(g2text, 6, layout.getAscent() + 1);
+        g2text.setColor(Color.WHITE);
+        layout.draw(g2text, 6, layout.getAscent());
+        g2text.dispose();
 
-            double x = (getWidth() - bulletWidth) / 2.0;
-            double y = (getHeight() + CD_SIZE + 30) / 2.0;
-
-            BufferedImage textImage = new BufferedImage((int) bulletWidth,
-                    (int) bulletHeight,
-                    BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2text = textImage.createGraphics();
-            g2text.setColor(new Color(0, 0, 0, 170));
-            layout.draw(g2text, 6, layout.getAscent() + 1);
-            g2text.setColor(Color.WHITE);
-            layout.draw(g2text, 6, layout.getAscent());
-            g2text.dispose();
-
-            g2.drawImage(fx.createReflectedPicture(textImage,
-                    fx.createGradientMask((int) bulletWidth,
-                    (int) bulletHeight)),
-                    (int) x, (int) y, null);
-            g2.setComposite(composite);
-        }
+        g2.drawImage(fx.createReflectedPicture(textImage,
+                fx.createGradientMask((int) bulletWidth,
+                (int) bulletHeight)),
+                (int) x, (int) y, null);
+        g2.setComposite(composite);
     }
 }
