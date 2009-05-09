@@ -22,6 +22,7 @@ import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,6 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -45,10 +45,8 @@ import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.MovieStatus;
-import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import eu.somatik.moviebrowser.tools.FileTools;
-import java.io.FileNotFoundException;
 
 /**
  *
@@ -76,17 +74,20 @@ public class FileSystemImageCache implements ImageCache {
         if(info != null){
             String imgUrl = provider.getImageUrl(info);
             if (imgUrl != null) {
+                File file = getCacheFile(imgUrl);
                 try {
-                    File file = getCacheFile(imgUrl);
+                    if (!file.exists()) {
+                        saveImgToCache(info, provider);
+                    }
                     if (file.exists()) {
                         image = ImageIO.read(file);
                     } else {
                         LOGGER.debug("Image not available in local cache: " + imgUrl);
                     }
                 } catch (IOException ex) {
-                    LOGGER.error("Could not load image", ex);
+                    LOGGER.error("Could not load image " + imgUrl + " -> " + file, ex);
                 }
-                info.setStatus(MovieStatus.LOADED);
+                //info.setStatus(MovieStatus.LOADED);
             }
         }
         return image;
@@ -98,10 +99,17 @@ public class FileSystemImageCache implements ImageCache {
      */
     private File getCacheFile(String imgUrl) {
         File cached = null;
-        String startAfter = "imdb.com/";
-        int startIndex = imgUrl.indexOf(startAfter) + startAfter.length();
-        String cacheName = imgUrl.substring(startIndex);
-        cacheName = cacheName.replaceAll("/", "_");
+        final String startAfter = "imdb.com/";
+        String cacheName = imgUrl;
+        if (imgUrl.indexOf(startAfter)!=-1) {
+            int startIndex = imgUrl.indexOf(startAfter) + startAfter.length();
+            cacheName = imgUrl.substring(startIndex);
+        } else {
+            if (imgUrl.startsWith("http://")) {
+                cacheName = imgUrl.substring("http://".length());
+            }
+        }
+        cacheName = cacheName.replace('/', '_').replace(':', '_');
         cached = new File(settings.getImageCacheDir(), cacheName);
         return cached;
     }
@@ -137,8 +145,10 @@ public class FileSystemImageCache implements ImageCache {
                 Date date = new Date(urlC.getLastModified());
                 LOGGER.trace("Saving resource type: {}, modified on: {}", urlC.getContentType(), date );
                 cached = getCacheFile(url);
-                writeFile(is, cached);
+                //writeFile(is, cached);
+                FileTools.writeToFile(is, cached);
                 is.close();
+                cached.setLastModified(date.getTime());
                 
                 //If users wants album art in movie folder, save there as well. 
                 if(settings.getSaveAlbumArt()) {
@@ -173,42 +183,5 @@ public class FileSystemImageCache implements ImageCache {
             }
         }
         return cached;
-    }
-    // TODO try nio
-    //            // Create channel on the source
-//        FileChannel srcChannel = new FileInputStream("srcFilename").getChannel();
-//    
-//        // Create channel on the destination
-//        FileChannel dstChannel = new FileOutputStream("dstFilename").getChannel();
-//    
-//        // Copy file contents from source to destination
-//        dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-//    
-//        // Close the channels
-//        srcChannel.close();
-//        dstChannel.close();
-    private void writeFile(InputStream inStream, File file) throws IOException {
-        final int bufferSize = 1024;
-        OutputStream fout = null;
-        try {
-            fout = new BufferedOutputStream(new FileOutputStream(file));
-            byte[] buffer = new byte[bufferSize];
-            int readCount = 0;
-            while ((readCount = inStream.read(buffer)) != -1) {
-                if (readCount < bufferSize) {
-                    fout.write(buffer, 0, readCount);
-                } else {
-                    fout.write(buffer);
-                }
-            }
-        } finally {
-            if (fout != null) {
-                try {
-                    fout.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close FileOutputStream", ex);
-                }
-            }
-        }
     }
 }
