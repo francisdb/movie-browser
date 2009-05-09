@@ -54,7 +54,6 @@ public class CDShelf extends JPanel {
 
 
     private final List<Image> avatarImages;
-    private final List<String> avatarsText;
     private final List<MovieInfo> avatarMovies;
     private final Font avatarFont;
     private final CrystalCaseFactory fx;
@@ -97,7 +96,6 @@ public class CDShelf extends JPanel {
 
     public CDShelf(final ImageCache imageCache, final ContentProvider contentProvider, final MovieInfoTableModel movieModel) {
         this.avatarImages = new ArrayList<Image>();
-        this.avatarsText = new ArrayList<String>();
         this.avatarMovies = new ArrayList<MovieInfo>();
         this.cache = imageCache;
         this.contentProvider = contentProvider;
@@ -134,7 +132,6 @@ public class CDShelf extends JPanel {
     public void clear() {
         this.avatarMovies.clear();
         avatarImages.clear();
-        avatarsText.clear();
     }
     
     public void selectMovie(MovieInfo info){
@@ -294,8 +291,8 @@ public class CDShelf extends JPanel {
         double avatarPosition = this.avatarPosition + spacing;
 
         Image avatar = avatarImages.get(avatarIndex + offset);
-        String title = avatarsText.get(avatarIndex + offset);
         MovieInfo movie = avatarMovies.get(avatarIndex + offset);
+        String title = contentProvider.getTitle(movie);
 
         int avatarWidth = displayWidth;//avatar.getWidth(null);
         int avatarHeight = displayHeight;//avatar.getHeight(null);
@@ -388,7 +385,11 @@ public class CDShelf extends JPanel {
 
     private void setAvatarIndex(int index) {
         avatarIndex = index;
-        avatarText = avatarsText.get(index);
+        avatarText = getAvatarTitle(index);
+    }
+    
+    private final String getAvatarTitle(int index) {
+        return contentProvider.getTitle(avatarMovies.get(index));
     }
 
     private void scrollBy(int increment) {
@@ -471,7 +472,6 @@ public class CDShelf extends JPanel {
                 try {
                     Image image = cache.loadImg(movie, contentProvider);
                     avatarImages.add(fx.createReflectedPicture(fx.createCrystalCase(image)));
-                    avatarsText.add(movie.getMovie().getTitle());
                     avatarMovies.add(movie);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -702,7 +702,7 @@ public class CDShelf extends JPanel {
             if (elapsed < ANIM_SCROLL_DELAY / 2.0) {
                 textAlphaLevel = (float) (1.0 - 2.0 * (elapsed / ANIM_SCROLL_DELAY));
             } else {
-                avatarText = avatarsText.get(index);
+                avatarText = getAvatarTitle(index);
                 textAlphaLevel = (float) (((elapsed / ANIM_SCROLL_DELAY) - 0.5) * 2.0);
                 if (textAlphaLevel > 1.0f) {
                     textAlphaLevel = 1.0f;
