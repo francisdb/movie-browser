@@ -2,6 +2,7 @@ package eu.somatik.moviebrowser.gui.shelf;
 
 import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.gui.MovieInfoTableModel;
 import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -38,6 +39,9 @@ import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +55,7 @@ public class CDShelf extends JPanel {
 
     private final List<Image> avatarImages;
     private final List<String> avatarsText;
+    private final List<MovieInfo> avatarMovies;
     private final Font avatarFont;
     private final CrystalCaseFactory fx;
     private final ImageCache cache;
@@ -88,17 +93,19 @@ public class CDShelf extends JPanel {
     private MouseWheelScroller wheelScroller;
     private KeyScroller keyScroller;
     private KeyAvatarSelector keyAvatarSelector;
+    private MovieInfoTableModel movieModel;
 
-
-    public CDShelf(final ImageCache imageCache, final ContentProvider contentProvider) {
+    public CDShelf(final ImageCache imageCache, final ContentProvider contentProvider, final MovieInfoTableModel movieModel) {
         this.avatarImages = new ArrayList<Image>();
         this.avatarsText = new ArrayList<String>();
+        this.avatarMovies = new ArrayList<MovieInfo>();
         this.cache = imageCache;
         this.contentProvider = contentProvider;
         this.avatarFont = new Font("Dialog", Font.PLAIN, 24);
         this.fx = CrystalCaseFactory.getInstance();
+        this.movieModel = movieModel;
         this.avatarName = new AvatarName();
-        loadAvatars(null);
+        //loadAvatars(null);
 
         setLayout(new GridBagLayout());
 
@@ -108,20 +115,36 @@ public class CDShelf extends JPanel {
 
         initInputListeners();
         addInputListeners();
+        
+        movieModel.addTableModelListener(new TableModelListener() {
+           @Override
+            public void tableChanged(TableModelEvent event) {
+               List<MovieInfo> movies; 
+               if (event.getType()==TableModelEvent.INSERT) {
+                   movies = CDShelf.this.movieModel.getRange(event.getFirstRow(), event.getLastRow());
+               } else {
+                   CDShelf.this.clear();
+                   movies = CDShelf.this.movieModel.getMovies();
+               }
+               loadAvatars(movies);
+            } 
+        });
     }
 
-    public void setMovies(List<MovieInfo> movies) {
-        if(drawableAvatars == null){
-            loadAvatars(movies);
-        }
+    public void clear() {
+        this.avatarMovies.clear();
+        avatarImages.clear();
+        avatarsText.clear();
     }
-
+    
     public void selectMovie(MovieInfo info){
         if(drawableAvatars != null){
             //LOGGER.info("size = "+drawableAvatars.length);
-            for(DrawableAvatar av:drawableAvatars){
-                if(info.getMovie().getTitle().equals(av.getTitle())){
+            //LOGGER.info("select "+info.getMovie().getTitle()+", info:"+info+" avatars:"+drawableAvatars.length);
+            for(DrawableAvatar av:drawableAvatars) { 
+                if(info == av.getMovie()){
                     scrollAndAnimate(av);
+                    return;
                 }
             }
         }
@@ -262,16 +285,17 @@ public class CDShelf extends JPanel {
             int x, int y, int width, int height,
             int offset) {
 
-        double spacing = offset * avatarSpacing;
-        double avatarPosition = this.avatarPosition + spacing;
-
         if (avatarIndex + offset < 0 ||
                 avatarIndex + offset >= avatarImages.size()) {
             return;
         }
 
+        double spacing = offset * avatarSpacing;
+        double avatarPosition = this.avatarPosition + spacing;
+
         Image avatar = avatarImages.get(avatarIndex + offset);
         String title = avatarsText.get(avatarIndex + offset);
+        MovieInfo movie = avatarMovies.get(avatarIndex + offset);
 
         int avatarWidth = displayWidth;//avatar.getWidth(null);
         int avatarHeight = displayHeight;//avatar.getHeight(null);
@@ -299,7 +323,7 @@ public class CDShelf extends JPanel {
         DrawableAvatar av = new DrawableAvatar(avatarIndex + offset,
                 avatar_x, avatar_y,
                 newWidth, newHeight,
-                avatarPosition, result);
+                avatarPosition, result, movie);
         av.setTitle(title);
         av.setImage(avatar);
         drawables.add(av);
@@ -356,8 +380,6 @@ public class CDShelf extends JPanel {
 //        removeKeyListener(keyAvatarSelector);
 //    }
     private void loadAvatars(final List<MovieInfo> info) {
-        avatarImages.clear();
-        avatarsText.clear();
 
         picturesFinder = new Thread(new PicturesFinderThread(info));
         picturesFinder.setPriority(Thread.MIN_PRIORITY);
@@ -450,6 +472,7 @@ public class CDShelf extends JPanel {
                     Image image = cache.loadImg(movie, contentProvider);
                     avatarImages.add(fx.createReflectedPicture(fx.createCrystalCase(image)));
                     avatarsText.add(movie.getMovie().getTitle());
+                    avatarMovies.add(movie);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -504,10 +527,12 @@ public class CDShelf extends JPanel {
 
         private Image image;
         private String title;
+        
+        private MovieInfo movie;
 
         private DrawableAvatar(int index,
                 double x, double y, int width, int height,
-                double position, double zOrder) {
+                double position, double zOrder, MovieInfo movie) {
             this.index = index;
             this.x = x;
             this.y = y;
@@ -515,6 +540,7 @@ public class CDShelf extends JPanel {
             this.height = height;
             this.position = position;
             this.zOrder = zOrder;
+            this.movie = movie;
         }
 
         public void setImage(Image image) {
@@ -531,6 +557,10 @@ public class CDShelf extends JPanel {
 
         public String getTitle() {
             return title;
+        }
+        
+        public MovieInfo getMovie() {
+            return movie;
         }
 
 

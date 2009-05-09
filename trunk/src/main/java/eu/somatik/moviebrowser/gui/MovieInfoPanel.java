@@ -75,6 +75,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private ResourceBundle bundle;
     private MovieBrowser browser;
 
+    private MovieInfoTableModel tableModel;
     private CDShelf shelf;
 
 
@@ -90,11 +91,13 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             final IconLoader iconLoader,
             final InfoHandler infoHandler,
             final Settings settings,
-            final MovieBrowser browser) {
+            final MovieBrowser browser,
+            final MovieInfoTableModel tableModel) {
         this.imageCache = imageCache;
         this.iconLoader = iconLoader;
         this.infoHandler = infoHandler;
         this.browser = browser;
+        this.tableModel = tableModel;
         // TODO get the services from the settings
         this.services = settings.getEnabledServices();
         this.siteButtons = new HashMap<MovieService, JButton>();
@@ -112,7 +115,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         JPanel panel = new JPanel();
         panel.setLayout(new StackLayout());
         panel.add(new GradientPanel(), StackLayout.BOTTOM);
-        this.shelf = new CDShelf(imageCache, provider);
+        this.shelf = new CDShelf(imageCache, provider, tableModel);
         panel.add(shelf, StackLayout.TOP);
         return panel;
     }
@@ -127,9 +130,6 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         update();
     }
 
-    public void setMovies(List<MovieInfo> info){
-        shelf.setMovies(info);
-    }
 
     private void updateButton(final JButton button, final String url) {
         if (url != null && url.trim().length() > 0) {
