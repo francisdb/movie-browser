@@ -18,20 +18,17 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.config.Settings;
-
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-
 import java.util.Enumeration;
 import java.util.HashMap;
-
 import java.util.Map;
 import java.util.Set;
+
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
+
+import com.flicklib.domain.MovieService;
 
 
 /**

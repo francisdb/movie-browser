@@ -563,7 +563,7 @@ public class CDShelf extends JPanel {
         }
     }
 
-    private class DrawableAvatar implements Comparable {
+    private class DrawableAvatar implements Comparable<DrawableAvatar> {
 
         private int index;
         private double x;
@@ -616,8 +616,8 @@ public class CDShelf extends JPanel {
         
 
         @Override
-        public int compareTo(Object o) {
-            double zOrder2 = ((DrawableAvatar) o).zOrder;
+        public int compareTo(DrawableAvatar o) {
+            double zOrder2 = o.zOrder;
             if (zOrder < zOrder2) {
                 return -1;
             } else if (zOrder > zOrder2) {

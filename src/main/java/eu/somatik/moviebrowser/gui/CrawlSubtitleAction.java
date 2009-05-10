@@ -18,18 +18,18 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.swing.AbstractAction;
+
 import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.swing.AbstractAction;
 
 /**
  * This action opens the SubtitleCrawlerFrame if a video file is found in the directory.

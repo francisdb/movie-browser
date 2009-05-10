@@ -18,13 +18,15 @@
  */
 package eu.somatik.moviebrowser.service;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 
 import com.flicklib.domain.MovieService;
+
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
