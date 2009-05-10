@@ -1,9 +1,5 @@
 package eu.somatik.moviebrowser.gui.shelf;
 
-import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.gui.MovieInfoTableModel;
-import eu.somatik.moviebrowser.service.ui.ContentProvider;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -34,8 +30,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -44,6 +43,11 @@ import javax.swing.event.TableModelListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.gui.MovieInfoTableModel;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
 
 public class CDShelf extends JPanel {
 
@@ -58,7 +62,9 @@ public class CDShelf extends JPanel {
     private final Font avatarFont;
     private final CrystalCaseFactory fx;
     private final ImageCache cache;
-    private final ContentProvider contentProvider;
+    private ContentProvider contentProvider;
+    
+    private ExecutorService executor; 
 
     private final int displayWidth = CD_SIZE;
     private final int displayHeight = (int) (CD_SIZE * 2 / 0.80);
@@ -73,7 +79,6 @@ public class CDShelf extends JPanel {
 
     private String avatarText;
     private boolean loadingDone;
-    private Thread picturesFinder;
     private Timer scrollerTimer;
     private Timer faderTimer;
 
@@ -119,8 +124,12 @@ public class CDShelf extends JPanel {
                if (event.getType()==TableModelEvent.INSERT) {
                    movies = CDShelf.this.movieModel.getRange(event.getFirstRow(), event.getLastRow());
                } else {
-                   CDShelf.this.clear();
-                   movies = CDShelf.this.movieModel.getMovies();
+                   if (event.getType() == TableModelEvent.UPDATE && event.getFirstRow()>=0 && event.getLastRow()>=0 && event.getLastRow()<Integer.MAX_VALUE) {
+                       movies = CDShelf.this.movieModel.getRange(event.getFirstRow(), event.getLastRow());
+                   } else {
+                       CDShelf.this.clear();
+                       movies = CDShelf.this.movieModel.getMovies();
+                   }
                }
                loadAvatars(movies);
             } 
@@ -128,8 +137,25 @@ public class CDShelf extends JPanel {
     }
 
     public void clear() {
-        this.avatarMovies.clear();
-        avatarImages.clear();
+        synchronized(avatarImages) {
+            this.avatarMovies.clear();
+            avatarImages.clear();
+            this.drawableAvatars = null;
+            this.needRepaint = true;
+        }
+    }
+    
+    void add(MovieInfo movie, Image image) {
+        synchronized(avatarImages) {
+            this.avatarMovies.add(movie);
+            this.avatarImages.add(image);
+        }
+    }
+    
+    public void setContentProvider(ContentProvider contentProvider) {
+        this.contentProvider = contentProvider;
+        needRepaint = true;
+        repaint();
     }
     
     public void selectMovie(MovieInfo info){
@@ -239,8 +265,9 @@ public class CDShelf extends JPanel {
             drawableAvatars = sortAvatarsByDepth(x, y, width, height);
             needRepaint = false;
         }
-
-        drawAvatars(g2, drawableAvatars);
+        synchronized(avatarImages) {
+            drawAvatars(g2, drawableAvatars);
+        }
 
         if (drawableAvatars.length > 0 && avatarText != null) {
             drawAvatarText(g2, avatarText);
@@ -249,6 +276,11 @@ public class CDShelf extends JPanel {
         g2.setComposite(oldComposite);
     }
 
+    /**
+     * locking avatarImages is held. 
+     * @param g2
+     * @param drawableAvatars
+     */
     private void drawAvatars(Graphics2D g2, DrawableAvatar[] drawableAvatars) {
         for (DrawableAvatar avatar : drawableAvatars) {
             AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) avatar.getAlpha());
@@ -260,18 +292,28 @@ public class CDShelf extends JPanel {
         }
     }
 
+    /**
+     * this locks on avatarImages 
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @return
+     */
     private DrawableAvatar[] sortAvatarsByDepth(int x, int y,
             int width, int height) {
         List<DrawableAvatar> drawables = new LinkedList<DrawableAvatar>();
-        for (int i = 0; i < avatarImages.size(); i++) {
-            promoteAvatarToDrawable(drawables,
-                    x, y, width, height, i - avatarIndex);
+        synchronized(avatarImages) {
+            for (int i = 0; i < avatarImages.size(); i++) {
+                promoteAvatarToDrawable(drawables,
+                        x, y, width, height, i - avatarIndex);
+            }
+    
+            DrawableAvatar[] drawableAvatars = new DrawableAvatar[drawables.size()];
+            drawableAvatars = drawables.toArray(drawableAvatars);
+            Arrays.sort(drawableAvatars);
+            return drawableAvatars;
         }
-
-        DrawableAvatar[] drawableAvatars = new DrawableAvatar[drawables.size()];
-        drawableAvatars = drawables.toArray(drawableAvatars);
-        Arrays.sort(drawableAvatars);
-        return drawableAvatars;
     }
 
     
@@ -374,11 +416,13 @@ public class CDShelf extends JPanel {
 //        removeKeyListener(keyScroller);
 //        removeKeyListener(keyAvatarSelector);
 //    }
-    private void loadAvatars(final List<MovieInfo> info) {
-
-        picturesFinder = new Thread(new PicturesFinderThread(info));
-        picturesFinder.setPriority(Thread.MIN_PRIORITY);
-        picturesFinder.start();
+    private synchronized void loadAvatars(final List<MovieInfo> info) {
+        if (info.size()>0) {
+            if (executor == null) {
+                executor = Executors.newSingleThreadExecutor();
+            }
+            executor.execute(new PicturesFinderThread(info));
+        }
     }
 
     private void setAvatarIndex(int index) {
@@ -446,12 +490,14 @@ public class CDShelf extends JPanel {
         return null;
     }
 
-    private void startFader() {
-        faderTimer = new Timer(35, new FaderAction());
+    private synchronized void startFader() {
+        if (faderTimer==null) {
+            faderTimer = new Timer(35, new FaderAction());
+        }
         faderTimer.start();
     }
 
-    private class PicturesFinderThread implements Runnable {
+    private  class PicturesFinderThread implements Runnable {
 
         private List<MovieInfo> info;
 
@@ -466,11 +512,11 @@ public class CDShelf extends JPanel {
         @Override
         public void run() {
             int i = 0;
+            try {
             for (MovieInfo movie : info) {
                 try {
                     Image image = cache.loadImg(movie, contentProvider);
-                    avatarImages.add(fx.createReflectedPicture(fx.createCrystalCase(image)));
-                    avatarMovies.add(movie);
+                    CDShelf.this.add(movie, fx.createReflectedPicture(fx.createCrystalCase(image)));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -479,6 +525,10 @@ public class CDShelf extends JPanel {
                     setAvatarIndex(avatarAmount / 2);
                     startFader();
                 }
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("info is : " + info);
             }
 
             LOGGER.info("Loading done...");

@@ -238,8 +238,10 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * Clears the movie list
      */
     public void clear() {
-        movies.clear();
-        this.fireTableDataChanged();
+        if (movies.size()>0) {
+            movies.clear();
+            this.fireTableDataChanged();
+        }
     }
     
     public MovieInfo getMovieInfo(int rowIndex){
@@ -252,11 +254,13 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
     }
 
     public List<MovieInfo> getMovies() {
-        return Collections.unmodifiableList(movies);
+        // wrapping into ArrayList is necessary, because the movies list can change by other threads
+        return Collections.unmodifiableList(new ArrayList<MovieInfo>(movies));
     }
     
     public List<MovieInfo> getRange(int fromIndex, int toIndex) {
-        return Collections.unmodifiableList(movies.subList(fromIndex, toIndex));
+        // wrapping into ArrayList is necessary, because the movies list can change by other threads
+        return Collections.unmodifiableList(new ArrayList<MovieInfo>(movies.subList(fromIndex, toIndex + 1)));
     }
 
 
