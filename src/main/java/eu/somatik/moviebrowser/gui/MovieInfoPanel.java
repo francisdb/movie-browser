@@ -142,6 +142,7 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     
     public void setContentProvider(ContentProvider provider) {
         this.provider = provider;
+        shelf.setContentProvider(provider);
         update();
     }
 
