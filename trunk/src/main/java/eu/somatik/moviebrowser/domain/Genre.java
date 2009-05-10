@@ -31,7 +31,7 @@ import javax.persistence.Id;
 @Entity
 public class Genre {
 
-    private static Map<String,Genre> instanceCache = new HashMap();
+    private static Map<String,Genre> instanceCache = new HashMap<String,Genre>();
     
     @Id
     private String name;

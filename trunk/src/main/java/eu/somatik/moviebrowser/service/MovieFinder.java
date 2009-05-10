@@ -20,13 +20,13 @@ package eu.somatik.moviebrowser.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +38,8 @@ import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
@@ -49,7 +49,6 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.tools.FileTools;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
