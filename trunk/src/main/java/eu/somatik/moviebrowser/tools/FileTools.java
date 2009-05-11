@@ -18,6 +18,8 @@
  */
 package eu.somatik.moviebrowser.tools;
 
+import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,11 +27,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
+import sun.security.util.Password;
+
 /**
  *
  * @author francisdb
@@ -38,7 +43,10 @@ public class FileTools {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTools.class);
 
+    private static final int DEFAULT_BUFF_SIZE = 1024 * 64;
+
     private FileTools() {
+        throw new UnsupportedOperationException("Utility class");
     }
 
 
@@ -85,7 +93,7 @@ public class FileTools {
      * @param dest
      * @throws IOException
      */
-    public static void copy(File source, File dest) throws IOException {
+    public static void copy(final File source, final File dest) throws IOException {
          FileChannel in = null;
          FileChannel out = null;
          try {          
@@ -99,18 +107,14 @@ public class FileTools {
               
               dest.setLastModified(source.lastModified());
         } finally {
-            if (in != null) {
-                in.close();
-            }
-            if (out != null) {
-                out.close();
-            }
+            close(in);
+            close(out);
          }
     }
     
     
     public static long copy(InputStream input, OutputStream output) throws IOException {
-        byte[] buffer = new byte[65536];
+        byte[] buffer = new byte[DEFAULT_BUFF_SIZE];
         int readCount = 0;
         long written = 0;
         while ((readCount = input.read(buffer)) != -1) {
@@ -123,14 +127,12 @@ public class FileTools {
     }
     
     public static void writeToFile(InputStream input, File destination) throws IOException {
-        FileOutputStream fs = null;
+        OutputStream fs = null;
         try {
-            fs = new FileOutputStream(destination);
+            fs = new BufferedOutputStream(new FileOutputStream(destination));
             copy(input, fs);
         } finally {
-            if (fs != null) {
-                fs.close();
-            }
+            close(fs);
         }
     }
     
@@ -152,13 +154,7 @@ public class FileTools {
         } catch (SecurityException ex) {
             LOGGER.error("Could not load preferences from " + propsFile.getAbsolutePath(), ex);
         } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                    LOGGER.error("Could not close inputstream for" + propsFile.getAbsolutePath(), ex);
-                }
-            }
+            close(is);
         }
         return props;
     }
@@ -184,13 +180,24 @@ public class FileTools {
         }catch(SecurityException ex){
             LOGGER.error("Could not save preferences to "+propsFile.getAbsolutePath(), ex);
         }finally{
-            if(os!=null){
-                try{
-                    os.close();
-                }catch(IOException ex){
-                    LOGGER.error("Could not close outputstream for"+propsFile.getAbsolutePath(), ex);
-                }
+            close(os);
+        }
+    }
+
+    /**
+     * Closes a closeable logging possible problems or errors
+     * @param closeable
+     */
+    public static void close(final Closeable closeable){
+        if(closeable != null){
+            try {
+                closeable.close();
+            } catch (IOException ex) {
+                LOGGER.error(ex.getMessage(), ex);
             }
+        }else{
+            IOException ex = new IOException("Trying to close a null closeable");
+            LOGGER.warn(ex.getMessage(), ex);
         }
     }
 }
