@@ -32,7 +32,6 @@ import javax.swing.table.AbstractTableModel;
 
 import com.flicklib.domain.MovieService;
 
-import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieStatus;
@@ -80,7 +79,6 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
 
     
     private final InfoHandler infoHandler;
-    private final ImageCache imageCache;
     private final ScoreCalculator calculator;
     private final Settings settings;
     
@@ -97,14 +95,13 @@ public class MovieInfoTableModel extends AbstractTableModel implements PropertyC
      * @param settings
      * @param imageCache
      */
-    public MovieInfoTableModel(final InfoHandler infoHandler, final ContentProvider contentProvider, final Settings settings, final ImageCache imageCache) {
+    public MovieInfoTableModel(final InfoHandler infoHandler, final ContentProvider contentProvider, final Settings settings) {
         this.infoHandler = infoHandler;
         this.settings = settings;
         this.calculator = new WeightedScoreCalculator(infoHandler);
         this.movies = new ArrayList<MovieInfo>();
         //this.finder = finder;
         this.contentProvider = contentProvider;
-        this.imageCache = imageCache;
         calculateExtraColumns();
     }
 

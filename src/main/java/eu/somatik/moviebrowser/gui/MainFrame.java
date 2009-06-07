@@ -118,7 +118,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         initComponents();
         ContentProvider contentProvider = browser.getContentProvider();
-        movieInfoModel = new MovieInfoTableModel(infoHandler, contentProvider, settings, imageCache);
+        movieInfoModel = new MovieInfoTableModel(infoHandler, contentProvider, settings);
         this.movieInfoPanel = new MovieInfoPanel(imageCache, iconLoader, infoHandler, settings, browser, movieInfoModel);
         jSplitPane1.setRightComponent(movieInfoPanel);
         setLocationRelativeTo(null);
@@ -342,7 +342,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         importAutoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_MASK));
         importAutoMenuItem.setMnemonic('a');
-        importAutoMenuItem.setText("Import folder auto...");
+        importAutoMenuItem.setText(bundle.getString("MainFrame.menu.autoImportFolder"));
         importAutoMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 importAutoMenuItemActionPerformed(evt);
