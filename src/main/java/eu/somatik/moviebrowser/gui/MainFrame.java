@@ -26,8 +26,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -88,6 +90,7 @@ public class MainFrame extends javax.swing.JFrame {
     private final MovieFileFilter movieFileFilter;
     private final ExporterLocator exporterLocator;
     private final MovieInfoTableModel movieInfoModel;
+    ResourceBundle bundle = ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
 
     /** 
      * Creates new form MainFrame
@@ -311,7 +314,6 @@ public class MainFrame extends javax.swing.JFrame {
         loadProgressBar.setString("");
         loadProgressBar.setStringPainted(true);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
         filterLabel.setText(bundle.getString("MainFrame.filterLabel.text")); // NOI18N
 
         filterText.setFont(filterText.getFont().deriveFont(filterText.getFont().getSize()-2f));
@@ -644,10 +646,12 @@ private void importAutoMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File newFolder = chooser.getSelectedFile();
-            settings.addFolder(newFolder);
-            this.selectedFile = newFolder;
-
-            scanFolders();
+            if (JOptionPane.showConfirmDialog(this, MessageFormat.format(bundle.getString("MainFrame.autoImport.confirmation"), newFolder.getAbsolutePath()),
+                    "Import", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                settings.addFolder(newFolder);
+                this.selectedFile = newFolder;
+                scanFolders();
+            }
         } else {
             LOGGER.debug("No Selection ");
         }
