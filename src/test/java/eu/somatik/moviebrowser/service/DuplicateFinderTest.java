@@ -66,7 +66,7 @@ public class DuplicateFinderTest {
     public void testDuplicateDetection() {
         Set<String> folders = new HashSet<String>();
         folders.add("target/test-classes/structure3");
-        List<MovieInfo> movies = scanner.scan(folders);
+        List<MovieInfo> movies = scanner.scan(folders, null);
 
         {
             assertEquals(4, movies.size());

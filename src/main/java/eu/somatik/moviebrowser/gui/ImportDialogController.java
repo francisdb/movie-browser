@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class ImportDialogController {
     private final Map<MovieInfo,MovieService> lastServices;
     private final Map<MovieInfo,List<? extends MovieSearchResult>> lastSearchResults;
 
-
+    private FileScanMonitor fileScanMonitor; 
     private List<MovieInfo> movies;
     private MovieInfo currentMovieInfo;
 
@@ -83,12 +84,14 @@ public class ImportDialogController {
     }
 
     public void startImporting(final Component componentToCenterOn) {
+        fileScanMonitor = new FileScanMonitor(componentToCenterOn, "Importing from " + scanDirectory.getAbsolutePath());
+        
         new SwingWorker<List<MovieInfo>, Void>() {
 
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
                 LOGGER.info("scanning in " + scanDirectory.getAbsolutePath());
-                List<MovieInfo> list = browser.getFolderScanner().scan(Collections.singleton(scanDirectory.getAbsolutePath()));
+                List<MovieInfo> list = browser.getFolderScanner().scan(Collections.singleton(scanDirectory.getAbsolutePath()), fileScanMonitor);
                 return new DuplicateFinder(browser.getMovieCache()).filter(list);
             }
 

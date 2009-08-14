@@ -32,7 +32,7 @@ public class AdvancedFolderScannerTest {
     public void testStructure1() {
         Set<String> folders = new HashSet<String>();
         folders.add("target/test-classes/structure1");
-        List<MovieInfo> movies = scanner.scan(folders);
+        List<MovieInfo> movies = scanner.scan(folders, null);
         assertEquals(3, movies.size());
         Map<String, MovieInfo> map = map(movies);
         assertNotNull("hackers", map.get("hackers"));
@@ -44,7 +44,7 @@ public class AdvancedFolderScannerTest {
     public void testStructure2() {
         Set<String> folders = new HashSet<String>();
         folders.add("target/test-classes/structure2");
-        List<MovieInfo> movies = scanner.scan(folders);
+        List<MovieInfo> movies = scanner.scan(folders, null);
         assertEquals(3, movies.size());
         Map<String, MovieInfo> map = map(movies);
         assertNotNull("dumb and dumber", map.get("dumb and dumber"));
@@ -56,7 +56,7 @@ public class AdvancedFolderScannerTest {
     public void testStructure3() {
         Set<String> folders = new HashSet<String>();
         folders.add("target/test-classes/structure3");
-        List<MovieInfo> movies = scanner.scan(folders);
+        List<MovieInfo> movies = scanner.scan(folders, null);
         assertEquals(4, movies.size());
         Map<String, MovieInfo> map = map(movies);
         assertNotNull("love and more", map.get("love and more"));

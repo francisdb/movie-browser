@@ -730,7 +730,7 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
 
             @Override
             protected List<MovieInfo> doInBackground() throws Exception {
-                List<MovieInfo> list = browser.getFolderScanner().scan(folders);
+                List<MovieInfo> list = browser.getFolderScanner().scan(folders, null);
                 return new DuplicateFinder(browser.getMovieCache()).filter(list);
             }
 

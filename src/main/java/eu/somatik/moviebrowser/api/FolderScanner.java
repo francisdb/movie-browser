@@ -19,6 +19,8 @@
 package eu.somatik.moviebrowser.api;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.service.AsyncMonitor;
+
 import java.util.List;
 import java.util.Set;
 
@@ -34,5 +36,13 @@ public interface FolderScanner {
      * @return a List of MovieInfo
      */
     List<MovieInfo> scan(final Set<String> folders);
+
+    /**
+     * Scans the folders
+     * @param folders
+     * @param monitor TODO
+     * @return a List of MovieInfo
+     */
+    List<MovieInfo> scan(final Set<String> folders, AsyncMonitor monitor);
 
 }
