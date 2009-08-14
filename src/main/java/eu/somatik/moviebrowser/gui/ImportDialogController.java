@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import java.util.logging.Level;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
@@ -117,6 +118,22 @@ public class ImportDialogController {
             }
         }.execute();
 
+    }
+
+    void openLocation() {
+        if (currentMovieInfo != null) {
+            FileGroup fg = currentMovieInfo.getMovie().getUniqueFileGroup();
+            if (fg != null) {
+                String path = fg.getDirectoryPath();
+                if (path != null && path.trim().length() > 0) {
+                    try {
+                        Desktop.getDesktop().open(new File(path));
+                    } catch (IOException ex) {
+                        LOGGER.error("Error during opening "+path, ex);
+                    }
+                }
+            }
+        }
     }
 
     void suggestedTitlesDoubleClicked(MovieSearchResult selectedMovie) {
