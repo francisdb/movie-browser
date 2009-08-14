@@ -83,21 +83,44 @@ public class AdvancedFolderScanner implements FolderScanner {
      */
     @Override
     public synchronized List<MovieInfo> scan(final Set<String> folders) {
+        return scan(folders, null);
+    }
+
+    /**
+     * Scans the folders
+     * 
+     * @param folders
+     * @return a List of MovieInfo
+     *
+     * TODO get rid of the synchronized and create a factory or pass all state data
+     */
+    @Override
+    public synchronized List<MovieInfo> scan(final Set<String> folders, AsyncMonitor monitor) {
         File folder;
         movies = new ArrayList<MovieInfo>();
+        
+        if (monitor != null) {
+            monitor.start();
+        }
         for (String path : folders) {
             folder = new File(path);
             if (folder.exists()) {
                 currentLabel = folder.getAbsolutePath();
                 LOGGER.info("scanning "+folder.getAbsolutePath());
                 try {
-					browse(folder.getCanonicalFile());
-				} catch (IOException e) {
-					LOGGER.error("error during acquiring canonical path for "+folder.getAbsolutePath() +", "+e.getMessage(), e);
-				}
+                    browse(folder.getCanonicalFile(), monitor);
+                } catch (IOException e) {
+                    LOGGER.error("error during acquiring canonical path for " + folder.getAbsolutePath() + ", " + e.getMessage(), e);
+                } catch (InterruptedException ie) {
+                    LOGGER.info("task is cancelled!" + ie.getMessage());
+                    return null;
+                }
             }else{
                 LOGGER.warn("folder "+folder.getAbsolutePath()+" does not exist!");
             }
+        }
+        if (monitor != null) {
+            monitor.finish();
         }
         return movies;
     }
@@ -105,11 +128,19 @@ public class AdvancedFolderScanner implements FolderScanner {
     /**
      * 
      * @param folder
+     * @param monitor 
      * @return true, if it contained movie file
+     * @throws InterruptedException 
      */
-    private boolean browse(File folder) {
+    private boolean browse(File folder, AsyncMonitor monitor) throws InterruptedException {
         LOGGER.trace("entering "+folder.getAbsolutePath());
         File[] files = folder.listFiles();
+        if (monitor != null) {
+            if (monitor.isCanceled()) {
+                throw new InterruptedException("at "+folder.getAbsolutePath());
+            }
+            monitor.step("scanning " + folder.getAbsolutePath());
+        }
 
         Set<String> plainFileNames = new HashSet<String>();
         int subDirectories = 0;
@@ -180,7 +211,7 @@ public class AdvancedFolderScanner implements FolderScanner {
         boolean subFolderContainMovie = false;
         for (File f : files) {
             if (f.isDirectory() && !f.getName().equalsIgnoreCase("sample") && !f.getName().startsWith(".")) {
-                subFolderContainMovie |= browse(f);
+                subFolderContainMovie |= browse(f, monitor);
             }
         }
         
