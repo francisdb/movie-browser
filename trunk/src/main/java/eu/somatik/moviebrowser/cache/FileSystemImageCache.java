@@ -160,7 +160,10 @@ public class FileSystemImageCache implements ImageCache {
                         try{
                             FileTools.copy(cover, save);
                         }catch(FileNotFoundException ex){
-                            LOGGER.warn("Could not save cover to "+save.getAbsolutePath());
+                            LOGGER.warn(String.format("Could not save cover from %s to %s (%s)",
+                                    cover.getAbsolutePath(),
+                                    save.getAbsolutePath(),
+                                    ex.getMessage()) );
                         }
                     }
                 }

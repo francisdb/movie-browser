@@ -193,6 +193,7 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
 
     @Override
     protected synchronized void save() {
+        // do we need to save data?
         if(stuffToSave.get()){
             long start = System.currentTimeMillis();
             // make defensive copy and save
@@ -203,8 +204,6 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
             stuffToSave.set(false);
             long passed = System.currentTimeMillis() - start;
             LOGGER.info("Saved movies to disk: "+passed+" msec");
-        }else{
-            // nothing to save
         }
     }
 

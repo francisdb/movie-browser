@@ -30,7 +30,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -797,6 +796,7 @@ public class CDShelf extends JPanel {
             if ((scrollerTimer == null || !scrollerTimer.isRunning()) &&
                     drawableAvatars != null) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    // TODO implement
                 }
             }
         }
@@ -811,6 +811,7 @@ public class CDShelf extends JPanel {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     DrawableAvatar avatar = getHitAvatar(e.getX(), e.getY());
                     if (avatar != null && avatar.getIndex() == avatarIndex) {
+                        // TODO implement
                     }
                 }
             }

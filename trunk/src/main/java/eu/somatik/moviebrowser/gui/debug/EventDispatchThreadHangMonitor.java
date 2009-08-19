@@ -56,6 +56,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -88,6 +90,9 @@ import javax.swing.SwingUtilities;
  * https://swinghelper.dev.java.net/
  */
 public final class EventDispatchThreadHangMonitor extends EventQueue {
+
+    private static final Logger logger = LoggerFactory.getLogger(EventDispatchThreadHangMonitor.class);
+
     private static final EventDispatchThreadHangMonitor INSTANCE = new EventDispatchThreadHangMonitor();
 
     // Time to wait between checks that the event dispatch thread isn't hung.
@@ -167,7 +172,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
             hangNumber = getNewHangNumber();
             String stackTrace = stackTraceToString(currentStack);
             lastReportedStack = currentStack;
-            Log.warn("(hang #" + hangNumber + ") event dispatch thread stuck processing event for " + timeSoFar() + " ms:" + stackTrace);
+            logger.warn("(hang #" + hangNumber + ") event dispatch thread stuck processing event for " + timeSoFar() + " ms:" + stackTrace);
             checkForDeadlock();
         }
 
@@ -195,7 +200,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
 
         public void dispose() {
             if (lastReportedStack != null) {
-                Log.warn("(hang #" + hangNumber + ") event dispatch thread unstuck after " + timeSoFar() + " ms.");
+                logger.warn("(hang #" + hangNumber + ") event dispatch thread unstuck after " + timeSoFar() + " ms.");
             }
         }
     }
@@ -258,11 +263,13 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
     }
 
     private void debug(String which) {
-        if (false) {
+        if (logger.isTraceEnabled()) {
+            StringBuilder sb = new StringBuilder();
             for (int i = dispatches.size(); i >= 0; --i) {
-                System.out.print(' ');
+                sb.append(' ');
             }
-            System.out.println(which);
+            sb.append(which);
+            logger.trace(which);
         }
     }
 
@@ -303,10 +310,10 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
         if (threadIds == null) {
             return;
         }
-        Log.warn("deadlock detected involving the following threads:");
+        logger.warn("deadlock detected involving the following threads:");
         ThreadInfo[] threadInfos = threadBean.getThreadInfo(threadIds, Integer.MAX_VALUE);
         for (ThreadInfo info : threadInfos) {
-            Log.warn("Thread #" + info.getThreadId() + " " + info.getThreadName() + 
+            logger.warn("Thread #" + info.getThreadId() + " " + info.getThreadName() +
                     " (" + info.getThreadState() + ") waiting on " + info.getLockName() + 
                     " held by " + info.getLockOwnerName() + stackTraceToString(info.getStackTrace()));
         }
@@ -502,9 +509,4 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
         }
     }
 
-    private static class Log {
-        public static void warn(String str) {
-            System.out.println(str);
-        }
-    }
 }
