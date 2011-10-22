@@ -18,15 +18,18 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import java.awt.Component;
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import java.util.logging.Level;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
@@ -44,11 +47,6 @@ import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 import eu.somatik.moviebrowser.service.DuplicateFinder;
 import eu.somatik.moviebrowser.service.MovieVisitor;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  *

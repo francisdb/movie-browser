@@ -54,10 +54,10 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
     
     static class RowInfo<T> {
         T row;
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         List children;
         
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         public RowInfo(T value, int size) {
             this.row = value;
             this.children = new ArrayList(size);
@@ -92,7 +92,7 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         public Object getValue(int column) {
             switch (column) {
                 case NAME : return row.getTitle();
-                case LABEL : return row.getDirector();
+                case LABEL : return row.getDirectorList();
                 case TYPE : return row.getGenres().toString();
                 default :
                     return null;

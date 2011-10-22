@@ -20,12 +20,13 @@ package eu.somatik.moviebrowser.gui;
 
 import java.util.Set;
 
+import javax.swing.RowFilter;
+import javax.swing.table.TableModel;
+
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
-import javax.swing.RowFilter;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -45,7 +46,9 @@ public class MovieTableRowFilter extends RowFilter<TableModel, Integer> {
         StorableMovie movie = info.getMovie();
         if (movie.getTitle() != null && movie.getTitle().toLowerCase().contains(filterText)) {
             return true;
-        } else if (movie.getDirector() != null && movie.getDirector().toLowerCase().contains(filterText)) {
+        } else if (movie.getDirectorList().toLowerCase().contains(filterText)) {
+            return true;
+        } else if (movie.getActorList().toLowerCase().contains(filterText)) {
             return true;
         } else if (movie.getPlot() != null && movie.getPlot().toLowerCase().contains(filterText)) {
             return true;
