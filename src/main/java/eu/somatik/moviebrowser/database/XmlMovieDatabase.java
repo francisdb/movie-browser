@@ -228,8 +228,9 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
     private void saveToFile(List<StorableMovie> movies) {
         Writer os = null;
         try {
-            os = new BufferedWriter(new FileWriter(path));
+            os = new BufferedWriter(new FileWriter(path + ".save"));
             xstream.toXML(movies, os);
+            
         } catch (IOException e) {
             LOGGER.error("Could not save cache to xml", e);
         } finally {
@@ -241,6 +242,11 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
                 }
             }
         }
+        File tempFile = new File(path + ".save");
+        File saveFile = new File(path);
+        saveFile.delete();
+        tempFile.renameTo(saveFile);
+        
     }
 
     @SuppressWarnings("unchecked")
