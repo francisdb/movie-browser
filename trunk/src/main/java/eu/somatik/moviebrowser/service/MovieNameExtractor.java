@@ -82,6 +82,7 @@ public class MovieNameExtractor {
         ".subpack",
         ".subfix",
         ".syncfix",
+        ".ts",
         ".cd1",
         ".cd2",
         ".screener",
@@ -132,6 +133,12 @@ public class MovieNameExtractor {
             //getYear(movieName);
         boolean release = false;
         for (String bad : TO_REMOVE) {
+            if(movieName.contains(bad)){
+                // these strings should not be available in non-release movies
+                release = true;
+                movieName = movieName.replaceAll(bad, "");
+            }
+            bad = bad.replace('.', ' ');
             if(movieName.contains(bad)){
                 // these strings should not be available in non-release movies
                 release = true;
