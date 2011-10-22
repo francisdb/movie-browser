@@ -19,6 +19,8 @@
 package eu.somatik.moviebrowser.service;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.somatik.moviebrowser.domain.Language;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  *
@@ -89,6 +89,7 @@ public class MovieNameExtractor {
         ".dvdr",
         ".dvd",
         ".pal",
+        ".1080p",
         ".direcors.cut",
         ".extended.cut",
         ".repack",

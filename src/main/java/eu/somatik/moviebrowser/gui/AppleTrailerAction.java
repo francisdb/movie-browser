@@ -22,13 +22,13 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.api.TrailerFinder;
-import com.flicklib.service.movie.apple.AppleTrailerFinder;
-import eu.somatik.moviebrowser.MovieBrowser;
-import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+
+import eu.somatik.moviebrowser.MovieBrowser;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 
 /**
  * This action tries to show the apple trailer site
@@ -50,8 +50,7 @@ class AppleTrailerAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         MovieInfo info = mainFrame.getSelectedMovie();
         if (info!=null) {
-            TrailerFinder finder = new AppleTrailerFinder();
-            String url = finder.findTrailerUrl(info.getMovie().getTitle(), null);
+            String url = browser.getTrailers().findTrailerUrl(info.getMovie().getTitle(), null);
             if (url == null) {
                 JOptionPane.showMessageDialog(mainFrame, "Could not find a trailer on www.apple.com");
             } else {

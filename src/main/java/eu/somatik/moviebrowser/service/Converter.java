@@ -18,15 +18,16 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.flicklib.domain.Movie;
 import com.flicklib.domain.MoviePage;
+
 import eu.somatik.moviebrowser.domain.Genre;
 import eu.somatik.moviebrowser.domain.Language;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
-import java.util.HashSet;
 
 /**
  * TODO this class could work using reflection!
@@ -39,7 +40,7 @@ public class Converter {
         movie.setRuntime(storableMovie.getRuntime());
         movie.setTitle(storableMovie.getTitle());
         movie.setYear(storableMovie.getYear());
-        movie.setDirector(storableMovie.getDirector());
+        movie.getDirectors().addAll(storableMovie.getDirectors());
         movie.setType(storableMovie.getType());
         for (Language lang : storableMovie.getLanguages()) {
             movie.addLanguage(lang.getName());
@@ -54,7 +55,7 @@ public class Converter {
         storableMovie.setPlot(movie.getPlot());
         storableMovie.setRuntime(movie.getRuntime());
         storableMovie.setYear(movie.getYear());
-        storableMovie.setDirector(movie.getDirector());
+        storableMovie.getDirectors().addAll(movie.getDirectors());
         storableMovie.setType(movie.getType());
         for (String lang : movie.getLanguages()) {
             storableMovie.addLanguage(new Language(lang));
@@ -69,7 +70,8 @@ public class Converter {
         storableMovie.setPlot(movie.getPlot());
         storableMovie.setRuntime(movie.getRuntime());
         storableMovie.setYear(movie.getYear());
-        storableMovie.setDirector(movie.getDirector());
+        storableMovie.getDirectors().addAll(movie.getDirectors());
+        storableMovie.getActors().addAll(movie.getActors());
         storableMovie.setType(movie.getType());
         storableMovie.getLanguages().clear();
         for (String lang : movie.getLanguages()) {

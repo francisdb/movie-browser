@@ -35,13 +35,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import ch.qos.logback.classic.LoggerContext;
-//import ch.qos.logback.classic.joran.JoranConfigurator;
-//import ch.qos.logback.core.joran.spi.JoranException;
-//import ch.qos.logback.core.util.StatusPrinter;
-
 import com.flicklib.api.InfoFetcherFactory;
 import com.flicklib.api.SubtitlesLoader;
+import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
 import com.flicklib.module.FlicklibModule;
 import com.flicklib.module.NetFlixAuthModule;
@@ -52,8 +48,8 @@ import com.google.inject.Injector;
 import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.gui.IconLoader;
 import eu.somatik.moviebrowser.gui.MainFrame;
 import eu.somatik.moviebrowser.gui.debug.CheckThreadViolationRepaintManager;
@@ -89,6 +85,7 @@ public class MovieBrowser {
     private final InfoFetcherFactory fetcherFactory;
     private final Map<MovieService,ContentProvider> contentProviders;
     private final ContentProvider defaultContentProvider;
+    private final TrailerFinder trailers;
     
     /** 
      * Creates a new instance of MovieBrowser
@@ -117,7 +114,8 @@ public class MovieBrowser {
             final InfoHandler infoHandler,
             final MovieDatabase movieCache,
             final ExporterLocator exporterLocator,
-            final InfoFetcherFactory fetcherFactory) {
+            final InfoFetcherFactory fetcherFactory,
+            final TrailerFinder trailers) {
         this.movieFinder = finder;
         this.folderScanner = folderScanner;
         this.fileSystemScanner = fileSystemScanner;
@@ -131,6 +129,7 @@ public class MovieBrowser {
         this.fetcherFactory = fetcherFactory;
         this.contentProviders = setupContentProviders();
         this.defaultContentProvider = contentProviders.get(MovieService.IMDB);
+        this.trailers = trailers;
     }
 
 
@@ -260,6 +259,10 @@ public class MovieBrowser {
 
     public InfoFetcherFactory getFetcherFactory() {
         return fetcherFactory;
+    }
+    
+    public TrailerFinder getTrailers() {
+        return trailers;
     }
     
     public void openUrl(String url) {

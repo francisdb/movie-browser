@@ -18,7 +18,10 @@
  */
 package eu.somatik.moviebrowser.domain;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -32,13 +35,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.flicklib.domain.MovieService;
 import com.flicklib.domain.MovieType;
-import java.util.Date;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * 
@@ -63,7 +65,9 @@ public class StorableMovie implements Cloneable, Persistent {
     private String plot;
     private Integer year;
 
-    private String director;
+    private List<String> directors;
+    
+    private List<String> actors;
 
     private MovieType type;
 
@@ -198,12 +202,26 @@ public class StorableMovie implements Cloneable, Persistent {
         this.year = year;
     }
 
-    public String getDirector() {
-        return director;
+    public List<String> getDirectors() {
+        if (directors == null) {
+            directors = new ArrayList<String>();
+        }
+        return directors;
     }
 
-    public void setDirector(String director) {
-        this.director = director;
+    public void setDirectors(List<String> director) {
+        this.directors = director;
+    }
+    
+    public List<String> getActors() {
+        if (actors == null) {
+            actors = new ArrayList<String>();
+        }
+        return actors;
+    }
+    
+    public void setActors(List<String> actors) {
+        this.actors = actors;
     }
 
     public MovieType getType() {
@@ -411,6 +429,28 @@ public class StorableMovie implements Cloneable, Persistent {
             count += f.getLocations().size();
         }
         return count;
+    }
+
+    public String getDirectorList() {
+        StringBuilder sb = new StringBuilder();
+        for (String s : getDirectors()) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
+    public String getActorList() {
+        StringBuilder sb = new StringBuilder();
+        for (String s : getActors()) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(s);
+        }
+        return sb.toString();
     }
     
 }

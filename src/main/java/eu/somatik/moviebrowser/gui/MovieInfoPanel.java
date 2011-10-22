@@ -18,22 +18,6 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.MovieBrowser;
-import eu.somatik.moviebrowser.cache.ImageCache;
-import eu.somatik.moviebrowser.config.Settings;
-import eu.somatik.moviebrowser.domain.FileGroup;
-import eu.somatik.moviebrowser.domain.StorableMovie;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.domain.Genre;
-import eu.somatik.moviebrowser.domain.Language;
-import eu.somatik.moviebrowser.domain.MovieLocation;
-import eu.somatik.moviebrowser.gui.shelf.CDShelf;
-import eu.somatik.moviebrowser.gui.shelf.GradientPanel;
-import eu.somatik.moviebrowser.gui.shelf.StackLayout;
-import eu.somatik.moviebrowser.service.InfoHandler;
-import eu.somatik.moviebrowser.service.ui.ContentProvider;
-
 import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -49,13 +33,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.domain.MovieService;
+
+import eu.somatik.moviebrowser.MovieBrowser;
+import eu.somatik.moviebrowser.cache.ImageCache;
+import eu.somatik.moviebrowser.config.Settings;
+import eu.somatik.moviebrowser.domain.FileGroup;
+import eu.somatik.moviebrowser.domain.Genre;
+import eu.somatik.moviebrowser.domain.Language;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.domain.StorableMovie;
+import eu.somatik.moviebrowser.gui.shelf.CDShelf;
+import eu.somatik.moviebrowser.gui.shelf.GradientPanel;
+import eu.somatik.moviebrowser.gui.shelf.StackLayout;
+import eu.somatik.moviebrowser.service.InfoHandler;
+import eu.somatik.moviebrowser.service.ui.ContentProvider;
 
 /**
  *
@@ -72,10 +75,10 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private final MovieFileTreeTableModel fileTree;
     private ContentProvider provider;
     private MovieInfo info;
-    private ResourceBundle bundle;
-    private MovieBrowser browser;
+    private final ResourceBundle bundle;
+    private final MovieBrowser browser;
 
-    private MovieInfoTableModel tableModel;
+    private final MovieInfoTableModel tableModel;
     private CDShelf shelf;
 
 
@@ -195,7 +198,12 @@ public class MovieInfoPanel extends javax.swing.JPanel {
             String type = movie.getType() == null ? "" : movie.getType().getName();
             //builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.dir")+"</strong> ").append(dir).append("<br/>");
             builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.type")+"</strong> ").append(type).append("<br/>");
-            builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.director")+"</strong> ").append(movie.getDirector()).append("<br/>");
+            for (String director : movie.getDirectors()) {
+                builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.director")+"</strong> ").append(director).append("<br/>");
+            }
+            for (String actor : movie.getActors()) {
+                builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.actor")+"</strong> ").append(actor).append("<br/>");
+            }
             builder.append("<strong>"+bundle.getString("MovieInfoPanel.panel.genres")+"</strong> ");
             for (Genre genre : movie.getGenres()) {
                 if (first) {

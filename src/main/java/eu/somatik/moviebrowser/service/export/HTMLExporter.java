@@ -79,7 +79,7 @@ class HTMLExporter implements Exporter {
                 title = movie.getTitle();
                 year = movie.getYear();
                 runtime = movie.getRuntime();
-                director = movie.getDirector();
+                director = movie.getDirectorList();
                 score = scoreCalculator.calculate(movieInfo);
                 out.println("<tr><td>" + score + "</td><td><a href='" + url + "'>" + title + "</a></td><td>" + year + "</td><td>" + director + "</td><td>" + runtime + "</td></tr>");
             } catch (NullPointerException ex) {
