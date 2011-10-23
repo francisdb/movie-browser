@@ -50,7 +50,7 @@ import javax.persistence.Transient;
 })
 public class FileGroup implements Cloneable, Persistent {
 
-    public final static long MB = 1024*1024;
+    private final static long MB = 1024*1024;
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

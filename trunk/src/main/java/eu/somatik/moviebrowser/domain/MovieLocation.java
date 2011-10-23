@@ -32,22 +32,22 @@ public class MovieLocation implements Cloneable, Persistent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
-    String path;
+    private String path;
 
-    String label;
-
-    @ManyToOne
-    StorableMovie movie;
+    private String label;
 
     @ManyToOne
-    FileGroup group;
+    private StorableMovie movie;
+
+    @ManyToOne
+    private FileGroup group;
     /**
      * mark if the folder is safe to rename, so it is not shared with other films.
      */
     @Column(nullable=false, columnDefinition="boolean default 0")
-    boolean folderRenamingSafe = false;
+    private boolean folderRenamingSafe = false;
 
     public MovieLocation() {
 
