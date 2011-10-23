@@ -18,6 +18,7 @@
  */
 package eu.somatik.moviebrowser.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -103,6 +104,7 @@ public class Converter {
         for (String genre :movieSite.getGenres()) {
             genres.add(Genre.get(genre));
         }
-
+        storableMovieSite.setActors(new ArrayList<String>(movieSite.getActors()));
+        storableMovieSite.setDirectors(new ArrayList<String>(movieSite.getDirectors()));
     }
 }
