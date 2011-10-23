@@ -18,12 +18,15 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieService;
-import com.google.inject.Singleton;
 import java.net.URL;
+
 import javax.swing.ImageIcon;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.domain.MovieService;
+import com.google.inject.Singleton;
 
 /**
  *
@@ -51,45 +54,7 @@ public class IconLoader {
     }
     
     public ImageIcon iconFor(MovieService service){
-        String fileName = null;
-        switch(service){
-            case FLIXSTER:
-                fileName = "images/16/flixter.png";
-                break;
-            case GOOGLE:
-                fileName = "images/16/google.png";
-                break;
-            case IMDB:
-                fileName = "images/16/imdb.png";
-                break;
-            case MOVIEWEB:
-                fileName = "images/16/movieweb.png";
-                break;
-//            case OMDB:
-//                fileName = "images/16/omdb.png";
-//                break;
-            case TOMATOES:
-                fileName = "images/16/rottentomatoes.png";
-                break;
-            case NETFLIX:
-                fileName = "images/16/netflix.png";
-                break;
-            case PORTHU:
-                fileName = "images/16/porthu.png";
-                break;
-            case CINEBEL:
-                fileName = "images/16/cinebel.png";
-                break;
-            case OFDB:
-                fileName = "images/16/ofdb.png";
-                break;
-            case XPRESSHU:
-                fileName = "images/16/xpresshu.png";
-                break;
-            default:
-                throw new AssertionError("Uncatched movieservice: "+service);
-                
-        }
+        String fileName = "images/16/"+service.name().toLowerCase()+".png";
         ImageIcon icon = null;
         if(fileName != null){
             icon = loadIcon(fileName);
