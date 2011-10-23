@@ -20,6 +20,7 @@ package eu.somatik.moviebrowser.domain;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -74,6 +75,10 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	private String plot;
 	
 	private Set<Genre> genres;
+	
+	private List<String> directors;
+	
+	private List<String> actors;
 
 	/**
 	 * Constructs a new StorableMovieSite
@@ -261,6 +266,21 @@ public class StorableMovieSite implements Cloneable, Persistent {
 	
 	public void setGenres(Set<Genre> genres) {
             this.genres = genres;
+        }
+	
+	public void setActors(List<String> actors) {
+            this.actors = actors;
+        }
+	public List<String> getActors() {
+            return actors;
+        }
+	
+	public void setDirectors(List<String> directors) {
+            this.directors = directors;
+        }
+	
+	public List<String> getDirectors() {
+            return directors;
         }
 	
 	
