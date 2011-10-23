@@ -56,7 +56,12 @@
         <dependency>
             <groupId>com.flicklib</groupId>
             <artifactId>flicklib-core</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>${flicklib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.flicklib</groupId>
+            <artifactId>flicklib-ehcache</artifactId>
+            <version>${flicklib.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -276,6 +281,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <flicklib.version>0.5-SNAPSHOT</flicklib.version>
     </properties>
 
 </project>

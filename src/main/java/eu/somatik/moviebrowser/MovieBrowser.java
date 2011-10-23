@@ -41,9 +41,12 @@ import com.flicklib.api.TrailerFinder;
 import com.flicklib.domain.MovieService;
 import com.flicklib.module.FlicklibModule;
 import com.flicklib.module.NetFlixAuthModule;
+import com.flicklib.service.SourceLoader;
+import com.flicklib.service.cache.EHCacheSelector;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.api.FolderScanner;
@@ -211,7 +214,9 @@ public class MovieBrowser {
     public static void main(String args[]) {
         // TODO request a key for moviebrowser
         NetFlixAuthModule authModule = new NetFlixAuthModule("", "");
-        Injector injector = Guice.createInjector(authModule, new MovieBrowserModule(), new FlicklibModule(), new ExporterModule());
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        FlicklibModule f = new FlicklibModule().setLoaderClass((Class<Provider<SourceLoader>>)(Class)EHCacheSelector.class);
+        Injector injector = Guice.createInjector(authModule, new MovieBrowserModule(), f, new ExporterModule());
         MovieBrowser browser = injector.getInstance(MovieBrowser.class);
         browser.start();
     }
