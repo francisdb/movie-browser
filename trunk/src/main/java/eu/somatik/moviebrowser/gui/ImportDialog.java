@@ -366,12 +366,7 @@ class ImportDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void suggestedTitlesListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_suggestedTitlesListValueChanged
-        if(!evt.getValueIsAdjusting() && suggestedTitlesList.getSelectedIndex() != -1){
-            evt.getFirstIndex();
-            evt.getLastIndex();
-            evt.getValueIsAdjusting();
-//            System.out.append("Event for indexes " + firstIndex + " - " + lastIndex + "; isAdjusting is " + isAdjusting + "; selected indexe: " + suggestedTitlesList.getSelectedIndex());
-//            System.out.println();
+        if(!evt.getValueIsAdjusting()){
             controller.selectionChanged();
         }
     }//GEN-LAST:event_suggestedTitlesListValueChanged
