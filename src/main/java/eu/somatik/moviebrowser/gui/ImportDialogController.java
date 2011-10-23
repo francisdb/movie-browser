@@ -52,7 +52,7 @@ import eu.somatik.moviebrowser.service.MovieVisitor;
  *
  * @author zsombor
  */
-public class ImportDialogController {
+class ImportDialogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportDialogController.class);
     
@@ -69,7 +69,7 @@ public class ImportDialogController {
     private List<MovieInfo> movies;
     private MovieInfo currentMovieInfo;
 
-    public ImportDialogController(MovieBrowser browser, ImportDialog dialog, File selectedFile, MovieInfoTableModel model) {
+    ImportDialogController(MovieBrowser browser, ImportDialog dialog, File selectedFile, MovieInfoTableModel model) {
         this.dialog = dialog;
         this.dialog.setController(this);
         this.dialog.setMovieService(browser.getSettings().getPreferredService());
@@ -82,7 +82,7 @@ public class ImportDialogController {
         this.lastSearchResults= new HashMap<MovieInfo,List<? extends MovieSearchResult>>();
     }
 
-    public void startImporting(final Component componentToCenterOn) {
+    void startImporting(final Component componentToCenterOn) {
         fileScanMonitor = new FileScanMonitor(componentToCenterOn, "Importing from " + scanDirectory.getAbsolutePath());
         
         new SwingWorker<List<MovieInfo>, Void>() {
