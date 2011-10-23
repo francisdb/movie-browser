@@ -18,11 +18,10 @@
  */
 package eu.somatik.moviebrowser.service;
 
-import com.flicklib.tools.LevenshteinDistance;
-import com.google.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,6 +32,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.flicklib.tools.LevenshteinDistance;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.api.FolderScanner;
@@ -42,7 +43,6 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
-import java.util.Arrays;
 
 /**
  * Scans a folder for movies
@@ -72,19 +72,6 @@ public class AdvancedFolderScanner implements FolderScanner {
 
     private List<MovieInfo> movies;
     private String currentLabel;
-
-    /**
-     * Scans the folders
-     * 
-     * @param folders
-     * @return a List of MovieInfo
-     *
-     * TODO get rid of the synchronized and create a factory or pass all state data
-     */
-    @Override
-    public synchronized List<MovieInfo> scan(final Set<String> folders) {
-        return scan(folders, null);
-    }
 
     /**
      * Scans the folders

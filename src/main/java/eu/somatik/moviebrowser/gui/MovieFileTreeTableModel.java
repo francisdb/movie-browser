@@ -39,26 +39,26 @@ import eu.somatik.moviebrowser.domain.StorableMovieSite;
  * @author zsombor
  *
  */
-public class MovieFileTreeTableModel extends AbstractTreeTableModel {
+class MovieFileTreeTableModel extends AbstractTreeTableModel {
 
-    final static int NAME = 0;
-    final static int TYPE = 1;
-    final static int SIZE = 2;
-    final static int LABEL = 3;
+    private final static int NAME = 0;
+    private final static int TYPE = 1;
+    private final static int SIZE = 2;
+    private final static int LABEL = 3;
     
     
-    final static int COLUMN_COUNT = 3;
+    private final static int COLUMN_COUNT = 3;
     
-    final static Object DUMMY_RATING = new Object();
-    StorableMovie movie;
+    private final static Object DUMMY_RATING = new Object();
+    private StorableMovie movie;
     
-    static class RowInfo<T> {
-        T row;
+    private static class RowInfo<T> {
+        protected final T row;
         @SuppressWarnings("rawtypes")
-        List children;
+        protected final List children;
         
         @SuppressWarnings("rawtypes")
-        public RowInfo(T value, int size) {
+        private RowInfo(T value, int size) {
             this.row = value;
             this.children = new ArrayList(size);
         }
@@ -66,7 +66,7 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
             return null;
         }
         
-        public Object getChild(int index) {
+        private Object getChild(int index) {
             return children.get(index);
         }
         
@@ -74,15 +74,15 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
             return children.size();
         }
         
-        public int indexOf(Object child) {
+        private int indexOf(Object child) {
             return children.indexOf(child);
         }
     }
     
-    static class MovieRowInfo extends RowInfo<StorableMovie> {
+    private static class MovieRowInfo extends RowInfo<StorableMovie> {
 
         @SuppressWarnings("unchecked")
-        public MovieRowInfo(StorableMovie value) {
+        private MovieRowInfo(StorableMovie value) {
             super(value,value.getGroups().size()+1);
             children.add(DUMMY_RATING);
             children.addAll(row.getGroups());
@@ -100,8 +100,9 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         }
     }
     
-    static class RatingsRowInfo extends RowInfo<StorableMovie> {
-        public RatingsRowInfo(StorableMovie value) {
+    private static class RatingsRowInfo extends RowInfo<StorableMovie> {
+        @SuppressWarnings("unchecked")
+        private RatingsRowInfo(StorableMovie value) {
             super(value,value.getSiteInfo().size());
             children.addAll(value.getSiteInfo());
         }
@@ -116,10 +117,10 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         
     }
     
-    static class FileGroupRowInfo extends RowInfo<FileGroup> {
+    private static class FileGroupRowInfo extends RowInfo<FileGroup> {
 
         @SuppressWarnings("unchecked")
-        public FileGroupRowInfo(FileGroup value) {
+        private FileGroupRowInfo(FileGroup value) {
             super(value, value.getFiles().size() + value.getLocations().size());
             children.addAll(value.getLocations());
             children.addAll(value.getFiles());
@@ -159,9 +160,9 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         }
     }
     
-    static class FileRowInfo extends RowInfo<StorableMovieFile> {
+    private static class FileRowInfo extends RowInfo<StorableMovieFile> {
 
-        public FileRowInfo(StorableMovieFile value) {
+        private FileRowInfo(StorableMovieFile value) {
             super(value, 0);
         }
         
@@ -176,9 +177,9 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         }
     }
     
-    static class LocationRowInfo extends RowInfo<MovieLocation> {
+    private static class LocationRowInfo extends RowInfo<MovieLocation> {
 
-        public LocationRowInfo(MovieLocation value) {
+        private LocationRowInfo(MovieLocation value) {
             super(value, 0);
         }
         
@@ -192,9 +193,9 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
         }
     }
     
-    static class SiteRowInfo extends RowInfo<StorableMovieSite> {
+    private static class SiteRowInfo extends RowInfo<StorableMovieSite> {
 
-        public SiteRowInfo(StorableMovieSite value) {
+        private SiteRowInfo(StorableMovieSite value) {
             super(value, 0);
         }
         
@@ -220,9 +221,7 @@ public class MovieFileTreeTableModel extends AbstractTreeTableModel {
     }
     
     
-    
-    
-    Map<Object,RowInfo<?>> rowInfos = new HashMap<Object, RowInfo<?>>();
+    private final Map<Object,RowInfo<?>> rowInfos = new HashMap<Object, RowInfo<?>>();
     /**
      *
      */

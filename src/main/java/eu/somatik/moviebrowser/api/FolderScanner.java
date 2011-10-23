@@ -18,11 +18,11 @@
  */
 package eu.somatik.moviebrowser.api;
 
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.service.AsyncMonitor;
-
 import java.util.List;
 import java.util.Set;
+
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.service.AsyncMonitor;
 
 /**
  *
@@ -30,12 +30,6 @@ import java.util.Set;
  */
 public interface FolderScanner {
 
-    /**
-     * Scans the folders
-     * @param folders
-     * @return a List of MovieInfo
-     */
-    List<MovieInfo> scan(final Set<String> folders);
 
     /**
      * Scans the folders

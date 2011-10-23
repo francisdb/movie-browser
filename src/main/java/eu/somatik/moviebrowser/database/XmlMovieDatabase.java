@@ -57,13 +57,12 @@ import eu.somatik.moviebrowser.domain.StorableMovieSite;
 @Singleton
 public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(XmlMovieDatabase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlMovieDatabase.class);
 
-    final static class GenreConverter implements SingleValueConverter {
+    private final static class GenreConverter implements SingleValueConverter {
 
-        @SuppressWarnings("unchecked")
         @Override
-        public boolean canConvert(Class cls) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class cls) {
             return cls.equals(Genre.class);
         }
 
@@ -78,11 +77,10 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
         }
     }
 
-    final static class LanguageConverter implements SingleValueConverter {
+    private final static class LanguageConverter implements SingleValueConverter {
 
-        @SuppressWarnings("unchecked")
         @Override
-        public boolean canConvert(Class cls) {
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class cls) {
             return cls.equals(Language.class);
         }
 
@@ -103,7 +101,7 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
     private final IdGenerator locationIdGenerator = new IdGenerator();
     private final IdGenerator siteInfoIdGenerator = new IdGenerator();
     private final XStream xstream;
-    final Timer timer;
+    private final Timer timer;
 
     private String path;
     private static final String DBFILE = "database.xml";
@@ -136,11 +134,6 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
                 save();
             }
         }, 0, 1000*10);
-    }
-
-    public XmlMovieDatabase(String path) {
-        this();
-        this.path = path;
     }
 
 

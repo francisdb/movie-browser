@@ -12,15 +12,15 @@ import eu.somatik.moviebrowser.service.AsyncMonitor;
  * @author zsombor
  *
  */
-public class FileScanMonitor implements AsyncMonitor {
+class FileScanMonitor implements AsyncMonitor {
     
-    final static int STEP = 10;
+    private final static int STEP = 10;
 
-    int position;
+    private int position;
     int max;
     ProgressMonitor monitor;
 
-    public FileScanMonitor(Component parentComponent, String startMessage) {
+    FileScanMonitor(Component parentComponent, String startMessage) {
         this.position = 0;
         this.max = STEP;
         this.monitor = new ProgressMonitor(parentComponent, startMessage, "", 0, max);
