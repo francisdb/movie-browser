@@ -31,13 +31,18 @@ import com.flicklib.domain.MovieService;
  */
 public class MovieInfo {
 
+    public static enum LoadType {
+        NEW, TITLE_CHANGED, REFRESH
+    }
+    
     private StorableMovie movie;
 
     private File directory;
     private MovieStatus status;
+    private LoadType load = null;
 
     private boolean needRefetch = false;
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Creates a new instance of MovieInfo
@@ -61,6 +66,13 @@ public class MovieInfo {
         }
     }
 
+    public void setLoadType(LoadType load) {
+        this.load = load;
+    }
+    
+    public LoadType getLoadType() {
+        return load;
+    }
     /**
      * This should trigger an update in the table
      */
@@ -138,6 +150,9 @@ public class MovieInfo {
     
     public void setNeedRefetch(boolean needRefetch) {
         this.needRefetch = needRefetch;
+        if (!needRefetch) {
+            this.load = null;
+        }
     }
     
     public boolean isNeedRefetch() {

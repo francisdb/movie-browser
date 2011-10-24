@@ -43,6 +43,7 @@ import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieInfo.LoadType;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.MovieStatus;
 import eu.somatik.moviebrowser.domain.StorableMovie;
@@ -114,7 +115,6 @@ public class MovieFinder {
 
     public void reloadMovie(MovieInfo movieInfo) {
         MovieService preferredService = settings.getPreferredService();
-        String movieId = movieInfo.siteFor(preferredService).getIdForSite();
 
         List<MovieInfo> list = new ArrayList<MovieInfo>();
         list.add(movieInfo);
@@ -131,10 +131,12 @@ public class MovieFinder {
         for (StorableMovieSite sms : movie.getSiteInfo()) {
             sms.setScore(null);
             sms.setVotes(null);
-            sms.setIdForSite(null);
+            if (sms.getService() != preferredService) {
+                // null out all, but the preferred service id, because the preferred service already know it well.
+                sms.setIdForSite(null);
+            }
         }
         
-        movie.getMovieSiteInfoOrCreate(preferredService).setIdForSite(movieId);
 
         movieInfo.setMovie(movieDatabase.insertOrUpdate(movie));
         loadMovies(list, true);
@@ -213,7 +215,7 @@ public class MovieFinder {
                     // TODO load movie
                     FileGroup group = findMovie(info);
                     if (group!=null) {
-                        MovieLocation directory = group.getDirectory(info.getDirectory().getAbsolutePath());
+                        group.getDirectory(info.getDirectory().getAbsolutePath());
                         //directory.setName(info.getDirectory().getName());
                         info.setMovie(movieDatabase.insertOrUpdate(group.getMovie()));
                     } else {
@@ -222,8 +224,12 @@ public class MovieFinder {
                     info.setStatus(MovieStatus.LOADED);
                 } else {
                     if (info.isNeedRefetch()) {
-                        needExtraServiceCheck = getMovieInfoImdb(info, preferredService);
-                        
+                        if (info.getLoadType() != LoadType.NEW) {
+                            fetchMoviePageInfo(info.getMovie(), preferredService);
+                            needExtraServiceCheck = true;
+                        } else {
+                            needExtraServiceCheck = getMovieInfoImdb(info, preferredService);
+                        }
                         info.setMovie(movieDatabase.insertOrUpdate(info.getMovie()));
                     }
                     info.setStatus(MovieStatus.CACHED);
@@ -251,7 +257,7 @@ public class MovieFinder {
                     // it's files, so it must be a different version, so we add as a new file
                     // group.
                     FileGroup newFileGroup = info.getMovie().getUniqueFileGroup();
-                    MovieLocation directory = newFileGroup.getDirectory(info.getDirectory().getAbsolutePath());
+                    newFileGroup.getDirectory(info.getDirectory().getAbsolutePath());
                     movie.addFileGroup(newFileGroup);
                 	//directory.setName(info.getDirectory().getName());
                 	info.setMovie(movieDatabase.insertOrUpdate(movie));
@@ -304,7 +310,7 @@ public class MovieFinder {
                 LOGGER.trace("Calling fetch on {} for '{}'", service.name(), info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 
-                fetchMoviePageInfo(info, service);
+                fetchMoviePageInfo(info.getMovie(), service);
                 
                 info.setMovie(movieDatabase.insertOrUpdate(info.getMovie()));
                 info.setStatus(MovieStatus.LOADED);
@@ -325,7 +331,7 @@ public class MovieFinder {
     private boolean getMovieInfoImdb(MovieInfo movieInfo, MovieService movieService) {
         StorableMovie newMovie = movieInfo.getMovie();
         try {
-            MoviePage moviePage = fetchMoviePageInfo(movieInfo, movieService);
+            MoviePage moviePage = fetchMoviePageInfo(movieInfo.getMovie(), movieService);
             if (moviePage!=null && moviePage.getIdForSite()!=null) {
                 converter.convert(moviePage, newMovie);
                 //rename titles, if we have IMDB result
@@ -354,22 +360,22 @@ public class MovieFinder {
      * @return the movie page
      * @throws IOException
      */
-    protected MoviePage fetchMoviePageInfo(MovieInfo info, MovieService service) throws IOException {
-        MoviePage site;
+    protected MoviePage fetchMoviePageInfo(StorableMovie movie, MovieService service) throws IOException {
+        MoviePage moviePage;
+        StorableMovieSite storableMovieSite = movie.getMovieSiteInfo(service);
         MovieInfoFetcher fetcher = fetcherFactory.get(service);
-        StorableMovieSite storableMovieSite = info.getMovie().getMovieSiteInfo(service);
         if (storableMovieSite==null || storableMovieSite.getIdForSite()==null) {
-            site = fetcher.fetch(info.getMovie().getTitle());
-            storableMovieSite = info.getMovie().getMovieSiteInfoOrCreate(service);
+            moviePage = fetcher.fetch(movie.getTitle());
+            storableMovieSite = movie.getMovieSiteInfoOrCreate(service);
         } else {
-            site = fetcher.getMovieInfo(storableMovieSite.getIdForSite());
+            moviePage = fetcher.getMovieInfo(storableMovieSite.getIdForSite());
         }
-        if (site!=null) {
-            converter.convert(site, storableMovieSite);
+        if (moviePage!=null) {
+            converter.convert(moviePage, storableMovieSite);
         } else {
-            LOGGER.warn("Movie Page not found for "+info.getMovie().getTitle()+" by "+service);
+            LOGGER.warn("Movie Page not found for "+movie.getTitle()+" by "+service);
         }
-        return site;
+        return moviePage;
     }
     
     public int getRunningTasks() {
