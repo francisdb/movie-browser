@@ -42,6 +42,7 @@ import com.flicklib.domain.MovieService;
 import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.domain.MovieInfo.LoadType;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
@@ -229,7 +230,7 @@ class ImportDialogController {
             movieSite.setIdForSite(result.getIdForSite());
             
             visitor.startVisit(info.getMovie());
-            
+            info.setLoadType(LoadType.NEW);
             browser.getMovieFinder().loadMovie(info, result.getService());
         }
         tableModel.addAll(selectedResults.keySet());

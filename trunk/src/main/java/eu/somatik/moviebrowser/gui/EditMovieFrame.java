@@ -24,7 +24,9 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.DefaultListModel;
@@ -41,8 +43,6 @@ import com.flicklib.domain.MovieService;
 
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.service.MovieFinder;
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -246,8 +246,9 @@ private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     if (moviePage == null) {
         JOptionPane.showMessageDialog(EditMovieFrame.this, java.util.ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle").getString("EditMovieFrame.noMovieSelected"));
     } else {
-        movieInfo.getMovie().setTitle(moviePage.getTitle());
+        movieInfo.getMovie().setTitle(moviePage.getPreferredTitle());
         movieInfo.getMovie().getMovieSiteInfoOrCreate(service).setIdForSite(moviePage.getIdForSite());
+        movieInfo.setLoadType(MovieInfo.LoadType.TITLE_CHANGED);
         movieInfo.setNeedRefetch(true);
         movieFinder.reloadMovie(movieInfo);
         this.dispose();

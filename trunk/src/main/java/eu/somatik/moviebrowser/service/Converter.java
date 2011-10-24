@@ -56,7 +56,8 @@ public class Converter {
         storableMovie.setPlot(movie.getPlot());
         storableMovie.setRuntime(movie.getRuntime());
         storableMovie.setYear(movie.getYear());
-        storableMovie.getDirectors().addAll(movie.getDirectors());
+        storableMovie.setDirectors(new ArrayList<String>(movie.getDirectors()));
+        storableMovie.setActors(new ArrayList<String>(movie.getCast()));
         storableMovie.setType(movie.getType());
         for (String lang : movie.getLanguages()) {
             storableMovie.addLanguage(new Language(lang));
@@ -71,8 +72,8 @@ public class Converter {
         storableMovie.setPlot(movie.getPlot());
         storableMovie.setRuntime(movie.getRuntime());
         storableMovie.setYear(movie.getYear());
-        storableMovie.getDirectors().addAll(movie.getDirectors());
-        storableMovie.getActors().addAll(movie.getActors());
+        storableMovie.setDirectors(new ArrayList<String>(movie.getDirectors()));
+        storableMovie.setActors(new ArrayList<String>(movie.getActors()));
         storableMovie.setType(movie.getType());
         storableMovie.getLanguages().clear();
         for (String lang : movie.getLanguages()) {
