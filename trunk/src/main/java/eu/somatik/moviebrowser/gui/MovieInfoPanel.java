@@ -34,10 +34,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 
 import org.slf4j.Logger;
@@ -381,14 +383,14 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         movieHeader.setDescription(bundle.getString("MovieInfoPanel.movieHeader.description")); // NOI18N
         movieHeader.setTitle(bundle.getString("MovieInfoPanel.movieHeader.title")); // NOI18N
 
-        javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
-        buttonPanel.setLayout(buttonPanelLayout);
-        buttonPanelLayout.setHorizontalGroup(
-            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout gl_buttonPanel = new javax.swing.GroupLayout(buttonPanel);
+        buttonPanel.setLayout(gl_buttonPanel);
+        gl_buttonPanel.setHorizontalGroup(
+            gl_buttonPanel.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 460, Short.MAX_VALUE)
         );
-        buttonPanelLayout.setVerticalGroup(
-            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        gl_buttonPanel.setVerticalGroup(
+            gl_buttonPanel.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 34, Short.MAX_VALUE)
         );
 
@@ -408,24 +410,16 @@ public class MovieInfoPanel extends javax.swing.JPanel {
         movieFileScrollPane.setViewportView(movieFileTreeTable);
 
         infoTabbedPane.addTab(bundle.getString("MovieInfoPanel.movieFileScrollPane.TabConstraints.tabTitle"), movieFileScrollPane); // NOI18N
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(movieHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-            .addComponent(buttonPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(infoTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(movieHeader, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(infoTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
-        );
+        upperPane = new javax.swing.JPanel();
+        new BoxLayout(upperPane, BoxLayout.Y_AXIS);
+        upperPane.setLayout(new BoxLayout(upperPane, BoxLayout.Y_AXIS));
+        upperPane.add(movieHeader);
+        upperPane.add(buttonPanel);
+        splitPane = new javax.swing.JSplitPane(JSplitPane.VERTICAL_SPLIT, true, upperPane, infoTabbedPane);
+        splitPane.setResizeWeight(0.5);
+        add(splitPane);
     }// </editor-fold>//GEN-END:initComponents
 
     private void movieFileTreeTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_movieFileTreeTableKeyReleased
@@ -442,6 +436,8 @@ public class MovieInfoPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane infoTabbedPane;
     private javax.swing.JTextPane infoTextPane;
     private javax.swing.JScrollPane movieFileScrollPane;
+    private javax.swing.JSplitPane splitPane;
+    private javax.swing.JPanel upperPane;
     private org.jdesktop.swingx.JXTreeTable movieFileTreeTable;
     private org.jdesktop.swingx.JXHeader movieHeader;
     // End of variables declaration//GEN-END:variables
