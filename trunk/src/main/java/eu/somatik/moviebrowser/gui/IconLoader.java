@@ -54,7 +54,7 @@ public class IconLoader {
     }
     
     public ImageIcon iconFor(MovieService service){
-        String fileName = "images/16/"+service.name().toLowerCase()+".png";
+        String fileName = "images/16/"+service.getId().toLowerCase()+".png";
         ImageIcon icon = null;
         if(fileName != null){
             icon = loadIcon(fileName);

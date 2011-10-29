@@ -21,6 +21,8 @@ package eu.somatik.moviebrowser.service;
 import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import eu.somatik.moviebrowser.Services;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 
 /**
@@ -55,11 +57,11 @@ public class WeightedScoreCalculator implements ScoreCalculator {
             if (serviceScore != null) {
                 weight = 2;
                 // double weight
-                if (movieService == MovieService.IMDB) {
+                if (movieService.getId().equals(Services.IMDB)) {
                     weight = 4;
                 }
                 // half weight
-                if (movieService == MovieService.MOVIEWEB) {
+                if (movieService.getId().equals(Services.MOVIEWEB)) {
                     weight = 1;
                 }
                 score += serviceScore * weight;

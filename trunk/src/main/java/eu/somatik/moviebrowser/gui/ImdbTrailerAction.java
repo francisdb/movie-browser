@@ -18,14 +18,17 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.api.TrailerFinder;
-import com.flicklib.domain.MovieService;
-import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
-import eu.somatik.moviebrowser.MovieBrowser;
-import eu.somatik.moviebrowser.domain.MovieInfo;
 import java.awt.event.ActionEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+
+import com.flicklib.api.TrailerFinder;
+import com.flicklib.service.movie.imdb.ImdbTrailerFinder;
+
+import eu.somatik.moviebrowser.MovieBrowser;
+import eu.somatik.moviebrowser.Services;
+import eu.somatik.moviebrowser.domain.MovieInfo;
 
 /**
  * This action  tries to show the trailer
@@ -33,15 +36,15 @@ import javax.swing.JOptionPane;
  */
 class ImdbTrailerAction extends AbstractAction {
 
-    MainFrame mainFrame;
-    MovieBrowser browser;
+    private final MainFrame mainFrame;
+    private final MovieBrowser browser;
 
     @Override
     public void actionPerformed(ActionEvent e) {
         MovieInfo info = mainFrame.getSelectedMovie();
         if (info!=null) {
             TrailerFinder finder = new ImdbTrailerFinder();
-            String url = finder.findTrailerUrl(info.getMovie().getTitle(), info.siteFor(MovieService.IMDB).getIdForSite());
+            String url = finder.findTrailerUrl(info.getMovie().getTitle(), info.siteFor(Services.IMDB).getIdForSite());
             if (url == null) {
                 JOptionPane.showMessageDialog(mainFrame, "Could not find a trailer on www.imdb.com");
             } else {

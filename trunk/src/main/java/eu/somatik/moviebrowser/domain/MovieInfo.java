@@ -136,16 +136,13 @@ public class MovieInfo {
         this.movie.addSiteInfo(storableMovieSite);
     }
 
-    public StorableMovieSite siteFor(MovieService service) {
+    
+    public StorableMovieSite siteFor(String service) {
         return movie.getMovieSiteInfo(service);
     }
-
-    public String siteForUrl(MovieService service) {
-        StorableMovieSite sms = siteFor(service);
-        if (sms != null) {
-            return sms.getUrl();
-        }
-        return null;
+    
+    public StorableMovieSite siteFor(MovieService service) {
+        return movie.getMovieSiteInfo(service);
     }
     
     public void setNeedRefetch(boolean needRefetch) {

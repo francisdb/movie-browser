@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,7 +42,6 @@ import com.flicklib.domain.MovieService;
 import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.tools.FileTools;
-import java.util.ArrayList;
 
 /**
  * Singleton implementation for the settings
@@ -160,11 +160,11 @@ public class SettingsImpl implements Settings {
     private Properties defaultPreferences() {
         Properties properties = new Properties();
         properties.put(LOOK_AND_FEEL_PROPERTY, UIManager.getSystemLookAndFeelClassName());
-        properties.put(serviceKey(MovieService.FLIXSTER),"true");
-        properties.put(serviceKey(MovieService.TOMATOES),"true");
-        properties.put(serviceKey(MovieService.GOOGLE),"true");
-        properties.put(serviceKey(MovieService.MOVIEWEB),"true");
-        properties.put(serviceKey(MovieService.IMDB),"true");
+        properties.put(serviceKey("FLIXSTER"),"true");
+        properties.put(serviceKey("TOMATOES"),"true");
+        properties.put(serviceKey("GOOGLE"),"true");
+        properties.put(serviceKey("MOVIEWEB"),"true");
+        properties.put(serviceKey("IMDB"),"true");
         return properties;
     }
 
@@ -320,7 +320,7 @@ public class SettingsImpl implements Settings {
     }
 
     @Override
-    public boolean isServiceEnabled(MovieService service, boolean defaultValue) {
+    public boolean isServiceEnabled(String service, boolean defaultValue) {
         Map<String, String> prefs = loadPreferences();
         String value = prefs.get(serviceKey(service));
         if (value==null) {
@@ -331,7 +331,7 @@ public class SettingsImpl implements Settings {
     }
 
     @Override
-    public void setServiceEnabled(MovieService service, boolean value) {
+    public void setServiceEnabled(String service, boolean value) {
         Map<String, String> prefs = loadPreferences();
         prefs.put(serviceKey(service), Boolean.toString(value));
         savePreferences(prefs);
@@ -342,7 +342,7 @@ public class SettingsImpl implements Settings {
         List<MovieService> services = new ArrayList<MovieService>();
         Map<String, String> prefs = loadPreferences();
         for(MovieService service:MovieService.values()){
-            String value = prefs.get(serviceKey(service));
+            String value = prefs.get(serviceKey(service.getId()));
             if (value != null && Boolean.valueOf(value) == Boolean.TRUE) {
                 services.add(service);
             }
@@ -360,7 +360,7 @@ public class SettingsImpl implements Settings {
     @Override
     public MovieService getPreferredService() {
         // default is imdb
-        MovieService service = MovieService.IMDB;
+        MovieService service = MovieService.valueOf("IMDB");
         try {
             String name = getPreferredServiceName();
             if(name != null){
@@ -375,11 +375,11 @@ public class SettingsImpl implements Settings {
     @Override
     public void setPreferredService(MovieService service) {
         Map<String, String> prefs = loadPreferences();
-        prefs.put(PREF_SERVICE_PROPERTY, service.name());
+        prefs.put(PREF_SERVICE_PROPERTY, service.getId());
         savePreferences(prefs);
     }
 
-    private String serviceKey(final MovieService movieService){
-        return SERVICE_PREFIX+movieService.name().toLowerCase();
+    private String serviceKey(final String movieServiceId){
+        return SERVICE_PREFIX+movieServiceId.toLowerCase();
     }
 }

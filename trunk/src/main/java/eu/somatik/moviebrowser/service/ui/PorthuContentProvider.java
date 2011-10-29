@@ -20,6 +20,7 @@ package eu.somatik.moviebrowser.service.ui;
 
 import com.flicklib.domain.MovieService;
 
+import eu.somatik.moviebrowser.Services;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 
 /**
@@ -34,12 +35,12 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 public class PorthuContentProvider extends AbstractFallbackContentProvider implements ContentProvider {
 
     public PorthuContentProvider() {
-        super(MovieService.PORTHU);
+        super(Services.PORTHU);
     }
     
     @Override
     public String getImageUrl(MovieInfo info) {
-        String xpressImage = getImageUrl(info, MovieService.XPRESSHU);
+        String xpressImage = getImageUrl(info, MovieService.getById(Services.XPRESSHU));
         return xpressImage != null ? xpressImage : super.getImageUrl(info);
     }
 

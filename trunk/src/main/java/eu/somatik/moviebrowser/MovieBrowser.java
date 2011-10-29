@@ -86,7 +86,7 @@ public class MovieBrowser {
     private final MovieDatabase movieCache;
     private final ExporterLocator exporterLocator;
     private final InfoFetcherFactory fetcherFactory;
-    private final Map<MovieService,ContentProvider> contentProviders;
+    private final Map<String,ContentProvider> contentProviders;
     private final ContentProvider defaultContentProvider;
     private final TrailerFinder trailers;
     
@@ -131,17 +131,17 @@ public class MovieBrowser {
         this.exporterLocator = exporterLocator;
         this.fetcherFactory = fetcherFactory;
         this.contentProviders = setupContentProviders();
-        this.defaultContentProvider = contentProviders.get(MovieService.IMDB);
+        this.defaultContentProvider = contentProviders.get(Services.IMDB);
         this.trailers = trailers;
     }
 
 
-    private Map<MovieService,ContentProvider> setupContentProviders(){
-        Map<MovieService,ContentProvider> providers = new HashMap<MovieService, ContentProvider>();
-        providers.put(MovieService.IMDB, new ImdbContentProvider());
-        providers.put(MovieService.PORTHU, new PorthuContentProvider());
-        providers.put(MovieService.CINEBEL, new CinebelContentProvider());
-        providers.put(MovieService.OFDB, new OfdbContentProvider());
+    private Map<String,ContentProvider> setupContentProviders(){
+        Map<String,ContentProvider> providers = new HashMap<String, ContentProvider>();
+        providers.put(Services.IMDB, new ImdbContentProvider());
+        providers.put(Services.PORTHU, new PorthuContentProvider());
+        providers.put(Services.CINEBEL, new CinebelContentProvider());
+        providers.put(Services.OFDB, new OfdbContentProvider());
         return providers;
     }
 

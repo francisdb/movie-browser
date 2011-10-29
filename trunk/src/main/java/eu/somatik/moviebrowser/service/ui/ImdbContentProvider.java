@@ -20,6 +20,7 @@ package eu.somatik.moviebrowser.service.ui;
 
 import com.flicklib.domain.MovieService;
 
+import eu.somatik.moviebrowser.Services;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
@@ -35,12 +36,12 @@ public class ImdbContentProvider implements ContentProvider {
 
     @Override
     public String getImageUrl(MovieInfo info) {
-        return getImageUrl(info, MovieService.IMDB);
+        return getImageUrl(info, MovieService.getById(Services.IMDB));
     }
     
     protected String getImageUrl(MovieInfo info, MovieService service) {
         StorableMovie movie = info.getMovie(); 
-        if (movie!=null) {
+        if (movie!=null && service != null) {
             StorableMovieSite siteInfo = movie.getMovieSiteInfo(service);
             if (siteInfo!=null) {
                 String imgUrl = siteInfo.getImgUrl();
@@ -56,7 +57,7 @@ public class ImdbContentProvider implements ContentProvider {
     public String getPlot(MovieInfo info) {
         StorableMovie movie = info.getMovie(); 
         if (movie!=null) {
-            StorableMovieSite siteInfo = movie.getMovieSiteInfo(MovieService.IMDB);
+            StorableMovieSite siteInfo = movie.getMovieSiteInfo(MovieService.getById(Services.IMDB));
             if (siteInfo!=null) {
                 String plot = siteInfo.getPlot();
                 if (plot!=null) {
@@ -72,7 +73,7 @@ public class ImdbContentProvider implements ContentProvider {
     public String getTitle(MovieInfo info) {
         StorableMovie movie = info.getMovie(); 
         if (movie!=null) {
-            StorableMovieSite siteInfo = movie.getMovieSiteInfo(MovieService.IMDB);
+            StorableMovieSite siteInfo = movie.getMovieSiteInfo(MovieService.getById(Services.IMDB));
             if (siteInfo!=null) {
                 String title = siteInfo.getTitle();
                 if (title!=null) {

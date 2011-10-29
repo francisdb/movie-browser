@@ -18,7 +18,8 @@
  */
 package eu.somatik.moviebrowser.service.ui;
 
-import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.Services;
+
 
 /**
  *
@@ -27,7 +28,7 @@ import com.flicklib.domain.MovieService;
 public class OfdbContentProvider extends AbstractFallbackContentProvider{
 
     public OfdbContentProvider() {
-        super(MovieService.OFDB);
+        super(Services.OFDB);
     }
 
 }

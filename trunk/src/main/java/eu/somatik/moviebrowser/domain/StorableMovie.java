@@ -272,6 +272,14 @@ public class StorableMovie implements Cloneable, Persistent {
         return groups;
     }
     
+    @Transient
+    public StorableMovieSite getMovieSiteInfo(String serviceId) {
+        MovieService service = MovieService.getById(serviceId);
+        if (service != null) {
+            return getMovieSiteInfo(service);
+        }
+        return null;
+    }
     
     @Transient
     public StorableMovieSite getMovieSiteInfo(MovieService service) {
@@ -283,6 +291,7 @@ public class StorableMovie implements Cloneable, Persistent {
         return null;
     }
     
+    @Transient
     public StorableMovieSite getMovieSiteInfoOrCreate(MovieService service) {
         StorableMovieSite sms = getMovieSiteInfo(service);
         if (sms==null) {
@@ -295,7 +304,7 @@ public class StorableMovie implements Cloneable, Persistent {
     
     
     @Transient
-    public void addSiteInfo(StorableMovieSite sms) {
+    void addSiteInfo(StorableMovieSite sms) {
         if (sms.getMovie()!=this) {
             if (sms.getMovie()!=null) {
                 sms.getMovie().getSiteInfo().remove(sms);

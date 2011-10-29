@@ -21,10 +21,16 @@ package eu.somatik.moviebrowser.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.flicklib.domain.MovieService;
+import com.flicklib.service.movie.flixter.FlixsterInfoFetcher;
+import com.flicklib.service.movie.imdb.ImdbInfoFetcher;
+import com.flicklib.service.movie.movieweb.MovieWebInfoFetcher;
+import com.flicklib.service.movie.tomatoes.TomatoesInfoFetcher;
 
+import eu.somatik.moviebrowser.Services;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
 
@@ -34,6 +40,13 @@ import eu.somatik.moviebrowser.domain.StorableMovieSite;
  */
 public class WeightedScoreCalculatorTest {
 
+    @BeforeClass
+    public static void setup() {
+        new ImdbInfoFetcher(null);
+        new TomatoesInfoFetcher(null);
+        new MovieWebInfoFetcher(null);
+        new FlixsterInfoFetcher(null);
+    }
     /**
      * Test of calculate method, of class WeightedScoreCalculator.
      */
@@ -45,23 +58,23 @@ public class WeightedScoreCalculatorTest {
         assertNull("Result should be null when no data", calc.calculate(movie));
         
         StorableMovieSite site = new StorableMovieSite();
-        site.setService(MovieService.IMDB);
+        site.setService(MovieService.getById(Services.IMDB));
         site.setScore(32);
         movie.addSite(site);
         assertEquals(Integer.valueOf(32), calc.calculate(movie));
         
         site = new StorableMovieSite();
-        site.setService(MovieService.TOMATOES);
+        site.setService(MovieService.getById(Services.TOMATOES));
         site.setScore(32);
         movie.addSite(site);
         site = new StorableMovieSite();
-        site.setService(MovieService.MOVIEWEB);
+        site.setService(MovieService.getById(Services.MOVIEWEB));
         site.setScore(32);
         movie.addSite(site);
         assertEquals(Integer.valueOf(32), calc.calculate(movie));
         
         site = new StorableMovieSite();
-        site.setService(MovieService.FLIXSTER);
+        site.setService(MovieService.getById(Services.FLIXSTER));
         site.setScore(80);
         movie.addSite(site);
         assertEquals(Integer.valueOf((32*7+80*2)/9), calc.calculate(movie));

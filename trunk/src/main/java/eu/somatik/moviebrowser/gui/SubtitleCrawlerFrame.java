@@ -18,37 +18,37 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.api.SubtitlesLoader;
-import com.flicklib.domain.MovieService;
-import java.util.concurrent.ExecutionException;
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
+import java.awt.Component;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import java.awt.Desktop;
-
-import java.util.Iterator;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-import com.flicklib.domain.Subtitle;
-import com.flicklib.service.sub.SubtitleSourceLoader;
-import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.tools.SwingTools;
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.flicklib.api.SubtitlesLoader;
+import com.flicklib.domain.Subtitle;
+import com.flicklib.service.sub.SubtitleSourceLoader;
+
+import eu.somatik.moviebrowser.Services;
+import eu.somatik.moviebrowser.domain.MovieInfo;
+import eu.somatik.moviebrowser.tools.SwingTools;
 
 /**
  *
@@ -203,7 +203,7 @@ private void subtitlesTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FI
             protected List<Subtitle> doInBackground() throws Exception {
                 String fileName;
                 List<Subtitle> results = new ArrayList<Subtitle>();
-                String imdbId = movie.siteFor(MovieService.IMDB).getIdForSite();
+                String imdbId = movie.siteFor(Services.IMDB).getIdForSite();
                 results.addAll(subtitlesLoader2.search(movie.getMovie().getTitle(), imdbId));
                 
                 Iterator<String> i = files.iterator();

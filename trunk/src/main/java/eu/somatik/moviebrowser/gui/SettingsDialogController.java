@@ -18,21 +18,27 @@
  */
 package eu.somatik.moviebrowser.gui;
 
-import com.flicklib.domain.MovieService;
-import eu.somatik.moviebrowser.MovieBrowser;
-import eu.somatik.moviebrowser.config.Settings;
 import java.awt.Component;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.swing.JFileChooser;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flicklib.domain.MovieService;
+
+import eu.somatik.moviebrowser.MovieBrowser;
+import eu.somatik.moviebrowser.Services;
+import eu.somatik.moviebrowser.config.Settings;
 
 /**
  *
@@ -42,8 +48,8 @@ public class SettingsDialogController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsDialogController.class);
 
-    private static final Set<MovieService> DEFAULT_SERVICES = Collections.unmodifiableSet(EnumSet.of(
-                MovieService.GOOGLE, MovieService.IMDB, MovieService.TOMATOES, MovieService.MOVIEWEB, MovieService.FLIXSTER));
+    private static final Set<String> DEFAULT_SERVICES = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                Services.GOOGLE, Services.IMDB, Services.TOMATOES, Services.MOVIEWEB, Services.FLIXSTER)));
 
     private final Settings settings;
     private final MovieBrowser movieBrowser;
@@ -125,8 +131,8 @@ public class SettingsDialogController {
 
 
     private void loadSettingsValues() {
-        Map<MovieService, Boolean> values = new HashMap<MovieService, Boolean>();
-        for (MovieService service : settingsFrame.getServiceSelection().keySet()) {
+        Map<String, Boolean> values = new HashMap<String, Boolean>();
+        for (String service : settingsFrame.getServiceSelection().keySet()) {
             // TODO set default values for each service
             values.put(service, settings.isServiceEnabled(service, DEFAULT_SERVICES.contains(service)));
         }
@@ -137,7 +143,7 @@ public class SettingsDialogController {
     private void setSettingsValues() {
         settings.setRenameTitles(settingsFrame.isRenameTitlesSelected());
         settings.setSaveAlbumArt(settingsFrame.isSaveCoverArtSelected());
-        for (Map.Entry<MovieService, Boolean> entry : settingsFrame.getServiceSelection().entrySet()) {
+        for (Map.Entry<String, Boolean> entry : settingsFrame.getServiceSelection().entrySet()) {
             settings.setServiceEnabled(entry.getKey(), entry.getValue());
         }
         MovieService item = settingsFrame.getSelectedPreferredSite();
