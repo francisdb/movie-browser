@@ -33,6 +33,8 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.flicklib.domain.MovieService;
 
+import eu.somatik.moviebrowser.Services;
+
 
 /**
  *
@@ -41,15 +43,15 @@ import com.flicklib.domain.MovieService;
 public class SettingsDialog extends javax.swing.JDialog {
 
     //TODO move this to the correct location
-    public static final MovieService[] MAIN_SERVICES = new MovieService[]{
-        MovieService.IMDB,
-        MovieService.PORTHU,
-        MovieService.CINEBEL,
-        MovieService.OFDB
+    public static final String[] MAIN_SERVICES = new String[]{
+        Services.IMDB,
+        Services.PORTHU,
+        Services.CINEBEL,
+        Services.OFDB
     };
     
     private final IconLoader iconLoader;
-    private final Map<MovieService, JCheckBox> serviceCheckBoxes;
+    private final Map<String, JCheckBox> serviceCheckBoxes;
 
     private SettingsDialogController controller;
     
@@ -68,18 +70,18 @@ public class SettingsDialog extends javax.swing.JDialog {
         this.preferSiteComboBox.setSelectedItem(preferredService);
     }
 
-    private Map<MovieService, JCheckBox> mapServiceCheckBoxes(){
-        Map<MovieService, JCheckBox> cbs = new HashMap<MovieService, JCheckBox>();
+    private Map<String, JCheckBox> mapServiceCheckBoxes(){
+        Map<String, JCheckBox> cbs = new HashMap<String, JCheckBox>();
         //cbs.put(MovieService.OMDB, omdbCheckBox);
-        cbs.put(MovieService.FLIXSTER, flixsterCheckBox);
-        cbs.put(MovieService.GOOGLE, googleCheckBox);
-        cbs.put(MovieService.MOVIEWEB, moviewebCheckBox);
-        cbs.put(MovieService.PORTHU, portHuCheckbox);
-        cbs.put(MovieService.TOMATOES, rottenTomatoesCheckBox);
-        cbs.put(MovieService.CINEBEL, cinebelCheckBox);
-        cbs.put(MovieService.OFDB, ofdbCheckBox);
-        cbs.put(MovieService.XPRESSHU, xpressHuCheckBox);
-        cbs.put(MovieService.BLIPPR, blipprCheckBox);
+        cbs.put(Services.FLIXSTER, flixsterCheckBox);
+        cbs.put(Services.GOOGLE, googleCheckBox);
+        cbs.put(Services.MOVIEWEB, moviewebCheckBox);
+        cbs.put(Services.PORTHU, portHuCheckbox);
+        cbs.put(Services.TOMATOES, rottenTomatoesCheckBox);
+        cbs.put(Services.CINEBEL, cinebelCheckBox);
+        cbs.put(Services.OFDB, ofdbCheckBox);
+        cbs.put(Services.XPRESSHU, xpressHuCheckBox);
+        cbs.put(Services.BLIPPR, blipprCheckBox);
         return cbs;
     }
     
@@ -397,16 +399,16 @@ public class SettingsDialog extends javax.swing.JDialog {
         return new DefaultComboBoxModel(MAIN_SERVICES);
     }
     
-    public Map<MovieService, Boolean> getServiceSelection() {
-        Map<MovieService, Boolean> cbs = new HashMap<MovieService, Boolean>();
-        for(Map.Entry<MovieService, JCheckBox> entry:serviceCheckBoxes.entrySet()){
+    public Map<String, Boolean> getServiceSelection() {
+        Map<String, Boolean> cbs = new HashMap<String, Boolean>();
+        for(Map.Entry<String, JCheckBox> entry:serviceCheckBoxes.entrySet()){
             cbs.put(entry.getKey(), entry.getValue().isSelected());
         }
         return cbs;
     }
 
-    public void setServiceSelection(Map<MovieService, Boolean> selection) {
-        for(Map.Entry<MovieService, Boolean> entry:selection.entrySet()){
+    public void setServiceSelection(Map<String, Boolean> selection) {
+        for(Map.Entry<String, Boolean> entry:selection.entrySet()){
             serviceCheckBoxes.get(entry.getKey()).setSelected(entry.getValue());
         }
     }

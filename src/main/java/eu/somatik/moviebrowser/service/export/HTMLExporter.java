@@ -24,8 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import com.flicklib.domain.MovieService;
-
+import eu.somatik.moviebrowser.Services;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.InfoHandlerImpl;
@@ -74,7 +73,7 @@ class HTMLExporter implements Exporter {
         for (MovieInfo movieInfo:movieIterator) {
             try {
                 final StorableMovie movie = movieInfo.getMovie();
-                url = "http://www.imdb.com/title/tt" + movie.getMovieSiteInfo(MovieService.IMDB).getIdForSite();
+                url = "http://www.imdb.com/title/tt" + movie.getMovieSiteInfo(Services.IMDB).getIdForSite();
 
                 title = movie.getTitle();
                 year = movie.getYear();

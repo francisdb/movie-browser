@@ -18,11 +18,12 @@
  */
 package eu.somatik.moviebrowser.config;
 
-import com.flicklib.domain.MovieService;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.flicklib.domain.MovieService;
 
 /**
  * Moviebrowser settings
@@ -122,14 +123,14 @@ public interface Settings {
      * @param defaultValue
      * @return
      */
-    boolean isServiceEnabled(MovieService movieService, boolean defaultValue);
+    boolean isServiceEnabled(String movieService, boolean defaultValue);
     
     /**
      * Set a flag
      * @param movieService
      * @param value
      */
-    void setServiceEnabled(MovieService movieService, boolean value);
+    void setServiceEnabled(String movieService, boolean value);
 
     /**
      * Returns all enabled services

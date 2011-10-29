@@ -307,7 +307,7 @@ public class MovieFinder {
         private void doCall() throws Exception {
             // TODO make a null entry if movie not found? so we can do better reloading
             try {
-                LOGGER.trace("Calling fetch on {} for '{}'", service.name(), info.getMovie().getTitle());
+                LOGGER.trace("Calling fetch on {} for '{}'", service.getId(), info.getMovie().getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 
                 fetchMoviePageInfo(info.getMovie(), service);
@@ -360,7 +360,7 @@ public class MovieFinder {
      * @return the movie page
      * @throws IOException
      */
-    protected MoviePage fetchMoviePageInfo(StorableMovie movie, MovieService service) throws IOException {
+    private MoviePage fetchMoviePageInfo(StorableMovie movie, MovieService service) throws IOException {
         MoviePage moviePage;
         StorableMovieSite storableMovieSite = movie.getMovieSiteInfo(service);
         MovieInfoFetcher fetcher = fetcherFactory.get(service);
@@ -424,7 +424,7 @@ public class MovieFinder {
      * @param info
      * @param exceptService
      */
-    public void checkWithSecondaryServices(MovieInfo info, MovieService exceptService) {
+    private void checkWithSecondaryServices(MovieInfo info, MovieService exceptService) {
         for (MovieService service : settings.getEnabledServices()) {
             if (service!=exceptService) {
                 StorableMovieSite siteInfo = info.siteFor(service);

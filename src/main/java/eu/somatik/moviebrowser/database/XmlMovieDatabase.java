@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.flicklib.domain.MovieService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.thoughtworks.xstream.XStream;
@@ -93,6 +94,24 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
         public String toString(Object g) {
             return ((Language) g).getName();
         }
+    }
+    
+    private final static class MovieServiceConverter implements SingleValueConverter {
+        @Override
+        public boolean canConvert(@SuppressWarnings("rawtypes") Class cls) {
+            return cls.equals(MovieService.class);
+        }
+
+        @Override
+        public Object fromString(String name) {
+            return MovieService.getById(name);
+        }
+
+        @Override
+        public String toString(Object g) {
+            return ((MovieService) g).getId();
+        }
+        
     }
 
     private final IdGenerator movieIdGenerator = new IdGenerator();
@@ -181,6 +200,7 @@ public class XmlMovieDatabase extends InMemoryDatabase implements MovieDatabase 
         xstream.alias("language", Language.class);
         xstream.registerConverter(new LanguageConverter());
         xstream.registerConverter(new GenreConverter());
+        xstream.registerConverter(new MovieServiceConverter());
         return xstream;
     }
 

@@ -18,7 +18,8 @@
  */
 package eu.somatik.moviebrowser.service.ui;
 
-import com.flicklib.domain.MovieService;
+import eu.somatik.moviebrowser.Services;
+
 
 /**
  * This content provider shows dutch titles, and gets the title, plot information from the cinebel service, and
@@ -29,7 +30,7 @@ import com.flicklib.domain.MovieService;
 public class CinebelContentProvider extends AbstractFallbackContentProvider{
 
     public CinebelContentProvider() {
-        super(MovieService.CINEBEL);
+        super(Services.CINEBEL);
     }
 
 }

@@ -19,6 +19,7 @@
 package eu.somatik.moviebrowser.service.ui;
 
 import com.flicklib.domain.MovieService;
+
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieSite;
@@ -35,8 +36,8 @@ public abstract class AbstractFallbackContentProvider extends ImdbContentProvide
      * Creates a new provider for the selected movieService
      * @param movieService
      */
-    public AbstractFallbackContentProvider(MovieService movieService) {
-        this.movieService = movieService;
+    public AbstractFallbackContentProvider(String id) {
+        this.movieService = MovieService.valueOf(id);
     }
 
      /* (non-Javadoc)
