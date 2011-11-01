@@ -67,7 +67,6 @@ import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.service.DuplicateFinder;
 import eu.somatik.moviebrowser.service.InfoHandler;
-import eu.somatik.moviebrowser.service.MovieFileFilter;
 import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.export.Exporter;
 import eu.somatik.moviebrowser.service.export.ExporterLocator;
@@ -87,7 +86,6 @@ public class MainFrame extends javax.swing.JFrame {
     private final IconLoader iconLoader;
     private final Settings settings;
     private final MovieInfoPanel movieInfoPanel;
-    private final MovieFileFilter movieFileFilter;
     private final ExporterLocator exporterLocator;
     private final MovieInfoTableModel movieInfoModel;
     ResourceBundle bundle = ResourceBundle.getBundle("eu/somatik/moviebrowser/gui/Bundle"); // NOI18N
@@ -115,7 +113,6 @@ public class MainFrame extends javax.swing.JFrame {
         this.iconLoader = iconLoader;
         this.settings = settings;
         this.exporterLocator = exporterLocator;
-        this.movieFileFilter = new MovieFileFilter(false);
         this.setIconImage(iconLoader.loadIcon("images/32/video-x-generic.png").getImage());
         this.setPreferredSize(new Dimension(1000, 600));
 
@@ -156,9 +153,7 @@ public class MainFrame extends javax.swing.JFrame {
         timer.start();
     }
 
-    MovieFileFilter getMovieFileFilter() {
-        return movieFileFilter;
-    }
+    
 
     
     
@@ -851,7 +846,7 @@ private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:even
         @Override
         public void actionPerformed(ActionEvent e) {
             MovieInfo info = getSelectedMovie();
-            int option = JOptionPane.showConfirmDialog(MainFrame.this, "Are you sure you want to delete '"+info.getMovie().getTitle()+"' from the database?", "Delete?", JOptionPane.OK_CANCEL_OPTION);
+            int option = JOptionPane.showConfirmDialog(MainFrame.this, "Are you sure you want to delete '"+info.getTitle()+"' from the database?", "Delete?", JOptionPane.OK_CANCEL_OPTION);
             if(option == JOptionPane.OK_OPTION){
                 deleteMovie(info);
                 browser.getMovieCache().remove(info.getMovie());

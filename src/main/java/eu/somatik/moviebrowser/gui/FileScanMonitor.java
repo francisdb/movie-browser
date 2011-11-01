@@ -4,7 +4,7 @@ import java.awt.Component;
 
 import javax.swing.ProgressMonitor;
 
-import eu.somatik.moviebrowser.service.AsyncMonitor;
+import com.flicklib.folderscanner.AsyncMonitor;
 
 /**
  * This class encapsulates a dialog with a progress bar, which can be cancelled, for a long running processes.
@@ -17,8 +17,8 @@ class FileScanMonitor implements AsyncMonitor {
     private final static int STEP = 10;
 
     private int position;
-    int max;
-    ProgressMonitor monitor;
+    private int max;
+    private final ProgressMonitor monitor;
 
     FileScanMonitor(Component parentComponent, String startMessage) {
         this.position = 0;

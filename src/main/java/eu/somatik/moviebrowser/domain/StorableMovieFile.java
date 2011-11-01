@@ -29,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.flicklib.folderscanner.MovieFileType;
+
 /**
  * 
  * @author francisdb
@@ -47,7 +49,7 @@ public class StorableMovieFile implements Cloneable, Persistent {
     private String name;
 
     @Enumerated(value = EnumType.STRING)
-    private FileType type;
+    private MovieFileType type;
 
     private long size;
     
@@ -57,19 +59,19 @@ public class StorableMovieFile implements Cloneable, Persistent {
     public StorableMovieFile() {
     }
 
-    public StorableMovieFile(File file, FileType contentType) {
+    public StorableMovieFile(File file, MovieFileType contentType) {
         setType(contentType);
         setSize(file.length());
         setName(file.getName());
     }
     
-    public StorableMovieFile(String name, long size, FileType contentType) {
+    public StorableMovieFile(String name, long size, MovieFileType contentType) {
         setType(contentType);
         setSize(size);
         setName(name);
     }
     
-    public StorableMovieFile(File file, FileType contentType, FileGroup fg) {
+    public StorableMovieFile(File file, MovieFileType contentType, FileGroup fg) {
         this(file,contentType);
         setGroup(fg);
     }
@@ -100,11 +102,11 @@ public class StorableMovieFile implements Cloneable, Persistent {
         this.name = name;
     }
 
-    public FileType getType() {
+    public MovieFileType getType() {
         return type;
     }
 
-    public void setType(FileType type) {
+    public void setType(MovieFileType type) {
         this.type = type;
     }
 

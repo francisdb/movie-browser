@@ -15,8 +15,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.flicklib.folderscanner.MovieFileType;
+
+import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.domain.FileGroup;
-import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
@@ -34,7 +36,7 @@ public class DuplicateFinderTest {
         
         {
             FileGroup fg = new FileGroup();
-            fg.addFile(new StorableMovieFile("spaceballs.avi", 0 , FileType.VIDEO_CONTENT));
+            fg.addFile(new StorableMovieFile("spaceballs.avi", 0 , MovieFileType.VIDEO_CONTENT));
             fg.addLocation(new MovieLocation("/some-imaginary/path", "cloud"));
             StorableMovie movie = new StorableMovie();
             movie.setTitle("Spaceballs");
@@ -44,7 +46,7 @@ public class DuplicateFinderTest {
         
         {
             FileGroup fg = new FileGroup();
-            fg.addFile(new StorableMovieFile("titanic.iso", 0 , FileType.VIDEO_CONTENT));
+            fg.addFile(new StorableMovieFile("titanic.iso", 0 , MovieFileType.VIDEO_CONTENT));
             fg.addLocation(new MovieLocation(new File(rootDir, "romance").getAbsolutePath(), "test-server"));
             StorableMovie movie = new StorableMovie();
             movie.setTitle("Titanic");
@@ -53,12 +55,12 @@ public class DuplicateFinderTest {
         }
     }
 
-    private AdvancedFolderScanner scanner;
+    private FolderScanner scanner;
     private DuplicateFinder duplicateFinder;
     
     @Before
     public void setUp() {
-        this.scanner = new AdvancedFolderScanner(new MovieNameExtractor());
+        this.scanner = new FolderScannerImpl();
         duplicateFinder = new DuplicateFinder(mdb);
     }
 

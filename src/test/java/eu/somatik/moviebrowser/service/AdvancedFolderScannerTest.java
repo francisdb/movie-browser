@@ -1,6 +1,7 @@
 package eu.somatik.moviebrowser.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,8 +12,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -21,11 +22,11 @@ import static org.junit.Assert.assertNotNull;
 public class AdvancedFolderScannerTest {
 
 
-    private AdvancedFolderScanner scanner;
+    private FolderScanner scanner;
 
     @Before
     public void setUp() {
-        this.scanner = new AdvancedFolderScanner(new MovieNameExtractor());
+        this.scanner = new FolderScannerImpl();
     }
 
     @Test

@@ -18,22 +18,24 @@
  */
 package eu.somatik.moviebrowser.module;
 
+import com.flicklib.folderscanner.AdvancedFolderScanner;
+import com.flicklib.folderscanner.Scanner;
 import com.google.inject.AbstractModule;
-import eu.somatik.moviebrowser.cache.ImageCache;
+
+import eu.somatik.moviebrowser.api.FileSystemScanner;
+import eu.somatik.moviebrowser.api.FolderScanner;
 import eu.somatik.moviebrowser.cache.FileSystemImageCache;
-import eu.somatik.moviebrowser.database.MovieDatabase;
-import eu.somatik.moviebrowser.database.XmlMovieDatabase;
+import eu.somatik.moviebrowser.cache.ImageCache;
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.config.SettingsImpl;
+import eu.somatik.moviebrowser.database.MovieDatabase;
+import eu.somatik.moviebrowser.database.XmlMovieDatabase;
 import eu.somatik.moviebrowser.gui.IconLoader;
-import eu.somatik.moviebrowser.api.FileSystemScanner;
 import eu.somatik.moviebrowser.service.FileSystemScannerImpl;
-import eu.somatik.moviebrowser.api.FolderScanner;
-import eu.somatik.moviebrowser.service.MovieFinder;
-import eu.somatik.moviebrowser.service.MovieNameExtractor;
-import eu.somatik.moviebrowser.service.AdvancedFolderScanner;
+import eu.somatik.moviebrowser.service.FolderScannerImpl;
 import eu.somatik.moviebrowser.service.InfoHandler;
 import eu.somatik.moviebrowser.service.InfoHandlerImpl;
+import eu.somatik.moviebrowser.service.MovieFinder;
 import eu.somatik.moviebrowser.service.ScoreCalculator;
 import eu.somatik.moviebrowser.service.WeightedScoreCalculator;
 /**
@@ -45,15 +47,14 @@ public class MovieBrowserModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(MovieFinder.class);
-        bind(MovieNameExtractor.class);
         bind(IconLoader.class);
 
 
         //bind(MovieDatabase.class).to(JPAMovieCache.class);
         bind(MovieDatabase.class).to(XmlMovieDatabase.class);
         bind(ImageCache.class).to(FileSystemImageCache.class);
-        bind(FolderScanner.class).to(AdvancedFolderScanner.class);
-        //bind(FolderScanner.class).to(SimpleFolderScanner.class);
+        bind(Scanner.class).to(AdvancedFolderScanner.class);
+        bind(FolderScanner.class).to(FolderScannerImpl.class);
         bind(FileSystemScanner.class).to(FileSystemScannerImpl.class);
         bind(Settings.class).to(SettingsImpl.class);
         bind(InfoHandler.class).to(InfoHandlerImpl.class);

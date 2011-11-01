@@ -105,6 +105,10 @@ public class MovieInfo {
     public String toString() {
         return movie.getTitle();
     }
+    
+    public String getTitle() {
+        return movie.getTitle();
+    }
 
     /**
      * 

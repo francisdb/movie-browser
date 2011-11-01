@@ -35,13 +35,13 @@ import com.flicklib.api.InfoFetcherFactory;
 import com.flicklib.api.MovieInfoFetcher;
 import com.flicklib.domain.MoviePage;
 import com.flicklib.domain.MovieService;
+import com.flicklib.folderscanner.MovieFileType;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import eu.somatik.moviebrowser.config.Settings;
 import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.domain.FileGroup;
-import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieInfo.LoadType;
 import eu.somatik.moviebrowser.domain.MovieLocation;
@@ -206,7 +206,7 @@ public class MovieFinder {
         
         private void doCall() throws Exception {
             try {
-                LOGGER.info("call "+info.getMovie().getTitle());
+                LOGGER.info("call "+info.getTitle());
                 info.setStatus(MovieStatus.LOADING);
                 // set true, if we should call extra services for this movie
                 boolean needExtraServiceCheck = false;
@@ -269,7 +269,7 @@ public class MovieFinder {
 
         private FileGroup findMovie(MovieInfo info) {
             for (StorableMovieFile file : info.getMovie().getUniqueFileGroup().getFiles()) {
-                if (file.getType()==FileType.VIDEO_CONTENT) {
+                if (file.getType()==MovieFileType.VIDEO_CONTENT) {
                     FileGroup fileGroup = movieDatabase.findByFile(file.getName(), file.getSize());
                     if (fileGroup!=null) {
                         return fileGroup;

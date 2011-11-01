@@ -30,6 +30,7 @@ import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
+import eu.somatik.moviebrowser.service.MovieVisitor;
 
 /**
  * This action opens the SubtitleCrawlerFrame if a video file is found in the directory.
@@ -49,15 +50,16 @@ class CrawlSubtitleAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Set<String> files = new HashSet<String>();
-        for (FileGroup fg : info.getMovie().getGroups()) {
-            for (MovieLocation location : fg.getLocations()) {
+        final Set<String> files = new HashSet<String>();
+        new MovieVisitor(info.getMovie()) {
+            @Override
+            public void visitLocation(FileGroup fileGroup, MovieLocation location) {
                 // FIXME do we realy need to crawl the folder again?
                 File locationFile = new File(location.getPath());
                 files.add(locationFile.getName());
             }
-        }
-        files.add(info.getMovie().getTitle());
+        };
+        files.add(info.getTitle());
 
         SubtitleCrawlerFrame subtitleCrawler = new SubtitleCrawlerFrame(files, info, browser.getSubtitlesLoader(), browser.getIconLoader());
         subtitleCrawler.setLocationRelativeTo(parent);

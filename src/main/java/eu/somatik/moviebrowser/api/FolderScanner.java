@@ -21,8 +21,9 @@ package eu.somatik.moviebrowser.api;
 import java.util.List;
 import java.util.Set;
 
+import com.flicklib.folderscanner.AsyncMonitor;
+
 import eu.somatik.moviebrowser.domain.MovieInfo;
-import eu.somatik.moviebrowser.service.AsyncMonitor;
 
 /**
  *
