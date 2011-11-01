@@ -38,7 +38,16 @@ public abstract class MovieVisitor {
     
     public void visitLocation(FileGroup fileGroup, MovieLocation location) {}
     
-    public void startVisit(StorableMovie movie) {
+    public MovieVisitor() {
+    }
+    
+    public MovieVisitor(StorableMovie movie) {
+        startVisit(movie);
+    }
+    
+    
+    
+    public final void startVisit(StorableMovie movie) {
         visitMovie(movie);
         for (FileGroup fg : movie.getGroups()) {
             visitGroup(fg);
@@ -49,6 +58,11 @@ public abstract class MovieVisitor {
                 visitLocation(fg, location);
             }
         }
+        finish();
+    }
+    
+    public void finish() {
+        
     }
     
 }

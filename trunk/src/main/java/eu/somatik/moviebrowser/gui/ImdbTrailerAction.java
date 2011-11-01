@@ -44,7 +44,7 @@ class ImdbTrailerAction extends AbstractAction {
         MovieInfo info = mainFrame.getSelectedMovie();
         if (info!=null) {
             TrailerFinder finder = new ImdbTrailerFinder();
-            String url = finder.findTrailerUrl(info.getMovie().getTitle(), info.siteFor(Services.IMDB).getIdForSite());
+            String url = finder.findTrailerUrl(info.getTitle(), info.siteFor(Services.IMDB).getIdForSite());
             if (url == null) {
                 JOptionPane.showMessageDialog(mainFrame, "Could not find a trailer on www.imdb.com");
             } else {

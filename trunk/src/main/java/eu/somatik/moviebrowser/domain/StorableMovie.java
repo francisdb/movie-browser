@@ -41,6 +41,7 @@ import javax.persistence.Transient;
 
 import com.flicklib.domain.MovieService;
 import com.flicklib.domain.MovieType;
+import com.flicklib.folderscanner.MovieFileType;
 
 /**
  * 
@@ -253,7 +254,7 @@ public class StorableMovie implements Cloneable, Persistent {
         }
         for (FileGroup g : getGroups()) {
             for (StorableMovieFile sm : g.getFiles()) {
-                if (sm.getType() == FileType.VIDEO_CONTENT) {
+                if (sm.getType() == MovieFileType.VIDEO_CONTENT) {
                     return true;
                 }
             }

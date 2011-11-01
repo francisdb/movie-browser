@@ -50,7 +50,7 @@ class AppleTrailerAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         MovieInfo info = mainFrame.getSelectedMovie();
         if (info!=null) {
-            String url = browser.getTrailers().findTrailerUrl(info.getMovie().getTitle(), null);
+            String url = browser.getTrailers().findTrailerUrl(info.getTitle(), null);
             if (url == null) {
                 JOptionPane.showMessageDialog(mainFrame, "Could not find a trailer on www.apple.com");
             } else {

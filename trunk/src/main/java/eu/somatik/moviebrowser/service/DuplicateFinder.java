@@ -21,15 +21,17 @@ package eu.somatik.moviebrowser.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.flicklib.folderscanner.MovieFileType;
+
 import eu.somatik.moviebrowser.database.MovieDatabase;
 import eu.somatik.moviebrowser.domain.FileGroup;
-import eu.somatik.moviebrowser.domain.FileType;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
 import eu.somatik.moviebrowser.domain.StorableMovieFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -66,7 +68,7 @@ public class DuplicateFinder {
         return result;
     }
 
-    protected boolean check(MovieInfo info) {
+    private boolean check(MovieInfo info) {
         return check(info.getMovie());
     }
 
@@ -75,12 +77,12 @@ public class DuplicateFinder {
      * @param movie
      * @return true, if in the database.
      */
-    protected boolean check(StorableMovie movie) {
+    private boolean check(StorableMovie movie) {
         for (FileGroup newlyFoundFileGroup : movie.getGroups()) {
             for (StorableMovieFile newlyFoundFile : newlyFoundFileGroup.getFiles()) {
                 // FIXME this fails for a folder containing only compressed files
                 // http://code.google.com/p/movie-browser/issues/detail?id=95
-                if (newlyFoundFile.getType()==FileType.VIDEO_CONTENT) {
+                if (newlyFoundFile.getType()==MovieFileType.VIDEO_CONTENT) {
                     FileGroup storedFileGroup = database.findByFile(newlyFoundFile.getName(), newlyFoundFile.getSize());
                     if (storedFileGroup!=null) {
                         if (!storedFileGroup.equals(newlyFoundFileGroup)) {
@@ -108,7 +110,7 @@ public class DuplicateFinder {
         boolean result = false;
         for (StorableMovieFile file : fileGroup.getFiles()) {
             // only check for video files
-            if (file.getType()==FileType.VIDEO_CONTENT) {
+            if (file.getType()==MovieFileType.VIDEO_CONTENT) {
                 // the other group has 
                 if (!group.hasFiles(file.getName(), file.getSize())) {
                     return false;

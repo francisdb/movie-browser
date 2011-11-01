@@ -37,6 +37,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.flicklib.folderscanner.MovieFileType;
+
 
 /**
  * 
@@ -194,7 +196,7 @@ public class FileGroup implements Cloneable, Persistent {
      * @return
      */
     @Transient
-    public StorableMovieFile getFileByType(FileType type) {
+    public StorableMovieFile getFileByType(MovieFileType type) {
         for (StorableMovieFile f : files) {
             if (f.getType() == type) {
                 return f;

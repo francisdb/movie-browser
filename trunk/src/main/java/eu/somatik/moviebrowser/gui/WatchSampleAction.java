@@ -18,15 +18,18 @@
  */
 package eu.somatik.moviebrowser.gui;
 
+import java.awt.event.ActionEvent;
+import java.io.File;
+
+import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
+
 import eu.somatik.moviebrowser.MovieBrowser;
 import eu.somatik.moviebrowser.domain.FileGroup;
 import eu.somatik.moviebrowser.domain.MovieInfo;
 import eu.somatik.moviebrowser.domain.MovieLocation;
 import eu.somatik.moviebrowser.domain.StorableMovie;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+import eu.somatik.moviebrowser.service.MovieVisitor;
 
 /**
  * This action opens the sample if a sample is found
@@ -49,16 +52,24 @@ class WatchSampleAction extends AbstractAction {
         MovieInfo info = mainFrame.getSelectedMovie();
         if (info!=null) {
             StorableMovie movie = info.getMovie();
-            for (FileGroup filegroup : movie.getGroups()) {
-                for (MovieLocation location : filegroup.getLocations()) {
-                    File sample = browser.getFileSystemScanner().findSample(new File(location.getPath()));
-                    if (sample!=null) {
-                        browser.openFile(sample);
-                        return;
+            new MovieVisitor(movie) {
+                boolean found = false;
+                @Override
+                public void visitLocation(FileGroup fileGroup, MovieLocation location) {
+                    if (!found) {
+                        File sample = browser.getFileSystemScanner().findSample(new File(location.getPath()));
+                        if (sample!=null) {
+                            browser.openFile(sample);
+                            found = true;
+                        }
                     }
                 }
-            }
-            JOptionPane.showMessageDialog(mainFrame, "No sample found");
+                public void finish() {
+                    if (!found) {
+                        JOptionPane.showMessageDialog(mainFrame, "No sample found");
+                    }
+                }
+            };
         }
     }
 }
